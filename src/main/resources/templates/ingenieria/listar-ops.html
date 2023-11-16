@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Ingenieria : Ordenes Produccion')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		
+		<div class="container my-5">
+			<h1>Ordenes de Produccion</h1>
+			
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <div  id="filtro">
+			     <form class="filtro my-5">
+			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'nombre compania', 'nit'..." />
+			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
+			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
+			     </form>
+			</div>
+			
+			<div class="table-responsive text-nowrap my-5 rounded" >
+				<table class="table table-striped align-middle table-hover " aria-describedby="table-description">
+					<thead class="table-dark">
+						<tr>
+							<th scope="col" class="sticky-col">#</th>
+							<th scope="col">No OP</th>
+							<th scope="col">Estado</th>
+							<th scope="col">Nit</th>
+							<th scope="col">Razon Social</th>
+							<th scope="col">No PV</th>
+							<th scope="col">Fecha entrega</th>
+							<th scope="col" class="sticky-col sticky-col-right">Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="op, stat : ${pedidosOp}">
+							<td class="sticky-col" data-label="#">[[${stat.index + 1}]]</td>
+							<td data-label="No OP" th:text="${op.tipoOp} + '-' + ${op.numOp}"></td>
+							<td data-label="Estado">
+								<div class="user__badge" th:text="${op.estadoOp}"></div>
+							</td>
+							<td data-label="Nit" th:text="${op.nit}"></td>
+							<td data-label="Razon Social" th:text="${op.razonSocial}"></td>
+							<td data-label="No PV" th:text="${op.tipoPv} + '-' + ${op.numPv}"></td>
+							<td data-label="Fecha entrega" th:text="${#dates.format(op.fechaEntregaPv, 'yyyy-MM-dd')}"></td>
+							<td data-label="Acciones" class="sticky-col sticky-col-right">
+								<a role="button" class="btn btn-primary" th:href="@{/ingenieria/op/{idOp}(idOp=${op.numOp})}" >Ver</a>				
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap.min.js" ></script>
+	</body>
+</html>

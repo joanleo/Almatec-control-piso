@@ -1,0 +1,158 @@
+
+* {
+  /*box-sizing: content-box;*/
+}
+
+body{
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+    margin: 0;
+}
+
+.row1{
+	display:flex !important;
+	justify-content:center;
+}
+.text_color{
+	color: #DC1D33 !important;
+}
+.text_color_black{
+	color: #000000 !important;
+}
+.text_color_white{
+	color: #FFFFF3 !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+.container_table{
+    margin: auto;
+    overflow: hidden;
+}
+.table-responsive{
+	border: 1px solid #e5e7eb;
+	overflow: hidden;
+	container-type: inline-size;
+  	container-name: table;
+}
+/*.table>:not(caption)>*>* {
+	background-color: rgb(0, 121, 54, 0.8);
+}*/
+
+.table-dark {
+	--bs-table-bg: rgb(0, 121, 54, 0.9);
+}
+
+.rounded{
+  border-radius: .375rem !important;
+  overflow: hidden;
+  border-width: 1px;
+}
+
+.size-l{
+    width: 18rem;
+}
+
+.size-s{
+    width: 9rem;
+}
+.size-xs{
+	width: 5rem;
+}
+
+.size-m{
+    width: 15rem;
+}
+
+.btn-primary{
+	background-color: rgb(0, 121, 54, 0.9) !important;
+	--bs-btn-border-color: none !important; 
+}
+
+.btn-secondary{
+	background-color: rgb(255, 214, 0, 0.9) !important;
+	--bs-btn-border-color: none !important;
+	color: #000; 
+}
+
+.filtro{
+	display: flex;
+}
+
+.no-text-decoration {
+    text-decoration: none;
+}
+footer {
+    background-color: rgb(0, 121, 54, 0.9);
+    color: #FFFFFF;
+    padding: 10px;
+    text-align: center;
+    border-radius: .375rem;
+}
+
+.container{
+	flex-grow: 1;
+}
+
+.user__badge {
+  width: max-content;
+  background: #dcfce7;
+  border-radius: 6px;
+  border: 1px solid #15803d;
+  color: #15803d;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+@container table (min-width: 400px) {
+    .sticky-col {
+     position: sticky;
+     left: 0;
+  }
+  
+  .sticky-col-right {
+    right: 0;
+  }
+}
+
+@container table (max-width: 400px) {
+  td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: #374151;
+      font-size: 14px;  
+  }
+  
+  label {
+    display: none;
+  }
+  
+  td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: none;
+  }
+  
+  td:first-child {
+    background: #f9fafb;
+  }
+  
+  th {
+    display: none;
+  }
+}
+
+

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Ingenieria')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+				 
+		<div class="container my-5">
+			<h1>Pedidos de venta</h1>
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <div  id="filtro">
+			     <form class="filtro my-5">
+			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'nombre compania', 'nit'..." />
+			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
+			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
+			     </form>
+			</div>
+		 
+			<div class="table-responsive text-nowrap my-5">
+			<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+				<thead class="table-dark">
+					<tr>
+						<th>Fecha</th>
+						<th>Pedido</th>
+						<th>Nit</th>
+						<th>Razon Social</th>
+						<th>Proyecto</th>
+						<th>Valor</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="pedido : ${pedidos}">
+					<td th:text="${#dates.format(pedido.fecha, 'yyyy-MM-dd')}"></td>
+					<td th:text="${pedido.pedidoNo}"></td>
+					<td th:text="${pedido.nit}"></td>
+					<td th:text="${pedido.razonSocial}"></td>
+					<td th:text="${pedido.proyecto}"></td>
+					<td th:text="'$ ' + ${#numbers.formatDecimal(pedido.valor, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+					<td >
+						<a role="button" class="btn btn-primary" th:href="@{/ingenieria/pedidos/{noPv}(noPv=${pedido.noPv})}">Ver</a>				
+					</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap.min.js" ></script>
+	</body>
+</html>

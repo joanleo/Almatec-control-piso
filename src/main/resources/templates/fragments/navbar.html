@@ -1,0 +1,32 @@
+<nav th:fragment="nav-bar(selec)" class="navbar navbar-expand-lg bg-body-tertiary rounded">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/home">
+		<img th:src="@{/imgs/logo-almatec.png}" alt="logo" />
+	</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" style="justify-content: space-between;" id="navbarNav">
+      <ul class="navbar-nav">
+        <li  class="nav-item">
+          <a class="nav-link" th:classappend="${selec == 'Ingenieria' ? 'active' : ''}" href="/ingenieria">Ingenieria</a>
+        </li>
+        <li  class="nav-item">
+          <a class="nav-link" th:classappend="${selec == 'Ingenieria' ? 'active' : ''}" href="/ingenieria/listar-ops">Consulta op</a>
+        </li>
+        <li  class="nav-item">
+          <a class="nav-link" th:classappend="${selec == 'Produccion' ? 'active' : ''}" href="#">Produccion</a>
+        </li>
+      </ul>
+      
+      <div class="d-flex me-2">
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div id="navbar-nav" >
+					<a class="navbar-brand" >Bienvenido,  <span sec:authentication="principal.username"></span></a>				
+					<a sec:authorize="isAuthenticated()" class="navbar-brand text_color" th:href="@{/logout}">Cerrar sesión</a>
+				</div>							
+			</div>
+	 </div>
+    </div>
+  </div>
+</nav>
