@@ -1,13 +1,15 @@
 
-* {
-  /*box-sizing: content-box;*/
-}
 
 body{
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
     margin: 0;
+}
+
+.header{
+	display: flex;
+	justify-content: space-between;
 }
 
 .row1{
@@ -70,6 +72,10 @@ body{
 
 .size-m{
     width: 15rem;
+}
+
+.size-xxl{
+	width: 30rem;
 }
 
 .btn-primary{
@@ -155,4 +161,8 @@ footer {
   }
 }
 
+.logo {
+  max-width: 100%;
+  height: auto;
+}
 

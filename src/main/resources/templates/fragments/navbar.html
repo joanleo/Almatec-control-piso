@@ -1,6 +1,6 @@
 <nav th:fragment="nav-bar(selec)" class="navbar navbar-expand-lg bg-body-tertiary rounded">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/home">
+    <a class="navbar-brand" href="/">
 		<img th:src="@{/imgs/logo-almatec.png}" alt="logo" />
 	</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,6 +17,19 @@
         <li  class="nav-item">
           <a class="nav-link" th:classappend="${selec == 'Produccion' ? 'active' : ''}" href="#">Produccion</a>
         </li>
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+            Configuracion
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
+            <li><a class="dropdown-item" href="#">Maestros</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
+          </ul>
+        </li>
+        
       </ul>
       
       <div class="d-flex me-2">

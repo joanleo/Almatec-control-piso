@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Configuracion :: Centros de trabajo')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>				 
+		<div class="container my-5" style="width:60%;">
+			<h1>Usuarios</h1>
+			<a class="btn btn-primary mt-4" th:href="@{/usuarios/nuevo}" role="button">Nuevo</a>
+			<div class="table-responsive text-nowrap my-5">
+				<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+					<thead class="table-dark">
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Role</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="usuario, stat: ${usuarios}">
+							<td style="width: 3rem;">[[${stat.index + 1}]]</td>
+							<td th:text="${usuario.nombres}"></td>
+							<td th:text="${usuario.rol.nombre}"></td>
+							<td style="width: 13rem; padding-left: 1rem;">
+								<a class="btn btn-primary" href="#" role="button">Editar</a>
+			                	<a class="btn btn-danger" href="#" role="button" th:data-ct-id="${usuario.id}">Eliminar</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap.bundle.min.js"></script>
+		<script th:replace="fragments/script-dropdown :: dropdown"></script>
+	</body>
+</html>

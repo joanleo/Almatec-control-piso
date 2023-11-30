@@ -5,7 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "usuarios")
@@ -26,7 +29,18 @@ public class Usuario {
 	private String correo;
 	
 	@Column(name = "usu_nombre")
-	private String nombre;
+	private String nombres;
+	
+	@Column(name = "comp_id")
+	private Integer cia;
+	
+	@Column(name = "usu_activo")
+	private Boolean isActivo;	
+	
+	
+	@ManyToOne()
+    @JoinColumn(name="role_id", referencedColumnName = "Id_Rol")
+    private Role rol;
 
 	public Usuario() {
 		super();
@@ -64,18 +78,49 @@ public class Usuario {
 		this.correo = correo;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getNombres() {
+		return nombres;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setNombres(String nombre) {
+		this.nombres = nombre;
+	}
+
+	public Integer getCia() {
+		return cia;
+	}
+
+	public void setCia(Integer cia) {
+		this.cia = cia;
+	}
+
+	public Boolean getIsActivo() {
+		return isActivo;
+	}
+
+	public void setIsActivo(Boolean isActivo) {
+		this.isActivo = isActivo;
+	}
+
+
+	public Role getRol() {
+		return rol;
+	}
+
+	public void setRol(Role rol) {
+		this.rol = rol;
 	}
 
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", nombreUsuario=" + nombreUsuario + ", contrasena=" + contrasena + ", correo="
-				+ correo + ", nombre=" + nombre + "]";
+				+ correo + ", nombres=" + nombres + ", cia=" + cia + ", isActivo=" + isActivo + ", rol=" + rol + "]";
 	}
+
+
+
+
+
+
 	
 }

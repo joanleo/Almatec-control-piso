@@ -40,7 +40,7 @@ public class ItemOp {
 	private String medida3;
 	
 	@Column(name = "peso_unitario")
-	private String precioUnitario;
+	private String peso;
 
 	@Column(name = "unidad")
 	private String um;
@@ -79,7 +79,7 @@ public class ItemOp {
 		this.medida1 = itemInterface.getMedida_1();
 		this.medida2 = itemInterface.getMedida_2();
 		this.medida3 = itemInterface.getMedida_3();
-		this.precioUnitario = itemInterface.getpeso_unitario();
+		this.peso = itemInterface.getpeso_unitario();
 		this.um = itemInterface.getunidad();
 		this.cant = itemInterface.getcant_req();
 		this.isEspecial = itemInterface.getespecial();
@@ -153,12 +153,12 @@ public class ItemOp {
 		this.medida3 = medida3;
 	}
 
-	public String getPrecioUnitario() {
-		return precioUnitario;
+	public String getPeso() {
+		return peso;
 	}
 
-	public void setPrecioUnitario(String precioUnitario) {
-		this.precioUnitario = precioUnitario;
+	public void setPeso(String pesoUnitario) {
+		this.peso = pesoUnitario;
 	}
 
 	public String getUm() {
@@ -223,6 +223,15 @@ public class ItemOp {
 
 	public void setIdEstado(Integer idEstado) {
 		this.idEstado = idEstado;
+	}
+
+	@Override
+	public String toString() {
+		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idPvIntegrapps + ", idFamilia=" + idFamilia + ", idGrupoItem="
+				+ idGrupoItem + ", descripcion=" + descripcion + ", medida1=" + medida1 + ", medida2=" + medida2
+				+ ", medida3=" + medida3 + ", precioUnitario=" + peso + ", um=" + um + ", cant=" + cant
+				+ ", isEspecial=" + isEspecial + ", isReqPlano=" + isReqPlano + ", isActivo=" + isActivo
+				+ ", rutaPlano=" + rutaPlano + ", agrupador=" + agrupador + ", idEstado=" + idEstado + "]";
 	}
 	
 	

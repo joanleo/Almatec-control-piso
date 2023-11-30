@@ -1,7 +1,12 @@
 package com.almatec.controlpiso.controllers;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +28,8 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.VistaItemPedidoErpService;
 import com.almatec.controlpiso.integrapps.services.VistaPedidosErpService;
 import com.almatec.controlpiso.integrapps.services.VistaPedidosOpErpService;
+import com.almatec.controlpiso.utils.ReporteOpsPdf;
+import com.lowagie.text.DocumentException;
 
 @Controller
 @RequestMapping("/ingenieria")
@@ -91,11 +98,39 @@ public class IngenieriaController {
 		return "ingenieria/listar-ops";
 	}
 	
-	@GetMapping("/op/{idOp}")
+	@GetMapping("/op/{idOp}") //detalle
 	public String verDetalleOp(@PathVariable String idOp, Model modelo) {
-		List<ItemOp> listaItemOp = itemOpService.obtenerItemsOp(idOp);
+		List<ItemOp> listaItemOp = itemOpService.obtenerItemsOpC1(idOp);
 		modelo.addAttribute("listaItemOp", listaItemOp);
 		modelo.addAttribute("idOp", idOp);
-		return "ingenieria/op";
+		return "ingenieria/op-grupo2";
 	}
+	
+	@GetMapping("/op/grupo/{idGrupo}") //Primer nivel
+	public String verDetalleOpNivel1(@PathVariable String idGrupo,
+									Model modelo) {
+		List<ItemOp> listaItemOp = itemOpService.obtenerItemsOpC2(idGrupo);
+		ItemOp itemOp = itemOpService.obtenerItemsOp(idGrupo);
+		modelo.addAttribute("listaItemOp", listaItemOp);
+		modelo.addAttribute("descripcion", itemOp.getDescripcion());
+		return "ingenieria/op-grupo1";
+	}
+	
+	@GetMapping("/op/{idOp}/descarga")
+	public void exportToPdfOp(HttpServletResponse response,
+			@PathVariable String idOp) throws DocumentException, IOException{
+		
+		response.setContentType("application/pdf");
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=reporteOp_" + idOp + "_" + currentDateTime + ".pdf";
+		response.setHeader(headerKey, headerValue);
+		
+		List<ItemOp> listaItemOp = itemOpService.obtenerItemsOpC1(idOp);
+		ReporteOpsPdf exportar = new ReporteOpsPdf(listaItemOp, itemOpService);
+		exportar.export(response);
+		
+	}
+	
 }

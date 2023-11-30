@@ -10,7 +10,7 @@ import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
 
 
-public interface ItemOpRepository extends JpaRepository<ItemOp, Integer> {
+public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 
 	@Query(value = "SELECT items_op.item_id, items_op.id_op_ia, items_op.id_flia, "
 			+ "items_op.id_grp_item, items_op.descripcion, items_op.Medida_1, "
@@ -24,6 +24,11 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Integer> {
 			+ "AND items_op.agrupa = 'C1' "
 			+ "AND items_op.agrupa IS NOT NULL "
 			+ "AND (items_op.agrupa <> '')", nativeQuery = true)
-	List<ItemOpInterface> obtenerItemsOp(@Param("idOp") String idOp);
+	List<ItemOpInterface> obtenerItemsOpC1(@Param("idOp") String idOp);
+
+	@Query(value = "SELECT * "
+			+ "FROM items_op "
+			+ "WHERE items_op.id_grp_item = :idGrupo",nativeQuery = true)
+	List<ItemOp> obtenerItemsOpC2(@Param("idGrupo") String idGrupo);
 
 }

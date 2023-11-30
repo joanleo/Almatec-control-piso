@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<body>
+    <div class="container">
+        <div th:replace="{content}"></div>
+    </div>
+    <footer th:replace="fragments/footer :: footer"></footer>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script th:replace="fragments/scripts :: custom-scripts"></script>
+    <script>
+	  document.querySelector('.dropdown').addEventListener('show.bs.dropdown', function () {
+		  var dropdown = document.querySelector('.dropdown');
+		  var body = document.querySelector('body');
+		  var rect = dropdown.getBoundingClientRect();
+		  
+		  dropdown.style.position = 'absolute';
+		  dropdown.style.left = (rect.left +3) + 'px';
+		  dropdown.style.top = (rect.top + 6) + 'px';
+		  dropdown.style.listStyleType = 'none'
+		  dropdown.style.margin = 'auto'
+		  
+		  body.appendChild(dropdown);
+		});
+	  document.querySelector('.dropdown').addEventListener('hidden.bs.dropdown', function () {
+	  document.querySelector('.navbar-nav').appendChild(dropdown.style.position = '');
+	  dropdown.style.left = '';
+	  dropdown.style.top = '';
+	    document.querySelector('.navbar-nav').appendChild(dropdown.parentNode.removeChild(dropdown));
+	  });
+	</script>
+</body>
+</html>

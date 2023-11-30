@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Configuracion :: Formulario Centro trabajo')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div class="container my-5" style="width:60%;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 <h2 class="mb-5">Formulario Centro de Trabajo</h2>
+			 <div class="card-body" style="margin: auto; width: 80%;">
+				 <form th:object="${centroTrabajo}" method="post" >
+	               	<div class="form-group mb-3">
+	                   <label>Centro operacion: 
+		                   <select class="form-control size-xxl" th:field="*{centroOperacion}" >
+		                   	<option value=""></option>
+		                       <option th:each="co : ${centrosOperacion}" th:value="${co.id}" th:text="${co.descripcion}"></option>
+		                   </select>
+	                   </label>
+	               	</div>
+	               	<div class="form-group mb-3">
+			           	<label>Nombre: 
+			           		<input type="text" th:field="*{nombre}" class="form-control size-xxl" required />
+		           		</label>	
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label>Unidad de medida: 
+			           	<input type="text" th:field="*{um}" class="form-control size-xxl" required />
+			           </label>
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label>Codigo centro de costos: 
+			           	<input type="text" th:field="*{codigo}" class="form-control size-xxl" required />
+			           </label>
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label>Centro de costos: 
+			           	<input type="text" th:field="*{centroCostos}" class="form-control size-xxl" required />
+			           </label>
+			       	</div>
+			       	<div class="form-group mb-3">
+	                   <label>Centro trabajo padre: 
+		                   <select class="form-control size-xxl" th:field="*{idCentroTrabajoPadre}" >
+		                   	<option value=""></option>
+		                       <option th:each="ct : ${centrosTrabajo}" th:value="${ct.id}" th:text="${ct.nombre}"></option>
+		                   </select>
+	                   </label>
+	               	</div>
+			       	<div class="form-group mb-3">
+			           <label>Tiempo disponible en segundos: 
+			           	<input type="number" th:field="*{tiempoDisponible}" class="form-control size-xxl" required />
+			           </label>
+			       	</div>
+			       	<button type="submit" class="btn btn-primary">Guardar</button>
+		        	<a class="btn btn-secondary" th:href="@{/centros-trabajo}" role="button">Volver al Listado</a>
+				 </form>
+			 </div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap.bundle.min.js"></script>
+		<script th:replace="fragments/script-dropdown :: dropdown"></script>
+	</body>
+</html>

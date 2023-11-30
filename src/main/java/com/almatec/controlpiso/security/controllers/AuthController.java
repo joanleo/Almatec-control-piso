@@ -13,7 +13,7 @@ public class AuthController {
 		return "login";
 	}
 	
-	@GetMapping("/home")
+	@GetMapping("/")
 	public String home(Principal principal) {
 		return "home";
 	}

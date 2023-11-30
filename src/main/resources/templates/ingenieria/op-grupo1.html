@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-	<head th:replace="fragments/head :: head('Ingenieria : Detalle Pedido')"></head>
+	<head th:replace="fragments/head :: head('Ingenieria : Detalle OP')"></head>
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
-		<div class="container my-5">
+		
+		<div class="container my-5" style="width: 60%;">
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -17,42 +18,38 @@
 			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
-			 <h1>Items PV-[[${noPedido}]]</h1>
-			<div class="table-responsive text-nowrap my-5">
-				<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+			 <div th:if="${idOp}" class="header">
+				 <h1>Detalle Orden Produccion IF - [[${idOp}]] </h1>
+				 <a role="button" class="btn btn-primary" style="height: max-content;margin-top:auto" th:href="@{/ingenieria/op/{idOp}/descarga(idOp=${idOp})}">pdf</a>
+			 </div>
+			 <h2 th:if="${descripcion}">Detalle [[${descripcion}]] </h2>
+			 <div class="table-responsive text-nowrap my-5">
+				 <table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
 					<thead class="table-dark">
 						<tr>
-							<th>Ref</th>
+							<th>#</th>
 							<th>Descripcion</th>
 							<th>UM</th>
-							<th>Bodega</th>
 							<th>Cant</th>
-							<th>Peso</th>
-							<th>Acciones</th>
+							<th>Peso Kg</th>
+							<th></th>
 						</tr>
 					</thead>
-					<tbody>
-					    <form th:action="@{/ingenieria/crear-op}" method="post">
-					        
-					        <tr th:each="item : ${items}" >
-								<input type="hidden" name="referencia" th:value="${item.referencia}" />
-								<input type="hidden" name="tipoPedido" th:value="${item.tipoPedido}" />
-								<input type="hidden" name="noPedido" th:value="${item.noPedido}" />
-					            <td th:text="${item.referencia}"></td>
+					<tbody>					        
+					        <tr th:each="item, stat : ${listaItemOp}" >
+					            <td >[[${stat.index + 1}]]</td>
 					            <td th:text="${item.descripcion}"></td>
 					            <td th:text="${item.um}"></td>
-					            <td th:text="${item.bodega}"></td>
-					            <td th:text="${item.cantidad}"></td>
+					            <td th:text="${item.cant}"></td>
 					            <td th:text="${item.peso}"></td>
-					            <td th:if="${#strings.isEmpty(item.numOp)}">
-					                <button type="submit" class="btn btn-primary">Crear OP</button>
-					            </td>
+					            <td style="width: 13rem; padding-left: 1rem;" th:if="${item.agrupador == 'C1'}">									
+									<a role="button" class="btn btn-primary" th:href="@{/ingenieria/op/grupo/{idGrupo}(idGrupo=${item.id})}">Ver</a>				
+								</td>
 					        </tr>
-					    </form>
 					</tbody>
 
 				</table>
-			</div>
+			 </div>			 
 		</div>
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap.bundle.min.js"></script>

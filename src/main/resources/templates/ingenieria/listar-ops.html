@@ -34,11 +34,11 @@
 					<thead class="table-dark">
 						<tr>
 							<th scope="col" class="sticky-col">#</th>
+							<th scope="col">No PV</th>
 							<th scope="col">No OP</th>
 							<th scope="col">Estado</th>
 							<th scope="col">Nit</th>
 							<th scope="col">Razon Social</th>
-							<th scope="col">No PV</th>
 							<th scope="col">Fecha entrega</th>
 							<th scope="col" class="sticky-col sticky-col-right">Acciones</th>
 						</tr>
@@ -46,13 +46,13 @@
 					<tbody>
 						<tr th:each="op, stat : ${pedidosOp}">
 							<td class="sticky-col" data-label="#">[[${stat.index + 1}]]</td>
+							<td data-label="No PV" th:text="${op.tipoPv} + '-' + ${op.numPv}"></td>
 							<td data-label="No OP" th:text="${op.tipoOp} + '-' + ${op.numOp}"></td>
 							<td data-label="Estado">
 								<div class="user__badge" th:text="${op.estadoOp}"></div>
 							</td>
 							<td data-label="Nit" th:text="${op.nit}"></td>
 							<td data-label="Razon Social" th:text="${op.razonSocial}"></td>
-							<td data-label="No PV" th:text="${op.tipoPv} + '-' + ${op.numPv}"></td>
 							<td data-label="Fecha entrega" th:text="${#dates.format(op.fechaEntregaPv, 'yyyy-MM-dd')}"></td>
 							<td data-label="Acciones" class="sticky-col sticky-col-right">
 								<a role="button" class="btn btn-primary" th:href="@{/ingenieria/op/{idOp}(idOp=${op.numOp})}" >Ver</a>				
@@ -64,6 +64,7 @@
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
-		<script src="/js/bootstrap.min.js" ></script>
+		<script src="/js/bootstrap.bundle.min.js"></script>
+		<script th:replace="fragments/script-dropdown :: dropdown"></script>
 	</body>
 </html>

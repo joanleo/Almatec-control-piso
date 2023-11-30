@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-	<head th:replace="fragments/head :: head('Ingenieria : Detalle OP')"></head>
+	<head th:replace="fragments/head :: head('Ingenieria : Detalle OP C1')"></head>
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 		
-		<div class="container my-5">
+		<div class="container my-5" style="width: 50%;">
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -25,36 +25,21 @@
 					<thead class="table-dark">
 						<tr>
 							<th>#</th>
-							<th>Agrupador</th>
 							<th>Descripcion</th>
-							<th>UM</th>
-							<th>Cant</th>
-							<th>Medida 1</th>
-							<th>Medida 2</th>
-							<th>Medida 3</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>					        
 					        <tr th:each="item, stat : ${listaItemOp}" >
 					            <td >[[${stat.index + 1}]]</td>
-					            <td th:text="${item.agrupador}"></td>
 					            <td th:text="${item.descripcion}"></td>
-					            <td th:text="${item.um}"></td>
-					            <td th:text="${item.cant}"></td>
-					            <td th:text="${item.medida1}"></td>
-					            <td th:text="${item.medida2}"></td>
-					            <td th:text="${item.medida3}"></td>
-					            <td >
-									
-									<a role="button" class="btn btn-primary" th:href="@{/ingenieria/op/{idOp}(idOp=${item.id})}">Ver</a>				
+					            <td style="width: 8rem; padding-left: 1rem;">									
+									<a role="button" class="btn btn-primary" th:href="@{/ingenieria/op/grupo/{idGrupo}(idGrupo=${item.id})}">Ver</a>				
 								</td>
 					        </tr>
 					</tbody>
-
 				</table>
 			 </div>
-			 
 		</div>
 		<footer th:replace="fragments/footer :: footer"></footer>
 	</body>

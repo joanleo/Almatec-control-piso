@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Configuracion :: Centros de trabajo')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+				 
+		<div class="container my-5" style="width:60%;">
+			<h1>Centros de trabajo</h1>
+			<a class="btn btn-primary mt-4" th:href="@{/centros-trabajo/nuevo}" role="button">Nuevo</a>
+			<div class="table-responsive text-nowrap my-5">
+				<table class="table table-striped align-middle table-hover table-bordered rounded"  aria-describedby="table-description">
+					<thead class="table-dark">
+						<tr>
+							<th>#</th>
+							<th>Nombre</thstyle="width: auto;">
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr  th:each="ct, stat: ${centrosTrabajo}">
+							<td style="width: 5rem;">[[${stat.index + 1}]]</td>
+							<td th:text="${ct.nombre}"></td>
+							<td style="width: 13rem; padding-left: 1rem;">
+								<a class="btn btn-primary" th:href="@{/centros-trabajo/actualizar/{id}(id=${ct.id})}" role="button">Editar</a>
+			                	<a class="btn btn-danger" href="#" role="button" onclick="confirmModal(this)" th:data-ct-id="${ct.id}">Eliminar</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true" id="modal">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="confirmModal">Advertencia</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <div class="modal-confirm-body px-5">
+	                </div>
+	                <div class="modal-footer ">
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+	                    <button type="button" class="btn btn-danger" onclick="eliminarvendedor()" >Eliminar</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap.bundle.min.js"></script>
+		<script th:replace="fragments/script-dropdown :: dropdown"></script>
+		<script type="text/javascript">
+				var id_vendedor_eliminar;
+				function confirmModal(button) {
+					const vendedorId = button.getAttribute("data-ct-id")
+					id_vendedor_eliminar = vendedorId
+					const confirm_modal = new bootstrap.Modal('#modal', {
+						  keyboard: false
+						})
+					const confirm_modal_body = confirm_modal._element.querySelector(".modal-confirm-body")
+					confirm_modal_body.textContent = "Esta seguro que desea eliminar este centro de trabajo"
+					confirm_modal.show()
+					
+				}
+				
+				function eliminarvendedor(){
+					console.log(id_vendedor_eliminar)
+					const id = parseInt(id_vendedor_eliminar)
+					if (isNaN(id)) {
+				        console.error('El ID del centro de trabajo no es un numero valido.');
+				        return;
+				    }
+					const urlEliminar = `http://localhost:8090/configuracion/centro-trabajo/eliminar/${id}`
+					console.log(urlEliminar)
+					fetch(urlEliminar, {
+			            method: 'DELETE'
+			        })
+			        .then(response => {
+			        	console.log(response)
+			            if (response.ok) {
+			                window.location.href = '/configuracion/centro-trabajo/listar';
+			            } else {
+			                console.error('Error al eliminar el centro de trabajo');
+			            }
+			        })
+			        .catch(error => {
+			            console.error('Error al eliminar el centro de trabajo:', error);
+			        });
+				}
+			</script>
+	</body>
+</html>
