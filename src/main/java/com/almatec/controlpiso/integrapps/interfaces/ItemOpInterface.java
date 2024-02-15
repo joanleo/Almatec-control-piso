@@ -1,23 +1,24 @@
 package com.almatec.controlpiso.integrapps.interfaces;
 
+import java.util.Date;
+
 public interface ItemOpInterface {
 	
 	Long getitem_id();
 	Integer getid_op_ia();
-	Integer getid_flia();
-	Integer getid_grp_item();
+	Integer getItem_fab_Id();
+	String getgrupo();
 	String getdescripcion();
-	String getMedida_1();
-	String getMedida_2();
-	String getMedida_3();
+	String getmarca();
+	String getcodigo_erp();
 	String getpeso_unitario();
 	String getunidad();
-	String getcant_req();
+	Double getcant_req();
 	Boolean getespecial();
 	Boolean getreq_plano();
 	Boolean getactivo();
 	String getruta_plano();
-	String getagrupa();
+	Date getfecha_crea();
 	Integer getid_estado();
 
 }

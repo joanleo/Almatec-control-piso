@@ -1,5 +1,7 @@
 package com.almatec.controlpiso.integrapps.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,23 +23,20 @@ public class ItemOp {
 	@Column(name = "id_op_ia")
 	private Integer idPvIntegrapps;
 	
-	@Column(name = "id_flia")
-	private Integer idFamilia;
+	@Column(name = "Item_fab_Id")
+	private Integer idItemFab;
 	
-	@Column(name ="id_grp_item")
-	private Integer idGrupoItem;
+	@Column(name ="grupo")
+	private String grupo;
+	
+	@Column(name = "codigo_erp")
+	private String codigoErp;
 	
 	@Column(name = "descripcion")
 	private String descripcion;
 	
-	@Column(name = "Medida_1")
-	private String medida1;
-	
-	@Column(name = "Medida_2")
-	private String medida2;
-	
-	@Column(name = "Medida_3")
-	private String medida3;
+	@Column(name = "marca")
+	private String marca;
 	
 	@Column(name = "peso_unitario")
 	private String peso;
@@ -45,8 +44,8 @@ public class ItemOp {
 	@Column(name = "unidad")
 	private String um;
 	
-	@Column(name = "cant_req")
-	private String cant;
+	@Column(name = "cant_req", columnDefinition = "double precision")
+	private Double cant;
 	
 	@Column(name = "especial")
 	private Boolean isEspecial;
@@ -60,8 +59,8 @@ public class ItemOp {
 	@Column(name = "ruta_plano")
 	private String rutaPlano;
 	
-	@Column(name = "agrupa")
-	private String agrupador;
+	@Column(name = "fecha_crea")
+	private Date fechaCreacion;
 	
 	@Column(name = "id_estado")
 	private Integer idEstado;
@@ -73,20 +72,20 @@ public class ItemOp {
 	public ItemOp(ItemOpInterface itemInterface) {
 		this.id = itemInterface.getitem_id();
 		this.idPvIntegrapps = itemInterface.getid_op_ia();
-		this.idFamilia = itemInterface.getid_flia();
-		this.idGrupoItem = itemInterface.getid_grp_item();
+		this.idItemFab = itemInterface.getItem_fab_Id();
+		this.grupo = itemInterface.getgrupo();
 		this.descripcion = itemInterface.getdescripcion();
-		this.medida1 = itemInterface.getMedida_1();
-		this.medida2 = itemInterface.getMedida_2();
-		this.medida3 = itemInterface.getMedida_3();
+		this.codigoErp = itemInterface.getcodigo_erp();
+		this.marca = itemInterface.getmarca();
 		this.peso = itemInterface.getpeso_unitario();
 		this.um = itemInterface.getunidad();
 		this.cant = itemInterface.getcant_req();
 		this.isEspecial = itemInterface.getespecial();
 		this.isReqPlano = itemInterface.getreq_plano();
 		this.isActivo = itemInterface.getactivo();
-		this.agrupador = itemInterface.getagrupa();
 		this.idEstado = itemInterface.getid_estado();
+		this.rutaPlano = itemInterface.getruta_plano();
+		this.fechaCreacion = itemInterface.getfecha_crea();
 	}
 
 	public Long getId() {
@@ -105,52 +104,12 @@ public class ItemOp {
 		this.idPvIntegrapps = idPvIntegrapps;
 	}
 
-	public Integer getIdFamilia() {
-		return idFamilia;
-	}
-
-	public void setIdFamilia(Integer idFamilia) {
-		this.idFamilia = idFamilia;
-	}
-
-	public Integer getIdGrupoItem() {
-		return idGrupoItem;
-	}
-
-	public void setIdGrupoItem(Integer idGrupoItem) {
-		this.idGrupoItem = idGrupoItem;
-	}
-
 	public String getDescripcion() {
 		return descripcion;
 	}
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}
-
-	public String getMedida1() {
-		return medida1;
-	}
-
-	public void setMedida1(String medida1) {
-		this.medida1 = medida1;
-	}
-
-	public String getMedida2() {
-		return medida2;
-	}
-
-	public void setMedida2(String medida2) {
-		this.medida2 = medida2;
-	}
-
-	public String getMedida3() {
-		return medida3;
-	}
-
-	public void setMedida3(String medida3) {
-		this.medida3 = medida3;
 	}
 
 	public String getPeso() {
@@ -169,11 +128,11 @@ public class ItemOp {
 		this.um = um;
 	}
 
-	public String getCant() {
+	public Double getCant() {
 		return cant;
 	}
 
-	public void setCant(String cant) {
+	public void setCant(Double cant) {
 		this.cant = cant;
 	}
 
@@ -209,14 +168,6 @@ public class ItemOp {
 		this.rutaPlano = rutaPlano;
 	}
 
-	public String getAgrupador() {
-		return agrupador;
-	}
-
-	public void setAgrupador(String agrupador) {
-		this.agrupador = agrupador;
-	}
-
 	public Integer getIdEstado() {
 		return idEstado;
 	}
@@ -225,16 +176,54 @@ public class ItemOp {
 		this.idEstado = idEstado;
 	}
 
+	public Integer getIdItemFab() {
+		return idItemFab;
+	}
+
+	public void setIdItemFab(Integer idItemFab) {
+		this.idItemFab = idItemFab;
+	}
+
+	public String getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	public String getCodigoErp() {
+		return codigoErp;
+	}
+
+	public void setCodigoErp(String codigoErp) {
+		this.codigoErp = codigoErp;
+	}
+
 	@Override
 	public String toString() {
-		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idPvIntegrapps + ", idFamilia=" + idFamilia + ", idGrupoItem="
-				+ idGrupoItem + ", descripcion=" + descripcion + ", medida1=" + medida1 + ", medida2=" + medida2
-				+ ", medida3=" + medida3 + ", precioUnitario=" + peso + ", um=" + um + ", cant=" + cant
-				+ ", isEspecial=" + isEspecial + ", isReqPlano=" + isReqPlano + ", isActivo=" + isActivo
-				+ ", rutaPlano=" + rutaPlano + ", agrupador=" + agrupador + ", idEstado=" + idEstado + "]";
+		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idPvIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
+				+ grupo + ", codigoErp=" + codigoErp + ", descripcion=" + descripcion + ", marca=" + marca + ", peso="
+				+ peso + ", um=" + um + ", cant=" + cant + ", isEspecial=" + isEspecial + ", isReqPlano=" + isReqPlano
+				+ ", isActivo=" + isActivo + ", rutaPlano=" + rutaPlano + ", fechaCreacion=" + fechaCreacion
+				+ ", idEstado=" + idEstado + "]";
 	}
-	
-	
 
 
 }

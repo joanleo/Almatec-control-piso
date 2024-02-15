@@ -14,7 +14,7 @@
 			      		<div class="alert alert-danger">Usuario o contraseña invalidos</div>
 			      	</div>
 			        <p>
-			          <input type="text" id="username" name="username" class="form-control" placeholder="Nombre de usuario" required autofocus>
+			          <input type="text" id="username" name="username" class="form-control" placeholder="Nombre de usuario" required autofocus autocomplete="on">
 			        </p>
 			        <p>
 			          <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
@@ -27,6 +27,15 @@
 		</div>
 	</div>
 	<footer th:replace="fragments/footer :: footer"></footer>
+	<script>
+        window.addEventListener('load', function () {
+            if ('Clear-Site-Data' in document) {
+                document.clearSiteData('localStorage');
+            } else {
+                localStorage.clear();
+            }
+        });
+    </script>
 
 </body>
 </html>

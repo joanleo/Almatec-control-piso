@@ -96,7 +96,7 @@ public class ReporteOpsPdf {
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			
-			phrase = new Phrase(item.getCant(), font);
+			phrase = new Phrase(String.valueOf(item.getCant()), font);
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			

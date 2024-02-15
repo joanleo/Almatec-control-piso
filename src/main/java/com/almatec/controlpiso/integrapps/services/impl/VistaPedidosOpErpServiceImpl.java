@@ -18,7 +18,7 @@ public class VistaPedidosOpErpServiceImpl implements VistaPedidosOpErpService {
 
 	@Override
 	public List<VistaPedidosOpErp> buscarOps() {
-		return vistaPedidosOpErpRepo.findByTipoOpOrderByNumPv("IF");
+		return vistaPedidosOpErpRepo.findByTipoOpOrTipoOpOrderByNumPv("IF", "OP");
 	}
 
 	@Override

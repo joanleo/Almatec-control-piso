@@ -277,7 +277,7 @@ public class XmlService {
 		encabezado.setF_consec_auto_reg(1);
 		encabezado.setF850_id_co("001");
 		encabezado.setF850_id_tipo_docto("IF");
-		encabezado.setF850_fecha(obtenerFechaFormateada());
+		encabezado.setF850_fecha("20231106");
 		encabezado.setF850_ind_estado(1);
 		encabezado.setF850_id_clase_docto(701);
 		encabezado.setF850_tercero_planificador("14701147");
@@ -305,7 +305,7 @@ public class XmlService {
 			movimiento.setF851_porc_rendimiento(100.00);
 			movimiento.setF851_cant_planeada_base(item.getCantidad());
 			movimiento.setF851_fecha_inicio(obtenerFechaFormateada());
-			movimiento.setF851_fecha_terminacion("20231106");
+			movimiento.setF851_fecha_terminacion("20241206");
 			movimiento.setF851_id_tipo_docto("IF");
 			movimiento.setF851_id_bodega("00190");
 			detalle.add(movimiento);

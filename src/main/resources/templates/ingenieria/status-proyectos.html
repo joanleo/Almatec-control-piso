@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Status Proyectos')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+				 
+		<div class="container my-5">
+			<h1>Proyectos OPS</h1>
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <div  id="filtro">
+			     <form class="filtro my-5">
+			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'cliente', 'proyecto', 'status'..." />
+			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
+			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
+			     </form>
+			</div>
+		 
+			<div class="table-responsive text-nowrap my-5 rounded">
+			<table class="table table-striped align-middle table-hover table-bordered" aria-describedby="table-status-proyectos">
+				<thead class="table-dark">
+					<tr>
+						<th>UN</th>
+						<th>CLIENTE</th>
+						<th>PROYECTO</th>
+						<th>ZONA</th>
+						<th>PESO TOTAL </th>
+						<th>PESO PEND</th>
+						<th>FECHA INSTALACION</th>
+						<th>STATUS</th>
+						<th>ESQUEMA DE PINTURA</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="proyecto, stat : ${proyectos}" th:id="${proyecto.tipoOp} + '-' + ${proyecto.numOp}">
+					<td th:text="${proyecto.unidadNegocio}"></td>
+					<td th:text="${proyecto.cliente}"></td>
+					<td th:text="${proyecto.idProyecto}"></td>
+					<td th:text="${proyecto.zonaSistema}"></td>
+					<td th:text="${proyecto.kgTotal}"></td>
+					<td th:text="${proyecto.kgTotal - proyecto.kgReal}">Peso Pend</td>
+					<td th:text="${#dates.format(proyecto.fechaEntrega, 'yyyy-MM-dd')}"></td>
+					<td >
+						<div class="user__badge" th:text="${proyecto.estadoDoc}"></div>
+					</td>
+					<td th:text="${proyecto.esquemaPintura}"></td>
+					<!--<td th:text="'$ ' + ${#numbers.formatDecimal(pedido.valor, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+					<a role="button" class="btn btn-primary">Ver</a>-->
+					<td >
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalleProyecto" th:data-bs-whatever="${proyecto.idProyecto}" onclick="llenarDetalleProyecto(event)">
+						  Ver
+						</button>										
+					</td>
+					
+					<input type="hidden" th:value="${proyecto.colorBastidores}" th:id="'bastidores_' + ${proyecto.numOp}"	>
+					<input type="hidden" th:value="${proyecto.colorVigas}" th:id="'vigas_' + ${proyecto.numOp}"	>
+					<input type="hidden" th:value="${proyecto.colorProtectores}" th:id="'protectores_' + ${proyecto.numOp}"	>						
+					</tr>
+				</tbody>
+			</table>
+			
+			
+		</div>
+		</div>
+		
+		<div class="modal fade" id="detalleProyecto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="detalleProyectoLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-xl">
+			    <div class="modal-content">
+			      <div class="modal-header" style="background-color: #F8F9FA;">
+			        <h1 class="modal-title fs-5" id="detalleProyectoLabel" >Nombre del proyecto</h1>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body">
+					  <div class="container">
+						  <div class="row1" style="margin-top: 2rem; margin-bottom: 2rem;">
+							  <div>
+								  <div class="input-group size-s">
+								  	<span class="input-group-text">Zona: </span>
+								   	<input type="text" id="zona" aria-label="Zona" class="form-control" readonly>
+								  </div>
+							  </div>
+							  <div>
+								  <div class="input-group size-m">
+								  	<span class="input-group-text">Sistema: </span>
+								   	<input type="text" id="sistema" aria-label="Sistema" class="form-control" readonly>
+								  </div>
+							  </div>
+							  <div>
+								  <div class="input-group size-l">
+								  	<span class="input-group-text">Esquema pintura: </span>
+								   	<input type="text" id="esquema_pintura" aria-label="Esquema pintura" class="form-control" readonly>
+								  </div>
+							  </div>
+							  <div>
+								  <div class="input-group">
+								  	<span class="input-group-text">Fecha instalacion: </span>
+								   	<input type="date" id="fecha_instalacion" aria-label="Fecha instalacion" class="form-control" readonly>
+								  </div>
+							  </div>
+						  </div>
+						  
+						  <div class="row1" style="margin-top: 1rem; margin-bottom: 2rem;">
+							  <div>
+								  <div class="input-group size-l">
+								  	<span class="input-group-text">Color bastidores: </span>
+								   	<input type="text" id="color_bastidores" aria-label="Color bastidores" class="form-control" readonly>
+								  </div>
+							  </div>
+							  <div>
+								  <div class="input-group size-l">
+								  	<span class="input-group-text">Color vigas: </span>
+								   	<input type="text" id="color_vigas" aria-label="Color vigas" class="form-control" readonly>
+								  </div>
+							  </div>
+							  <div>
+								  <div class="input-group size-l">
+								  	<span class="input-group-text">Color protectores: </span>
+								   	<input type="text" id="color_protectores" aria-label="Color protectores" class="form-control" readonly>
+								  </div>
+							  </div>
+						  </div>
+					  </div>
+					  <div class="row table-responsive rounded" style="padding: 5rem;">
+	                        <table id="exampleArray" class="table table-striped align-middle table-hover table-bordered" aria-describedby="table-detalle-proyecto">
+	                            <thead class="table-dark">
+	                                <tr>
+	                                <th>ITEM</th>
+	                                <th>MARCA</th>
+	                                <th>DESCRIPCION</th>
+	                                <th>CANT</th>
+	                                <th>PESO</th>
+	                                <th>CANT PENDIENTE</th>
+	                                <th>PESO PENDIENTE</th>
+	                                <th>COLOR</th> 
+	                                </tr>
+	                            </thead>
+	                            <tbody id="tabla_detalle_proyecto">
+	                            </tbody>
+	                        </table>
+	                        <div id="table-detalle-proyecto" class="visually-hidden">
+							  Esta tabla muestra el detalle de un proyecto seleccionado.
+							</div>
+	                    </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/proyectos.js"></script>
+		<script src="/js/jquery-3.7.1.min.js"></script>
+		<script src="/js/datatable/jquery.dataTables.min.js"></script>
+		<script src="/assets/Buttons-2.4.2/js/dataTables.buttons.min.js"></script>
+		<script src="/assets/JSZip-3.10.1/jszip.min.js"></script>
+		<script src="/js/pdfmake-0.2.7/pdfmake.min.js"></script>
+		<script src="/js/pdfmake-0.2.7/vfs_fonts.js"></script>
+		<script src="/assets/Buttons-2.4.2/js/buttons.html5.min.js"></script>
+		<script src="/js/datatable/dataTables.bootstrap5.min.js"></script>
+		<script src="/js/datatable/dataTables.dataTables.min.js"></script>
+	</body>
+</html>

@@ -43,6 +43,7 @@ public class VistaItemPedidoErp {
 	@Column(name = "NumOp")
 	private Integer numOp;
 
+
 	public VistaItemPedidoErp() {
 		super();
 	}
@@ -133,6 +134,7 @@ public class VistaItemPedidoErp {
 				+ ", referencia=" + referencia + ", descripcion=" + descripcion + ", um=" + um + ", bodega=" + bodega
 				+ ", cantidad=" + cantidad + ", peso=" + peso + ", numOp=" + numOp + "]";
 	}
+
 
 	
 }

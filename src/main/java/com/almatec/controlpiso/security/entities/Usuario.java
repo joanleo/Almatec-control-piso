@@ -8,10 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuarios", uniqueConstraints = { @UniqueConstraint(columnNames = { "usu_login" }) })
 public class Usuario {
 
 	@Id
@@ -35,12 +38,18 @@ public class Usuario {
 	private Integer cia;
 	
 	@Column(name = "usu_activo")
-	private Boolean isActivo;	
+	private Boolean isActivo=true;	
 	
+	@Column(name = "usu_pass_erp")
+	private String contrasenaErp;
 	
+	@JsonBackReference
 	@ManyToOne()
     @JoinColumn(name="role_id", referencedColumnName = "Id_Rol")
     private Role rol;
+	
+	@Column(name = "usu_docid")
+	private String cedula;
 
 	public Usuario() {
 		super();
@@ -111,16 +120,27 @@ public class Usuario {
 		this.rol = rol;
 	}
 
+	public String getContrasenaErp() {
+		return contrasenaErp;
+	}
+
+	public void setContrasenaErp(String contrasenaErp) {
+		this.contrasenaErp = contrasenaErp;
+	}
+
+	public String getCedula() {
+		return cedula;
+	}
+
+	public void setCedula(String cedula) {
+		this.cedula = cedula;
+	}
+	
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", nombreUsuario=" + nombreUsuario + ", contrasena=" + contrasena + ", correo="
-				+ correo + ", nombres=" + nombres + ", cia=" + cia + ", isActivo=" + isActivo + ", rol=" + rol + "]";
+				+ correo + ", nombres=" + nombres + ", cia=" + cia + ", isActivo=" + isActivo + ", contrasenaErp="
+				+ contrasenaErp + ", rol=" + rol.getNombre() + ", cedula=" + cedula + "]";
 	}
-
-
-
-
-
-
 	
 }

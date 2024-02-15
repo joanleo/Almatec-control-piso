@@ -16,7 +16,7 @@ public class CentroTrabajo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "C_centrotrabajo_id")
-	private Long id;
+	private Integer id;
 	
 	@Column(name = "C_ciaorg_id")
 	private Integer idCia;
@@ -71,16 +71,19 @@ public class CentroTrabajo {
 	
 	@Column(name = "E_servicio")
 	private Boolean isControlServicio;
+	
+	@Column(name = "is_show")
+	private Boolean isShow;
 
 	public CentroTrabajo() {
 		super();
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -228,6 +231,14 @@ public class CentroTrabajo {
 		this.isControlServicio = isControlServicio;
 	}
 
+	public Boolean getIsShow() {
+		return isShow;
+	}
+
+	public void setIsShow(Boolean isShow) {
+		this.isShow = isShow;
+	}
+
 	@Override
 	public String toString() {
 		return "CentroTrabajo [id=" + id + ", idCia=" + idCia + ", centroOperacion=" + centroOperacion + ", nombre="
@@ -236,9 +247,8 @@ public class CentroTrabajo {
 				+ usuarioCrea + ", usuarioEdita=" + usuarioEdita + ", fechaCreacion=" + fechaCreacion
 				+ ", fechaEdicion=" + fechaEdicion + ", codigoBarraMaquina=" + codigoBarraMaquina + ", codigoBarraHum="
 				+ codigoBarraHum + ", idEstacion=" + idEstacion + ", tiempoDisponible=" + tiempoDisponible
-				+ ", isControlPieza=" + isControlPieza + ", isControlServicio=" + isControlServicio + "]";
-	}
-	
-	
+				+ ", isControlPieza=" + isControlPieza + ", isControlServicio=" + isControlServicio + ", isShow="
+				+ isShow + "]";
+	}	
 
 }

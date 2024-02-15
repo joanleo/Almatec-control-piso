@@ -21,29 +21,38 @@
 			 <h2 class="mb-5">Formulario Usuario</h2>
 			 <div class="card-body" style="margin: auto; width: 80%;">
 	 		    <form th:object="${usuario}" th:action="@{/usuarios/guardar}" method="post">
-			        <input type="hidden" th:field="*{id}" required/>
+			        <input type="hidden" th:field="*{id}" />
 			        <div class="form-group mb-3">
-			           <label>Nombre de usuario: </label>
-			           <input type="text" th:field="*{nombreUsuario}" class="form-control" required />
+			           <label for="nombre-usuario">Nombre de usuario (ERP): </label>
+			           	<input type="text" id="nombre-usuario" th:field="*{nombreUsuario}" class="form-control" required />						   
+					   
 			       	</div>
 			       	<div class="form-group mb-3">
-			           <label>Contrase&ntilde;a: </label>
-			           <input type="password" th:field="*{contrasena}" class="form-control" />
+			           <label for="password">Contrase&ntilde;a (ERP): </label>
+			           	<input type="password" id="password" th:field="*{contrasena}" class="form-control" />						   
 			       	</div>
 			       	<div class="form-group mb-3">
-			           <label>Nombres: </label>
-			           <input type="text" th:field="*{nombres}" class="form-control" required />
+			           <label for="nombres">Nombres: </label>
+				           <input type="text" id="nombres" th:field="*{nombres}" class="form-control" required />						   
+					   
 			       	</div>
 			       	<div class="form-group mb-3">
-			           <label>Email: </label>
-			           <input type="email" th:field="*{correo}" class="form-control" required />
+			           <label for="cedula">Cedula: </label>
+				           <input type="text" id="cedula" th:field="*{cedula}" class="form-control" required />						   
+					   
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label for="email">Email: </label>
+				           <input type="email" id="email" th:field="*{correo}" class="form-control" required autocomplete="on"/>						   
+					   
 			       	</div>
 			       	<div class="form-group mb-3">
 	                   <label>Perfil : </label>
-	                   <select class="form-control" th:field="*{rol}" required>
-	                   	<option value=""></option>
-	                       <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
-	                   </select>
+		                   <select class="form-control" th:field="*{rol}" required>
+		                   	<option value=""></option>
+		                       <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}" th:selected="${usuario.rol?.idRol == rol.idRol}"></option>
+		                   </select>						   
+					   
 	               	</div>
 			       	<button type="submit" class="btn btn-primary">Guardar</button>
 		        	<a class="btn btn-secondary" th:href="@{/usuarios}" role="button">Volver al Listado</a>
@@ -52,7 +61,6 @@
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
-		<script src="/js/bootstrap.bundle.min.js"></script>
-		<script th:replace="fragments/script-dropdown :: dropdown"></script>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
 	</body>
 </html>

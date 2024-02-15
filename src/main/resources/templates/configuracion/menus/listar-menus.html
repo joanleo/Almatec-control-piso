@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Configuracion :: Menu')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('*')"></nav>				 
+		<div class="container my-5" style="width:60%;">
+			<h1>Menus</h1>
+			<a class="btn btn-primary mt-4" th:href="@{/menus/nuevo}" role="button">Nuevo</a>
+			<div class="table-responsive text-nowrap my-5">
+				<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+					<thead class="table-dark">
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Url</th>
+							<th>Padre</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="menu, stat: ${menus}">
+							<td style="width: 3rem;">[[${stat.index + 1}]]</td>
+							<td th:text="${menu.nombre}"></td>
+							<td th:text="${menu.url}"></td>
+							<td th:text="${menu.padre.nombre}"></td>
+							<td style="width: 13rem; padding-left: 1rem;">
+								<a class="btn btn-primary" href="#" role="button">Editar</a>
+			                	<a class="btn btn-danger" href="#" role="button" th:data-ct-id="${menu.id}">Eliminar</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

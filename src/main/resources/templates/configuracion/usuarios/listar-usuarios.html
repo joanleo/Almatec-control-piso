@@ -23,8 +23,8 @@
 							<td th:text="${usuario.nombres}"></td>
 							<td th:text="${usuario.rol.nombre}"></td>
 							<td style="width: 13rem; padding-left: 1rem;">
-								<a class="btn btn-primary" href="#" role="button">Editar</a>
-			                	<a class="btn btn-danger" href="#" role="button" th:data-ct-id="${usuario.id}">Eliminar</a>
+								<a class="btn btn-primary" th:href="@{/usuarios/editar/{id}(id=${usuario.id})}" role="button">Editar</a>
+			                	<a class="btn btn-danger" href="#" role="button" onclick="confirmModal(this)" th:data-usuario-id="${usuario.id}">Eliminar</a>
 							</td>
 						</tr>
 					</tbody>
@@ -33,7 +33,69 @@
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
-		<script src="/js/bootstrap.bundle.min.js"></script>
-		<script th:replace="fragments/script-dropdown :: dropdown"></script>
+		
+		<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true" id="modal">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="confirmModal">Advertencia</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <div class="modal-confirm-body px-5">
+	                </div>
+	                <div class="modal-footer ">
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+	                    <button type="button" class="btn btn-danger" onclick="eliminarUsuario()" >Eliminar</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		
+		<script type="text/javascript">
+			var id_usuario_eliminar;
+			function confirmModal(button) {
+				console.log(button)
+				const clienteId = button.getAttribute("data-usuario-id")
+				console.log(clienteId)
+				id_usuario_eliminar = clienteId
+				const confirm_modal = new bootstrap.Modal('#modal', {
+					  keyboard: false
+					})
+				const confirm_modal_body = confirm_modal._element.querySelector(".modal-confirm-body")
+				confirm_modal_body.textContent = "Esta seguro que desea eliminar este usuario"
+				confirm_modal.show()
+				
+			}
+			
+			function eliminarUsuario(){
+				console.log(id_usuario_eliminar)
+				const id = parseInt(id_usuario_eliminar)
+				if (isNaN(id)) {
+			        console.error('El ID del usuario no es un numero valido.');
+			        return;
+			    }
+				const urlEliminar = `http://localhost:8090/usuarios/eliminar/${id}`
+				console.log(urlEliminar)
+				fetch(urlEliminar, {
+		            method: 'DELETE',
+		            headers: {
+				        'Content-Type': 'application/json'
+				    }
+		        })
+		        .then(response => {
+		        	console.log(response)
+		            if (response.ok) {
+		                window.location.href = '/usuarios/';
+		            } else {
+		                console.error('Error al eliminar el usuario');
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error al eliminar el usuario:', error);
+		        });
+			}
+		</script>
 	</body>
 </html>

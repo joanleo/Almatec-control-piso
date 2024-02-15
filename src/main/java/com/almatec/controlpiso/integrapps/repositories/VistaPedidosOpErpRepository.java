@@ -24,4 +24,6 @@ public interface VistaPedidosOpErpRepository extends JpaRepository<VistaPedidosO
 
 	List<VistaPedidosOpErp> findByTipoOpOrderByNumPv(String string);
 
+	List<VistaPedidosOpErp> findByTipoOpOrTipoOpOrderByNumPv(String tipoOp1, String tipoOp2);
+
 }

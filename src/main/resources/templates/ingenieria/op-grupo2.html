@@ -5,7 +5,7 @@
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 		
-		<div class="container my-5" style="width: 50%;">
+		<div class="container my-5" >
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -20,27 +20,37 @@
 			 </div>
 			 
 			 <h1>Detalle Orden Produccion IF - [[${idOp}]] </h1>
-			 <div class="table-responsive text-nowrap my-5">
+			 <div class="table-responsive my-5">
 				 <table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
 					<thead class="table-dark">
 						<tr>
 							<th>#</th>
-							<th>Descripcion</th>
-							<th>Acciones</th>
+							<th>ITEM</th>
+							<th>MARCA</th>
+							<th>DESCRIPCION</th>
+							<th>CANT [und]</th>
+							<th>PESO [Kg]</th>
+							<th>CANT PENDIENTE [und]</th>
+							<th>PESO PENDIENTE [Kg]</th>
+							<th>PINTURA BT [Kg]</th>
+							<th>PINTURA VIG [Kg]</th>
+							<th>PINTURA PROT [Kg]</th>
 						</tr>
 					</thead>
 					<tbody>					        
 					        <tr th:each="item, stat : ${listaItemOp}" >
 					            <td >[[${stat.index + 1}]]</td>
+					            <td th:text="${item.codigoErp}"></td>
+					            <td th:text="${item.marca}"></td>
 					            <td th:text="${item.descripcion}"></td>
-					            <td style="width: 8rem; padding-left: 1rem;">									
-									<a role="button" class="btn btn-primary" th:href="@{/ingenieria/op/grupo/{idGrupo}(idGrupo=${item.id})}">Ver</a>				
-								</td>
+					            <td th:text="${item.cant}"></td>
+					            <td th:text="${item.peso}"></td>
 					        </tr>
 					</tbody>
 				</table>
 			 </div>
 		</div>
 		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
 	</body>
 </html>

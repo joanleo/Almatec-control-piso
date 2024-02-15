@@ -1,8 +1,18 @@
 <head th:fragment="head(title)">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="shortcut icon" href="/imgs/cropped-icono-almatec-32x32.png" type="image/x-icon">
+	<link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/datatable/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="/css/Buttons-2.4.2/buttons.dataTables.min.css">
+	<link rel="stylesheet" href="/css/fontawesome6/all.min.css">
+	<link rel="stylesheet" href="/css/fontawesome6/fontawesome.min.css">
+	<link rel="stylesheet" href="/css/fontawesome6/v4-shims.min.css">
 	<link rel="stylesheet" href="/css/style.css">
-	<title>[[${title}]] | Almatec </title>	
+	<title>[[${title}]] | Almatec </title>
+	<script>
+		function clearLocalStorage() {
+			localStorage.clear()
+		}
+	</script>
 </head>

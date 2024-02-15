@@ -10,7 +10,7 @@ import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.interfaces.CentroOperacionInterface;
 import com.almatec.controlpiso.integrapps.interfaces.CompaniaErp;
 
-public interface CentroTrabajoRepository extends JpaRepository<CentroTrabajo, Long> {
+public interface CentroTrabajoRepository extends JpaRepository<CentroTrabajo, Integer> {
 
 	@Query(value = "SELECT  f010_id, f010_razon_social "
 			+ "FROM  Companias_ERP", nativeQuery = true)
@@ -26,6 +26,7 @@ public interface CentroTrabajoRepository extends JpaRepository<CentroTrabajo, Lo
 			+ "WHERE f285_id_cia = :cia ", nativeQuery = true)
 	List<CentroOperacionInterface> buscarCentrosOperacion(@Param("cia") Integer cia);
 
-	List<CentroTrabajo> findByIdCia(Integer cia);
+	List<CentroTrabajo> findByIdCiaAndIsShowTrue(Integer cia);
 
+	
 }

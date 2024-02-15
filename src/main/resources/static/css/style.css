@@ -14,7 +14,8 @@ body{
 
 .row1{
 	display:flex !important;
-	justify-content:center;
+	justify-content: space-around;
+	margin: 0 0 2rem 0;
 }
 .text_color{
 	color: #DC1D33 !important;
@@ -37,7 +38,7 @@ body{
 
 .container_table{
     margin: auto;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 .table-responsive{
 	border: 1px solid #e5e7eb;
@@ -55,27 +56,31 @@ body{
 
 .rounded{
   border-radius: .375rem !important;
-  overflow: hidden;
   border-width: 1px;
 }
 
 .size-l{
-    width: 18rem;
+    width: 19rem;
 }
 
 .size-s{
     width: 9rem;
 }
 .size-xs{
-	width: 5rem;
+	width: 5rem !important;
 }
 
 .size-m{
-    width: 15rem;
+    width: 12rem;
 }
 
 .size-xxl{
 	width: 30rem;
+}
+
+.menus{
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .btn-primary{
@@ -120,6 +125,110 @@ footer {
   gap: 8px;
   font-size: .875rem;
   font-weight: 500;
+}
+
+.input-group-text{
+	background: rgb(0, 121, 54, 0.79);
+	color: #FFFFFF;
+}
+
+.button-check-table{
+	background-color: #fff;
+    border: none;
+    color: #000;
+    padding: 0;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.button-check-table:active{
+	outline: none;
+}
+
+.button-check-table:focus{
+	outline: none;
+}
+
+.button-check-table .button-icon {
+  display: inline-block;
+}
+
+.button-check-table .plus::before{
+	content: "+";
+}
+
+.button-check-table .minus::before{
+	content: "-";
+}
+
+.table-production {
+	display:none;
+}
+
+.table-production.show {
+  display: inline-block;
+}
+
+.button-check-table.show .button-icon.plus,
+.button-check-table.show .button-icon.minus {
+  display: none; 
+}
+
+.button-check-table.show .button-icon.plus {
+  display: inline-block; 
+}
+
+.button-check-table.show .button-icon.minus {
+  display: none; 
+}
+
+.progress-bar-container {
+	width: 80%;
+	margin: auto;
+	background-color: #e0e0e0;
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.progress-bar {
+    height: 30px;
+    background-color: #4caf50;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+}
+
+.green {
+  height: 40%;
+  background: green;
+}
+
+.yellow {
+  top: 40%;
+  height: 40%;
+  background: yellow; 
+}
+
+.red {
+  top: 80%;
+  height: 20%;
+  background: red;
+}
+
+.number {
+  position: absolute;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.number:first-child {
+  top: 10px;
+  left: 10px; 
+}
+
+.number:last-child {
+  bottom: 10px;
+  right: 10px;  
 }
 
 @container table (min-width: 400px) {

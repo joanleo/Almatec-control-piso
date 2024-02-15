@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		
+		<div class="container" id="principal">
+			<div id="nombre-centro-trabajo" style="display: flex; justify-content: center; margin-bottom: 1rem;">
+				<h1 id="title-ct"></h1>				
+			</div>			
+			<div class="row1" id="lectura-codigos">
+				<div>
+					<div class="input-group size-m">
+					  <span class="input-group-text">Turno: </span>
+					  <select aria-label="Turno" id="turno" class="form-control"></select>
+					</div>
+				</div>
+				<div>
+					<div class="input-group ">
+					  <span class="input-group-text">Codigo / Codigo de barras: </span>
+					  <input type="text" aria-label="Codigo / Codigo de barras" id="codigo" onkeypress="handleKeyPress(event)" class="form-control">
+					</div>
+				</div>
+			</div>
+			<!--<div class="row1" id="modal-reporte-piezas" style="justify-content: end;">
+                <button type="button" id="button_reporte-piezas" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reporte-piezas">
+                    Reportar
+                </button>
+            </div>-->
+			<div class="row1" id="graficos">
+				<div style="text-align: center;">
+					<h2>Productividad</h2>
+					<div style="display: flex; justify-content: center; align-items: center; text-align: center; margin: auto;">
+						<div id="indicador_div" style="width: 200px; height: 200px; margin:auto;"></div>						
+					</div>
+				</div>
+				<div style="text-align: center;">
+					<h2>Paradas</h2>
+					<div id="piechart" style="width: 400px; height: 200px; margin:auto;"></div>
+				</div>
+			</div>
+			
+			<div class="container my-4" id="piezas-proceso">
+				<div class="table-responsive" >
+					<table class="table table-striped" id="table-process" aria-describedby="table-process-description">
+						<thead class="table-light">
+							  <tr>
+								<th>#</th>
+								<th>OP</th>
+								<th>Item</th>
+								<th>Pieza</th>
+								<th>Cliente</th>
+								<th>Proyecto - Zona</th>
+								<th>Descripcion</th>
+								<th>Tiempo</th>
+								<th>Operario</th>
+								<th>Stdr</th>
+								<th>Real</th>
+								<th>Estado</th>
+								<th>Plano</th>
+							  </tr>
+						</thead>
+						<tbody>
+							  <tr>
+								<td>1</td>
+								<td>IF-3</td>
+								<td>1</td>
+								<td>1</td>
+								<td>Italcol</td>
+								<td>640IKEA - Zona 1</td>
+								<td>CX CONECTOR 60X40 CV2F</td>
+								<td>1.15</td>
+								<td>Joan Leon</td>
+								<td>1.15</td>
+								<td>1.15</td>
+								<td>Activo</td>
+								<td id="plano">
+									
+									<a href="#" onclick="verPdf()">VIGA B9 CX-RV01</a>
+									</td>
+							  </tr>						
+						</tbody>
+					</table>
+					<div id="table-process-description" class="visually-hidden">
+					  Esta tabla muestra el detalle del trabajo de los operarios en el centro de trabajo.
+					</div>		
+				</div>			
+			</div>
+			
+			<div class="row1" style="margin-bottom: 0;">
+				<button class="button-check-table" onclick="toggleTable()">
+					<span class="button-icon plus"></span>
+					<span class="button-icon minus"></span>
+				</button>
+			</div>		
+			
+			<div class="container my-4" id="productividad-operario">
+				<div class="table-responsive" >
+					<table class="table table-striped table-production" id="table-produccion" aria-describedby="table-produccion-description">
+					  <thead class="table-light"> 
+						  <tr>
+							<th>Operario</th>
+							<th>Turno</th>
+							<th>Inicio</th>
+							<th>Productivo</th>
+							<th>Improductivo</th>
+							<th>Final</th>
+							<th>Disponible</th>
+							<th>Estado</th>
+						  </tr>
+					  </thead>
+					  <tbody>
+						  <tr>
+							<td>Joan Leon</td>
+							<td>6AM - 2PM</td>
+							<td>06:15 AM</td>
+							<td id="productivo">4.35</td>
+							<td id="improductivo">1.15</td>
+							<td>04:00 PM</td>
+							<td>
+								<div class="progress-bar-container">
+							        <div id="progress-bar" class="progress-bar"></div>
+							    </div>
+							</td>
+							<td>Activo</td>
+						  </tr>					  
+					  </tbody>
+					</table>
+					<div id="table-produccion-description" class="visually-hidden">
+					  Esta tabla muestra el detalle de productividad de los operarios en el centro de trabajo.
+					</div>		
+				</div>
+				
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		
+		<div class="modal fade" id="asignarPieza" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="asignarPiezaLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #F8F9FA;">
+		        <h1 class="modal-title fs-5" id="asignarPiezaLabel" >Asignacion Pieza</h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			  		<div class="container">
+						  <div class="row" style="justify-content: space-around;">
+							  <div id="ops-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
+							  </div>
+							  
+							  <div id="operarios-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
+							  </div>							  
+						  </div>
+						  
+						  <div class="row1" id="items-op" style="margin-top: 1rem; margin-bottom: 2rem;">
+							  <div class="container">
+								  <div class="table-responsive" >
+									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-items-description">
+									  		<thead>
+									            <tr>
+													<th>#</th>
+									                <th>Item</th>
+									                <th>Longitud</th>
+									                <th>Cliente</th>
+									                <th>Proyecto</th>
+									                <th>Cant Solic</th>
+									            </tr>
+									        </thead>
+									        <tbody id="listado-items">
+									            <!-- Aquí se mostrará el listado de items -->
+									        </tbody>
+									   </table>
+									   <div id="tabla-items-description" class="visually-hidden">
+										  Esta tabla muestra items.
+									   </div>
+								  </div>
+							  </div>
+						  </div>
+		      		</div>
+		      </div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
+		
+		<div class="modal fade" id="reporte-piezas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="reportePiezasLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #F8F9FA;">
+		        <h1 class="modal-title fs-5" id="reportePiezaLabel" >Reporte piezas operario</h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			  		<div class="container">
+						  <div class="row1" id="cod-operario" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+								<div class="input-group ">
+								  <span class="input-group-text">Codigo / Codigo de barras: </span>
+								  <input type="text" aria-label="Codigo / Codigo de barras" id="codigo-oper" onkeypress="handleKeyPress(event)" class="form-control">
+								</div>
+						  </div>
+						  						  
+		      		</div>
+		      </div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
+		
+		<div class="modal fade" id="modal-confirma-pieza" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true" >
+	        <div class="modal-dialog modal-l">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="confirmModal">Advertencia</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <div class="modal-confirm-body px-3 py-5">
+	                </div>
+	                <div class="modal-footer ">
+	                    <button type="button" class="btn btn-primary" onclick="agregarPiezaOperario()" >Aceptar</button>
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+		
+		<div id="pdf-viewer"></div>
+		
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/loader.js"></script>
+		<script src="/js/graphic-ind.js"></script>
+		<script src="/js/graphic-pie.js"></script>
+		<script src="/js/produccion.js"></script>
+		<script src="/js/logout.js"></script>
+		
+		<script>
+			function verPdf(){
+				const nombreDelArchivo = document.getElementById("plano").textContent
+				window.open(`http://10.75.98.3:8090/centros-trabajo/descargar-pdf/${nombreDelArchivo}.pdf`, '_blank');				
+			}
+		</script>
+
+		
+	</body>
+</html>
