@@ -35,8 +35,25 @@
           </ul>
         </li>
         
-        <li  class="nav-item">
-          <a class="nav-link" th:classappend="${selec == 'Produccion' ? 'active' : ''}" href="/produccion/home">Produccion</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+            Programacion
+          </a>
+          <ul class="dropdown-menu">
+			<li><a class="dropdown-item" href="/programacion/asignar-prioridades">Prioridad</a></li>
+          </ul>
+        </li>
+        
+        <li  class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" th:classappend="${selec == 'Produccion' ? 'active' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+			  Produccion
+		  </a>
+		  <ul class="dropdown-menu">
+			<li><a class="dropdown-item" href="/produccion/home">Dashboard</a></li>
+			<li><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/produccion/proyectos">Proyectos</a></li>
+          </ul>
         </li>
         
         <li class="nav-item dropdown">
@@ -46,8 +63,6 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
             <li><hr class="dropdown-divider"></li>
-            <!--<li><a class="dropdown-item" href="/menus">Menus</a></li>
-            <li><a class="dropdown-item" href="/roles">Perfiles</a></li>-->
             <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
           </ul>
         </li>

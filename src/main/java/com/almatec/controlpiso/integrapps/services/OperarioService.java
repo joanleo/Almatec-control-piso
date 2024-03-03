@@ -6,4 +6,6 @@ public interface OperarioService {
 
 	Operario obtenerOperario(Integer numCedula);
 
+	Operario buscarOperarioPorId(Integer idOperario);
+
 }

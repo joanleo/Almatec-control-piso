@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+				 
+		<div class="container my-5">
+			<h1>Proyectos</h1>
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 		 
+			<div class="table-responsive text-nowrap my-5">
+			<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+				<thead class="table-dark">
+					<tr>
+						<th>DESCRIPCION</th>
+						<th>CANT</th>
+						<th>PESO</th>
+						<th>CANT PEND</th>
+						<th>PESO PEND</th>
+						<th>COLOR</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${items}">
+					<td th:text="${item.descripcion}"></td>
+					<td th:text="${item.cant}"></td>
+					<td th:text="${item.peso}"></td>
+					<td th:text="${item.cant}"></td>
+					<td th:text="${item.peso}"></td>
+					
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

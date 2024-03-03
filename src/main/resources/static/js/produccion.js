@@ -225,13 +225,10 @@ async function validateCode() {
 }
 
 async function configuraCentroTrabajo(codigo){
-	console.log("configura centro de trabajo para el turno: ", turnoSelected.descripcion)
 	const title = document.querySelector("#title-ct")
 	for(const ct of centrosTrabajo){
 		if(codigo === ct.codigoBarraHum || codigo === ct){
 			centroTSelected = ct
-			console.log("CT selected!")
-			console.log(centroTSelected.nombre)
 			title.textContent = ct.nombre
 			try{
 				const responseConfiProceso = await fetch(`/config-procesos/centro-trabajo/${centroTSelected.id}/turno/${turnoSelected.id}`)
@@ -239,7 +236,6 @@ async function configuraCentroTrabajo(codigo){
 					console.log(responseConfiProceso.status)
 					throw new Error("Error al tratar de configurar el proceso el en centro de trabajo ", centroTSelected.nombre)
 				}
-				console.log("ESta pasando")
 				configProceso = await responseConfiProceso.json()
 				mostrarAlert(`Centro de trabajo ${centroTSelected.nombre} registrado exitosamente`, "success")
 				saveToLocalStorage()
@@ -257,6 +253,7 @@ function mostrarAlert(mensaje, tipo){
 	const alertElement = document.createElement('div')
     	alertElement.className = `alert alert-${tipo} alert-dismissible fade show fixed-top`
     	alertElement.role = 'alert'
+    	alertElement.style.zIndex = '10000'
         alertElement.innerHTML = `
         <strong>${mensaje}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
@@ -274,7 +271,6 @@ async function registraUsuarioCT(codigo){
 	}
 	try{
 		const operario = await obtenerOperario(codigo.substring(3))
-		console.log(`Registra o retira al operario ${operario.nombre} usuario del centro de trabajo ${centroTSelected.nombre}`)
 		const operarioDTO = {
 			"idOperario": operario.id,
 			"idCentroTrabajo": centroTSelected.id,
@@ -291,7 +287,6 @@ async function registraUsuarioCT(codigo){
 			console.log(responseRegistroOperario)
 		}
 		const data = await responseRegistroOperario.text()
-		console.log(data)
 		if(data.includes("registrado")){
 			mostrarAlert(`Operario ${operario.nombre} ${data}.`, "warning")
 		}else{
@@ -308,12 +303,13 @@ async function validaEvento(){
 	console.log("Valida un evento")
 }
 
-async function obtenerOpCentroT(){
+async function obtenerOpCentroT(ct){
 	try{
-		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/ordenes-produccion`)
+		const response = await fetch(`/centros-trabajo/${ct}/ordenes-produccion`)
 		if(!response.ok){
 			throw new Error(response)
 		}
+
 		const data = await response.json()
 		console.log("respuesta ops CT: ",data)
 		return data
@@ -324,17 +320,18 @@ async function obtenerOpCentroT(){
 }
 
 function cargarListadoItems(){
+	const operarioSelected = document.getElementById("operario-selected").textContent
 	let selectOpsCt = document.getElementById('op-selected')
     let opSelected = selectOpsCt.value
     let listadoItemsTbody = document.getElementById('listado-items')
-    let opElement = opSelected.split("-")
     listadoItemsTbody.innerHTML = ''
-	let ops = opsCt.filter(item => item.numOp === parseInt(opElement[1], 10) && item.tipoOp === opElement[0])
-    console.log(ops)
+	let ops = opsCt.filter(item => item.idOp === parseInt(opSelected))
+    console.log(ops[0].items)
     if (ops) {
         ops.forEach(function(op, index) {
 			for(const item of op.items){
 		        let row = document.createElement('tr')
+		        
 	            let cellNum = document.createElement('td')
 	            cellNum.textContent = index + 1
 	            row.appendChild(cellNum)
@@ -345,22 +342,34 @@ function cargarListadoItems(){
 	            let isComponente = false
 	            let cantListaMaterial
 	            let longitud
+	            let idComponente
+	            let ref
+	            let peso
 	            for(const componente of componentes){
 					if(centroTSelected.id === componente.idCentroTrabajoPerfil){
 						descripcion = componente.descripcionPerfil
 						isComponente = true
 						cantListaMaterial = componente.cantListaMateriales
 						longitud = componente.longitud
+						idComponente = componente.idPerfil
+						ref = componente.codErp
+						peso = componente.pesoPerfil
 					}
 				}
-				console.log(isComponente, cantListaMaterial)
+				
+				let idPieza = item.idItem
+				
+				ref = isComponente ? ref: ""
+				let cellRef = document.createElement('td')
+				cellRef.textContent = ref
+				row.appendChild(cellRef)
 				
 				descripcion = descripcion ?? item.descripcion
 	            cellName.textContent = descripcion 
 	            row.appendChild(cellName)
 	            
 	            let cellLongitud = document.createElement('td')
-				cellLongitud.textContent = isComponente? longitud: ''
+				cellLongitud.textContent = isComponente ? longitud: ''
 				row.append(cellLongitud)
 
 	            let cellCliente = document.createElement('td')
@@ -372,11 +381,41 @@ function cargarListadoItems(){
 	            row.appendChild(cellProyecto)
 
 	            let cellCantSol = document.createElement('td')
-	            cellCantSol.textContent = isComponente ? item.cant * cantListaMaterial: item.cant
+	            cellCantSol.textContent = isComponente ? cantListaMaterial: item.cant
 	            row.appendChild(cellCantSol)
-
+	            
+	            let pesoUnitario = document.createElement('td')
+				pesoUnitario.textContent = isComponente ? peso: item.peso
+				row.appendChild(pesoUnitario)
+				
+				let pesoTotal = document.createElement('td')
+				let resultadoPeso = isComponente ? (peso * cantListaMaterial): (item.peso * item.cant)
+				pesoTotal.textContent = resultadoPeso.toFixed(2)
+				row.appendChild(pesoTotal)
+				
+				row.addEventListener('mouseover', function() {
+	                row.style.cursor = 'pointer';
+	            });
+	
+	            row.addEventListener('mouseout', function() {
+	                row.style.cursor = 'default';
+	            });
+				
 	            row.addEventListener('click', function(){
-					confirmModal(item, isComponente)})
+					if(!operarioSelected){
+						console.log("validando operario seleccionado", operarioSelected)
+						mostrarAlert("No existe operario o no se ha seleccionado.", "danger")
+					}else{
+						const pieza = {
+							id: idPieza,
+							descripcionPieza: item.descripcion,
+							idComponente: idComponente,
+							descripcionComponente: descripcion
+						}
+						confirmModal(pieza)
+					
+					}
+				})						
 	                        
 	            listadoItemsTbody.appendChild(row)
 			}            
@@ -402,18 +441,13 @@ function crearSelectCT(opsCt){
 	selectElement.addEventListener("change", function() {
         cargarListadoItems()
     })
-	let uniqueOps = new Set()
 	if (Array.isArray(opsCt)) {
         opsCt.forEach(function (op) {
-			let uniqueKey = op.tipoOp + op.numOp
-			if (!uniqueOps.has(uniqueKey)) {
-	            const optionElement = document.createElement("option")
-	            selectElement.style.margin = "0 0 0 1rem"
-	            optionElement.value = op.tipoOp +"-"+ op.numOp
-	            optionElement.text = op.tipoOp +"-"+ op.numOp
-	            selectElement.appendChild(optionElement)
-			}
-			uniqueOps.add(uniqueKey)
+	        const optionElement = document.createElement("option")
+	        selectElement.style.margin = "0 0 0 1rem"
+	        optionElement.value = op.idOp
+	        optionElement.text = "Proyecto-"+ op.proyecto
+	        selectElement.appendChild(optionElement)
         })
 
         opCtElement.appendChild(selectElement)
@@ -454,11 +488,9 @@ function limpiarElementos() {
 }
 
 let opsCt
-
 async function asignaPiezaOperario(){
 	const modalAsignarPieza = new bootstrap.Modal('#asignarPieza')
-	console.log("traer ordenes de produccion en este ct")
-	opsCt = await obtenerOpCentroT()
+	opsCt = await obtenerOpCentroT(centroTSelected.id)
     let operariosCt = await obtenerOperariosCT()
 	
     crearSelectCT(opsCt)
@@ -466,59 +498,60 @@ async function asignaPiezaOperario(){
     console.log("Items de la OP seleccionada")
     cargarListadoItems()
     modalAsignarPieza.show()
-    console.log("Asigna una pieza a un operario")
     modalAsignarPieza._element.addEventListener('hidden.bs.modal', function () {
     limpiarElementos()
 })
 }
 
 let itemAgregar
-function confirmModal(item, isComponente) {
-	const operarioSelected = document.getElementById("operario-selected").textContent
-	console.log(operarioSelected)
-	console.log(item)
-	const confirm_modal = new bootstrap.Modal('#modal-confirma-pieza', {
+let confirm_modal;
+function confirmModal(item) {
+	const operarioSelected = document.getElementById("operario-selected")
+	const operarioSelectedName = operarioSelected.options[operarioSelected.selectedIndex].text;
+	const descripcion = item.descripcionComponente ? item.descripcionComponente: item.descripcion
+	confirm_modal = new bootstrap.Modal('#modal-confirma-pieza', {
 		  keyboard: false
 		})
 	const confirm_modal_body = confirm_modal._element.querySelector(".modal-confirm-body")
-	let items
-	if(isComponente){
-		for(const componente of item.componentes){
-			items += componente.descripcionPerfil +" ,"
-		}
-		confirm_modal_body.textContent = `Esta seguro que desea asignar la pieza ${items} al operario ${operarioSelected}.`
-		itemAgregar = item
-		confirm_modal.show()
-	}
-	confirm_modal_body.textContent = `Esta seguro que desea asignar la pieza ${item} al operario ${operarioSelected}.`
+
+	confirm_modal_body.textContent = `Esta seguro que desea asignar la pieza ${descripcion} al operario ${operarioSelectedName}.`
 	itemAgregar = item
+	const btnAceptar = confirm_modal._element.querySelector(".btn-primary");
+	let piezaOperario = {
+		idProceso: configProceso.id,
+		idOperario: operarioSelected.value,
+		idPieza: item.id,
+		idPerfil: item.idComponente,
+		estaActivo: true
+	}
+    btnAceptar.setAttribute("data-item", JSON.stringify(piezaOperario));
 	confirm_modal.show()	
 }
 
-function agregarPiezaOperario(){
-	
-}
-
-async function obtenerParadas(){
-	
-	try{
-		const response = await fetch(`/paradas`)
-		if(!response.ok){
-			const error = response.json()
-			throw new Error(error)
+async function agregarPiezaOperario(event){
+	let piezasOperario = []
+	const btnAceptar = event.target;
+    const itemToAdd = JSON.parse(btnAceptar.getAttribute("data-item"))    
+    console.log("Item a agregar:", itemToAdd);
+    piezasOperario.push(itemToAdd)
+    try{
+		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/asignar-pieza`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(piezasOperario),
+        })
+		
+		if(!response){
+			console.error("Error en la solicitud:", response.statusText);
+			throw new Error("Error en la asignacion de pieza")
 		}
-		const data = response.json()
-		return data		
-	}catch(error){
-		console.error("Ocurrio un error al tratar de obtener las paradas ", error)
-	}
-	
-}
 
-async function regActualizarParada(codigo){
-	console.log("Registra una parada, id de la parada: ", codigo)
-	const paradas = await obtenerParadas()
-	console.log(paradas)
+        confirm_modal.hide();
+	}catch(error){
+		console.error(error)
+	}
 }
 
 function clearTable(table) {
@@ -568,11 +601,263 @@ async function mostrarOperariosCT(){
 	if(centroTSelected !== null && configProceso !== null){
 		let operariosCT = await obtenerOperariosCT()
 		const tiemposOperarios = await obtenerTiemposOperariosProceso()
-		console.log(operariosCT)
-		console.log(tiemposOperarios)
+		console.log("Operario en centro de trabajo: ", operariosCT)
+		console.log("Tiempos operario ct: ", tiemposOperarios)
 		
 		let table = document.querySelector("#table-produccion")
 		//clearTable(table)
 	}
 }
+
+async function obtenerParadas(){
+	
+	try{
+		const response = await fetch(`/paradas`)
+		if(!response.ok){
+			const error = response.json()
+			throw new Error(error)
+		}
+		const data = response.json()
+		return data		
+	}catch(error){
+		console.error("Ocurrio un error al tratar de obtener las paradas ", error)
+	}
+	
+}
+
+async function regActualizarParada(codigo){
+	console.log("Registra una parada, id de la parada: ", codigo)
+	const paradas = await obtenerParadas()
+	let paradaSelected
+	for(let parada of paradas){
+		if(codigo == parada.codBarrasM){
+			paradaSelected = parada.codBarrasM
+		}
+	}
+	let mensaje = "Debe seleccionar un "
+	let mostrarError = false
+	if(configProceso == null){
+		mensaje += "centro de trabajo"
+		mostrarError = true
+	}
+	
+	if(mostrarError) mostrarAlert(mensaje, "danger")
+	
+	registroParada = {
+		proceso:configProceso.id,
+		operario:"",
+		parada:paradaSelected
+	}
+	console.log("Debe identificar el usuario")
+}
+
+function reportePiezasNovedades(){
+	if(centroTSelected){
+		return true		
+	}else{
+		mostrarAlert("Debe seleccionar un centro de trabajo", "danger")
+		return false
+	}
+	
+}
+
+async function obtenerPiezasOperarioCt(operarioDTO){
+	try{
+		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/piezas-operario-proceso`,
+			{
+			method: 'POST',
+			headers: {
+		      'Content-Type': 'application/json'
+		    },
+			body: JSON.stringify(operarioDTO)
+			})
+		if(!response.ok){
+			console.error("Error en la solicitud:", response.statusText);
+			throw new Error("Error en la asignacion de pieza")
+		}
+		const data = await response.json()
+		return data
+		
+	}catch (error){
+		console.log(error)
+	}
+}
+
+let modalReportar
+async function isValid(){
+	const element = event.target.id
+	console.log(element)
+	const valido = reportePiezasNovedades()
+	console.log("Se valida si selecciona ct", valido)
+	if(valido){
+		if(element == "btn-reporte-piezas"){
+			modalReportar = new bootstrap.Modal('#reporte-piezas', {
+			  keyboard: false
+			})
+			document.getElementById('listado-piezas-operario').innerHTML = ''
+			modalReportar.show()			
+		}else{
+			modalReportar = new bootstrap.Modal('#novedades', {
+			  keyboard: false
+			})
+			document.getElementById('listado-piezas-operario-novedades').innerHTML = ''
+			modalReportar.show()
+		}
+	}	
+}
+
+async function handleKeyPressPiezasOperario(event) {
+    if (event.key === 'Enter') {
+		const codigoOperElement = document.querySelector("#codigo-operario-reporte")
+		const codigoOper = codigoOperElement.value
+        const operario = await obtenerOperario(codigoOper.substring(3))
+        document.getElementById('codigo-operario-reporte').value = ''
+        const operarioDTO = {
+			"idOperario": 3,
+			"idCentroTrabajo": centroTSelected.id,
+			"idConfigProceso": configProceso.id
+		}
+	
+		let ops = await obtenerPiezasOperarioCt(operarioDTO)
+		if(ops.length == 0) {
+			console.log("No tiene piezas asignadas en proceso")
+			mostrarAlert("No tiene piezas asignadas en proceso", "warning")
+			modalReportar.hide()
+		}else{
+		console.log("Piezas asignadas al operario: ", ops)
+		mostrarPiezasOperario(ops, operario, 'listado-piezas-operario')			
+		}
+    }
+}
+
+async function handleKeyPressNovedadesOperario(event){
+	if(event.key === 'Enter'){
+		const codigoOperElement = document.querySelector("#codigo-operario-novedad")
+		const codigoOper = codigoOperElement.value
+        const operario = await obtenerOperario(codigoOper.substring(3))
+        document.getElementById('codigo-operario-novedad').value = ''
+        const operarioDTO = {
+			"idOperario": 3,
+			"idCentroTrabajo": centroTSelected.id,
+			"idConfigProceso": configProceso.id
+		}
+	
+		let ops = await obtenerPiezasOperarioCt(operarioDTO)
+		if(ops.length == 0) {
+			console.log("No tiene piezas asignadas en proceso")
+			mostrarAlert("No tiene piezas asignadas en proceso", "warning")
+			modalReportar.hide()
+		}else{
+		console.log("Piezas asignadas al operario NOVEDADES: ", ops)
+		mostrarPiezasOperario(ops, operario, 'listado-piezas-operario-novedades')		
+		}
+	}
+}
+
+function mostrarPiezasOperario(ops, operario, idTbody){
+	let listadoItemsTbody = document.getElementById(idTbody)
+    listadoItemsTbody.innerHTML = ''
+    ops.forEach(function(op, index) {
+		for(const item of op.items){
+		    let row = document.createElement('tr')
+		    
+		    let cellNum = document.createElement('td')
+		    cellNum.textContent = index + 1
+		    row.appendChild(cellNum)
+			
+		    let cellName = document.createElement('td')
+		    let componentes = item.componentes
+		    let descripcion
+		    let isComponente = false
+		    let cantListaMaterial
+		    let longitud
+		    let ref
+		    let peso
+		    for(const componente of componentes){
+				if(centroTSelected.id === componente.idCentroTrabajoPerfil){
+					descripcion = componente.descripcionPerfil
+					isComponente = true
+					cantListaMaterial = componente.cantListaMateriales
+					longitud = componente.longitud
+					ref = componente.codErp
+					peso = componente.pesoPerfil
+				}
+			}
+			
+			let idPieza = item.idItem
+			
+			ref = isComponente ? ref: ""
+			let cellRef = document.createElement('td')
+			cellRef.textContent = ref
+			row.appendChild(cellRef)
+			
+			descripcion = descripcion ?? item.descripcion
+		    cellName.textContent = descripcion 
+		    row.appendChild(cellName)
+		    
+		    let cellLongitud = document.createElement('td')
+			cellLongitud.textContent = isComponente ? longitud: ''
+			row.append(cellLongitud)
+		
+		    let cellCliente = document.createElement('td')
+		    cellCliente.textContent = op.cliente
+		    row.appendChild(cellCliente)
+		    
+		    let cellProyecto = document.createElement('td')
+		    cellProyecto.textContent = op.proyecto
+		    row.appendChild(cellProyecto)
+		
+		    let cellCantSol = document.createElement('td')
+		    cellCantSol.textContent = isComponente ? cantListaMaterial: item.cant
+		    row.appendChild(cellCantSol)
+		    
+		    let pesoUnitario = document.createElement('td')
+			pesoUnitario.textContent = isComponente ? peso: item.peso
+			row.appendChild(pesoUnitario)
+			
+			let pesoTotal = document.createElement('td')
+			let resultadoPeso = isComponente ? (peso * cantListaMaterial): (item.peso * item.cant)
+			pesoTotal.textContent = resultadoPeso.toFixed(2)
+			row.appendChild(pesoTotal)
+			
+			row.addEventListener('mouseover', function() {
+                row.style.cursor = 'pointer';
+            });
+
+            row.addEventListener('mouseout', function() {
+                row.style.cursor = 'default';
+            });
+			
+		    row.addEventListener('click', function(){
+				console.log("redirecciona a pagina donde se tomaran los datos de las piezas realizadas reportan novedad")
+				console.log(idTbody)
+				if(idTbody == 'listado-piezas-operario'){
+					const reporte = {
+						"idItem": idPieza,
+						"idCentroTabajo": centroTSelected.id,
+						"idOperario": operario.id
+					}
+					
+					console.log(reporte)
+					let locationUrl = window.location.href
+					console.log(locationUrl)
+					window.location.href = `/centros-trabajo/${centroTSelected.id}/reporte?idItem=` + idPieza +
+	                            '&idOperario=' + operario.id					
+				}
+				if(idTbody == 'listado-piezas-operario-novedades'){
+					window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=` + idPieza +
+	                            '&idOperario=' + operario.id
+				}
+			})						
+		                
+		    listadoItemsTbody.appendChild(row)
+		}
+	})
+}
+
+document.getElementById('codigo-operario-reporte').addEventListener('change', function () {
+	(async()=>{
+	    await handleKeyPressPiezasOperario(event)		
+	})()
+})
 

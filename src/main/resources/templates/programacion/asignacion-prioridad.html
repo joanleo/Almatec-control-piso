@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<body>
+		
+		<style>
+			.origin {
+	        flex-basis: 100%;
+	        flex-grow: 1;
+	        padding: 10px;
+	        }
+	
+	        .draggable {
+	        font-weight: normal;
+	        }
+	
+	        .dropzone {
+			
+	        flex-basis: 100%;
+	        flex-grow: 1;
+	        padding: 1rem !important;
+	        }
+		</style>
+		
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+				 
+		<div class="container my-5">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <div style="display: flex; margin: 2rem 0">
+				 <div class="container" style="background-color: #F8F9FA;">
+					 <h3>Items</h3>
+					 <div th:each="item, stat : ${items}" th:id="'draggable-' + ${stat.index}" class="draggable my-3"
+				            draggable="true"
+				            ondragstart="drag(event);">	                    
+	                    <table class="table table-striped align-middle table-hover table-bordered rounded">
+			            <thead class="table-dark">
+			                <tr>
+			                    <th>Descripción</th>
+			                    <th>Cantidad</th>
+			                    <th>Proyecto</th>
+			                    <th>Prioridad</th>
+			                </tr>
+			            </thead>
+			            <tbody>
+			                <tr>
+			                    <td th:text="${item.idItem}" hidden></td>
+			                    <td th:text="${item.descripcion}"></td>
+			                    <td th:text="${item.cant}"></td>
+			                    <td th:text="${item.proyecto}"></td>
+			                    <td th:text="${item.prioridad}"></td>
+			                </tr>
+			            </tbody>
+			        </table>
+	                </div>
+					 
+				 </div>
+				 
+				 <div class="container mx-3" style="background-color: #F8F9FA; ">
+					 <h3>Prioridad</h3>
+					 <div class="dropzone" id="dropzone" ondragover="allowDrop(event)" ondrop="drop(event)" style="height: 100%;" >                    
+	                </div>
+				 </div>
+              			   
+           	 </div>
+           	 
+           	 
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script>
+        function allowDrop(event){
+            event.preventDefault()
+        }
+
+        function drag(event){
+			
+            event.dataTransfer.setData("text", event.target.id)
+            event
+            .currentTarget
+            .style
+            .backgroundColor = '#CCCCCC';
+        }
+
+        function drop(event){
+            event.preventDefault()
+            var id = event.dataTransfer.getData("text");
+            const draggableElement = document.getElementById(id);
+            const dropzone = event.target;
+            dropzone.appendChild(draggableElement);
+            event
+                .dataTransfer
+                .clearData();
+        }
+        const targetNode = document.getElementById("dropzone")
+        const config = { childList: true}
+        
+        const callback = (mutationList, observer) => {
+		  for (const mutation of mutationList) {
+		    if (mutation.type === "childList") {
+		      const elementos = Object.values(targetNode.children)
+		      elementos.forEach((elemento, index) => {
+		        const tabla = elemento.querySelector('.table')		        
+		        if (tabla) {
+		          const primeraFila = tabla.querySelector('tbody tr')		          
+		          if (primeraFila) {
+					const row = Object.values(primeraFila.children)
+					const idItem = parseInt(primeraFila.firstElementChild.textContent) 
+					console.log(idItem)
+		            const ultimaCelda = primeraFila.lastElementChild
+		            const prioridad = index + 1
+		            ultimaCelda.textContent = `Posición: ${prioridad}`
+		            fetch(`/programacion/item/${idItem}/actualizar-prioridad/${prioridad}`,{method:'POST'})
+		            .catch(error => console.error('Error:', error))
+		            
+		          } else {
+		            console.log("No hay filas en el tbody de la tabla.")
+		          }
+		        } else {
+		          console.log("No se encontró la tabla dentro del elemento.")
+		        }
+		      })
+		    } 
+		  }
+		}
+		
+		const observer = new MutationObserver(callback);
+		observer.observe(targetNode, config)
+    </script>
+	</body>
+</html>

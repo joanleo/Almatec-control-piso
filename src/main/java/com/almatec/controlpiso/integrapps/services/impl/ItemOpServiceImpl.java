@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
 import com.almatec.controlpiso.integrapps.paging.Column;
@@ -114,6 +113,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 		return itemOpRepo.findByIdPvIntegrapps(numOp);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Predicate<ItemOp> filterItemsOp(PagingRequest pagingRequest) {
         if (pagingRequest.getSearch() == null || StringUtils.isEmpty(pagingRequest.getSearch()
                                                                                   .getValue())) {
@@ -170,5 +170,16 @@ public class ItemOpServiceImpl implements ItemOpService {
 
         return EMPTY_COMPARATOR;
     }
+
+	@Override
+	public List<ItemOp> obtenerItemsOpProduccion(Integer numOp) {
+		List<ItemOpInterface> listaItemsOpInterface = itemOpRepo.obtenerItemsOp(numOp);
+		List<ItemOp> itemsOp = new ArrayList<>();
+		for(ItemOpInterface itemInterface: listaItemsOpInterface) {
+			ItemOp item = new ItemOp(itemInterface);
+			itemsOp.add(item);
+		}
+		return itemsOp;
+	}
 
 }

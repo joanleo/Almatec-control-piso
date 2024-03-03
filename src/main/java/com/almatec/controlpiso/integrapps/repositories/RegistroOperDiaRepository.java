@@ -54,7 +54,12 @@ public interface RegistroOperDiaRepository extends JpaRepository<RegistroOperDia
 			+ "FROM pro_regoperxdia "
 			+ "WHERE (C_prooperario_id = :#{#operarioDTO.idOperario}) "
 			+ "AND CONVERT(date, FC_registro) = CONVERT(date, :fechaActual) "
-			+ "AND C_centrotrabajo_id = :#{#operarioDTO.idCentroTrabajo} ", nativeQuery = true)
+			+ "AND C_centrotrabajo_id = :#{#operarioDTO.idCentroTrabajo} "
+			+ "AND C_proconfigproceso_id = :#{#operarioDTO.idConfigProceso} ", nativeQuery = true)
 	RegistroOperDia findByIdCentroTAndFecha(@Param("operarioDTO") OperarioDTO operarioDTO, @Param("fechaActual") Date fechaActual);
+
+	List<RegistroOperDia> findByIdCentroTAndIdConfigProcesoAndIdOperario(Integer idCT, Integer idProceso, Integer idOperario);
+
+	
 
 }

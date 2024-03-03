@@ -20,4 +20,6 @@ public interface ItemOpService {
 	PageArray obtenerItemsOpArray(PagingRequest pagingRequest, Integer idOp);
 
 	Page<ItemOp> obtenerPagina(List<ItemOp> itemsOp, PagingRequest pagingRequest);
+
+	List<ItemOp> obtenerItemsOpProduccion(Integer numOp);
 }

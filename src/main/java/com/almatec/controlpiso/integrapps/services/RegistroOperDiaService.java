@@ -11,4 +11,5 @@ public interface RegistroOperDiaService {
 
 	List<RegistroOperDia> findByIdCentroTAndIdConfigProceso(Integer idCT, Integer idConfigP);
 
+
 }

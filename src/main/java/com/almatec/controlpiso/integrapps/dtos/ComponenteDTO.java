@@ -3,21 +3,24 @@ package com.almatec.controlpiso.integrapps.dtos;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class ComponenteDTO {
+import com.almatec.controlpiso.integrapps.interfaces.CommonDTO;
+
+public class ComponenteDTO implements CommonDTO {
 	
 	private Integer codErp;
 	private Integer idPerfil;
 	private String descripcionPerfil;
-	private String cantListaMateriales;
+	private Integer cantListaMateriales;
 	private Integer idCentroTrabajoPerfil;
 	private String centroTrabajoPerfil;
 	private BigDecimal longitud;
+	private BigDecimal pesoPerfil;
 	
 	public ComponenteDTO() {
 		super();
 	}
 
-	public ComponenteDTO(Integer codErp, Integer idPerfil, String descripcionPerfil, String cantListaMateriales,
+	public ComponenteDTO(Integer codErp, Integer idPerfil, String descripcionPerfil, Integer cantListaMateriales,
 			Integer idCentroTrabajoPerfil, String centroTrabajoPerfil) {
 		super();
 		this.codErp = codErp;
@@ -52,11 +55,11 @@ public class ComponenteDTO {
 		this.descripcionPerfil = descripcionPerfil;
 	}
 
-	public String getCantListaMateriales() {
+	public Integer getCantListaMateriales() {
 		return cantListaMateriales;
 	}
 
-	public void setCantListaMateriales(String cantListaMateriales) {
+	public void setCantListaMateriales(Integer cantListaMateriales) {
 		this.cantListaMateriales = cantListaMateriales;
 	}
 
@@ -85,9 +88,17 @@ public class ComponenteDTO {
 	}
 
 	@Override
+	public String toString() {
+		return "ComponenteDTO [codErp=" + codErp + ", idPerfil=" + idPerfil + ", descripcionPerfil=" + descripcionPerfil
+				+ ", cantListaMateriales=" + cantListaMateriales + ", idCentroTrabajoPerfil=" + idCentroTrabajoPerfil
+				+ ", centroTrabajoPerfil=" + centroTrabajoPerfil + ", longitud=" + longitud + ", pesoPerfil="
+				+ pesoPerfil + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(cantListaMateriales, centroTrabajoPerfil, codErp, descripcionPerfil, idCentroTrabajoPerfil,
-				idPerfil, longitud);
+				idPerfil, longitud, pesoPerfil);
 	}
 
 	@Override
@@ -103,14 +114,31 @@ public class ComponenteDTO {
 				&& Objects.equals(centroTrabajoPerfil, other.centroTrabajoPerfil)
 				&& Objects.equals(codErp, other.codErp) && Objects.equals(descripcionPerfil, other.descripcionPerfil)
 				&& Objects.equals(idCentroTrabajoPerfil, other.idCentroTrabajoPerfil)
-				&& Objects.equals(idPerfil, other.idPerfil) && Objects.equals(longitud, other.longitud);
+				&& Objects.equals(idPerfil, other.idPerfil) && Objects.equals(longitud, other.longitud)
+				&& Objects.equals(pesoPerfil, other.pesoPerfil);
+	}
+
+	public BigDecimal getPesoPerfil() {
+		return pesoPerfil;
+	}
+
+	public void setPesoPerfil(BigDecimal pesoPerfil) {
+		this.pesoPerfil = pesoPerfil;
 	}
 
 	@Override
-	public String toString() {
-		return "ComponenteDTO [codErp=" + codErp + ", idPerfil=" + idPerfil + ", descripcionPerfil=" + descripcionPerfil
-				+ ", cantListaMateriales=" + cantListaMateriales + ", idCentroTrabajoPerfil=" + idCentroTrabajoPerfil
-				+ ", centroTrabajoPerfil=" + centroTrabajoPerfil + ", longitud=" + longitud + "]";
+	public String getCentroTrabajo() {
+		return this.centroTrabajoPerfil;
+	}
+
+	@Override
+	public Integer getCant() {
+		return this.cantListaMateriales;
+	}
+
+	@Override
+	public String getDescripcion() {
+		return this.descripcionPerfil;
 	}	
 
 }

@@ -23,4 +23,10 @@ public class OperarioServiceImpl  implements OperarioService{
 		return operarioRepo.findById(idOperario)
 				.orElseThrow(()-> new ResourceNotFoundException("No se encontro operario con la cedula: " + numCedula));
 	}
+
+	@Override
+	public Operario buscarOperarioPorId(Integer idOperario) {
+		return operarioRepo.findById(idOperario)
+				.orElseThrow(()-> new ResourceNotFoundException("No se encontro operario con el id: " + idOperario));
+	}
 }

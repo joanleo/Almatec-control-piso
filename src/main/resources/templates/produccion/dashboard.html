@@ -6,10 +6,24 @@
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 		
 		<div class="container" id="principal">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+            
 			<div id="nombre-centro-trabajo" style="display: flex; justify-content: center; margin-bottom: 1rem;">
 				<h1 id="title-ct"></h1>				
 			</div>			
-			<div class="row1" id="lectura-codigos">
+			<div class="row1" id="lectura-codigos" style="justify-content: space-between;">
 				<div>
 					<div class="input-group size-m">
 					  <span class="input-group-text">Turno: </span>
@@ -23,21 +37,26 @@
 					</div>
 				</div>
 			</div>
-			<!--<div class="row1" id="modal-reporte-piezas" style="justify-content: end;">
-                <button type="button" id="button_reporte-piezas" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reporte-piezas">
-                    Reportar
+
+			<div class="row1"  style="justify-content: space-between;">
+                <button type="button" class="btn btn-primary" id="btn-reporte-piezas" onclick="isValid()">
+                    Reportar piezas
                 </button>
-            </div>-->
+                <button type="button" class="btn btn-secondary" id="btn-reporte-novedades" onclick="isValid()">
+                    Novedades
+                </button>
+            </div>
+
 			<div class="row1" id="graficos">
 				<div style="text-align: center;">
-					<h2>Productividad</h2>
 					<div style="display: flex; justify-content: center; align-items: center; text-align: center; margin: auto;">
 						<div id="indicador_div" style="width: 200px; height: 200px; margin:auto;"></div>						
 					</div>
+					<h2>Productividad</h2>
 				</div>
 				<div style="text-align: center;">
-					<h2>Paradas</h2>
 					<div id="piechart" style="width: 400px; height: 200px; margin:auto;"></div>
+					<h2>Paradas</h2>
 				</div>
 			</div>
 			
@@ -161,21 +180,25 @@
 									  		<thead>
 									            <tr>
 													<th>#</th>
-									                <th>Item</th>
-									                <th>Longitud</th>
-									                <th>Cliente</th>
-									                <th>Proyecto</th>
-									                <th>Cant Solic</th>
+													<th>REF</th>
+									                <th>DESCRIPCION</th>
+									                <th>LONG</th>
+									                <th>CLIENTE</th>
+									                <th>PROYECTO</th>
+									                <th>CANT SOL</th>
+									                <th>PESO UN</th>
+									                <th>PESO TTL</th>
+									                <th></th>
 									            </tr>
 									        </thead>
 									        <tbody id="listado-items">
 									            <!-- Aquí se mostrará el listado de items -->
 									        </tbody>
-									   </table>
-									   <div id="tabla-items-description" class="visually-hidden">
-										  Esta tabla muestra items.
-									   </div>
-								  </div>
+									 </table>
+								    <div id="tabla-items-description" class="visually-hidden">
+									  Esta tabla muestra items.
+								    </div>
+								 </div>
 							  </div>
 						  </div>
 		      		</div>
@@ -188,34 +211,7 @@
 		    </div>
 		  </div>
 		</div>
-		
-		<div class="modal fade" id="reporte-piezas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="reportePiezasLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-xl">
-		    <div class="modal-content">
-		      <div class="modal-header" style="background-color: #F8F9FA;">
-		        <h1 class="modal-title fs-5" id="reportePiezaLabel" >Reporte piezas operario</h1>
-		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		      </div>
-		      <div class="modal-body">
-			  		<div class="container">
-						  <div class="row1" id="cod-operario" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
-								<div class="input-group ">
-								  <span class="input-group-text">Codigo / Codigo de barras: </span>
-								  <input type="text" aria-label="Codigo / Codigo de barras" id="codigo-oper" onkeypress="handleKeyPress(event)" class="form-control">
-								</div>
-						  </div>
-						  						  
-		      		</div>
-		      </div>
-		      
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		      </div>
-		      
-		    </div>
-		  </div>
-		</div>
-		
+				
 		<div class="modal fade" id="modal-confirma-pieza" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true" >
 	        <div class="modal-dialog modal-l">
 	            <div class="modal-content">
@@ -226,14 +222,129 @@
 	                <div class="modal-confirm-body px-3 py-5">
 	                </div>
 	                <div class="modal-footer ">
-	                    <button type="button" class="btn btn-primary" onclick="agregarPiezaOperario()" >Aceptar</button>
+	                    <button type="button" class="btn btn-primary" onclick="agregarPiezaOperario(event)" >Aceptar</button>
 	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                </div>
 	            </div>
 	        </div>
 	    </div>
+	    
+	    <div class="modal fade" id="reporte-piezas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="reportePiezasLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #F8F9FA;">
+		        <h1 class="modal-title fs-5" id="reportePiezaLabel" >Reporte piezas operario</h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			  		<div class="container">
+						  <div class="row1" id="cod-operario" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+								<div class="input-group ">
+								  <span class="input-group-text">Operario: </span>
+								  <input type="text" aria-label="Codigo / Codigo de barras operario" id="codigo-operario-reporte" onkeypress="handleKeyPressPiezasOperario(event)" class="form-control">
+								</div>
+						  </div>
+						  
+							<div class="row1" style="margin-top: 1rem; margin-bottom: 2rem;">
+							  <div class="container">
+								  <div class="table-responsive" >
+									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-reporte-items-description">
+									  		<thead>
+									            <tr>
+													<th>#</th>
+													<th>REF</th>
+									                <th>DESCRIPCION</th>
+									                <th>LONG</th>
+									                <th>CLIENTE</th>
+									                <th>PROYECTO</th>
+									                <th>CANT SOL</th>
+									                <th>PESO UN</th>
+									                <th>PESO TTL</th>
+									                <th></th>
+									            </tr>
+									        </thead>
+									        <tbody id="listado-piezas-operario">
+									            <!-- Aquí se mostrará el listado de items -->
+									        </tbody>
+									 </table>
+								    <div id="tabla-reporte-items-description" class="visually-hidden">
+									  Esta tabla muestra items.
+								    </div>
+								 </div>
+							  </div>
+						  </div>
+					  </div>
+						  						  
+		      		
+		      </div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
 		
-		<div id="pdf-viewer"></div>
+		
+		
+		<div class="modal fade" id="novedades" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="novedadesLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #F8F9FA;">
+		        <h1 class="modal-title fs-5" id="novedadesLabel" >Reporte piezas operario</h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			  		<div class="container">
+						  <div class="row1" id="cod-operario" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+								<div class="input-group ">
+								  <span class="input-group-text">Operario: </span>
+								  <input type="text" aria-label="Codigo / Codigo de barras operario" id="codigo-operario-novedad" onkeypress="handleKeyPressNovedadesOperario(event)" class="form-control">
+								</div>
+						  </div>
+						  
+							<div class="row1" style="margin-top: 1rem; margin-bottom: 2rem;">
+							  <div class="container">
+								  <div class="table-responsive" >
+									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-novedades-items-description">
+									  		<thead>
+									            <tr>
+													<th>#</th>
+													<th>REF</th>
+									                <th>DESCRIPCION</th>
+									                <th>LONG</th>
+									                <th>CLIENTE</th>
+									                <th>PROYECTO</th>
+									                <th>CANT SOL</th>
+									                <th>PESO UN</th>
+									                <th>PESO TTL</th>
+									                <th></th>
+									            </tr>
+									        </thead>
+									        <tbody id="listado-piezas-operario-novedades">
+									            <!-- Aquí se mostrará el listado de items -->
+									        </tbody>
+									 </table>
+								    <div id="tabla-novedades-items-description" class="visually-hidden">
+									  Esta tabla muestra items.
+								    </div>
+								 </div>
+							  </div>
+						  </div>
+					  </div>
+						  						  
+		      		
+		      </div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
+		
 		
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
 		<script src="/js/loader.js"></script>

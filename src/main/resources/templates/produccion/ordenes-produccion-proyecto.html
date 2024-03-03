@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+				 
+		<div class="container my-5">
+			<h1>Proyectos</h1>
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <div  id="filtro">
+			     <form class="filtro my-5">
+			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'nombre del proyecto'..." />
+			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
+			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
+			     </form>
+			</div>
+		 
+			<div class="table-responsive text-nowrap my-5">
+			<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+				<thead class="table-dark">
+					<tr>
+						<th>OP</th>
+						<th>UN</th>
+						<th>PROYECTO</th>
+						<th>ZONA</th>
+						<th>REF</th>
+						<th>ITEM</th>
+						<th>CANT</th>
+						<th>ESQ PINTURA</th>						
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="orden : ${ordenes}">
+					<td th:text="${orden.tipoOp + '-' + orden.numOp}"></td>
+					<td th:text="${orden.un}"></td>
+					<td th:text="${orden.idProyecto}"></td>
+					<td th:text="${orden.zona}"></td>
+					<td th:text="${orden.itemRef}"></td>
+					<td th:text="${orden.itemDescripcion}"></td>
+					<td th:text="${orden.cant}"></td>
+					<td th:text="${orden.esquemaPintura}"></td>
+					<td >
+						<a role="button" class="btn btn-primary" th:href="@{/produccion/proyectos/{idProyecto}/op/{numOp}(idProyecto=${orden.idProyecto}, numOp=${orden.numOp})}">Ver</a>				
+					</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

@@ -53,7 +53,7 @@ public class OrdenPv {
 	@Column(name = "ord_und")
 	private String um;
 	@Column(name = "ord_cant")
-	private Double cant;
+	private Integer cant;
 	@Column(name = "Observaciones")
 	private String observaciones;
 	@Column(name = "Anulada")
@@ -100,6 +100,10 @@ public class OrdenPv {
 	private String cliente;
 	@Column(name = "estado_doc")
 	private String estadoDoc;
+	@Column(name = "f120_referencia")
+	private String itemRef;
+	@Column(name = "f120_descripcion")
+	private String itemDescripcion;
 	
 	public OrdenPv() {
 		super();
@@ -218,10 +222,10 @@ public class OrdenPv {
 	public void setUm(String um) {
 		this.um = um;
 	}
-	public Double getCant() {
+	public Integer getCant() {
 		return cant;
 	}
-	public void setCant(Double cant) {
+	public void setCant(Integer cant) {
 		this.cant = cant;
 	}
 	public String getObservaciones() {
@@ -362,22 +366,36 @@ public class OrdenPv {
 	public void setEstadoDoc(String estadoDoc) {
 		this.estadoDoc = estadoDoc;
 	}
+	public String getItemRef() {
+		return itemRef;
+	}
+	public void setItemRef(String itemRef) {
+		this.itemRef = itemRef;
+	}
+	public String getItemDescripcion() {
+		return itemDescripcion;
+	}
+	public void setItemDescripcion(String itemDescripcion) {
+		this.itemDescripcion = itemDescripcion;
+	}
 	@Override
 	public String toString() {
-		return "OrdenPv [id=" + id + ", idPadre=" + idPadre + ", idEmpIng=" + idEmpIng + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", opErp="
-				+ opErp + ", idEstadoDoc=" + idEstadoDoc + ", fecPlanIngR=" + fecPlanIngR + ", fecRealIngR="
-				+ fecRealIngR + ", codigoSgc=" + codigoSgc + ", respIngenieria=" + respIngenieria + ", fechaIngenieria="
-				+ fechaIngenieria + ", fechaContractual=" + fechaContractual + ", fConActual=" + fConActual
-				+ ", kgTotal=" + kgTotal + ", kgReal=" + kgReal + ", um=" + um + ", cant=" + cant + ", observaciones="
-				+ observaciones + ", isAnulada=" + isAnulada + ", fechaDespacho=" + fechaDespacho + ", adjunto="
-				+ adjunto + ", fechaCompletada=" + fechaCompletada + ", fAper=" + fAper + ", barCodeHumano="
-				+ barCodeHumano + ", barCodeMaquina=" + barCodeMaquina + ", ordFechaPlaneada=" + ordFechaPlaneada
-				+ ", bodega=" + bodega + ", eptUnoEE=" + eptUnoEE + ", sciUnoEE=" + sciUnoEE + ", unidadNegocio="
-				+ unidadNegocio + ", zonaSistema=" + zonaSistema + ", fechaEntrega=" + fechaEntrega
-				+ ", fechaAProduccion=" + fechaAProduccion + ", pintura=" + esquemaPintura + ", colorBastidores="
-				+ colorBastidores + ", colorVigas=" + colorVigas + ", colorProtectores=" + colorProtectores
-				+ ", idProyecto=" + idProyecto + ", cliente=" + cliente + ", estadoDoc=" + estadoDoc + "]";
+		return "OrdenPv [id=" + id + ", idPadre=" + idPadre + ", idEmpIng=" + idEmpIng + ", tipoOp=" + tipoOp
+				+ ", numOp=" + numOp + ", opErp=" + opErp + ", idEstadoDoc=" + idEstadoDoc + ", fecPlanIngR="
+				+ fecPlanIngR + ", fecRealIngR=" + fecRealIngR + ", codigoSgc=" + codigoSgc + ", respIngenieria="
+				+ respIngenieria + ", fechaIngenieria=" + fechaIngenieria + ", fechaContractual=" + fechaContractual
+				+ ", fConActual=" + fConActual + ", kgTotal=" + kgTotal + ", kgReal=" + kgReal + ", um=" + um
+				+ ", cant=" + cant + ", observaciones=" + observaciones + ", isAnulada=" + isAnulada
+				+ ", fechaDespacho=" + fechaDespacho + ", adjunto=" + adjunto + ", fechaCompletada=" + fechaCompletada
+				+ ", fAper=" + fAper + ", barCodeHumano=" + barCodeHumano + ", barCodeMaquina=" + barCodeMaquina
+				+ ", ordFechaPlaneada=" + ordFechaPlaneada + ", bodega=" + bodega + ", eptUnoEE=" + eptUnoEE
+				+ ", sciUnoEE=" + sciUnoEE + ", unidadNegocio=" + unidadNegocio + ", zonaSistema=" + zonaSistema
+				+ ", fechaEntrega=" + fechaEntrega + ", fechaAProduccion=" + fechaAProduccion + ", esquemaPintura="
+				+ esquemaPintura + ", colorBastidores=" + colorBastidores + ", colorVigas=" + colorVigas
+				+ ", colorProtectores=" + colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente
+				+ ", estadoDoc=" + estadoDoc + ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion + "]";
 	}
+	
 
 
 }

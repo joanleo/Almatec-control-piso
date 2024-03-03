@@ -1,8 +1,8 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class OpCentroTrabajoDTO {
 	
@@ -11,7 +11,9 @@ public class OpCentroTrabajoDTO {
 	private Integer numOp;
 	private String cliente;
 	private String proyecto;
-	private Set<ItemDTO> items = new HashSet<>();
+	private Date fechaContraActual;
+	private String esquemaPintura;
+	private List<ItemOpCtDTO> items = new ArrayList<>();
 	
 	public OpCentroTrabajoDTO() {
 		super();
@@ -66,18 +68,35 @@ public class OpCentroTrabajoDTO {
 		this.proyecto = proyecto;
 	}
 
-	public Set<ItemDTO> getItems() {
+	public List<ItemOpCtDTO> getItems() {
 		return items;
 	}
 
-	public void setItems(Set<ItemDTO> items) {
+	public void setItems(List<ItemOpCtDTO> items) {
 		this.items = items;
+	}
+
+	public Date getFechaContraActual() {
+		return fechaContraActual;
+	}
+
+	public void setFechaContraActual(Date fechaContraActual) {
+		this.fechaContraActual = fechaContraActual;
+	}
+
+	public String getEsquemaPintura() {
+		return esquemaPintura;
+	}
+
+	public void setEsquemaPintura(String esquemaPintura) {
+		this.esquemaPintura = esquemaPintura;
 	}
 
 	@Override
 	public String toString() {
 		return "OpCentroTrabajoDTO [idOp=" + idOp + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", cliente=" + cliente
-				+ ", proyecto=" + proyecto + ", items=" + items + "]";
+				+ ", proyecto=" + proyecto + ", fechaContraActual=" + fechaContraActual + ", esquemaPintura="
+				+ esquemaPintura + ", items=" + items + "]";
 	}
 
 }

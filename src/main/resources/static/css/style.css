@@ -60,7 +60,7 @@ body{
 }
 
 .size-l{
-    width: 19rem;
+    width: 20rem;
 }
 
 .size-s{
@@ -71,7 +71,7 @@ body{
 }
 
 .size-m{
-    width: 12rem;
+    width: 16rem;
 }
 
 .size-xxl{
@@ -274,4 +274,8 @@ footer {
   max-width: 100%;
   height: auto;
 }
+
+
+
+
 

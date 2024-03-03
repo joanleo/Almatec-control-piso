@@ -1,17 +1,16 @@
 package com.almatec.controlpiso.integrapps.services;
 
 import java.util.List;
-
-import org.springframework.http.ResponseEntity;
+import java.util.Set;
 
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
 import com.almatec.controlpiso.integrapps.dtos.Compania;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
 import com.almatec.controlpiso.integrapps.dtos.PiezaOperarioDTO;
+import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
-import com.almatec.controlpiso.integrapps.entities.VistaItemsRutas;
 import com.almatec.controlpiso.integrapps.entities.VistaTiemposOperarios;
 
 public interface CentroTrabajoService {
@@ -30,11 +29,13 @@ public interface CentroTrabajoService {
 
 	List<Operario> buscarOperariosCtDia(Integer idCT, Integer idConfigP);
 
-	List<OpCentroTrabajoDTO> buscarOpCT(Integer idCT);
+	Set<OpCentroTrabajoDTO> buscarOpCT(Integer idCT);
 
 	List<VistaTiemposOperarios> obtenerTiemposOperarios(Integer idProceso);
 
-	ResponseEntity<?> asignarActualizarPiezaOperario(Integer idCT, List<PiezaOperarioDTO> piezas);
+	void asignarActualizarPiezaOperario(Integer idCT, List<PiezaOperarioDTO> piezas);
+
+	ReporteDTO buscarItemCt(Long idItem, Integer idCT, Integer idOperario);
 
 
 }

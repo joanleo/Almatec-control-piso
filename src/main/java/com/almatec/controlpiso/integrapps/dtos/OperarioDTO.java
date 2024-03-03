@@ -39,9 +39,7 @@ public class OperarioDTO {
 	@Override
 	public String toString() {
 		return "OperarioDTO [idOperario=" + idOperario + ", idCentroTrabajo=" + idCentroTrabajo + ", idConfigProceso="
-				+ idConfigProceso + ", getIdOperario()=" + getIdOperario() + ", getIdCentroTrabajo()="
-				+ getIdCentroTrabajo() + ", getIdConfigProceso()=" + getIdConfigProceso() + ", getClass()=" + getClass()
-				+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+				+ idConfigProceso + "]";
 	}
 	
 	

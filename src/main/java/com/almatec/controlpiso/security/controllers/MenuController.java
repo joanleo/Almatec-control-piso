@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.almatec.controlpiso.security.entities.Menu;
-import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.MenuService;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
@@ -27,7 +26,7 @@ public class MenuController {
 	
 	@GetMapping
 	public String listar(Model modelo) {
-		Usuario usuario = util.obtenerUsuarioAtenticado();
+		//Usuario usuario = util.obtenerUsuarioAtenticado();
 		//System.out.println(usuario.getRol().getMenus());
 		List<Menu> menus = menuService.buscarMenus();
 		modelo.addAttribute("menus", menus);

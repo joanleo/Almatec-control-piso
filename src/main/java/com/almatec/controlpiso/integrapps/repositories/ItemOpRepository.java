@@ -18,7 +18,9 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "items_op.activo, items_op.ruta_plano, items_op.fecha_crea, items_op.id_estado,"
 			+ "orden_pv.Color_Bas, orden_pv.Color_Vigas, orden_pv.Color_Pro "
 			+ "FROM     items_op "
-			+ "LEFT JOIN orden_pv "
+			+ "JOIN items_fabrica "
+			+ "ON items_op.Item_fab_Id = items_fabrica.Item_fab_Id "
+			+ "JOIN orden_pv "
 			+ "ON items_op.id_op_ia = orden_pv.id_op_ia "
 			+ "WHERE  (orden_pv.Num_Op = :idOp) ", nativeQuery = true)
 	List<ItemOpInterface> obtenerItemsOp(@Param("idOp") Integer idOp);
