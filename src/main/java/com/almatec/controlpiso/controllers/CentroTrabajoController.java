@@ -37,12 +37,14 @@ import com.almatec.controlpiso.integrapps.dtos.NovedadDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
 import com.almatec.controlpiso.integrapps.dtos.PiezaOperarioDTO;
+import com.almatec.controlpiso.integrapps.dtos.RegistroParadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.VistaTiemposOperarios;
 import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
 import com.almatec.controlpiso.integrapps.services.NovedadCtService;
+import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
 import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaItemsRutasService;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasOperariosService;
@@ -76,6 +78,9 @@ public class CentroTrabajoController {
 	
 	@Autowired
 	private NovedadCtService novedadCtService;
+	
+	@Autowired
+	private RegistroParadaService registroParadaService;
 
 	
 	@GetMapping("/listar")
@@ -125,8 +130,14 @@ public class CentroTrabajoController {
 	
 	@ResponseBody
 	@PostMapping("/{idCT}/paradas")
-	public ResponseEntity<?> registrarActualizarParada(@PathVariable Integer idCT){
-		return null;
+	public ResponseEntity<?> registrarActualizarParada(@RequestBody RegistroParadaDTO registroParada){
+		System.out.println("Controller registra parada");
+		ErrorMensaje mensaje = registroParadaService.registrarActualizarParada(registroParada);
+		if(mensaje.getError()) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
+        } else {
+            return ResponseEntity.ok(mensaje);
+        }
 	}
 	
 	@ResponseBody

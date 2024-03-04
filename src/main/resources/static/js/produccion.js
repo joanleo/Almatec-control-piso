@@ -625,30 +625,83 @@ async function obtenerParadas(){
 	
 }
 
+let modalParada
+let paradaSelected
 async function regActualizarParada(codigo){
 	console.log("Registra una parada, id de la parada: ", codigo)
+	if(configProceso == null){
+		mostrarAlert("Debe seleccionar un centro de trabajo", "danger")
+		return
+	}
+	
+	let operariosCT = await obtenerOperariosCT()
+	if(operariosCT.length == 0) {
+		mostrarAlert("No hay operarios registrados en este centro de trabajo", "danger")
+		return 
+	}
 	const paradas = await obtenerParadas()
-	let paradaSelected
 	for(let parada of paradas){
 		if(codigo == parada.codBarrasM){
-			paradaSelected = parada.codBarrasM
+			paradaSelected = parada
+			document.getElementById("descripcion-parada").value = parada.nombre
+			modalParada = new bootstrap.Modal('#modal-parada')
+			modalParada.show()
 		}
 	}
-	let mensaje = "Debe seleccionar un "
-	let mostrarError = false
-	if(configProceso == null){
-		mensaje += "centro de trabajo"
-		mostrarError = true
+	if(!paradaSelected){
+		mostrarAlert("La parada digitada no existe.", "danger")
+		return
 	}
-	
-	if(mostrarError) mostrarAlert(mensaje, "danger")
-	
-	registroParada = {
-		proceso:configProceso.id,
-		operario:"",
-		parada:paradaSelected
+}
+
+async function handleKeyPressParadaOperario(event){
+	if (event.key === 'Enter') {
+		const codigoOperElement = document.querySelector("#cod-operario-parada")
+		const codigoOper = codigoOperElement.value
+        const operario = await obtenerOperario(codigoOper.substring(3))
+        let operariosCT = await obtenerOperariosCT()
+        let isOperarioInCt = false
+        for(const oper of operariosCT){
+			if(oper.id == operario.id){
+				isOperarioInCt = true
+				const registroParadaDTO ={
+					"idConfigProceso": configProceso.id,
+					"idOperario": operario.id,
+					"idParada": paradaSelected.id
+				}
+				await registrarActualizarPara(registroParadaDTO)
+				console.log("Se envia parada a la bd")
+				modalParada.hide()
+		        codigoOperElement.value = ''
+			}
+		}
+		if(!isOperarioInCt){
+			mostrarAlert("El operario digitado no se encuentra registrado en el centro de trabajo", "danger")
+		}
+    }
+}
+
+async function registrarActualizarPara(registroParadaDTO){
+	try{
+		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/paradas`,
+		{
+			method: "POST",
+			headers: {
+		      'Content-Type': 'application/json'
+		    },
+			body: JSON.stringify(registroParadaDTO)
+		})
+		
+		if(!response.ok){
+			let error = await response.json();
+            console.error(error);
+            throw new Error(error.mensaje);
+		}
+		const data = await response.json()
+		mostrarAlert(data.mensaje,"success")
+	}catch(error){
+		mostrarAlert(error,"danger")
 	}
-	console.log("Debe identificar el usuario")
 }
 
 function reportePiezasNovedades(){

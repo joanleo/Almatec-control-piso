@@ -2,7 +2,7 @@ package com.almatec.controlpiso.integrapps.dtos;
 
 public class ErrorMensaje {
 	
-	private Boolean error;	
+	private Boolean error = false;	
 	private String mensaje;
 	
 	public ErrorMensaje() {
@@ -12,6 +12,10 @@ public class ErrorMensaje {
 	public ErrorMensaje(Boolean error, String mensaje) {
 		super();
 		this.error = error;
+		this.mensaje = mensaje;
+	}
+
+	public ErrorMensaje(String mensaje) {
 		this.mensaje = mensaje;
 	}
 

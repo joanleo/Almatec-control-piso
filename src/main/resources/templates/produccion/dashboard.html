@@ -238,7 +238,7 @@
 		      </div>
 		      <div class="modal-body">
 			  		<div class="container">
-						  <div class="row1" id="cod-operario" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+						  <div class="row1" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
 								<div class="input-group ">
 								  <span class="input-group-text">Operario: </span>
 								  <input type="text" aria-label="Codigo / Codigo de barras operario" id="codigo-operario-reporte" onkeypress="handleKeyPressPiezasOperario(event)" class="form-control">
@@ -297,7 +297,7 @@
 		      </div>
 		      <div class="modal-body">
 			  		<div class="container">
-						  <div class="row1" id="cod-operario" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+						  <div class="row1" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
 								<div class="input-group ">
 								  <span class="input-group-text">Operario: </span>
 								  <input type="text" aria-label="Codigo / Codigo de barras operario" id="codigo-operario-novedad" onkeypress="handleKeyPressNovedadesOperario(event)" class="form-control">
@@ -345,6 +345,36 @@
 		  </div>
 		</div>
 		
+		
+		<div class="modal fade" id="modal-parada" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="paradaLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #F8F9FA;">
+		        <h1 class="modal-title fs-5" id="paradaLabel" >Registro de parada</h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			  		<div class="container">
+						  <div class="row1" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+								<div class="input-group ">
+								  <span class="input-group-text">Operario: </span>
+								  <input type="text" aria-label="Codigo / Codigo de barras operario" id="cod-operario-parada" onkeypress="handleKeyPressParadaOperario(event)" class="form-control">
+								</div>
+						  </div>
+						  <div class="input-group my-3">
+					          	<span class="input-group-text">Parada: </span>
+					           	<input type="text" id="descripcion-parada"  class="form-control" readonly style="text-align: right;"/>						   
+				       	</div>
+					</div>						  
+		      </div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
 		
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
 		<script src="/js/loader.js"></script>

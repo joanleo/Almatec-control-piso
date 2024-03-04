@@ -115,12 +115,9 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 
 	@Override
 	public List<Operario> buscarOperariosCtDia(Integer idCT, Integer idConfigP) {
-		System.out.println("Buscando operarios centro trabajo proceso");
 		List<RegistroOperDia> registros = registroOperdiaService.findByIdCentroTAndIdConfigProceso(idCT, idConfigP);
-		System.out.println(registros);
 		List<Operario> operarios = new ArrayList<>();
 		for(RegistroOperDia registro:registros) {
-			System.out.println("Registro operario dia " + registro);
 			Operario operario = operarioRepo.findById(registro.getIdOperario())
 					.orElseThrow(()-> new ResourceNotFoundException("No se encontro el operario con id: " + registro.getIdOperario()));
 			operarios.add(operario);
