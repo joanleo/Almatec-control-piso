@@ -5,9 +5,9 @@ import com.almatec.controlpiso.integrapps.entities.ConfigProceso;
 public class ConfigProcesoDTO {
 
 	private Integer id;
-	private Integer estado;
+	private Boolean estado;
 	
-	public ConfigProcesoDTO(Integer id, Integer estado) {
+	public ConfigProcesoDTO(Integer id, Boolean estado) {
 		super();
 		this.id = id;
 		this.estado = estado;
@@ -15,7 +15,7 @@ public class ConfigProcesoDTO {
 
 	public ConfigProcesoDTO(ConfigProceso configProceso) {
 		this.id = configProceso.getId();
-		this.estado = configProceso.getIdEstadoProceso();
+		this.estado = configProceso.getIsActivo();
 	}
 
 	public Integer getId() {
@@ -26,11 +26,11 @@ public class ConfigProcesoDTO {
 		this.id = id;
 	}
 
-	public Integer getEstado() {
+	public Boolean getEstado() {
 		return estado;
 	}
 
-	public void setEstado(Integer estado) {
+	public void setEstado(Boolean estado) {
 		this.estado = estado;
 	}
 

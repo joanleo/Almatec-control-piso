@@ -29,4 +29,12 @@ public interface ConfigProcesoRepository extends JpaRepository<ConfigProceso, In
 	void guardarConfig(@Param("idCentroTrabajo") Integer idCentroTrabajo, 
 					   @Param("idTurno") Long idTurno);
 
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE pro_configproceso "
+			+ "SET E_activo = :estado "
+			+ "WHERE C_proconfigproceso_id = :idConfigProceso ", nativeQuery = true)
+	void updateIsActivo(@Param("idConfigProceso") Integer idConfigProceso, @Param("estado") int estado);
+
+
 }

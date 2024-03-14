@@ -210,7 +210,7 @@ async function validateCode() {
 			registraUsuarioCT(codigo)
 			break
 		case "EVE":
-			validaEvento()
+			validaEvento(codigo)
 			break
 		case "IDU":
 			asignaPiezaOperario()
@@ -299,8 +299,36 @@ async function registraUsuarioCT(codigo){
 	
 }
 
-async function validaEvento(){
+async function validaEvento(codigo){
 	console.log("Valida un evento")
+	if(codigo == "EVE0100"){
+		console.log(configProceso)
+		if(configProceso === null){
+			mostrarAlert("Debe existir al menos un centro de trabajo registrado para finalizar el turno", "danger")
+			return
+		}
+		try{
+			const response = await fetch(`/config-procesos/${configProceso.id}/finalizar-turno`,{
+				method: 'POST',
+				headers: {
+                	'Content-Type': 'application/json',
+            	},
+			})
+			if (response.ok) {
+		        const data = await response.json();
+		        if (data.status === "success") {
+		            mostrarAlert(data.message, "success");
+		        } else {
+		            mostrarAlert(data.message, "danger");
+		        }
+		    } else {
+		        const text = await response.text();
+		        mostrarAlert(text, "danger");
+		    }
+		}catch(error){
+			console.error("Error al tratar de finalizar el turno ", error)
+		}
+	}
 }
 
 async function obtenerOpCentroT(ct){
