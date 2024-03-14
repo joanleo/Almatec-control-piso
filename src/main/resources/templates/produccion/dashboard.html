@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head th:replace="fragments/head :: head('Produccion')"></head>
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
@@ -43,7 +43,7 @@
                     Reportar piezas
                 </button>
                 <button type="button" class="btn btn-secondary" id="btn-reporte-novedades" onclick="isValid()">
-                    Novedades
+                    Reportar desperdicio
                 </button>
             </div>
 
@@ -292,7 +292,7 @@
 		  <div class="modal-dialog modal-xl">
 		    <div class="modal-content">
 		      <div class="modal-header" style="background-color: #F8F9FA;">
-		        <h1 class="modal-title fs-5" id="novedadesLabel" >Reporte piezas operario</h1>
+		        <h1 class="modal-title fs-5" id="novedadesLabel" >Reporte novedades operario</h1>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">

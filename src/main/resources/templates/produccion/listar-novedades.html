@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Produccion')"></nav>
+				 
+		<div class="container my-5">
+			<h1>Novedades</h1>
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <div  id="filtro">
+			     <form class="filtro my-5">
+			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ..." />
+			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
+			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
+			     </form>
+			</div>
+		 
+			<div class="table-responsive my-5">
+				<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
+					<thead class="table-dark">
+						<tr>
+							<th>Proyecto</th>
+							<th>Fecha</th>
+							<th>Codigo</th>
+							<th>Descripcion</th>
+							<th>Centro T</th>
+							<th>Operario</th>
+							<th>Sobrante (piezas)</th>
+							<th>No conforme (ml)</th>
+							<th >Desperdicio (ml)</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="novedad : ${novedades}">
+							<td th:text="${ novedad.proyecto }"></td>
+							<td th:text="${ novedad.fechaCreachion }"></td>
+							<td th:text="${ novedad.codigoErpItem } ?: ${ novedad.codigoErpPerfil }"></td>
+							<td th:text="${ novedad.descripcionItem } ?: ${ novedad.descripcionPerfil }"></td>
+							<td th:text="${ novedad.idCentroTrabajo }"></td>
+							<td th:text="${ novedad.nombreOperario }"></td>
+							<td th:text="${ novedad.sobrante }"></td>
+							<td th:text="${ novedad.noConforme }"></td>
+							<td th:text="${ novedad.desperdicio }"></td>
+							<td>
+								<a role="button" class="btn btn-primary">Registro ERP</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

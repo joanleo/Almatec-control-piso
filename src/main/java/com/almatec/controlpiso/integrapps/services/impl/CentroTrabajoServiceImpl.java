@@ -141,12 +141,12 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	public void asignarActualizarPiezaOperario(Integer idCT, List<PiezaOperarioDTO> piezas) {
 		try {
 			for(PiezaOperarioDTO pieza: piezas) {
-				System.out.println(pieza);
 				Integer idProceso = pieza.getIdProceso();
 				Integer idOperario = pieza.getIdOperario();
 				Integer idPieza = pieza.getIdPieza();
 				Integer idPerfil = pieza.getIdPerfil();
 				RegistroPieza registro = registroPiezaService.consultaRegistroPieza(idCT, idProceso, idOperario, idPieza);
+				
 				LocalDateTime fecha = LocalDateTime.now();
 				if(registro != null) {
 					Boolean estaActivo = !registro.getIsActivo();
@@ -165,6 +165,10 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 				nuevoRegistro.setIsActivo(pieza.getEstaActivo());
 				System.out.println("Nuevo registro: " + nuevoRegistro);
 				registroPiezaService.actualizarRegistro(nuevoRegistro);
+				//validar registro operariodia parada == 50 cambiar a cero
+				RegistroOperDia registroOperario = registroOperdiaService.obtenerRegistroOperario(idCT, idProceso, idOperario);
+				Integer idParada = 0;
+				registroOperdiaService.actualizaParada(registroOperario, idParada);
 			}
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -190,7 +194,8 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 			cant = item.getCant();
 			centroTrabajo = item.getCentroTrabajo();
 			idItemFab = item.getIdItemFab();
-			cantFabricada = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItem, idItemFab, idCT);
+			Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItem, idItemFab, idCT);
+			cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
 		}
 		if(descripcion == null) {
 			for(ComponenteDTO componente: item.getComponentes()) {
@@ -199,7 +204,8 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 					cant = componente.getCantListaMateriales();
 					centroTrabajo = componente.getCentroTrabajoPerfil();
 					idPerfil = componente.getIdPerfil();
-					cantFabricada = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItem, idPerfil, idCT);
+					Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItem, idPerfil, idCT);
+					cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
 				}
 			}
 		}

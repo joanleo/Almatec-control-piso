@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:replace="fragments/head :: head('Produccion :: Reporte piezas centro de trabajo')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div class="container my-5" style="width:60%;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 <div class="card-body" style="margin: auto; width: 60%;">
+				 <div class="my-3" style="display: flex; justify-content: end;">
+					<div class="input-group size-m">
+					  <span class="input-group-text">Solicitud No: </span>
+					  <input type="text" aria-label="consecutivo" class="form-control" th:value="*{consecutivo}" readonly style="text-align: right;"/>
+					</div>
+				</div>
+				 <h2 class="mb-5"> Solicitud de Materia Prima </h2>
+	 		    <form method="POST" th:action="@{/materia-prima/solicitud}" th:object="${solicitudMP}" >
+					<div class="input-group my-3">
+			           <span class="input-group-text">Fecha Documento </span>
+			           <input type="datetime-local" class="form-control" id="fechaDoc" name="fechaDoc" th:field="*{solicitud.fechaDoc}" required style="text-align: right;" />
+			    	</div>
+					
+					<h2>Detalles de la Solicitud</h2>
+				        <div th:each="detalle, detalleStat : *{detalles}">
+				            <div class="detalle">
+								<div class="input-group my-3">
+						           	<span class="input-group-text">Código ERP </span>
+					                <input type="number" id="codigoErp" name="detalles[__${detalleStat.index}__].codigoErp" th:field="*{detalles[__${detalleStat.index}__].codigoErp}" required>
+						    	</div>
+								
+								<div class="input-group my-3">
+						           	<span class="input-group-text">Unidad ERP </span>
+					                <input type="text" id="undErp" name="detalles[__${detalleStat.index}__].undErp" th:field="*{detalles[__${detalleStat.index}__].undErp}">
+						    	</div>
+								
+								<div class="input-group my-3">
+						           	<span class="input-group-text">Cantidad Solicitada </span>
+					                <input type="number" id="cantSol" name="detalles[__${detalleStat.index}__].cantSol" step="0.01" th:field="*{detalles[__${detalleStat.index}__].cantSol}"><
+						    	</div>
+								
+				            </div>
+				        </div>
+				        
+				        <button type="button" id="agregarDetalle">Agregar Detalle</button><br>
+
+        				<button type="submit">Guardar Solicitud</button>
+				 </form>
+			 </div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		
+		<script>
+	        document.getElementById('agregarDetalle').addEventListener('click', function() {
+	            var detalle = document.querySelector('.detalle').cloneNode(true);
+	            document.querySelector('form').appendChild(detalle);
+	        });
+	    </script>
+    
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

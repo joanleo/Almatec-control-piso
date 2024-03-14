@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
+import com.almatec.controlpiso.integrapps.dtos.SolicitudMariaPrimaDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.VistaNovedades;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
+import com.almatec.controlpiso.integrapps.services.VistaNovedadesService;
 
 @Controller
 @RequestMapping("/produccion")
@@ -25,6 +28,9 @@ public class ProduccionController {
 	
 	@Autowired
 	private ItemOpService itemOpService;
+	
+	@Autowired
+	private VistaNovedadesService vistaNovedadesService; 
 
 	@GetMapping("/home")
 	public String homeProduction() {
@@ -60,5 +66,19 @@ public class ProduccionController {
 		
 		modelo.addAttribute("items", items);
 		return "produccion/detalle-op";
+	}
+	
+	@GetMapping("/novedades")
+	public String listarNovedades(Model modelo) {
+		List<VistaNovedades> novedades = vistaNovedadesService.obtenerNovedades();
+		modelo.addAttribute("novedades", novedades);
+		return "produccion/listar-novedades";
+	}
+	
+	@GetMapping("/materia-prima/solicitud")
+	public String solicitudMateriaPrima(Model modelo) {
+		SolicitudMariaPrimaDTO solicitud = new SolicitudMariaPrimaDTO();
+		modelo.addAttribute("solicitudMP", solicitud);
+		return "produccion/formulario-solicitud-materia-prima";
 	}
 }
