@@ -221,7 +221,7 @@ public class RegistroOperDia {
 
 	@Override
 	public String toString() {
-		return "RegistroOperDia [id=" + id + ", idConfigProceso=" + idConfigProceso + ", cia=" + cia + ", idCT=" + idCentroT
+		return "RegistroOperDia [id=" + id + ", idConfigProceso=" + idConfigProceso + ", cia=" + cia + ", idCentroT=" + idCentroT
 				+ ", idOperario=" + idOperario + ", idParada=" + idParada + ", idItem=" + idItem + ", fechaInicio="
 				+ fechaInicio + ", fechaFin=" + fechaFin + ", usuarioCrea=" + usuarioCrea + ", usuarioEdita="
 				+ usuarioEdita + ", fechaCreacion=" + fechaCreacion + ", fechaEdicion=" + fechaEdicion

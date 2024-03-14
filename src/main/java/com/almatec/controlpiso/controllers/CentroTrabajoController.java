@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -81,6 +83,8 @@ public class CentroTrabajoController {
 	
 	@Autowired
 	private RegistroParadaService registroParadaService;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	
 	@GetMapping("/listar")
@@ -154,7 +158,7 @@ public class CentroTrabajoController {
 								  @RequestParam Integer idOperario,
 								  Model modelo) {
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
-		System.out.println("Operario enviado al formulario: " + reporte.getOperario());
+		logger.debug("CantFab: {}, CantSol: {}", reporte.getCantFab(), reporte.getCantSol());
 		modelo.addAttribute("reporte", reporte);
 		return "produccion/formulario-reporte-piezas-ct";
 	}
@@ -182,6 +186,7 @@ public class CentroTrabajoController {
 		Integer ultimoConsecutivo = novedadCtService.obtenerUltimoConsecutivo();
 		NovedadDTO novedad = new NovedadDTO(reporte); 
 		System.out.println("Operario enviado al formulario novedades: " + reporte.getOperario());
+		
 		modelo.addAttribute("novedad", novedad);
 		modelo.addAttribute("consecutivo", ultimoConsecutivo);
 		return "produccion/formulario-novedades";

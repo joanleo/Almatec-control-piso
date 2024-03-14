@@ -1,16 +1,22 @@
 package com.almatec.controlpiso.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.integrapps.dtos.ConfigProcesoDTO;
+import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
 import com.almatec.controlpiso.integrapps.entities.ConfigProceso;
 import com.almatec.controlpiso.integrapps.services.ConfigProcesoService;
 
@@ -32,8 +38,22 @@ public class ConfigProcesoController {
 	public ConfigProcesoDTO configNuevoProceso(Model modelo, 
 									@PathVariable Integer idCentroTrabajo, 
 									@PathVariable Long idTurno) throws Exception {
-		System.out.println("Configurando CT");
 		return configProcesoService.configProceso(idCentroTrabajo, idTurno);
+	}
+	
+	@ResponseBody
+	@PostMapping("{idConfigProceso}/finalizar-turno")
+	public ResponseEntity<?> finalizarTurno(@PathVariable Integer idConfigProceso) {
+		ErrorMensaje mensaje = configProcesoService.finalizarTurno(idConfigProceso);
+		Map<String, Object> response = new HashMap<>();
+		if(Boolean.FALSE.equals(mensaje.getError())) {
+			response.put("status", "success");
+	        response.put("message", mensaje.getMensaje());
+	        return ResponseEntity.ok(response);
+		}
+		response.put("status", "error");
+        response.put("message", mensaje.getMensaje());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
 	
 }
