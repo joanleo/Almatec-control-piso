@@ -10,6 +10,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Immutable
 @Table(name = "Pedidos_Erp_Estado")
@@ -40,13 +42,20 @@ public class VistaPedidosErp {
 	@Column(name = "Vlr_Neto")
 	private String valor;
 	
-	@Column(name = "Id_estado")
-	private Integer estado;
+	@Column(name = "f054_descripcion")
+	private String estado;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date fecha;
 	
 	@Column(name = "f431_id_proyecto")
 	private String proyecto;
+	
+	@Column(name = "Vendedor")
+	private String vendedor;
+	
+	@Column(name = "Id_estado")
+	private Integer idEstado;
 
 	public VistaPedidosErp() {
 		super();
@@ -108,11 +117,11 @@ public class VistaPedidosErp {
 		this.valor = valor;
 	}
 
-	public Integer getEstado() {
+	public String getEstado() {
 		return estado;
 	}
 
-	public void setEstado(Integer estado) {
+	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 
@@ -132,13 +141,29 @@ public class VistaPedidosErp {
 		this.proyecto = proyecto;
 	}
 
-	@Override
-	public String toString() {
-		return "VistaPedidosErp [nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal + ", tipo="
-				+ tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", estado=" + estado
-				+ ", fecha=" + fecha + ", proyecto=" + proyecto + "]";
+	public String getVendedor() {
+		return vendedor;
 	}
 
+	public void setVendedor(String vendedor) {
+		this.vendedor = vendedor;
+	}
+
+	public Integer getIdEstado() {
+		return idEstado;
+	}
+
+	public void setIdEstado(Integer idEstado) {
+		this.idEstado = idEstado;
+	}
+
+	@Override
+	public String toString() {
+		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
+				+ ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", estado="
+				+ estado + ", fecha=" + fecha + ", proyecto=" + proyecto + ", vendedor=" + vendedor + ", idEstado="
+				+ idEstado + "]";
+	}
 	
 
 }

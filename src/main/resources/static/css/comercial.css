@@ -1,0 +1,29 @@
+.table-rounded {
+    border-radius: 10px;
+    overflow: hidden; /* Oculta cualquier contenido que se desborde de la tabla */
+}
+
+.table-rounded thead th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.table-rounded thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.table-rounded tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.table-rounded tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.rounded{
+  border-radius: .375rem !important;
+  border-width: 1px;
+}
+
+caption{
+	padding-left: 0.5rem;
+}

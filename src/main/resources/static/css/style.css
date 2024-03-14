@@ -64,7 +64,7 @@ body{
 }
 
 .size-s{
-    width: 9rem;
+    width: 9rem !important;
 }
 .size-xs{
 	width: 5rem !important;
@@ -113,12 +113,40 @@ footer {
 	flex-grow: 1;
 }
 
-.user__badge {
+.finished__badge {
   width: max-content;
   background: #dcfce7;
   border-radius: 6px;
   border: 1px solid #15803d;
   color: #15803d;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+.approved__badge {
+  width: max-content;
+  background: #9DD0EB;
+  border-radius: 6px;
+  border: 1px solid #3F3FEB;
+  color: #3F3FEB;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+.user__badge {
+  width: max-content;
+  background: #f8ffdc;
+  border-radius: 6px;
+  border: 1px solid #EAA90F;
+  color: #EAA90F;
   padding: 4px 12px;
   display: flex;
   align-items: center;

@@ -2,13 +2,15 @@ package com.almatec.controlpiso.integrapps.repositories;
 
 import java.util.List;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.integrapps.entities.VistaPedidosErp;
 
-public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp, Long> {
+public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp, Long>, JpaSpecificationExecutor<VistaPedidosErp> {
 
 	List<VistaPedidosErp> findByTipoAndEstadoOrderByNoPvDesc(String tipoP, Integer idEstado);
 
@@ -21,5 +23,9 @@ public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp
 	List<VistaPedidosErp> buscarPedidosErpFilterByKeyword(@Param("tipoP") String tipoP, 
 			@Param("idEstado") int idEstado, 
 			@Param("keyword") String keyword);
+
+	List<VistaPedidosErp> findAll(Specification<VistaPedidosErp> pedidos);
+
+	List<VistaPedidosErp> findByTipoAndIdEstadoOrderByNoPvDesc(String string, int i);
 
 }
