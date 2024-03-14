@@ -11,5 +11,9 @@ public interface RegistroOperDiaService {
 
 	List<RegistroOperDia> findByIdCentroTAndIdConfigProceso(Integer idCT, Integer idConfigP);
 
+	void actualizaParada(RegistroOperDia registroOperario, int idParada);
+
+	RegistroOperDia obtenerRegistroOperario(Integer idCT, Integer idProceso, Integer idOperario);
+
 
 }

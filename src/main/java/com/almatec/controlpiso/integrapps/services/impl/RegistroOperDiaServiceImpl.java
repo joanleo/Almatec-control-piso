@@ -2,6 +2,7 @@ package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -36,13 +37,15 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 			return "se encuentra registrado en otro centro de trabajo";
 		}
 		RegistroOperDia registroOperario = registroOperRepo.findByIdCentroTAndFecha(operarioDTO, fechaActual);
+		System.out.println(operarioDTO);
 		System.out.println(registroOperario);
 		if(registroOperario == null) {
 			Date fecha = new Date();
 			registroOperRepo.agregarOperario(operarioDTO, fecha);
 			return "agregado exitosamente";				
 		}
-		if(registroOperario.getIdCentroT() == operarioDTO.getIdCentroTrabajo() && registroOperario.getIdConfigProceso() == operarioDTO.getIdConfigProceso()) {
+		if(Objects.equals(registroOperario.getIdCentroT(), operarioDTO.getIdCentroTrabajo()) 
+				&& Objects.equals(registroOperario.getIdConfigProceso(), operarioDTO.getIdConfigProceso())) {
 			Boolean estado = (registroOperario.getIsActivo());
 			System.out.println("Estado operario registro NEGADO: "+ !estado);
 			System.out.println("Actualizando estado del operario...");
@@ -56,6 +59,17 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 	@Override
 	public List<RegistroOperDia> findByIdCentroTAndIdConfigProceso(Integer idCT, Integer idConfigP) {
 		return registroOperRepo.findByIdCentroTAndIdConfigProcesoAndIsActivoTrue(idCT, idConfigP);
+	}
+
+	@Override
+	public RegistroOperDia obtenerRegistroOperario(Integer idCT, Integer idProceso, Integer idOperario) {
+		return registroOperRepo.findByIdCentroTAndIdConfigProcesoAndIdOperario(idCT, idProceso, idOperario);
+	}
+
+	@Override
+	public void actualizaParada(RegistroOperDia registroOperario, int idParada) {
+		registroOperRepo.actualizaParada(registroOperario, idParada);
+		
 	}
 
 	

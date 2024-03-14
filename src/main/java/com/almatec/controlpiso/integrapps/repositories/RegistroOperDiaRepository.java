@@ -58,7 +58,16 @@ public interface RegistroOperDiaRepository extends JpaRepository<RegistroOperDia
 			+ "AND C_proconfigproceso_id = :#{#operarioDTO.idConfigProceso} ", nativeQuery = true)
 	RegistroOperDia findByIdCentroTAndFecha(@Param("operarioDTO") OperarioDTO operarioDTO, @Param("fechaActual") Date fechaActual);
 
-	List<RegistroOperDia> findByIdCentroTAndIdConfigProcesoAndIdOperario(Integer idCT, Integer idProceso, Integer idOperario);
+	RegistroOperDia findByIdCentroTAndIdConfigProcesoAndIdOperario(Integer idCT, Integer idProceso, Integer idOperario);
+
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE pro_regoperxdia "
+			+ "SET C_proparada_id = :idParada "
+			+ "WHHERE (C_prooperario_id = :#{#registroOperario.idOperario} "
+			+ "AND C_centrotrabajo_id = :#{#registroOperario.idCentroT} "
+			+ "AND C_proconfigproceso_id = :#{#registroOperario.idConfigProceso} ", nativeQuery = true)
+	void actualizaParada(@Param("registroOperario") RegistroOperDia registroOperario, @Param("idParada") int idParada);
 
 	
 
