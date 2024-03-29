@@ -18,4 +18,8 @@ public interface OrdenPvService {
 
 	List<OpProduccionDTO> buscarOrdenesPorIdProyecto(String idProyecto);
 
+	OrdenPv obtenerOrdenPorId(Integer idPvIntegrapps);
+
+	void guardarOrden(OrdenPv orden);
+
 }

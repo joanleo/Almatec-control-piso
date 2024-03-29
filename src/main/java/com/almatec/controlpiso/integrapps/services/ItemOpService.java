@@ -22,4 +22,8 @@ public interface ItemOpService {
 	Page<ItemOp> obtenerPagina(List<ItemOp> itemsOp, PagingRequest pagingRequest);
 
 	List<ItemOp> obtenerItemsOpProduccion(Integer numOp);
+
+	ItemOp obtenerItemPorId(Long itemId);
+
+	void guardarItemOp(ItemOp item);
 }

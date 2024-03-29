@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
 import com.almatec.controlpiso.integrapps.paging.Column;
@@ -180,6 +181,17 @@ public class ItemOpServiceImpl implements ItemOpService {
 			itemsOp.add(item);
 		}
 		return itemsOp;
+	}
+
+	@Override
+	public ItemOp obtenerItemPorId(Long itemId) {
+		return itemOpRepo.findById(itemId)
+				.orElseThrow(()-> new ResourceNotFoundException("No se encontro el item con id: " + itemId));
+	}
+
+	@Override
+	public void guardarItemOp(ItemOp item) {
+		itemOpRepo.save(item);		
 	}
 
 }

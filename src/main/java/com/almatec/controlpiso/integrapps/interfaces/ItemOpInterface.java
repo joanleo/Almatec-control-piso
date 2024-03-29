@@ -20,5 +20,6 @@ public interface ItemOpInterface {
 	String getruta_plano();
 	Date getfecha_crea();
 	Integer getid_estado();
+	Double cant_cumplida();
 
 }

@@ -64,6 +64,9 @@ public class ItemOp {
 	
 	@Column(name = "id_estado")
 	private Integer idEstado;
+	
+	@Column(name = "cant_cumplida")
+	private Double cantCumplida;
 
 	public ItemOp() {
 		super();
@@ -86,6 +89,7 @@ public class ItemOp {
 		this.idEstado = itemInterface.getid_estado();
 		this.rutaPlano = itemInterface.getruta_plano();
 		this.fechaCreacion = itemInterface.getfecha_crea();
+		this.cantCumplida = itemInterface.cant_cumplida();
 	}
 
 	public Long getId() {
@@ -216,14 +220,21 @@ public class ItemOp {
 		this.codigoErp = codigoErp;
 	}
 
+	public Double getCantCumplida() {
+		return cantCumplida;
+	}
+
+	public void setCantCumplida(Double cantCumplida) {
+		this.cantCumplida = cantCumplida;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idPvIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
 				+ grupo + ", codigoErp=" + codigoErp + ", descripcion=" + descripcion + ", marca=" + marca + ", peso="
 				+ peso + ", um=" + um + ", cant=" + cant + ", isEspecial=" + isEspecial + ", isReqPlano=" + isReqPlano
 				+ ", isActivo=" + isActivo + ", rutaPlano=" + rutaPlano + ", fechaCreacion=" + fechaCreacion
-				+ ", idEstado=" + idEstado + "]";
+				+ ", idEstado=" + idEstado + ", cantCumplida=" + cantCumplida + "]";
 	}
-
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
 import com.almatec.controlpiso.integrapps.entities.OrdenPv;
@@ -77,6 +78,18 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 			ordenes.add(orden);
 		}
 		return ordenes;
+	}
+
+	@Override
+	public OrdenPv obtenerOrdenPorId(Integer idPvIntegrapps) {
+		return ordenPvRepo.findById(idPvIntegrapps)
+				.orElseThrow(()-> new ResourceNotFoundException("No se encontro la orden PV con id: " + idPvIntegrapps));
+	}
+
+	@Override
+	public void guardarOrden(OrdenPv orden) {
+		ordenPvRepo.save(orden);
+		
 	}
 
 }
