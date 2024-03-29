@@ -18,6 +18,7 @@ public class ListadematerialesListadematerialesv3 implements Conector {
 	private Integer f820_id_hijo;  //Se valida con maestro, es obligatorio si no se especifica la referencia
 	private String f820_referencia_hijo;  //Se valida con maestro, es obligatoria si no se especifica el código
 	private String f820_id_ext1_detalle_hijo;  //Es obligatorio si el ítem maneja extensión 1
+	private String f820_id_ext2_detalle_hijo;  //Es obligatorio si el ítem maneja extensión 2
 
 	public String getF_numero_reg () {
 		return getFormattedValue(F_NUMERO_REG ,7);
@@ -139,6 +140,14 @@ public class ListadematerialesListadematerialesv3 implements Conector {
 	public void setF820_id_ext1_detalle_hijo (String f820_id_ext1_detalle_hijo) {
 		this.f820_id_ext1_detalle_hijo = f820_id_ext1_detalle_hijo;
 	}
+	
+	public String getF820_id_ext2_detalle_hijo () {
+		return getFormattedValue(f820_id_ext2_detalle_hijo ,20);
+	}
+	
+	public void setF820_id_ext2_detalle_hijo (String f820_id_ext1_detalle_hijo) {
+		this.f820_id_ext2_detalle_hijo = f820_id_ext1_detalle_hijo;
+	}
 
 	public ListadematerialesListadematerialesv3 () {
 	// Constructor vacio para inicializar
@@ -173,6 +182,6 @@ public class ListadematerialesListadematerialesv3 implements Conector {
 	}
 	@Override
 	public String getConector() {
-		return this.getF_numero_reg ()+this.getF_tipo_reg ()+this.getF_subtipo_reg ()+this.getF_version_reg ()+this.getF_cia ()+this.getF820_id   ()+this.getF820_referencia  ()+this.getF820_id_ext1_detalle ()+this.getF820_id_ext2_detalle ()+this.getF820_id_instalacion  ()+this.getF820_id_metodo  ()+this.getF820_secuencia  ()+this.getF820_id_hijo ()+this.getF820_referencia_hijo ()+this.getF820_id_ext1_detalle_hijo ();
+		return this.getF_numero_reg ()+this.getF_tipo_reg ()+this.getF_subtipo_reg ()+this.getF_version_reg ()+this.getF_cia ()+this.getF820_id   ()+this.getF820_referencia  ()+this.getF820_id_ext1_detalle ()+this.getF820_id_ext2_detalle ()+this.getF820_id_instalacion  ()+this.getF820_id_metodo  ()+this.getF820_secuencia  ()+this.getF820_id_hijo ()+this.getF820_referencia_hijo ()+this.getF820_id_ext1_detalle_hijo ()+this.getF820_id_ext2_detalle_hijo();
 	}
 }

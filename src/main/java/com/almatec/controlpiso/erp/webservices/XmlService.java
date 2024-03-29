@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
@@ -33,7 +32,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.almatec.controlpiso.erp.dto.ListaMaterialesDTO;
+import com.almatec.controlpiso.erp.dto.RutaDTO;
 import com.almatec.controlpiso.erp.entities.ListaMaterial;
+import com.almatec.controlpiso.erp.interfaces.RutaInterface;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoordenesdeproduccionDocumentosVersión01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoordenesdeproduccionItemsVersión01;
@@ -41,9 +42,13 @@ import com.almatec.controlpiso.erp.webservices.generated.Final;
 import com.almatec.controlpiso.erp.webservices.generated.Inicial;
 import com.almatec.controlpiso.erp.webservices.generated.ListadematerialesListadematerialesv3;
 import com.almatec.controlpiso.erp.webservices.generated.ListadematerialesListadematerialesv4;
+import com.almatec.controlpiso.erp.webservices.generated.RutasoperacionesOperacionesV01;
+import com.almatec.controlpiso.erp.webservices.generated.RutasoperacionesOperacionesV02;
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
-import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.entities.VistaItemPedidoErp;
+import com.almatec.controlpiso.integrapps.services.ItemOpService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -56,7 +61,10 @@ public class XmlService {
 	private RestTemplate restTemplate;
 	
 	@Autowired
-	private ListaMaterialService listaMaterial;
+	private ListaMaterialService listaMaterialService;
+	
+	@Autowired
+	private ItemOpService itemOpService;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -328,7 +336,7 @@ public class XmlService {
 
 	public String crearListaMAteriales(List<ListaMaterialesDTO> listaMateriales) throws IOException {
 		List<Conector> listaBorarXml = new ArrayList<>();
-		List<ListaMaterial> lista = listaMaterial.obtenerListaActual(listaMateriales.get(0).getF820_id());
+		List<ListaMaterial> lista = listaMaterialService.obtenerListaActual(listaMateriales.get(0).getF820_id());
 		List<ListadematerialesListadematerialesv3> listaBorrar = new ArrayList<>();
 		for(ListaMaterial item: lista){
 			ListadematerialesListadematerialesv3 borrar = new ListadematerialesListadematerialesv3();
@@ -338,10 +346,10 @@ public class XmlService {
 			borrar.setF820_id_instalacion("001");
 			borrar.setF820_id_metodo(item.getMetodo());
 			borrar.setF820_secuencia(item.getSecuencia());
-			borrar.setF820_id_hijo(item.getRowIdHijo());
+			borrar.setF820_id_hijo(item.getIdHijo());
 			listaBorrar.add(borrar);
 		}
-		listaBorarXml.addAll(listaBorarXml);
+		listaBorarXml.addAll(listaBorrar);
 		
 		String response = postImportarXML(listaBorarXml);
 		System.out.println(response);
@@ -383,6 +391,67 @@ public class XmlService {
 		System.out.println(responseCrear);
 		
 		return "Creada Exitosamente";
+	}
+
+
+	public String crearRuta(List<RutaDTO> rutas) throws IOException {
+		List<Conector> rutaBorrarXml = new ArrayList<>();
+		List<RutaInterface> rutasI = listaMaterialService.obtenerRutasActual(rutas.get(0).getF808_id());
+		List<RutasoperacionesOperacionesV02> listaBorrar = new ArrayList<>();
+		for(RutaInterface item: rutasI) {
+			System.out.println(item.getf808_id() + " " + item.getf808_id_instalacion() + " " + item.getf809_numero_operacion() +" " + item.getf809_id_metodo());
+			RutasoperacionesOperacionesV02 borrar = new RutasoperacionesOperacionesV02();
+			borrar.setF_cia(22);
+			borrar.setF808_id(item.getf808_id());
+			borrar.setF808_id_instalacion(item.getf808_id_instalacion());
+			borrar.setF809_id_metodo(item.getf809_id_metodo());
+			borrar.setF809_numero_operacion(item.getf809_numero_operacion());
+			listaBorrar.add(borrar);
+		}
+		rutaBorrarXml.addAll(listaBorrar);
+		String responseBorrar = postImportarXML(rutaBorrarXml);
+		System.out.println(responseBorrar);
+		
+		List<Conector> rutaCrearXml = new ArrayList<>();
+		List<RutasoperacionesOperacionesV01> listaCrear = new ArrayList<>();
+		for(RutaDTO item: rutas) {
+			RutasoperacionesOperacionesV01 crear = new RutasoperacionesOperacionesV01();
+			crear.setF_cia(22);
+			crear.setF808_id(item.getF808_id());
+			crear.setF808_id_instalacion(item.getF808_id_instalacion());
+			crear.setF809_id_metodo(item.getF809_id_metodo());
+			crear.setF809_numero_operacion(item.getF809_numero_operacion());
+			crear.setF809_ind_estado(1);
+			crear.setF809_descripcion(item.getF809_descripcion());
+			crear.setF809_ind_operacion_externa(0);
+			crear.setF809_id_ctrabajo(item.getF809_id_ctrabajo());
+			crear.setF809_cantidad_base(item.getF809_cantidad_base());
+			crear.setF809_horas_maquina(item.getF809_horas_maquina());
+			crear.setF809_fecha_activacion(obtenerFechaFormateada());
+			crear.setF809_num_operarios_alistamiento("001");
+			crear.setF809_num_operarios_ejecucion("001");
+			crear.setF809_unidades_equivalentes(1.0);
+			listaCrear.add(crear);
+		}
+		rutaCrearXml.addAll(listaCrear);
+		String responseCrear = postImportarXML(rutaCrearXml);
+		System.out.println(responseCrear);
+		return "Creada Exitosamente";
+	}
+
+
+	public String crearListaMaterialesPorIdTabla(Integer id) throws IOException {
+		String response = null;
+		String jsonString = itemOpService.obtenerStringListaMateriales(id);
+		ObjectMapper objectMapper = new ObjectMapper();
+		List<ListaMaterialesDTO> miDTOList = new ArrayList<>();
+		try {
+            miDTOList = objectMapper.readValue(jsonString, new TypeReference<List<ListaMaterialesDTO>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		response = crearListaMAteriales(miDTOList);
+		return response;
 	}
 
 	

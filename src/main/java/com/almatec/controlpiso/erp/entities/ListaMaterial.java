@@ -19,8 +19,8 @@ public class ListaMaterial {
 	@Column(name = "f820_secuencia")
 	private Integer secuencia;
 	
-	@Column(name = "f820_rowid_item_ext_hijo")
-	private Integer rowIdHijo;
+	@Column(name = "id_hijo")
+	private Integer idHijo;
 	
 	public ListaMaterial() {
 		super();
@@ -31,7 +31,7 @@ public class ListaMaterial {
 		this.rowId = rowId;
 		this.metodo = metodo;
 		this.secuencia = secuencia;
-		this.rowIdHijo = rowIdItemExtHijo;
+		this.idHijo = rowIdItemExtHijo;
 	}
 
 	public Integer getRowId() {
@@ -46,8 +46,8 @@ public class ListaMaterial {
 		return secuencia;
 	}
 
-	public Integer getRowIdHijo() {
-		return rowIdHijo;
+	public Integer getIdHijo() {
+		return idHijo;
 	}
 
 	public void setRowId(Integer rowId) {
@@ -62,14 +62,14 @@ public class ListaMaterial {
 		this.secuencia = secuencia;
 	}
 
-	public void setRowIdHijo(Integer rowIdItemExtHijo) {
-		this.rowIdHijo = rowIdItemExtHijo;
+	public void setIdHijo(Integer rowIdItemExtHijo) {
+		this.idHijo = rowIdItemExtHijo;
 	}
 
 	@Override
 	public String toString() {
 		return "ListaMaterial [rowId=" + rowId + ", metodo=" + metodo + ", secuencia=" + secuencia
-				+ ", rowIdItemExtHijo=" + rowIdHijo + "]";
+				+ ", rowIdItemExtHijo=" + idHijo + "]";
 	}
 	
 }
