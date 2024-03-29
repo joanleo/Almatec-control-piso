@@ -22,19 +22,23 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 	@Autowired
 	private RegistroOperDiaRepository registroOperRepo;
 	
-	private Boolean isOperarioRegistradoOtroCt(OperarioDTO operarioDTO) {
+	private String isOperarioRegistradoOtroCt(OperarioDTO operarioDTO) {
 		System.out.println("Validando si esta activo en otro ct");
 		Date fechaActual = new Date();
-		List<RegistroOperDia> registros = registroOperRepo.findOperariosCT(operarioDTO, fechaActual);
-		return registros != null && !registros.isEmpty();
+		List<String> registros = registroOperRepo.findOperariosCT(operarioDTO, fechaActual);
+		for(String registro: registros) {
+			System.out.println(registro);
+		}
+		return registros.get(0);
 	}
 
 	@Override
 	public String agregarRetirarOperario(OperarioDTO operarioDTO) {
 		
 		Date fechaActual = new Date();
-		if(Boolean.TRUE.equals(isOperarioRegistradoOtroCt(operarioDTO))) {
-			return "se encuentra registrado en otro centro de trabajo";
+		String otroCt = isOperarioRegistradoOtroCt(operarioDTO);
+		if(otroCt != null) {
+			return "ya se encuentra registrado en el centro de trabajo " + otroCt;
 		}
 		RegistroOperDia registroOperario = registroOperRepo.findByIdCentroTAndFecha(operarioDTO, fechaActual);
 		System.out.println(operarioDTO);
