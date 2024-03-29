@@ -133,7 +133,13 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 
 	@Override
 	public List<VistaTiemposOperarios> obtenerTiemposOperarios(Integer idProceso) {
+		System.out.println("Config proceso: " + idProceso);
 		List<VistaTiemposOperarios> tiempos = vistaTiemposOperariosService.obtenerTiemposOperarios(idProceso);		
+		System.out.println("Lista size: " + tiempos.size());
+		System.out.println("Tiempos operarios: ");
+		for(VistaTiemposOperarios tiempo: tiempos) {
+			System.out.println(tiempo);
+		}
 		return tiempos;
 	}
 
@@ -167,8 +173,11 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 				registroPiezaService.actualizarRegistro(nuevoRegistro);
 				//validar registro operariodia parada == 50 cambiar a cero
 				RegistroOperDia registroOperario = registroOperdiaService.obtenerRegistroOperario(idCT, idProceso, idOperario);
-				Integer idParada = 0;
-				registroOperdiaService.actualizaParada(registroOperario, idParada);
+				System.out.println("Codigo de parada actual: " + registroOperario.getIdParada());
+				if(registroOperario.getIdParada() == 50) {
+					Integer idParada = 0;
+					registroOperdiaService.actualizaParada(registroOperario, idParada);					
+				}
 			}
 	    } catch (Exception e) {
 	        e.printStackTrace();

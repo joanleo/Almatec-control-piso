@@ -64,7 +64,7 @@ public interface RegistroOperDiaRepository extends JpaRepository<RegistroOperDia
 	@Modifying
 	@Query(value = "UPDATE pro_regoperxdia "
 			+ "SET C_proparada_id = :idParada "
-			+ "WHHERE (C_prooperario_id = :#{#registroOperario.idOperario} "
+			+ "WHERE (C_prooperario_id = :#{#registroOperario.idOperario} "
 			+ "AND C_centrotrabajo_id = :#{#registroOperario.idCentroT} "
 			+ "AND C_proconfigproceso_id = :#{#registroOperario.idConfigProceso} ", nativeQuery = true)
 	void actualizaParada(@Param("registroOperario") RegistroOperDia registroOperario, @Param("idParada") int idParada);
