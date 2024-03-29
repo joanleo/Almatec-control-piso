@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,15 +9,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.SolicitudMariaPrimaDTO;
+import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
+import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 import com.almatec.controlpiso.integrapps.entities.VistaNovedades;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
+import com.almatec.controlpiso.integrapps.services.VistaItemLoteDisponibleService;
 import com.almatec.controlpiso.integrapps.services.VistaNovedadesService;
 
 @Controller
@@ -30,7 +38,10 @@ public class ProduccionController {
 	private ItemOpService itemOpService;
 	
 	@Autowired
-	private VistaNovedadesService vistaNovedadesService; 
+	private VistaNovedadesService vistaNovedadesService;
+	
+	@Autowired
+	private VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
 
 	@GetMapping("/home")
 	public String homeProduction() {
@@ -78,7 +89,21 @@ public class ProduccionController {
 	@GetMapping("/materia-prima/solicitud")
 	public String solicitudMateriaPrima(Model modelo) {
 		SolicitudMariaPrimaDTO solicitud = new SolicitudMariaPrimaDTO();
+		DetalleSolicitudMateriaPrima item = new DetalleSolicitudMateriaPrima();
+		List<DetalleSolicitudMateriaPrima> detalles = new ArrayList<>();
+		//detalles.add(item);
+		solicitud.setDetalles(detalles);
+		Integer consecutivo = 1;
 		modelo.addAttribute("solicitudMP", solicitud);
+		modelo.addAttribute("consecutivo", consecutivo);
 		return "produccion/formulario-solicitud-materia-prima";
+	}
+	
+	@ResponseBody
+	@PostMapping("/items/disponibilidad")
+	public List<VistaItemLoteDisponible> obtenerItemsDispon(@RequestBody SpecItemLoteDTO filtro){
+		System.out.println(filtro);
+		List<VistaItemLoteDisponible> lista = vistaItemLoteDisponibleService.searchItems(filtro);
+		return lista;
 	}
 }
