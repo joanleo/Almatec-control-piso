@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .authorizeRequests(requests -> requests
                 		.antMatchers("/css/**", "/js/**", "/imgs/**").permitAll()
                 		.antMatchers("/login").permitAll()
+                		.antMatchers("/api/**").permitAll()
                 		.antMatchers("/logout").permitAll()
                         .antMatchers("/**").authenticated()
                         .anyRequest().authenticated())

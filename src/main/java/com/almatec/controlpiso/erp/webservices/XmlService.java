@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,12 +32,19 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.almatec.controlpiso.erp.dto.ListaMaterialesDTO;
+import com.almatec.controlpiso.erp.entities.ListaMaterial;
+import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoordenesdeproduccionDocumentosVersión01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoordenesdeproduccionItemsVersión01;
 import com.almatec.controlpiso.erp.webservices.generated.Final;
 import com.almatec.controlpiso.erp.webservices.generated.Inicial;
+import com.almatec.controlpiso.erp.webservices.generated.ListadematerialesListadematerialesv3;
+import com.almatec.controlpiso.erp.webservices.generated.ListadematerialesListadematerialesv4;
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
+import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.entities.VistaItemPedidoErp;
+
 
 
 
@@ -46,6 +54,9 @@ public class XmlService {
 	
 	@Autowired 
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private ListaMaterialService listaMaterial;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -312,6 +323,66 @@ public class XmlService {
 			cont++;
 		}
 		return detalle;
+	}
+
+
+	public String crearListaMAteriales(List<ListaMaterialesDTO> listaMateriales) throws IOException {
+		List<Conector> listaBorarXml = new ArrayList<>();
+		List<ListaMaterial> lista = listaMaterial.obtenerListaActual(listaMateriales.get(0).getF820_id());
+		List<ListadematerialesListadematerialesv3> listaBorrar = new ArrayList<>();
+		for(ListaMaterial item: lista){
+			ListadematerialesListadematerialesv3 borrar = new ListadematerialesListadematerialesv3();
+			System.out.println(item);
+			borrar.setF_cia(22);
+			borrar.setF820_id(listaMateriales.get(0).getF820_id());
+			borrar.setF820_id_instalacion("001");
+			borrar.setF820_id_metodo(item.getMetodo());
+			borrar.setF820_secuencia(item.getSecuencia());
+			borrar.setF820_id_hijo(item.getRowIdHijo());
+			listaBorrar.add(borrar);
+		}
+		listaBorarXml.addAll(listaBorarXml);
+		
+		String response = postImportarXML(listaBorarXml);
+		System.out.println(response);
+		/*if(Objects.equals(response, RESPUESTA_OK)) {
+			List<ListaMaterial> listaResponse = listaMaterial.obtenerListaActual(listaMateriales.getF820_id());
+			if(listaResponse == null) {
+				crearArchivo(listaBorarXml, listaMateriales.getF820_id().toString());
+				return "Eliminado Exitosamente";
+			}else {
+				throw new ResourceNotFoundException("No se encontro el recaudo creado");
+			}
+		}else {
+			throw new ResourceNotFoundException(response);
+		}*/
+		
+		List<Conector> listaCrearXml = new ArrayList<>();
+		List<ListadematerialesListadematerialesv4> listaCrear = new ArrayList<>();
+		for(ListaMaterialesDTO item: listaMateriales) {
+			ListadematerialesListadematerialesv4 crear = new ListadematerialesListadematerialesv4();
+			crear.setF_cia(22);
+			crear.setF820_id(item.getF820_id());
+			crear.setF820_id_instalacion("001");
+			crear.setF820_id_metodo("0001");
+			crear.setF820_secuencia(item.getF820_secuencia());
+			crear.setF820_id_hijo(item.getF820_id_hijo());
+			crear.setF820_cant_base(item.getF820_cant_base());
+			crear.setF820_cant_requerida(item.getF820_cant_requerida());
+			crear.setF820_fecha_activacion(obtenerFechaFormateada());
+			crear.setF820_codigo_uso(0);
+			crear.setF820_ind_no_costea(0);
+			crear.setF820_id_bodega(item.getF820_id_bodega());
+			
+			listaCrear.add(crear);
+		}
+		
+		listaCrearXml.addAll(listaCrear);
+		
+		String responseCrear = postImportarXML(listaCrearXml);
+		System.out.println(responseCrear);
+		
+		return "Creada Exitosamente";
 	}
 
 	
