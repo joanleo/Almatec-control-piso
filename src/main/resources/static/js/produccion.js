@@ -39,6 +39,174 @@ if(improductivo + productivo !== 0){
 progressBar.style.width = porcentaje + '%'
 progressBar.textContent = porcentaje + '%'
 
+async function llenarTablaProductividadOperario(){
+	if(centroTSelected != null){
+		const tiemposOperarios = await obtenerTiemposOperariosProceso()
+		let tBodyProductividad = document.getElementById("body-table-productividad-operario")
+		tBodyProductividad.innerHTML = ""
+		tiemposOperarios.forEach(operario => {
+			let row = document.createElement('tr')
+	        
+	        let cellNombre = document.createElement('td')
+	        cellNombre.textContent = operario.nombreOperario
+	        row.appendChild(cellNombre)
+	        
+	        let cellTurno = document.createElement('td')
+	        cellTurno.textContent = operario.turno
+	        row.appendChild(cellTurno)
+	        
+	        let cellInicio = document.createElement('td')
+	        cellInicio.textContent = formatarFechaHora(operario.fechaInicioTurno)
+	        row.appendChild(cellInicio)
+	        
+	        let cellPruductivo = document.createElement('td')
+	        cellPruductivo.textContent = formatarTiempo(parseFloat(operario.productivo))
+	        row.appendChild(cellPruductivo)
+	        const productivo = parseFloat(operario.productivo)
+	        
+	        let cellImproductivo = document.createElement('td')
+	        cellImproductivo.textContent = formatarTiempo(parseFloat(operario.improductivo))
+	        row.appendChild(cellImproductivo)
+	        const improductivo = parseFloat(operario.improductivo)
+	        
+	        let cellFinal = document.createElement('td')
+	        cellFinal.textContent = formatarFechaHora(operario.fechaInicioTurno)
+	        row.appendChild(cellFinal)
+	        
+	        let porcentaje
+	        if(improductivo + productivo !== 0){
+				console.log("calculando porcentaje progess bar")
+				console.log(typeof(productivo) + " " + productivo)
+				console.log(typeof(improductivo)  + " " + improductivo)
+				porcentaje = Math.ceil((1- improductivo / (improductivo + productivo)) * 100)
+				console.log("Valor del rogress bar: " + porcentaje)
+			}
+			porcentaje = porcentaje ?? 100
+			let cellProgressBar = document.createElement('td')
+			let containerProgressBar = document.createElement("div")
+			containerProgressBar.classList.add("progress-bar-container")
+			let progressBar = document.createElement("div")
+			progressBar.classList.add("progress-bar")
+			progressBar.style.width = porcentaje + '%'
+			progressBar.textContent = porcentaje + '%'
+			containerProgressBar.append(progressBar)
+			cellProgressBar.appendChild(containerProgressBar)
+	        row.appendChild(cellProgressBar)
+	        
+	        let cellEstado = document.createElement('td')
+	        cellEstado.textContent = operario.isActive ? "Activo": "Inactivo"
+	        row.appendChild(cellEstado)
+	        
+	        tBodyProductividad.appendChild(row)		
+		})		
+	}
+	
+}
+
+function formatarTiempo(segundos) {
+    const horas = Math.floor(segundos / 3600);
+    const minutos = Math.floor((segundos % 3600) / 60);
+    const segundosRestantes = segundos % 60;
+    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundosRestantes).padStart(2, '0')}`;
+}
+
+function formatarFechaHora(fecha) {
+    const fechaObj = new Date(fecha);
+    const horas = String(fechaObj.getHours()).padStart(2, '0');
+    const minutos = String(fechaObj.getMinutes()).padStart(2, '0');
+    return `${horas}:${minutos}`;
+}
+async function obtenerPiezasCtProceso(){
+	if(configProceso != null){
+		try{
+			const response = await fetch(`/centros-trabajo/${centroTSelected.id}/${configProceso.id}/piezas-operarios-ct-proceso`)
+			if(!response.ok){
+				console.error("Error en la solicitud:", response.statusText);
+				throw new Error("Error en la asignacion de pieza")
+			}
+			const data = await response.json()
+			return data
+			
+		}catch (error){
+			console.log(error)
+		}			
+	}
+}
+
+async function llenarTablaPiezasOperario(){
+	if(centroTSelected != null){
+		let piezasCT = await obtenerPiezasCtProceso()
+		let tBodyProductividad = document.getElementById("body-table-piezas-proceso")
+		tBodyProductividad.innerHTML = ""
+		console.log("Piezas en el ct en proceso: ", piezasCT)
+		piezasCT.forEach((pieza, index) => {
+			let row = document.createElement('tr')
+	        
+	        let cellIndex = document.createElement('td')
+	        cellIndex.textContent = index + 1
+	        row.appendChild(cellIndex)
+	        
+	        let cellOp = document.createElement('td')
+	        cellOp.textContent = pieza.tipoOp + "-" + pieza.numOp
+	        row.appendChild(cellOp)
+	        
+	        let cellNumItem = document.createElement('td')
+	        cellNumItem.textContent = ""
+	        row.appendChild(cellNumItem)
+	        
+	        let cellcliente = document.createElement('td')
+	        cellcliente.textContent = pieza.cliente
+	        row.appendChild(cellcliente)
+	        
+	        let cellProyecto = document.createElement('td')
+	        cellProyecto.textContent = pieza.proyecto
+	        row.appendChild(cellProyecto)
+	        
+	        let celldescripcion = document.createElement('td')
+	        celldescripcion.textContent = pieza.descripcion
+	        row.appendChild(celldescripcion)
+	        
+	        let cellTiempo = document.createElement('td')
+	        cellTiempo.textContent = formatarTiempo(parseFloat(pieza.tiempoTrancurrido))
+	        row.appendChild(cellTiempo)
+	        
+	        let cellOperario = document.createElement('td')
+	        cellOperario.textContent = pieza.nombreOperario
+	        row.appendChild(cellOperario)
+	        
+	        let cellStdr = document.createElement('td')
+	        cellStdr.textContent = pieza.tiempoStd
+	        row.appendChild(cellStdr)
+	        
+	        let cellEstado = document.createElement('td')
+	        cellEstado.textContent = pieza.isActive ? "Activo": "Inactivo"
+	        row.appendChild(cellEstado)
+	        
+	        let cellPlano = document.createElement('td')
+	        cellEstado.cellPlano = ""
+	        row.appendChild(cellPlano)
+	        
+	        tBodyProductividad.appendChild(row)
+	    })
+		/*if(ops.length == 0) {
+			console.log("No tiene piezas en el ct en proceso")
+			mostrarAlert("No tiene piezas en el ct en proceso", "warning")
+		}else{
+		}*/		
+	}
+} 
+
+async function mostrarOperariosCT(){
+	if(centroTSelected !== null && configProceso !== null){
+		let operariosCT = await obtenerOperariosCT()
+		const tiemposOperarios = await obtenerTiemposOperariosProceso()
+		console.log("Operario en centro de trabajo: ", operariosCT)
+		console.log("Tiempos operario ct: ", tiemposOperarios)
+		
+		let table = document.querySelector("#table-produccion")
+		//clearTable(table)
+	}
+}
 
 function saveToLocalStorage() {
     localStorage.setItem('turnos', JSON.stringify(turnos))
@@ -168,6 +336,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			title.textContent = centroTSelected.nombre
 		}
 	    mostrarOperariosCT()
+	    llenarTablaProductividadOperario()
+	    llenarTablaPiezasOperario()
     })()
 })
 
@@ -612,29 +782,19 @@ function addRowToTable(table, operario, index) {
 }
 
 async function obtenerTiemposOperariosProceso(){
-	try{
-		const response = await fetch(`/centros-trabajo/${configProceso.id}/tiempos_operarios`)
-		if(!response.ok){
-			const error = await response.json()
-			throw new Error(error)
-		}
-		return await response.json()
-	}catch(error){
-		console.error(error)
+	if(configProceso != null){
+		try{
+			const response = await fetch(`/centros-trabajo/${configProceso.id}/tiempos_operarios`)
+			if(!response.ok){
+				const error = await response.json()
+				throw new Error(error)
+			}
+			return await response.json()
+		}catch(error){
+			console.error(error)
+		}	
 	}
 	
-}
-
-async function mostrarOperariosCT(){
-	if(centroTSelected !== null && configProceso !== null){
-		let operariosCT = await obtenerOperariosCT()
-		const tiemposOperarios = await obtenerTiemposOperariosProceso()
-		console.log("Operario en centro de trabajo: ", operariosCT)
-		console.log("Tiempos operario ct: ", tiemposOperarios)
-		
-		let table = document.querySelector("#table-produccion")
-		//clearTable(table)
-	}
 }
 
 async function obtenerParadas(){
@@ -794,7 +954,7 @@ async function handleKeyPressPiezasOperario(event) {
         const operario = await obtenerOperario(codigoOper.substring(3))
         document.getElementById('codigo-operario-reporte').value = ''
         const operarioDTO = {
-			"idOperario": 3,
+			"idOperario": operario.id,
 			"idCentroTrabajo": centroTSelected.id,
 			"idConfigProceso": configProceso.id
 		}
@@ -818,7 +978,7 @@ async function handleKeyPressNovedadesOperario(event){
         const operario = await obtenerOperario(codigoOper.substring(3))
         document.getElementById('codigo-operario-novedad').value = ''
         const operarioDTO = {
-			"idOperario": 3,
+			"idOperario": operario.id,
 			"idCentroTrabajo": centroTSelected.id,
 			"idConfigProceso": configProceso.id
 		}

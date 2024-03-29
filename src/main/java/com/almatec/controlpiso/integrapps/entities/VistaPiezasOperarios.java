@@ -78,6 +78,21 @@ public class VistaPiezasOperarios {
 	@Column(name = "Esq_Pintura")
 	private String esquemaPintura;
 	
+	@Column(name = "tiempo_std_item")
+	private BigDecimal tiempoStdItem;
+	
+	@Column(name = "tiempo_std_perfil")
+	private BigDecimal tiempoStdPerfil;
+	
+	@Column(name = "N_sstranscurrido")
+	private Integer tiempoTrancurrido;
+	
+	@Column(name = "N_ssreproceso")
+	private Integer tiempoReproceso;
+	
+	@Column(name = "A_Operario_Nombre")
+	private String nombreOperario;
+	
 	
 
 	public Integer getIdRegPieza() {
@@ -184,20 +199,46 @@ public class VistaPiezasOperarios {
 		return esquemaPintura;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public BigDecimal getTiempoStdItem() {
+		return tiempoStdItem;
+	}
+
+	public BigDecimal getTiempoStdPerfil() {
+		return tiempoStdPerfil;
+	}
+
+	public Integer getTiempoTrancurrido() {
+		return tiempoTrancurrido;
+	}
+
+	public Integer getTiempoReproceso() {
+		return tiempoReproceso;
+	}
+
+	public String getNombreOperario() {
+		return nombreOperario;
+	}
+
 	public VistaPiezasOperarios() {
 		super();
 	}
 
 	@Override
 	public String toString() {
-		return "VistaPiezasOperarios [id=" + id + ", idRegPieza=" + idRegPieza + ", idProceso=" + idProceso
-				+ ", idCia=" + idCia + ", ct=" + ct + ", idOperario=" + idOperario + ", isActivo=" + isActivo
-				+ ", cliente=" + cliente + ", proyecto=" + proyecto + ", IdItem=" + IdItem + ", idItemFab=" + idItemFab
+		return "VistaPiezasOperarios [id=" + id + ", idRegPieza=" + idRegPieza + ", idProceso=" + idProceso + ", idCia="
+				+ idCia + ", ct=" + ct + ", idOperario=" + idOperario + ", isActivo=" + isActivo + ", cliente="
+				+ cliente + ", proyecto=" + proyecto + ", IdItem=" + IdItem + ", idItemFab=" + idItemFab
 				+ ", descripcionItem=" + descripcionItem + ", ctConjunto=" + ctConjunto + ", cantOp=" + cantOp
 				+ ", pesoConjunto=" + pesoConjunto + ", idPerfil=" + idPerfil + ", descripcionPerfil="
 				+ descripcionPerfil + ", ctPerfil=" + ctPerfil + ", codErp=" + codErp + ", pesoPerfil=" + pesoPerfil
 				+ ", cantListaMateriales=" + cantListaMateriales + ", longitud=" + longitud + ", prioridad=" + prioridad
 				+ ", idOp=" + idOp + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", esquemaPintura=" + esquemaPintura
+				+ ", tiempoStdItem=" + tiempoStdItem + ", tiempoStdPerfil=" + tiempoStdPerfil + ", tiempoTrancurrido="
+				+ tiempoTrancurrido + ", tiempoReproceso=" + tiempoReproceso + ", nombreOperario=" + nombreOperario
 				+ "]";
 	}
 	

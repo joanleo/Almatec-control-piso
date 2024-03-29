@@ -17,4 +17,10 @@ public interface VistaPiezasOperariosRepository extends JpaRepository<VistaPieza
 			+ "AND C_prooperario_id = :#{#operario.idOperario} ", nativeQuery = true)
 	List<VistaPiezasOperarios> findPiezasOperariosProceso(OperarioDTO operario);
 
+	@Query(value = "SELECT * "
+			+ "FROM view_piezas_operarios_proceso "
+			+ "WHERE C_proconfigproceso_id = :idConfig "
+			+ "AND ct = :idCT ", nativeQuery = true)
+	List<VistaPiezasOperarios> findPiezasOperariosProceso(Integer idCT, Integer idConfig);
+
 }

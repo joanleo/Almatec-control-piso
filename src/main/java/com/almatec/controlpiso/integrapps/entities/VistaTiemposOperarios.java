@@ -2,20 +2,17 @@ package com.almatec.controlpiso.integrapps.entities;
 
 import java.time.LocalDateTime;
 
-import javax.annotation.concurrent.Immutable;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Immutable
 @Entity
 @Table(name = "tiempo_operarios_proceso")
 public class VistaTiemposOperarios {
 	
-	@Id
-	@Column(name = "C_proconfigproceso_id")
-	private Integer idConfigProceso;
+	@EmbeddedId
+	private VistaTiemposOperariosId id;
 	
 	@Column(name = "F_turnoini")
 	private LocalDateTime fechaInicioTurno;
@@ -35,29 +32,18 @@ public class VistaTiemposOperarios {
 	@Column(name = "TmpActivo_A") 
 	private Float productivo;
 	
-	//TmpActivo
-	@Column(name = "C_prooperario_id")
-	private Integer idOperario;
-	//E_activo
+	@Column(name = "E_activo")
+	private Boolean isActive;
+	
 	@Column(name = "A_Operario_Nombre")
 	private String nombreOperario;
-	//F_configuracion
-	//C_proparada_id
-	@Column(name = "parada")
-	private String status;
-	//A_turno
+
 	private String turno;
-	//C_ciaorg_id
-	//centro_trabajo
+
 	public VistaTiemposOperarios() {
 		super();
 	}
-	public Integer getIdConfigProceso() {
-		return idConfigProceso;
-	}
-	public void setIdConfigProceso(Integer idConfigProceso) {
-		this.idConfigProceso = idConfigProceso;
-	}
+
 	public LocalDateTime getFechaInicioTurno() {
 		return fechaInicioTurno;
 	}
@@ -94,23 +80,12 @@ public class VistaTiemposOperarios {
 	public void setProductivo(Float productivo) {
 		this.productivo = productivo;
 	}
-	public Integer getIdOperario() {
-		return idOperario;
-	}
-	public void setIdOperario(Integer idOperario) {
-		this.idOperario = idOperario;
-	}
+
 	public String getNombreOperario() {
 		return nombreOperario;
 	}
 	public void setNombreOperario(String nombreOperario) {
 		this.nombreOperario = nombreOperario;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
 	}
 	public String getTurno() {
 		return turno;
@@ -118,6 +93,23 @@ public class VistaTiemposOperarios {
 	public void setTurno(String turno) {
 		this.turno = turno;
 	}
+
+	public VistaTiemposOperariosId getId() {
+		return id;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setId(VistaTiemposOperariosId id) {
+		this.id = id;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
 	
 
 }
