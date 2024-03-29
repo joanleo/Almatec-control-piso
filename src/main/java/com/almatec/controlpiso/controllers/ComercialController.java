@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ public class ComercialController {
 	@ResponseBody
 	@PostMapping("/pedidos/filtrar")
 	public List<VistaPedidosErp> getPedidos(@RequestBody PedidoSpecDTO busquedaSpec){
-		System.out.println(busquedaSpec);
 		List<VistaPedidosErp> lista = vistaPedidosErpService.searchOrder(busquedaSpec);
 		return lista;
 	}

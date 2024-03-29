@@ -56,105 +56,75 @@ public class VistaPedidosErp {
 	
 	@Column(name = "Id_estado")
 	private Integer idEstado;
+	
+	@Column(name = "f120_descripcion")
+	private String descripcion;
+	
+	@Column(name = "f431_cant1_pedida")
+	private Integer cantPedida;
 
 	public VistaPedidosErp() {
 		super();
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getNit() {
 		return nit;
 	}
 
-	public void setNit(String nit) {
-		this.nit = nit;
-	}
-
 	public String getRazonSocial() {
 		return razonSocial;
-	}
-
-	public void setRazonSocial(String razonSocial) {
-		this.razonSocial = razonSocial;
 	}
 
 	public String getSucursal() {
 		return sucursal;
 	}
 
-	public void setSucursal(String sucursal) {
-		this.sucursal = sucursal;
-	}
-
 	public String getTipo() {
 		return tipo;
-	}
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
 	}
 
 	public Integer getNoPv() {
 		return noPv;
 	}
 
-	public void setNoPv(Integer noPv) {
-		this.noPv = noPv;
-	}
-
 	public String getPedidoNo() {
 		return pedidoNo;
-	}
-
-	public void setPedidoNo(String pedidoNo) {
-		this.pedidoNo = pedidoNo;
 	}
 
 	public String getValor() {
 		return valor;
 	}
 
-	public void setValor(String valor) {
-		this.valor = valor;
-	}
-
 	public String getEstado() {
 		return estado;
-	}
-
-	public void setEstado(String estado) {
-		this.estado = estado;
 	}
 
 	public Date getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-
 	public String getProyecto() {
 		return proyecto;
-	}
-
-	public void setProyecto(String proyecto) {
-		this.proyecto = proyecto;
 	}
 
 	public String getVendedor() {
 		return vendedor;
 	}
 
-	public void setVendedor(String vendedor) {
-		this.vendedor = vendedor;
-	}
-
 	public Integer getIdEstado() {
 		return idEstado;
 	}
 
-	public void setIdEstado(Integer idEstado) {
-		this.idEstado = idEstado;
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public Integer getCantPedida() {
+		return cantPedida;
 	}
 
 	@Override
@@ -162,8 +132,8 @@ public class VistaPedidosErp {
 		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
 				+ ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", estado="
 				+ estado + ", fecha=" + fecha + ", proyecto=" + proyecto + ", vendedor=" + vendedor + ", idEstado="
-				+ idEstado + "]";
+				+ idEstado + ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + "]";
 	}
-	
 
+	
 }

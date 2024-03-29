@@ -23,7 +23,7 @@ async function buscarPedidos(){
 	}
 	
 	const orders = await getOrders(filtro)
-	console.log(orders)
+	//console.log(orders)
 	let listOrders = createListObjetsOrder(orders)
 	
 	fillTableOrders(listOrders)	
@@ -41,6 +41,7 @@ function fillTableOrders(listOrders) {
         row.appendChild(cellUn)
 
         let cellDescripcion = document.createElement('td')
+        cellDescripcion.textContent = order.descripcion
         row.appendChild(cellDescripcion)
 
         let cellCliente = document.createElement('td')
@@ -48,6 +49,7 @@ function fillTableOrders(listOrders) {
         row.appendChild(cellCliente)
 
         let cellPosiciones = document.createElement('td')
+        cellPosiciones.textContent = order.posiciones
         row.appendChild(cellPosiciones)
 
         let cellEstado = document.createElement('td')
@@ -94,7 +96,9 @@ function createListObjetsOrder(orders) {
     let listOrders = []
     for (const item of orders) {
         const un = item.proyecto
+        const descripcion = item.descripcion
         const cliente = item.razonSocial
+        const posiciones = item.cantPedida
         const estado = item.estado
         const asesor = item.vendedor
         const fecha = new Date(item.fecha + "T00:00:00")
@@ -105,7 +109,9 @@ function createListObjetsOrder(orders) {
         })
         const order = {
             "un": un,
+            "descripcion": descripcion,
             "cliente": cliente,
+            "posiciones": posiciones,
             "estado": estado,
             "asesor": asesor,
             "fecha": fechaFormateada
