@@ -35,9 +35,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.almatec.controlpiso.config.AppConfig;
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
 import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.InfoParadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.NovedadDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
+import com.almatec.controlpiso.integrapps.dtos.PiezaCTProcesoDTO;
 import com.almatec.controlpiso.integrapps.dtos.PiezaOperarioDTO;
 import com.almatec.controlpiso.integrapps.dtos.RegistroParadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
@@ -118,7 +120,7 @@ public class CentroTrabajoController {
 	public List<VistaTiemposOperarios> obtenerTiempoOperarios(@PathVariable Integer idProceso){
 		return centroTrabajoService.obtenerTiemposOperarios(idProceso);
 	}
-	
+		
 	@ResponseBody
 	@PostMapping("/{idCT}/asignar-pieza")
 	public ResponseEntity<?> asignarActualizarPiezaOperario(@PathVariable Integer idCT,
@@ -134,9 +136,9 @@ public class CentroTrabajoController {
 	
 	@ResponseBody
 	@PostMapping("/{idCT}/paradas")
-	public ResponseEntity<?> registrarActualizarParada(@RequestBody RegistroParadaDTO registroParada){
+	public ResponseEntity<?> registrarActualizarParada(@PathVariable Integer idCT, @RequestBody RegistroParadaDTO registroParada){
 		System.out.println("Controller registra parada");
-		ErrorMensaje mensaje = registroParadaService.registrarActualizarParada(registroParada);
+		ErrorMensaje mensaje = registroParadaService.registrarActualizarParada(registroParada, idCT);
 		if(mensaje.getError()) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
         } else {
@@ -149,6 +151,17 @@ public class CentroTrabajoController {
 	public Set<OpCentroTrabajoDTO> piezasCentroTrabajo(@RequestBody OperarioDTO operario){
 		System.out.println("Se reciben datos: " + operario);
 		Set<OpCentroTrabajoDTO> piezas = vistaPiezasOperariosService.obtenerPiezasOperarioProceso(operario);
+		return piezas;
+	}
+	
+	@ResponseBody
+	@GetMapping("/{idCT}/{idConfig}/piezas-operarios-ct-proceso")
+	public Set<PiezaCTProcesoDTO> piezasOperariosCentroTrabajo(
+			@PathVariable Integer idCT,
+			@PathVariable Integer idConfig){
+		System.out.println("Se ct: " + idCT);
+		System.out.println("Se ct: " + idConfig);
+		Set<PiezaCTProcesoDTO> piezas = vistaPiezasOperariosService.obtenerPiezasCentroTrabajoProceso(idCT, idConfig);
 		return piezas;
 	}
 	
@@ -319,6 +332,13 @@ public class CentroTrabajoController {
 		
 		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT);
 		documento.export(response);
+	}
+	
+	@ResponseBody
+	@GetMapping("/{idCT}/proceso/{idConfigProceso}/paradas")
+	public List<InfoParadaDTO> obtenerInfoParadasCT(@PathVariable Integer idConfigProceso){
+		List<InfoParadaDTO> lista = registroParadaService.obtenerInfoParadasCT(idConfigProceso);
+		return lista;
 	}
 
 }

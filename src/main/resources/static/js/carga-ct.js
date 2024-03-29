@@ -32,7 +32,6 @@ function agregarFilaATabla(table, data) {
 }
 
 function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes) {
-    // Limpiar solo las filas de las tablas, no los encabezados
     while (table_items.rows.length > 1) {
         table_items.deleteRow(1);
     }
@@ -95,10 +94,7 @@ function mostrarOcultarTabla(elementId, condition) {
 
 document.getElementById('centroSelect').addEventListener('change', async function () {
     selectedCentroId = this.value;
-    // Obtengo las ops por centro de trabajo		
     opsCargaCt = await obtenerOpCentroT(selectedCentroId);
-
-    // Limpio el div donde muestro las op, esto por si ya se ha seleccionado un ct antes para limpiar esas ops
     document.getElementById('ops-ct').innerHTML = '';
 
     if (Array.isArray(opsCargaCt) && opsCargaCt.length > 0) {
@@ -119,7 +115,6 @@ document.getElementById('centroSelect').addEventListener('change', async functio
 				checkbox.checked = isChecked;
 			}
 		
-		    // Llamar al evento change manualmente para actualizar la tabla
 		    actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes)
         });
 
