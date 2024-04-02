@@ -3,6 +3,7 @@ package com.almatec.controlpiso.integrapps.services;
 import java.util.List;
 
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
+import com.almatec.controlpiso.integrapps.dtos.OperarioRegistradoDTO;
 import com.almatec.controlpiso.integrapps.entities.RegistroOperDia;
 
 public interface RegistroOperDiaService {
@@ -14,6 +15,8 @@ public interface RegistroOperDiaService {
 	void actualizaParada(RegistroOperDia registroOperario, int idParada);
 
 	RegistroOperDia obtenerRegistroOperario(Integer idCT, Integer idProceso, Integer idOperario);
+
+	List<OperarioRegistradoDTO> obtenerOperariosRegistrados();
 
 
 }

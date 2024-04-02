@@ -1,5 +1,7 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
+import com.almatec.controlpiso.integrapps.dtos.OperarioRegistradoDTO;
 import com.almatec.controlpiso.integrapps.entities.RegistroOperDia;
+import com.almatec.controlpiso.integrapps.interfaces.OperarioRegistrado;
 import com.almatec.controlpiso.integrapps.repositories.RegistroOperDiaRepository;
 import com.almatec.controlpiso.integrapps.services.RegistroOperDiaService;
 
@@ -26,10 +30,8 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 		System.out.println("Validando si esta activo en otro ct");
 		Date fechaActual = new Date();
 		List<String> registros = registroOperRepo.findOperariosCT(operarioDTO, fechaActual);
-		for(String registro: registros) {
-			System.out.println(registro);
-		}
-		return registros.get(0);
+		
+		return registros.isEmpty() ? null : registros.get(0);
 	}
 
 	@Override
@@ -74,6 +76,21 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 	public void actualizaParada(RegistroOperDia registroOperario, int idParada) {
 		registroOperRepo.actualizaParada(registroOperario, idParada);
 		
+	}
+
+	@Override
+	public List<OperarioRegistradoDTO> obtenerOperariosRegistrados() {
+		Date fecha = new Date();
+		List<OperarioRegistrado> listOperariosInterface = registroOperRepo.findByFechaCreacion(fecha);
+		System.out.println(listOperariosInterface.get(0).getct_nombre());
+		List<OperarioRegistradoDTO> operarios = new ArrayList<>();
+		for(OperarioRegistrado oper: listOperariosInterface) {
+			System.out.println(oper.getoperario_nombre());
+			OperarioRegistradoDTO operario = new OperarioRegistradoDTO(oper);
+			operarios.add(operario);
+		}
+		
+		return operarios;
 	}
 
 	
