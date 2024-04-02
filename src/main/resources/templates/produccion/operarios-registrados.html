@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Produccion')">
+	</head>
+	<th:block >
+    </th:block>
+	<body>
+		
+		<nav th:replace="fragments/navbar :: nav-bar('Produccion')"></nav>
+				 
+		<div class="container my-5" style="width: 100%; margin-left: 10rem;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+				<span th:text="${message}"></span>
+			  	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    	<span aria-hidden="true">&times;</span>
+			  	</button>
+			</div>
+			
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+				<span th:text="${error}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				 </button>
+			</div>
+
+			<h1>Operarios</h1>
+			
+		<!--	<div style="display: flex; flex-direction: column;">
+				<div style="display: flex;">
+					<div class="input-group my-3 mx-3 size-m">
+						<span class="input-group-text">UN </span>
+						<input type="text" id="un"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			     			       	
+			       	<div class="input-group my-3 mx-3 size-l">
+						<span class="input-group-text">Asesor </span>
+						<input type="text" id="asesor"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			       						
+			       	<div class="input-group my-3 mx-3 size-m">
+						<label for="start_date" class="input-group-text">Desde</label>
+						<input type="date" id="start_date" name="start_date"  class="form-control" onchange="buscarPedidos()"/>
+					</div>
+				</div>
+		       		       	
+			</div> -->
+			
+			<div class="table-responsive" style="margin-top: 3rem;">
+				<table class="table table-striped table-hover table-rounded caption-top">
+					<caption>Operarios registrados</caption>
+					<thead class="table-dark">
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>C.T</th>
+							<th>Turno</th>
+							<th>Estado</th>
+							<th>Parada</th>
+						</tr>
+					</thead>
+					<tbody id="operarios-registrados">
+						<tr th:each="operario,stat : ${operarios}">
+							<td th:text="${stat.index +1}"></td>
+							<td th:text="${operario.operarioNombre}"></td>
+							<td th:text="${operario.ctNombre}"></td>
+							<td th:text="${operario.turnoDescripcion}"></td>
+							<td th:id="'estado_' + ${stat.index}" th:data-operario="${operario}"></td>
+							<td th:text="${operario.paradaNombre}"></td>
+						</tr>
+					</tbody>
+				</table>		 				
+			</div>
+
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>		
+		<script src="/js/operarios-registrados.js"></script>
+	</body>
+</html>
