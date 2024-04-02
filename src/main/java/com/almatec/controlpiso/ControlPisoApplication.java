@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.BufferedImageHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 
+
 @SpringBootApplication
 @ComponentScan("com.almatec.controlpiso")
 @EntityScan(basePackages = {"com.almatec.controlpiso.integrapps.entities","com.almatec.controlpiso.security.entities"})

@@ -211,10 +211,17 @@ public class VistaNovedades {
 	public void setNombreOperario(String nombreOperario) {
 		this.nombreOperario = nombreOperario;
 	}
-	
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "VistaNovedades [idNovedad=" + idNovedad + ", idItem=" + idItem + ", idItemFab=" + idItemFab
+				+ ", idPerfil=" + idPerfil + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario
+				+ ", fechaCreachion=" + fechaCreachion + ", noConforme=" + noConforme + ", desperdicio=" + desperdicio
+				+ ", sobrante=" + sobrante + ", isRegistered=" + isRegistered + ", descripcionItem=" + descripcionItem
+				+ ", descripcionPerfil=" + descripcionPerfil + ", numOp=" + numOp + ", codigoErpItem=" + codigoErpItem
+				+ ", codigoErpPerfil=" + codigoErpPerfil + ", proyecto=" + proyecto + ", nombreOperario="
+				+ nombreOperario + "]";
+	}
 	
 
 }

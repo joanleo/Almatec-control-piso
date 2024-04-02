@@ -32,10 +32,9 @@ public class ApiController {
 	@ResponseBody
 	@PostMapping("/lista-materiales")
 	public ResponseEntity<?> crearListaMateriales(@RequestBody List<ListaMaterialesDTO> listaMateriales){
-		System.out.println(listaMateriales);
 		logger.info("Se recibe solicitud de creacion de lista de materiales con la siguiente info: {}", listaMateriales);
 		try {
-			String response = xmlService.crearListaMAteriales(listaMateriales);
+			String response = xmlService.crearListaMAteriales(listaMateriales);			
 			return ResponseEntity.ok(response);
 	    } catch (IOException e) {
 	        e.printStackTrace();
@@ -49,6 +48,8 @@ public class ApiController {
 		logger.info("Se recibe solicitud de creacion de lista de materiales con el id: {}", id);
 		try {
 			String response = xmlService.crearListaMaterialesPorIdTabla(id);
+			String responseTransf = xmlService.crearTransferencia();
+			System.out.println(responseTransf);
 			return ResponseEntity.ok(response);
 	    } catch (IOException e) {
 	        e.printStackTrace();
@@ -64,6 +65,19 @@ public class ApiController {
 		logger.info("Se recibe solicitud de creacion de ruta", ruta);
 		try {
 			String response = xmlService.crearRuta(ruta);
+			return ResponseEntity.ok(response);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en la creación de la ruta"); 
+	    }
+	}
+	
+	@ResponseBody
+	@PostMapping("/rutas/{id}")
+	public ResponseEntity<?> crearRutasId(@PathVariable Integer id){
+		logger.info("Se recibe solicitud de creacion de ruta por id: {}", id);
+		try {
+			String response = xmlService.crearRutaPorId(id);
 			return ResponseEntity.ok(response);
 	    } catch (IOException e) {
 	        e.printStackTrace();

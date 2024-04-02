@@ -32,4 +32,14 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 
 	List<ItemOp> findByIdPvIntegrapps(Integer numOp);
 
+	@Query(value = "SELECT Json "
+			+ "FROM Apis_Json "
+			+ "WHERE Id_Integrador = :id "
+			+ "AND Estado = 0", nativeQuery = true)
+	String obtenerJsonPorId(@Param("id")Integer id);
+
+	@Query(value = "SELECT DISTINCT id_op_ia "
+			+ "FROM items_op ", nativeQuery = true)
+	List<Integer> obtenerNumsOps();
+
 }

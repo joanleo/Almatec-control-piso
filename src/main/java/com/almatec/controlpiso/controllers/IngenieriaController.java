@@ -10,16 +10,16 @@
 	
 	import org.springframework.beans.factory.annotation.Autowired;
 	import org.springframework.data.repository.query.Param;
+	import org.springframework.http.HttpStatus;
+	import org.springframework.http.ResponseEntity;
 	import org.springframework.stereotype.Controller;
 	import org.springframework.ui.Model;
 	import org.springframework.web.bind.annotation.GetMapping;
 	import org.springframework.web.bind.annotation.PathVariable;
 	import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-	import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+	import org.springframework.web.bind.annotation.RequestBody;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.bind.annotation.ResponseBody;
 	
 	import com.almatec.controlpiso.erp.webservices.XmlService;
 	import com.almatec.controlpiso.integrapps.entities.ItemOp;
@@ -80,18 +80,22 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 			return "ingenieria/pedido";
 		}
 		
-		@PostMapping("/crear-op")
-		public String crearOrdenProduccion(@RequestParam String referencia, 
-										   @RequestParam String noPedido, 
-										   RedirectAttributes flash ) {
-			List<VistaItemPedidoErp> items = vistaItemPedidosErp.buscarItemPedidoByReferencia(noPedido, referencia);
+		@PostMapping("/crear-op/{idOpI}")
+		public ResponseEntity<?> crearOrdenProduccion(@PathVariable Integer idOpI) {
+			System.out.println("Id op integraps: " + idOpI);
+			String referencia = "0024409";
+			OrdenPv orden = ordenPvService.obtenerOrdenPorId(idOpI);
+			List<VistaItemPedidoErp> items = vistaItemPedidosErp.buscarItemPedidoByReferencia(String.valueOf(idOpI), referencia);
+			for(VistaItemPedidoErp item: items) {
+				System.out.println(item);
+			}
 			try {
-				xmlService.crearOrdenProduccion(items);
+				String response = xmlService.crearOrdenProduccion(items, orden);
+				return ResponseEntity.ok(response);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			flash.addFlashAttribute("message", "Orden de produccion creada exitosamente.");
-			return "redirect:/ingenieria/pedidos/"+noPedido;
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en la creación de la orden de produccion");
 		}
 		
 		@GetMapping("/listar-ops")
