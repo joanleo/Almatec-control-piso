@@ -60,12 +60,12 @@ async function llenarTablaProductividadOperario(){
 	        row.appendChild(cellInicio)
 	        
 	        let cellPruductivo = document.createElement('td')
-	        cellPruductivo.textContent = formatarTiempo(parseFloat(operario.productivo))
+	        cellPruductivo.textContent = formatearTiempo(parseFloat(operario.productivo))
 	        row.appendChild(cellPruductivo)
 	        const productivo = parseFloat(operario.productivo)
 	        
 	        let cellImproductivo = document.createElement('td')
-	        cellImproductivo.textContent = formatarTiempo(parseFloat(operario.improductivo))
+	        cellImproductivo.textContent = formatearTiempo(parseFloat(operario.improductivo))
 	        row.appendChild(cellImproductivo)
 	        const improductivo = parseFloat(operario.improductivo)
 	        
@@ -103,7 +103,7 @@ async function llenarTablaProductividadOperario(){
 	
 }
 
-function formatarTiempo(segundos) {
+function formatearTiempo(segundos) {
     const horas = Math.floor(segundos / 3600);
     const minutos = Math.floor((segundos % 3600) / 60);
     const segundosRestantes = segundos % 60;
@@ -167,7 +167,7 @@ async function llenarTablaPiezasOperario(){
 	        row.appendChild(celldescripcion)
 	        
 	        let cellTiempo = document.createElement('td')
-	        cellTiempo.textContent = formatarTiempo(parseFloat(pieza.tiempoTrancurrido))
+	        cellTiempo.textContent = formatearTiempo(parseFloat(pieza.tiempoTrancurrido))
 	        row.appendChild(cellTiempo)
 	        
 	        let cellOperario = document.createElement('td')
@@ -203,8 +203,6 @@ async function mostrarOperariosCT(){
 		console.log("Operario en centro de trabajo: ", operariosCT)
 		console.log("Tiempos operario ct: ", tiemposOperarios)
 		
-		let table = document.querySelector("#table-produccion")
-		//clearTable(table)
 	}
 }
 
@@ -286,7 +284,13 @@ async function fillTurnosDropdown() {
     try {
         turnos = await fetchTurnos()
         const selectElement = document.getElementById('turno')
-
+		selectElement.innerHTML = ''
+		
+		const defaultOption = document.createElement('option')
+		defaultOption.value = ''
+        defaultOption.text = 'Selecciona un turno'
+        selectElement.add(defaultOption)
+        
         turnos.forEach(turno => {
             const option = document.createElement('option')
             option.value = turno.descripcion
@@ -327,10 +331,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		loadFromLocalStorage()
 		await fillTurnosDropdown()
 		centrosTrabajo = await fetchCentrosT()
-	    const turnosElement = document.getElementById('turno')
+	    /*const turnosElement = document.getElementById('turno')
 	    const turnoCalculated = await calculateTurno()
 	    turnosElement.value = turnoCalculated.descripcion
-	    turnoSelected = turnoCalculated
+	    turnoSelected = turnoCalculated*/
 	    if(centroTSelected !== null){
 			const title = document.querySelector("#title-ct")
 			title.textContent = centroTSelected.nombre
@@ -349,12 +353,16 @@ document.getElementById('codigo').addEventListener('change', function () {
 
 document.getElementById('turno').addEventListener('change', function () {
 	console.log('Turno changed!')
-	turnos.forEach(turno=>{
-		console.log(this.options[this.selectedIndex].id)
-		if(turno.id == this.options[this.selectedIndex].id){
-			turnoSelected = turno
-		}
-	})
+	if (this.value === '') { 
+        turnoSelected = ''
+    } else {
+        turnos.forEach(turno => {
+            console.log(this.options[this.selectedIndex].id);
+            if (turno.id == this.options[this.selectedIndex].id) {
+                turnoSelected = turno;
+            }
+        });
+    }
     console.log("Turno seleccionado:", turnoSelected)
     
     saveToLocalStorage()
@@ -375,6 +383,7 @@ async function validateCode() {
 		case "CTR":
 		case "ÑCT":
 			configuraCentroTrabajo(codigo)
+			document.getElementById("turno").value = ""
 			break
 		case "USU":
 			registraUsuarioCT(codigo)
@@ -396,6 +405,13 @@ async function validateCode() {
 
 async function configuraCentroTrabajo(codigo){
 	const title = document.querySelector("#title-ct")
+	const turnosElement = document.getElementById('turno')
+	console.log(turnosElement.value)
+	if(turnosElement.value == ""){
+		console.log("Debe seleccionar un turno")
+		mostrarAlert("Debe seleccionar un turno.","danger")
+		return
+	}
 	for(const ct of centrosTrabajo){
 		if(codigo === ct.codigoBarraHum || codigo === ct){
 			centroTSelected = ct
@@ -414,6 +430,7 @@ async function configuraCentroTrabajo(codigo){
 				console.log("Error al tratar de configurar el proceso el en centro de trabajo ", error)
 			}
 			document.querySelector("#codigo").value = ""
+			
 		}
 	}
 	mostrarAlert("El centro de trabajo no existe.", "danger")
