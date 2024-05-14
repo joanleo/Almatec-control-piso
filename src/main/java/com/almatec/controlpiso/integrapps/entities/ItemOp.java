@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.integrapps.entities;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -21,7 +22,7 @@ public class ItemOp {
 	private Long id;
 	
 	@Column(name = "id_op_ia")
-	private Integer idPvIntegrapps;
+	private Integer idOpIntegrapps;
 	
 	@Column(name = "Item_fab_Id")
 	private Integer idItemFab;
@@ -39,7 +40,7 @@ public class ItemOp {
 	private String marca;
 	
 	@Column(name = "peso_unitario")
-	private String peso;
+	private BigDecimal peso;
 
 	@Column(name = "unidad")
 	private String um;
@@ -67,6 +68,15 @@ public class ItemOp {
 	
 	@Column(name = "cant_cumplida")
 	private Double cantCumplida;
+	
+	@Column(name = "pintura")
+	private String color;
+	
+	@Column(name = "grp_pintura")
+	private String grupoColor;
+	
+	@Column(name = "cant_imp_eti")
+	private Integer canEtiqueta;
 
 	public ItemOp() {
 		super();
@@ -74,7 +84,7 @@ public class ItemOp {
 
 	public ItemOp(ItemOpInterface itemInterface) {
 		this.id = itemInterface.getitem_id();
-		this.idPvIntegrapps = itemInterface.getid_op_ia();
+		this.idOpIntegrapps = itemInterface.getid_op_ia();
 		this.idItemFab = itemInterface.getItem_fab_Id();
 		this.grupo = itemInterface.getgrupo();
 		this.descripcion = itemInterface.getdescripcion();
@@ -89,152 +99,180 @@ public class ItemOp {
 		this.idEstado = itemInterface.getid_estado();
 		this.rutaPlano = itemInterface.getruta_plano();
 		this.fechaCreacion = itemInterface.getfecha_crea();
-		this.cantCumplida = itemInterface.cant_cumplida();
+		this.cantCumplida = itemInterface.getcant_cumplida();
+		this.color = itemInterface.getpintura();
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getIdPvIntegrapps() {
-		return idPvIntegrapps;
-	}
-
-	public void setIdPvIntegrapps(Integer idPvIntegrapps) {
-		this.idPvIntegrapps = idPvIntegrapps;
-	}
-
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
-	public String getPeso() {
-		return peso;
-	}
-
-	public void setPeso(String pesoUnitario) {
-		this.peso = pesoUnitario;
-	}
-
-	public String getUm() {
-		return um;
-	}
-
-	public void setUm(String um) {
-		this.um = um;
-	}
-
-	public Double getCant() {
-		return cant;
-	}
-
-	public void setCant(Double cant) {
-		this.cant = cant;
-	}
-
-	public Boolean getIsEspecial() {
-		return isEspecial;
-	}
-
-	public void setIsEspecial(Boolean isEspecial) {
-		this.isEspecial = isEspecial;
-	}
-
-	public Boolean getIsReqPlano() {
-		return isReqPlano;
-	}
-
-	public void setIsReqPlano(Boolean isReqPlano) {
-		this.isReqPlano = isReqPlano;
-	}
-
-	public Boolean getIsActivo() {
-		return isActivo;
-	}
-
-	public void setIsActivo(Boolean isActivo) {
-		this.isActivo = isActivo;
-	}
-
-	public String getRutaPlano() {
-		return rutaPlano;
-	}
-
-	public void setRutaPlano(String rutaPlano) {
-		this.rutaPlano = rutaPlano;
-	}
-
-	public Integer getIdEstado() {
-		return idEstado;
-	}
-
-	public void setIdEstado(Integer idEstado) {
-		this.idEstado = idEstado;
+	public Integer getIdOpIntegrapps() {
+		return idOpIntegrapps;
 	}
 
 	public Integer getIdItemFab() {
 		return idItemFab;
 	}
 
-	public void setIdItemFab(Integer idItemFab) {
-		this.idItemFab = idItemFab;
-	}
-
 	public String getGrupo() {
 		return grupo;
-	}
-
-	public void setGrupo(String grupo) {
-		this.grupo = grupo;
-	}
-
-	public String getMarca() {
-		return marca;
-	}
-
-	public void setMarca(String marca) {
-		this.marca = marca;
-	}
-
-	public Date getFechaCreacion() {
-		return fechaCreacion;
-	}
-
-	public void setFechaCreacion(Date fechaCreacion) {
-		this.fechaCreacion = fechaCreacion;
 	}
 
 	public String getCodigoErp() {
 		return codigoErp;
 	}
 
-	public void setCodigoErp(String codigoErp) {
-		this.codigoErp = codigoErp;
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	public String getUm() {
+		return um;
+	}
+
+	public Double getCant() {
+		return cant;
+	}
+
+	public Boolean getIsEspecial() {
+		return isEspecial;
+	}
+
+	public Boolean getIsReqPlano() {
+		return isReqPlano;
+	}
+
+	public Boolean getIsActivo() {
+		return isActivo;
+	}
+
+	public String getRutaPlano() {
+		return rutaPlano;
+	}
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public Integer getIdEstado() {
+		return idEstado;
 	}
 
 	public Double getCantCumplida() {
 		return cantCumplida;
 	}
 
+	public String getColor() {
+		return color;
+	}
+
+	public String getGrupoColor() {
+		return grupoColor;
+	}
+
+	public Integer getCanEtiqueta() {
+		return canEtiqueta;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setIdOpIntegrapps(Integer idPvIntegrapps) {
+		this.idOpIntegrapps = idPvIntegrapps;
+	}
+
+	public void setIdItemFab(Integer idItemFab) {
+		this.idItemFab = idItemFab;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
+	}
+
+	public void setCodigoErp(String codigoErp) {
+		this.codigoErp = codigoErp;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
+	}
+
+	public void setUm(String um) {
+		this.um = um;
+	}
+
+	public void setCant(Double cant) {
+		this.cant = cant;
+	}
+
+	public void setIsEspecial(Boolean isEspecial) {
+		this.isEspecial = isEspecial;
+	}
+
+	public void setIsReqPlano(Boolean isReqPlano) {
+		this.isReqPlano = isReqPlano;
+	}
+
+	public void setIsActivo(Boolean isActivo) {
+		this.isActivo = isActivo;
+	}
+
+	public void setRutaPlano(String rutaPlano) {
+		this.rutaPlano = rutaPlano;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	public void setIdEstado(Integer idEstado) {
+		this.idEstado = idEstado;
+	}
+
 	public void setCantCumplida(Double cantCumplida) {
 		this.cantCumplida = cantCumplida;
 	}
 
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public void setGrupoColor(String grupoColor) {
+		this.grupoColor = grupoColor;
+	}
+
+	public void setCanEtiqueta(Integer canEtiqueta) {
+		this.canEtiqueta = canEtiqueta;
+	}
+
 	@Override
 	public String toString() {
-		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idPvIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
+		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idOpIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
 				+ grupo + ", codigoErp=" + codigoErp + ", descripcion=" + descripcion + ", marca=" + marca + ", peso="
 				+ peso + ", um=" + um + ", cant=" + cant + ", isEspecial=" + isEspecial + ", isReqPlano=" + isReqPlano
 				+ ", isActivo=" + isActivo + ", rutaPlano=" + rutaPlano + ", fechaCreacion=" + fechaCreacion
-				+ ", idEstado=" + idEstado + ", cantCumplida=" + cantCumplida + "]";
+				+ ", idEstado=" + idEstado + ", cantCumplida=" + cantCumplida + ", color=" + color + ", grupoColor="
+				+ grupoColor + ", canEtiqueta=" + canEtiqueta + "]";
 	}
+	
+	
 
 }

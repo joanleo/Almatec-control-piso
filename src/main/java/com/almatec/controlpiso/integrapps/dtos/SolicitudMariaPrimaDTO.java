@@ -9,6 +9,7 @@ public class SolicitudMariaPrimaDTO {
 	
 	private SolicitudMateriaPrima solicitud;
 	private List<DetalleSolicitudMateriaPrima> detalles;
+	private String nombreUsuario;
 	
 	public SolicitudMariaPrimaDTO() {
 		super();
@@ -30,8 +31,22 @@ public class SolicitudMariaPrimaDTO {
 		this.detalles = detalles;
 	}
 	
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+
+	public void setNombreUsuario(String nombreUsuario) {
+		this.nombreUsuario = nombreUsuario;
+	}
+
+	@SuppressWarnings("unused")
 	private void addDetalle(DetalleSolicitudMateriaPrima detalle) {
 		this.detalles.add(detalle);
+	}
+
+	@Override
+	public String toString() {
+		return "SolicitudMariaPrimaDTO [solicitud=" + solicitud + ", detalles=" + detalles + "]";
 	}
 
 }

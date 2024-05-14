@@ -32,7 +32,6 @@ public class ProgramacionController {
 	@PostMapping("/item/{idItem}/actualizar-prioridad/{prioridad}")
 	public ResponseEntity<String> actualizaPrioridad(@PathVariable Long idItem, 
 	                                                @PathVariable Integer prioridad) {
-	    System.out.println("Controller prioridad");
 	    vistaItemsOpsProgramacionService.actualizaPrioridad(idItem, prioridad);
 
 	    return new ResponseEntity<>("Actualización exitosa", HttpStatus.OK);

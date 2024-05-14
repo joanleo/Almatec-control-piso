@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "Lista_MP_Ops")
 public class ListaM {
@@ -58,6 +59,8 @@ public class ListaM {
 	public ListaM() {
 		super();
 	}
+
+	
 
 	public Integer getIdListaM() {
 		return idListaM;

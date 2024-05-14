@@ -22,8 +22,8 @@ public class NovedadCt {
 	@Column(name = "Item_fab_id")
 	private Integer idItmFab;
 	
-	@Column(name = "item_perf_id")
-	private Integer idPerfil;
+	@Column(name = "item_parte_id")
+	private Integer idParte;
 	
 	@Column(name = "C_centrotrabajo_id")
 	private Integer idCentroTrabajo;
@@ -54,9 +54,6 @@ public class NovedadCt {
 		return idItmFab;
 	}
 
-	public Integer getIdPerfil() {
-		return idPerfil;
-	}
 
 	public Integer getIdCentroTrabajo() {
 		return idCentroTrabajo;
@@ -90,10 +87,6 @@ public class NovedadCt {
 		this.idItmFab = idItmFab;
 	}
 
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
-	}
-
 	public void setIdCentroTrabajo(Integer idCentroTrabajo) {
 		this.idCentroTrabajo = idCentroTrabajo;
 	}
@@ -114,10 +107,18 @@ public class NovedadCt {
 		this.sobrante = sobrante;
 	}
 
+	public Integer getIdParte() {
+		return idParte;
+	}
+
+	public void setIdParte(Integer idParte) {
+		this.idParte = idParte;
+	}
+
 	@Override
 	public String toString() {
-		return "NovedadCt [idNovedad=" + idNovedad + ", IdItem=" + IdItem + ", idItmFab=" + idItmFab + ", idPerfil="
-				+ idPerfil + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario + ", noConforme="
+		return "NovedadCt [idNovedad=" + idNovedad + ", IdItem=" + IdItem + ", idItmFab=" + idItmFab + ", idParte="
+				+ idParte + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario + ", noConforme="
 				+ noConforme + ", desperdicio=" + desperdicio + ", sobrante=" + sobrante + "]";
 	}
 	

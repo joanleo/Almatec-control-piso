@@ -7,98 +7,96 @@ import com.almatec.controlpiso.integrapps.interfaces.CommonDTO;
 
 public class ComponenteDTO implements CommonDTO {
 	
-	private Integer codErp;
-	private Integer idPerfil;
-	private String descripcionPerfil;
-	private Integer cantListaMateriales;
-	private Integer idCentroTrabajoPerfil;
-	private String centroTrabajoPerfil;
-	private BigDecimal longitud;
-	private BigDecimal pesoPerfil;
+	private Integer material_id;
+	private String material_desc;
+	private BigDecimal material_cant;
+	private Integer material_centro_t_id;
+	private String material_centro_t_nombre;
+	private BigDecimal material_long;
+	private BigDecimal material_peso;
 	
 	public ComponenteDTO() {
 		super();
 	}
 
-	public ComponenteDTO(Integer codErp, Integer idPerfil, String descripcionPerfil, Integer cantListaMateriales,
-			Integer idCentroTrabajoPerfil, String centroTrabajoPerfil) {
+	public ComponenteDTO(Integer material_id, String material_desc, BigDecimal material_cant,
+			Integer material_centro_t_id, String material_centro_t_nombre) {
 		super();
-		this.codErp = codErp;
-		this.idPerfil = idPerfil;
-		this.descripcionPerfil = descripcionPerfil;
-		this.cantListaMateriales = cantListaMateriales;
-		this.idCentroTrabajoPerfil = idCentroTrabajoPerfil;
-		this.centroTrabajoPerfil = centroTrabajoPerfil;
+		this.material_id = material_id;
+		this.material_desc = material_desc;
+		this.material_cant = material_cant;
+		this.material_centro_t_id = material_centro_t_id;
+		this.material_centro_t_nombre = material_centro_t_nombre;
 	}
 
-	public Integer getCodErp() {
-		return codErp;
+	public Integer getMaterial_id() {
+		return material_id;
 	}
 
-	public void setCodErp(Integer codErp) {
-		this.codErp = codErp;
+	public String getMaterial_desc() {
+		return material_desc;
 	}
 
-	public Integer getIdPerfil() {
-		return idPerfil;
+	public BigDecimal getMaterial_cant() {
+		return material_cant;
 	}
 
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
+	public Integer getMaterial_centro_t_id() {
+		return material_centro_t_id;
 	}
 
-	public String getDescripcionPerfil() {
-		return descripcionPerfil;
+	public String getMaterial_centro_t_nombre() {
+		return material_centro_t_nombre;
 	}
 
-	public void setDescripcionPerfil(String descripcionPerfil) {
-		this.descripcionPerfil = descripcionPerfil;
+	public BigDecimal getMaterial_peso() {
+		return material_peso;
 	}
 
-	public Integer getCantListaMateriales() {
-		return cantListaMateriales;
+	public void setMaterial_id(Integer material_id) {
+		this.material_id = material_id;
 	}
 
-	public void setCantListaMateriales(Integer cantListaMateriales) {
-		this.cantListaMateriales = cantListaMateriales;
+	public void setMaterial_desc(String material_desc) {
+		this.material_desc = material_desc;
 	}
 
-	public Integer getIdCentroTrabajoPerfil() {
-		return idCentroTrabajoPerfil;
+	public void setMaterial_cant(BigDecimal material_cant) {
+		this.material_cant = material_cant;
 	}
 
-	public void setIdCentroTrabajoPerfil(Integer idCentroTrabajoPerfil) {
-		this.idCentroTrabajoPerfil = idCentroTrabajoPerfil;
+	public void setMaterial_centro_t_id(Integer material_centro_t_id) {
+		this.material_centro_t_id = material_centro_t_id;
 	}
 
-	public String getCentroTrabajoPerfil() {
-		return centroTrabajoPerfil;
+	public void setMaterial_centro_t_nombre(String material_centro_t_nombre) {
+		this.material_centro_t_nombre = material_centro_t_nombre;
 	}
 
-	public void setCentroTrabajoPerfil(String centroTrabajoPerfil) {
-		this.centroTrabajoPerfil = centroTrabajoPerfil;
+	public void setMaterial_peso(BigDecimal material_peso) {
+		this.material_peso = material_peso;
 	}
 
-	public BigDecimal getLongitud() {
-		return longitud;
+	public BigDecimal getMaterial_long() {
+		return material_long;
 	}
 
-	public void setLongitud(BigDecimal longitud) {
-		this.longitud = longitud;
+	public void setMaterial_long(BigDecimal material_long) {
+		this.material_long = material_long;
 	}
 
 	@Override
 	public String toString() {
-		return "ComponenteDTO [codErp=" + codErp + ", idPerfil=" + idPerfil + ", descripcionPerfil=" + descripcionPerfil
-				+ ", cantListaMateriales=" + cantListaMateriales + ", idCentroTrabajoPerfil=" + idCentroTrabajoPerfil
-				+ ", centroTrabajoPerfil=" + centroTrabajoPerfil + ", longitud=" + longitud + ", pesoPerfil="
-				+ pesoPerfil + "]";
+		return "ComponenteDTO [material_id=" + material_id + ", material_desc=" + material_desc + ", material_cant="
+				+ material_cant + ", material_centro_t_id=" + material_centro_t_id + ", material_centro_t_nombre="
+				+ material_centro_t_nombre + ", material_long=" + material_long + ", material_peso=" + material_peso
+				+ "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cantListaMateriales, centroTrabajoPerfil, codErp, descripcionPerfil, idCentroTrabajoPerfil,
-				idPerfil, longitud, pesoPerfil);
+		return Objects.hash(material_cant, material_centro_t_id, material_centro_t_nombre, material_desc, material_id,
+				material_long, material_peso);
 	}
 
 	@Override
@@ -110,35 +108,30 @@ public class ComponenteDTO implements CommonDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		ComponenteDTO other = (ComponenteDTO) obj;
-		return Objects.equals(cantListaMateriales, other.cantListaMateriales)
-				&& Objects.equals(centroTrabajoPerfil, other.centroTrabajoPerfil)
-				&& Objects.equals(codErp, other.codErp) && Objects.equals(descripcionPerfil, other.descripcionPerfil)
-				&& Objects.equals(idCentroTrabajoPerfil, other.idCentroTrabajoPerfil)
-				&& Objects.equals(idPerfil, other.idPerfil) && Objects.equals(longitud, other.longitud)
-				&& Objects.equals(pesoPerfil, other.pesoPerfil);
-	}
-
-	public BigDecimal getPesoPerfil() {
-		return pesoPerfil;
-	}
-
-	public void setPesoPerfil(BigDecimal pesoPerfil) {
-		this.pesoPerfil = pesoPerfil;
+		return Objects.equals(material_cant, other.material_cant)
+				&& Objects.equals(material_centro_t_id, other.material_centro_t_id)
+				&& Objects.equals(material_centro_t_nombre, other.material_centro_t_nombre)
+				&& Objects.equals(material_desc, other.material_desc) && Objects.equals(material_id, other.material_id)
+				&& Objects.equals(material_long, other.material_long)
+				&& Objects.equals(material_peso, other.material_peso);
 	}
 
 	@Override
 	public String getCentroTrabajo() {
-		return this.centroTrabajoPerfil;
-	}
-
-	@Override
-	public Integer getCant() {
-		return this.cantListaMateriales;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getDescripcion() {
-		return this.descripcionPerfil;
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getCant() {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 
 }

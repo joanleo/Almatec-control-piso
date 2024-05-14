@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  <head th:replace="fragments/head :: head('Almacen :: Solicitudes Materia Prima')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div class="container my-5" style="width: 80%; margin-left: 10rem;">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+						
+						
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 
+			 <h2 class="mb-2"> Solicitudes de Transferencia </h2>
+			<div style="display: flex; justify-content: center;">
+				<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem; width: 40rem;  max-height: 15rem; overflow-y: auto;">
+					<table class="table table-striped table-hover table-rounded caption-top">
+						<caption>Solicitudes</caption>
+						<thead class="table-dark sticky-top">
+							<tr>
+								<th>No Solic</th>
+								<th>Fecha</th>
+								<th>OP</th>
+								<th>Usuario solicita</th>
+							</tr>
+						</thead>
+						<tbody id="body-solicitudes-materia-prima">
+							<tr	th:each="sol, usuarioSol: ${solicitudes}">
+								<td th:text="${sol.solicitud.id}"></td>
+								<td th:text="${#dates.format(sol.solicitud.fechaDoc, 'yyyy-MM-dd')}"></td>
+								<td th:text="${sol.solicitud.tipoOp +'-'+ sol.solicitud.numOp}"></td>
+								<td th:text="${sol.usuarioSol}"></td>
+							</tr>		
+						</tbody>
+					</table>		 				
+				</div>
+			</div>
+			
+			<div style="display: flex; flex-direction: column;" hidden id="solSel">
+				<h3>Solicitud selecionada:</h3>
+				<div style="display: flex; justify-content: space-between;">
+					<div class="input-group my-3 size-s" >
+			           <span class="input-group-text">No. Sol</span>
+			           <input type="text" class="form-control" id="noSolSel" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-m" >
+			           <span class="input-group-text">Fecha </span>
+			           <input type="text" class="form-control" id="fechaSolSel" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-m" >
+			           <span class="input-group-text">OP </span>
+			           <input type="text" class="form-control" id="opSel" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-l" >
+			           <span class="input-group-text">Solicita </span>
+			           <input type="text" class="form-control" id="usuSolSel" readonly style="text-align: right;" />
+			    	</div>				
+				</div>
+				<div id="buttons" class="d-flex">
+					<button style="flex: 0 0 48%; max-width: 48%;" type="button" class="btn btn-secondary mx-2" id="btn-rechazar" onclick="rechazarTransferencia(event)">
+	                    Rechazar
+	                </button>
+					
+					<button style="flex: 0 0 48%; max-width: 48%;" type="button" class="btn btn-primary mx-2" id="btn-tranferir" onclick="crearTransferencia(event)">
+	                    Transferir
+	                </button>			
+				</div>
+			</div>			
+			
+			<div style="margin-right: 2rem;">
+				<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem; max-height: 30rem; overflow-y: auto;">
+					<table class="table table-striped table-hover table-rounded caption-top">
+						<caption>Detalle Solicitud </caption>
+						<thead class="table-dark sticky-top">
+							<tr>
+								<th>Codigo</th>
+								<th>Descripcion</th>
+								<th>Um</th>
+								<th>Bodega Origen</th>
+								<th>Bodega Destino</th>
+								<th>Lote</th>
+								<th>Cant Solicitada</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody id="body-detalle-materia-prima">									
+						</tbody>
+					</table>		 				
+				</div>
+			</div>
+ 		    
+			<!-- Modal -->
+			<div class="modal" id="respuestaModal" tabindex="-1" aria-labelledby="respuestaModalLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="respuestaModalLabel">Creacion de tranferencia</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body" id="respuestaModalBody">
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+		
+
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/solicitudes-materia-prima.js"></script>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

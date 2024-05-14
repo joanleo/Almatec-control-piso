@@ -2,6 +2,7 @@ package com.almatec.controlpiso.integrapps.services;
 
 import java.util.List;
 
+import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
 import com.almatec.controlpiso.integrapps.entities.OrdenPv;
@@ -21,5 +22,11 @@ public interface OrdenPvService {
 	OrdenPv obtenerOrdenPorId(Integer idPvIntegrapps);
 
 	void guardarOrden(OrdenPv orden);
+
+	void actualizarDatosOp(ConsultaOpCreadaDTO creado, OrdenPv ordenIntegrapps);
+
+	Integer obtenerNumOpPorIdOp(Integer idOpIntegrapps);
+
+	OrdenPv obtenerOrdenPorNumPv(Integer noPedido);
 
 }

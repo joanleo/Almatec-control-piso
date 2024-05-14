@@ -1,26 +1,28 @@
 package com.almatec.controlpiso.integrapps.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.Immutable;
-
 @Entity
 @Table(name = "Pedidos_Items_Erp")
-@Immutable
 public class VistaItemPedidoErp {
 	
 	@Id
 	@Column(name = "f431_rowid")
 	private Integer id;
 	
+	@Column(name = "f430_rowid")
+	private Integer rowIdOp;
+	
 	@Column(name = "Tipo_Pv")
 	private String tipoPedido;
 	
 	@Column(name = "No_Pv")
-	private String noPedido;
+	private Integer noPedido;
 	
 	@Column(name = "Referencia")
 	private String referencia;
@@ -42,6 +44,9 @@ public class VistaItemPedidoErp {
 	
 	@Column(name = "NumOp")
 	private Integer numOp;
+	
+	@Column(name = "fecha_entrega")
+	private Date fechaEntrega;
 
 
 	public VistaItemPedidoErp() {
@@ -56,6 +61,14 @@ public class VistaItemPedidoErp {
 		this.id = id;
 	}
 
+	public Integer getRowIdOp() {
+		return rowIdOp;
+	}
+
+	public void setRowIdOp(Integer rowIdOp) {
+		this.rowIdOp = rowIdOp;
+	}
+
 	public String getTipoPedido() {
 		return tipoPedido;
 	}
@@ -64,11 +77,11 @@ public class VistaItemPedidoErp {
 		this.tipoPedido = tipoPedido;
 	}
 
-	public String getNoPedido() {
+	public Integer getNoPedido() {
 		return noPedido;
 	}
 
-	public void setNoPedido(String noPedido) {
+	public void setNoPedido(Integer noPedido) {
 		this.noPedido = noPedido;
 	}
 
@@ -128,11 +141,20 @@ public class VistaItemPedidoErp {
 		this.numOp = numOp;
 	}
 
+	public Date getFechaEntrega() {
+		return fechaEntrega;
+	}
+
+	public void setFechaEntrega(Date fechaEntrega) {
+		this.fechaEntrega = fechaEntrega;
+	}
+
 	@Override
 	public String toString() {
-		return "VistaItemPedidoErp [id=" + id + ", tipoPedido=" + tipoPedido + ", noPedido=" + noPedido
-				+ ", referencia=" + referencia + ", descripcion=" + descripcion + ", um=" + um + ", bodega=" + bodega
-				+ ", cantidad=" + cantidad + ", peso=" + peso + ", numOp=" + numOp + "]";
+		return "VistaItemPedidoErp [id=" + id + ", rowIdOp=" + rowIdOp + ", tipoPedido=" + tipoPedido + ", noPedido="
+				+ noPedido + ", referencia=" + referencia + ", descripcion=" + descripcion + ", um=" + um + ", bodega="
+				+ bodega + ", cantidad=" + cantidad + ", peso=" + peso + ", numOp=" + numOp + ", fechaEntrega="
+				+ fechaEntrega + "]";
 	}
 
 

@@ -20,8 +20,11 @@ public class RegistroPiezaServiceImpl implements RegistroPiezaService{
 
 	@Override
 	public void actualizarRegistro(RegistroPieza registro) {
-		registroPiezaRepo.save(registro);
-		
+		System.out.println("registro a guardar:");
+		System.out.println(registro);
+		RegistroPieza guardado = registroPiezaRepo.saveAndFlush(registro);
+		System.out.println("Registro guardado");
+		System.out.println(guardado);
 	}
 
 }

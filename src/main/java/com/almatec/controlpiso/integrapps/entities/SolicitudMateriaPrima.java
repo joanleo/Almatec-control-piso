@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.integrapps.entities;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+
+import com.almatec.controlpiso.integrapps.interfaces.SolicitudUsuarioInterface;
 
 @Entity
 @Table(name = "Mp_Sol")
@@ -27,7 +30,7 @@ public class SolicitudMateriaPrima {
 	@Column(name = "Num_doc")
 	private Integer numDoc = 0;
 	@Column(name = "Fecha_Doc")
-	private LocalDateTime fechaDoc;
+	private Date fechaDoc;
 	@Column(name = "Estado_Doc")
 	private Integer idEstado = 0;
 	@Column(name = "id_op_ia")
@@ -52,12 +55,31 @@ public class SolicitudMateriaPrima {
 	@PrePersist
     public void prePersist() {
         if (fechaDoc == null) {
-            fechaDoc = LocalDateTime.now();
+            fechaDoc = new Date();
         }
 	}
 	
 	public SolicitudMateriaPrima() {
 		super();
+	}
+
+	public SolicitudMateriaPrima(SolicitudUsuarioInterface sol) {
+		this.id = sol.getid_sol_mp();
+		this.idCia = sol.getcia();
+		this.bodegaErp = sol.getBodega_Erp();
+		this.tipoDoc = sol.getTipo_doc();
+		this.numDoc = sol.getNum_doc();
+		this.fechaDoc = sol.getFecha_Doc();
+		this.idEstado = sol.getEstado_Doc();
+		this.idOp = sol.getid_op_ia();
+		this.tipoOp = sol.getTipo_Op();
+		this.numOp = sol.getNum_Op();
+		this.idUsuarioSol = sol.getId_Usu_Sol();
+		this.idUsuarioErp = sol.getId_Usu_Erp();
+		this.tipoDocErp = sol.getTipo_doc_Erp();
+		this.numDocErp = sol.getNum_Doc_Erp();
+		this.fechaDocEp = sol.getFecha_Doc_Erp();
+		this.barcode = sol.getBarcode();
 	}
 
 	public Integer getId() {
@@ -80,7 +102,7 @@ public class SolicitudMateriaPrima {
 		return numDoc;
 	}
 
-	public LocalDateTime getFechaDoc() {
+	public Date getFechaDoc() {
 		return fechaDoc;
 	}
 
@@ -144,7 +166,7 @@ public class SolicitudMateriaPrima {
 		this.numDoc = numDoc;
 	}
 
-	public void setFechaDoc(LocalDateTime fechaDoc) {
+	public void setFechaDoc(Date fechaDoc) {
 		this.fechaDoc = fechaDoc;
 	}
 

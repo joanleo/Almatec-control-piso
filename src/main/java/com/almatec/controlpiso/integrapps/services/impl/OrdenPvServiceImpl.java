@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
+import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
 import com.almatec.controlpiso.integrapps.entities.OrdenPv;
@@ -37,8 +38,8 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 		List<ProyectoProduccionDTO> proyectos = new ArrayList<>(); 
 		for(Object[] p: proyectosOPV) {
 			ProyectoProduccionDTO project = new ProyectoProduccionDTO();
-			project.setProyecto(p[0].toString());
-			project.setCliente(p[1].toString());
+			project.setProyecto(p[0] != null ? p[0].toString() : "");
+			project.setCliente(p[1] != null ? p[1].toString() : "");
 			//project.setUn(p[2].toString());
 			proyectos.add(project);
 		}
@@ -90,6 +91,23 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	public void guardarOrden(OrdenPv orden) {
 		ordenPvRepo.save(orden);
 		
+	}
+
+	@Override
+	public Integer obtenerNumOpPorIdOp(Integer idOpIntegrapps) {
+		return ordenPvRepo.obtenerNumOpPorIdOp(idOpIntegrapps);
+	}
+
+	@Override
+	public void actualizarDatosOp(ConsultaOpCreadaDTO creado, OrdenPv ordenIntegrapps) {
+		String opUnoEE = creado.getF850_id_tipo_docto()+"-"+creado.getF850_consec_docto();
+		ordenPvRepo.actualizarOp(creado, opUnoEE, ordenIntegrapps);
+		
+	}
+
+	@Override
+	public OrdenPv obtenerOrdenPorNumPv(Integer noPedido) {
+		return ordenPvRepo.findByNumOp(noPedido);
 	}
 
 }

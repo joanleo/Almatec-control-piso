@@ -39,12 +39,6 @@ public class RegistroPieza {
 	@Column(name = "E_activo")
 	private Boolean isActivo;
 	
-	/*@Column(name = "A_usuariocrea")
-	private String usuarioCrea;
-	
-	@Column(name = "A_usuarioedita")
-	private String usuarioEdita;*/
-	
 	@Column(name = "FC_registro")	
 	private LocalDateTime fechaCreacion;
 	
@@ -60,8 +54,11 @@ public class RegistroPieza {
 	@Column(name = "C_prooperario_id")
 	private Integer idOperario;
 	
-	@Column(name = "item_perf_id")
-	private Integer idPerfil;
+	@Column(name = "item_parte_id")
+	private Integer IdItemParte =0;
+	
+	@Column(name = "Item_fab_Id")
+	private Integer idItemFab=0;
 
 	public RegistroPieza() {
 		super();
@@ -131,22 +128,6 @@ public class RegistroPieza {
 		this.isActivo = isActivo;
 	}
 
-	/*public String getUsuarioCrea() {
-		return usuarioCrea;
-	}
-
-	public void setUsuarioCrea(String usuarioCrea) {
-		this.usuarioCrea = usuarioCrea;
-	}
-
-	public String getUsuarioEdita() {
-		return usuarioEdita;
-	}
-
-	public void setUsuarioEdita(String usuarioEdita) {
-		this.usuarioEdita = usuarioEdita;
-	}*/
-
 	public LocalDateTime getFechaCreacion() {
 		return fechaCreacion;
 	}
@@ -187,27 +168,30 @@ public class RegistroPieza {
 		this.idOperario = idOperario;
 	}
 
-	public Integer getIdPerfil() {
-		return idPerfil;
+	public Integer getIdItemFab() {
+		return idItemFab;
 	}
 
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
+	public Integer getIdItemParte() {
+		return IdItemParte;
+	}
+
+	public void setIdItemFab(Integer idItemFab) {
+		this.idItemFab = idItemFab;
+	}
+
+	public void setIdItemParte(Integer idItemParte) {
+		IdItemParte = idItemParte;
 	}
 
 	@Override
 	public String toString() {
-		return "RegistroPieza [id=" + id + ", idCia=" + idCia + ", IdCT=" + idCT + ", idItem=" + idItem
+		return "RegistroPieza [id=" + id + ", idCia=" + idCia + ", idCT=" + idCT + ", idItem=" + idItem
 				+ ", transcurrido=" + transcurrido + ", reproceso=" + reproceso + ", cantidad=" + cantidad
-				+ ", isActivo=" + isActivo + ", fechaCreacion=" + fechaCreacion + ", fechaEdicion=" + fechaEdicion + ", isAjustado=" + isAjustado
-				+ ", idConfig=" + idConfig + ", idOperario=" + idOperario + ", idPerfil=" + idPerfil + "]";
+				+ ", isActivo=" + isActivo + ", fechaCreacion=" + fechaCreacion + ", fechaEdicion=" + fechaEdicion
+				+ ", isAjustado=" + isAjustado + ", idConfig=" + idConfig + ", idOperario=" + idOperario
+				+ ", idItemFab=" + idItemFab + ", IdItemParte=" + IdItemParte + "]";
 	}
-	
-	
-	
-	
-	
-	
 
 
 }

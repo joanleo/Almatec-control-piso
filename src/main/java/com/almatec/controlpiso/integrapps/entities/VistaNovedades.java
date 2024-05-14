@@ -21,7 +21,7 @@ public class VistaNovedades {
 	@Column(name = "Item_fab_id")
 	private Integer idItemFab;
 	
-	@Column(name = "item_perf_id")
+	@Column(name = "item_parte_id")
 	private Integer idPerfil;
 	
 	@Column(name = "C_centrotrabajo_id")
@@ -43,20 +43,11 @@ public class VistaNovedades {
 	@Column(name = "ind_registro_siesa")
 	private Boolean isRegistered;
 	
-	@Column(name = "item_desc")
-	private String descripcionItem;
-	
-	@Column(name = "item_perf_desc")
-	private String descripcionPerfil;
+	@Column(name = "descripcion")
+	private String descripcion;
 	
 	@Column(name = "Num_Op")
 	private Integer numOp;
-	
-	@Column(name = "codigo_erp")
-	private Integer codigoErpItem;
-	
-	@Column(name = "item_perf_cod")
-	private Integer codigoErpPerfil;
 	
 	@Column(name = "Und_Neg")
 	private String proyecto;
@@ -112,24 +103,12 @@ public class VistaNovedades {
 		return isRegistered;
 	}
 
-	public String getDescripcionItem() {
-		return descripcionItem;
-	}
-
-	public String getDescripcionPerfil() {
-		return descripcionPerfil;
+	public String getDescripcion() {
+		return descripcion;
 	}
 
 	public Integer getNumOp() {
 		return numOp;
-	}
-
-	public Integer getCodigoErpItem() {
-		return codigoErpItem;
-	}
-
-	public Integer getCodigoErpPerfil() {
-		return codigoErpPerfil;
 	}
 
 	public String getProyecto() {
@@ -140,88 +119,6 @@ public class VistaNovedades {
 		return nombreOperario;
 	}
 
-	public void setIdNovedad(Integer idNovedad) {
-		this.idNovedad = idNovedad;
-	}
-
-	public void setIdItem(Long idItem) {
-		this.idItem = idItem;
-	}
-
-	public void setIdItemFab(Integer idItemFab) {
-		this.idItemFab = idItemFab;
-	}
-
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
-	}
-
-	public void setIdCentroTrabajo(Integer idCentroTrabajo) {
-		this.idCentroTrabajo = idCentroTrabajo;
-	}
-
-	public void setIdOperario(Integer idOperario) {
-		this.idOperario = idOperario;
-	}
-
-	public void setFechaCreachion(Date fechaCreachion) {
-		this.fechaCreachion = fechaCreachion;
-	}
-
-	public void setNoConforme(Integer noConforme) {
-		this.noConforme = noConforme;
-	}
-
-	public void setDesperdicio(Integer desperdicio) {
-		this.desperdicio = desperdicio;
-	}
-
-	public void setSobrante(Integer sobrante) {
-		this.sobrante = sobrante;
-	}
-
-	public void setIsRegistered(Boolean isRegistered) {
-		this.isRegistered = isRegistered;
-	}
-
-	public void setDescripcionItem(String descripcionItem) {
-		this.descripcionItem = descripcionItem;
-	}
-
-	public void setDescripcionPerfil(String descripcionPerfil) {
-		this.descripcionPerfil = descripcionPerfil;
-	}
-
-	public void setNumOp(Integer numOp) {
-		this.numOp = numOp;
-	}
-
-	public void setCodigoErpItem(Integer codigoErpItem) {
-		this.codigoErpItem = codigoErpItem;
-	}
-
-	public void setCodigoErpPerfil(Integer codigoErpPerfil) {
-		this.codigoErpPerfil = codigoErpPerfil;
-	}
-
-	public void setProyecto(String proyecto) {
-		this.proyecto = proyecto;
-	}
-
-	public void setNombreOperario(String nombreOperario) {
-		this.nombreOperario = nombreOperario;
-	}
-
-	@Override
-	public String toString() {
-		return "VistaNovedades [idNovedad=" + idNovedad + ", idItem=" + idItem + ", idItemFab=" + idItemFab
-				+ ", idPerfil=" + idPerfil + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario
-				+ ", fechaCreachion=" + fechaCreachion + ", noConforme=" + noConforme + ", desperdicio=" + desperdicio
-				+ ", sobrante=" + sobrante + ", isRegistered=" + isRegistered + ", descripcionItem=" + descripcionItem
-				+ ", descripcionPerfil=" + descripcionPerfil + ", numOp=" + numOp + ", codigoErpItem=" + codigoErpItem
-				+ ", codigoErpPerfil=" + codigoErpPerfil + ", proyecto=" + proyecto + ", nombreOperario="
-				+ nombreOperario + "]";
-	}
 	
 
 }

@@ -1,28 +1,35 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
-import com.almatec.controlpiso.integrapps.dtos.ItemOpCtDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
-import com.almatec.controlpiso.integrapps.entities.VistaItemsRutas;
-import com.almatec.controlpiso.integrapps.repositories.VistaItemsRutasRepository;
 import com.almatec.controlpiso.integrapps.services.VistaItemsRutasService;
-import com.almatec.controlpiso.utils.EstructuraDatos;
 
 @Service
 public class VistaItemsRutasServiceImpl implements VistaItemsRutasService {
+
+	@Override
+	public Set<OpCentroTrabajoDTO> buscarOpCT(Integer idCT) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<OpCentroTrabajoDTO> buscarOp(Integer idOp) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<OpCentroTrabajoDTO> buscarItemCt(Long idItem, Integer idCT) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
-	@Autowired
+	/*@Autowired
 	private VistaItemsRutasRepository vistaItemsRutasRepo;
 
 	@Override
@@ -107,6 +114,6 @@ public class VistaItemsRutasServiceImpl implements VistaItemsRutasService {
 		}
 		filiterOrdenesProduccion.forEach(System.out::println);
 		return filiterOrdenesProduccion;
-	}
+	}*/
 
 }

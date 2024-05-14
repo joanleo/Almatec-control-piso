@@ -174,7 +174,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_tarifa_externa () {
-		return getFormattedValue(f809_tarifa_externa ,20,0);
+		return getFormattedValue(f809_tarifa_externa ,20,4);
 	}
 
 	public void setF809_tarifa_externa (Double f809_tarifa_externa) {
@@ -190,7 +190,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_cantidad_base () {
-		return getFormattedValue(f809_cantidad_base ,20,0);
+		return getFormattedValue(f809_cantidad_base ,20,4);
 	}
 
 	public void setF809_cantidad_base (Double f809_cantidad_base) {
@@ -198,7 +198,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_unidades_equivalentes () {
-		return getFormattedValue(f809_unidades_equivalentes ,12,0);
+		return getFormattedValue(f809_unidades_equivalentes ,12,4);
 	}
 
 	public void setF809_unidades_equivalentes (Double f809_unidades_equivalentes) {
@@ -206,7 +206,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_horas_cola () {
-		return getFormattedValue(f809_horas_cola ,12,0);
+		return getFormattedValue(f809_horas_cola ,12,4);
 	}
 
 	public void setF809_horas_cola (Double f809_horas_cola) {
@@ -214,7 +214,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_horas_alistamiento () {
-		return getFormattedValue(f809_horas_alistamiento ,12,0);
+		return getFormattedValue(f809_horas_alistamiento ,12,4);
 	}
 
 	public void setF809_horas_alistamiento (Double f809_horas_alistamiento) {
@@ -222,7 +222,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_horas_ejecucion () {
-		return getFormattedValue(f809_horas_ejecucion ,12,0);
+		return getFormattedValue(f809_horas_ejecucion ,12,4);
 	}
 
 	public void setF809_horas_ejecucion (Double f809_horas_ejecucion) {
@@ -230,7 +230,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_horas_maquina () {
-		return getFormattedValue(f809_horas_maquina ,12,0);
+		return getFormattedValue(f809_horas_maquina ,12,4);
 	}
 
 	public void setF809_horas_maquina (Double f809_horas_maquina) {
@@ -238,7 +238,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 	}
 
 	public String getF809_horas_traslado () {
-		return getFormattedValue(f809_horas_traslado ,12,0);
+		return getFormattedValue(f809_horas_traslado ,12,4);
 	}
 
 	public void setF809_horas_traslado (Double f809_horas_traslado) {
@@ -316,6 +316,7 @@ public class RutasoperacionesOperacionesV01 implements Conector {
 		if(name == null) {
 			return String.format("%0" + size + "."+decimal+"f", 0.0).replace(",",".");
 		}
+		
 		return String.format("%0" + size + "."+decimal+ "f", name).replace(",",".");
 	}
 	@Override

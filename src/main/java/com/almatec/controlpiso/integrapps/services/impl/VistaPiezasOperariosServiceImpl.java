@@ -1,25 +1,14 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
-import com.almatec.controlpiso.integrapps.dtos.ItemOpCtDTO;
-import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
-import com.almatec.controlpiso.integrapps.dtos.PiezaCTProcesoDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasOperarios;
 import com.almatec.controlpiso.integrapps.repositories.VistaPiezasOperariosRepository;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasOperariosService;
-import com.almatec.controlpiso.utils.ClaveAgrupacion;
 
 @Service
 public class VistaPiezasOperariosServiceImpl implements VistaPiezasOperariosService {
@@ -28,24 +17,27 @@ public class VistaPiezasOperariosServiceImpl implements VistaPiezasOperariosServ
 	private VistaPiezasOperariosRepository vistaPiezasOperariosRepository;
 
 	@Override
-	public Set<OpCentroTrabajoDTO> obtenerPiezasOperarioProceso(OperarioDTO operario) {
+	public List<VistaPiezasOperarios> obtenerPiezasOperarioProceso(OperarioDTO operario) {
 		System.out.println("Servicio piezas Operario");
 		List<VistaPiezasOperarios> lista = vistaPiezasOperariosRepository.findPiezasOperariosProceso(operario);
-		Map<ClaveAgrupacion, List<VistaPiezasOperarios>> mapPorProyecto = agruparPorProyecto(lista);
+		/*Map<ClaveAgrupacion, List<VistaPiezasOperarios>> mapPorProyecto = agruparPorProyecto(lista);
 		
 		List<OpCentroTrabajoDTO> listaOpsCt = generarEstructuraOp(mapPorProyecto);
 
-		Set<OpCentroTrabajoDTO> ordenesProduccion = agruparItems(listaOpsCt);
+		Set<OpCentroTrabajoDTO> ordenesProduccion = agruparItems(listaOpsCt);		
+		return ordenesProduccion;*/
 		
-		return ordenesProduccion;
+		return lista;
+		
 	}
 
-	private Map<ClaveAgrupacion, List<VistaPiezasOperarios>> agruparPorProyecto(List<VistaPiezasOperarios> lista) {
+	/*private Map<ClaveAgrupacion, List<VistaPiezasOperarios>> agruparPorProyecto(List<VistaPiezasOperarios> lista) {
 		Map<ClaveAgrupacion, List<VistaPiezasOperarios>> mapPorProyecto = lista.stream()
                 .collect(Collectors.groupingBy(
                 		vista -> new ClaveAgrupacion(
                         vista.getCliente(),
-                        vista.getProyecto())));
+                        vista.getProyecto(),
+                        vista.getIdOp())));
 		mapPorProyecto.forEach((key, value) -> {
 			System.out.println("Key: " + key);
 			System.out.println("Values: ");
@@ -120,40 +112,41 @@ public class VistaPiezasOperariosServiceImpl implements VistaPiezasOperariosServ
 	}
 	
     private static ItemOpCtDTO crearItemProduccion(VistaPiezasOperarios vista) {
-        ComponenteDTO componente = crearComponente(vista);
+    	System.out.println("creando itemDTO");
+    	System.out.println(vista);
         ItemOpCtDTO itemProduccion = new ItemOpCtDTO();
         itemProduccion.setIdItem(vista.getIdItem());
         itemProduccion.setIdItemFab(vista.getIdItemFab());
         itemProduccion.setDescripcion(vista.getDescripcionItem());
         itemProduccion.setCant(vista.getCantOp());
-        itemProduccion.setIdCentroTrabajo(vista.getCtConjunto());
-        itemProduccion.setPeso(vista.getPesoConjunto());
+        itemProduccion.setIdCentroTrabajo(vista.getCt());
+        itemProduccion.setPeso(vista.getPeso());
         itemProduccion.setPrioridad(vista.getPrioridad());
-        
+        System.out.println(itemProduccion);
+        ComponenteDTO componente = crearComponente(vista);
         itemProduccion.addComponente(componente);
         return itemProduccion;
     }
 
     private static ComponenteDTO crearComponente(VistaPiezasOperarios vista) {
     	ComponenteDTO componente = new ComponenteDTO();
-        componente.setIdPerfil(vista.getIdPerfil());
+        //componente.setIdPerfil(vista.getIdPerfil());
         componente.setCodErp(vista.getCodErp());
-        componente.setDescripcionPerfil(vista.getDescripcionPerfil());
+        //componente.setDescripcionPerfil(vista.getDescripcionPerfil());
         componente.setCantListaMateriales(vista.getCantListaMateriales() * vista.getCantOp());
-        componente.setIdCentroTrabajoPerfil(vista.getCtPerfil());
+        //componente.setIdCentroTrabajoPerfil(vista.getCtPerfil());
         componente.setLongitud(vista.getLongitud());
-        componente.setPesoPerfil(vista.getPesoPerfil());
+        //componente.setPesoPerfil(vista.getPesoPerfil());
 
         return componente;
-    }
+    }*/
     
     @Override
-    public Set<PiezaCTProcesoDTO> obtenerPiezasCentroTrabajoProceso(Integer idCT, Integer idConfig) {
-		System.out.println("Servicio piezas ct");
+    public List<VistaPiezasOperarios> obtenerPiezasCentroTrabajoProceso(Integer idCT, Integer idConfig) {
 		List<VistaPiezasOperarios> lista = vistaPiezasOperariosRepository.findPiezasOperariosProceso(idCT, idConfig);
-		Set<PiezaCTProcesoDTO> piezas = lista.stream()
+		/*Set<PiezaCTProcesoDTO> piezas = lista.stream()
 				.map(item -> {
-					System.out.println(item);
+					//System.out.println(item);
 					PiezaCTProcesoDTO pieza = new PiezaCTProcesoDTO();
 					pieza.setCliente(item.getCliente());
 					pieza.setProyecto(item.getProyecto().trim());
@@ -166,28 +159,14 @@ public class VistaPiezasOperariosServiceImpl implements VistaPiezasOperariosServ
 					pieza.setTiempoTrancurrido(item.getTiempoTrancurrido());
 					pieza.setTiempoReproceso(item.getTiempoReproceso());
 					pieza.setNombreOperario(item.getNombreOperario());
-					if(Objects.equals(item.getCtPerfil(), idCT)) {
-						pieza.setIsPerfil(true);
-						pieza.setDescripcion(item.getDescripcionPerfil());
-						pieza.setIdPerfil(item.getIdPerfil());
-						pieza.setPeso(item.getPesoPerfil());
-						pieza.setCant(item.getCantListaMateriales() * item.getCantOp());
-						pieza.setTiempoStd(item.getTiempoStdPerfil());
-					}else {
-						pieza.setIsPerfil(false);
-						pieza.setDescripcion(item.getDescripcionItem());
-						pieza.setIdItemFab(item.getIdItemFab());
-						pieza.setPeso(item.getPesoConjunto());
-						pieza.setCant(item.getCantOp());
-						pieza.setTiempoStd(item.getTiempoStdItem());
-					}
+
 					return pieza;
 				})
 				.collect(Collectors.toSet());
 		
-		piezas.forEach(System.out::println);
+		piezas.forEach(System.out::println);*/
 
-		return piezas;
+		return lista;
     }
 
 }

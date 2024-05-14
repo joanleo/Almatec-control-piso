@@ -1,29 +1,36 @@
-  
-  
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
 
   async function drawChart() {
 	let infoParadas = await obtenerInfoParadas()
-	console.log(infoParadas)
+	//console.log(infoParadas)
 	
 	let paradas = [['Parada','Tiempo']]
-	for(const registro of infoParadas){
-		paradas.push([registro.nombre, registro.tiempo])
+	if(infoParadas){
+		for(const registro of infoParadas){
+			paradas.push([registro.nombre, registro.tiempo])
+		}		
 	}
 
-    /*let data = google.visualization.arrayToDataTable([
-      ['Task', 'Hours per Day'],
-      ['Cambio de color', 11],
-      ['Cambio de rollo', 2],
-      ['Falta de operarios', 2],
-      ['Cambio de fabricacion de producto', 2],
-      ['Problemas de calidad', 2]
-    ]);*/
 	let data = google.visualization.arrayToDataTable(paradas)
     let chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
-    chart.draw(data);
+    chart.draw(data)
+    
+    setInterval(async function() {		
+		infoParadas = await obtenerInfoParadas()
+		
+		let paradas = [['Parada','Tiempo']]
+		if(infoParadas){
+			for(const registro of infoParadas){
+				paradas.push([registro.nombre, registro.tiempo])
+			}		
+		}
+		
+		data = google.visualization.arrayToDataTable(paradas)
+	  	//console.log("Graficando paradas")
+	  	chart.draw(data)
+    }, 13000)
   }
   
   async function obtenerInfoParadas(){

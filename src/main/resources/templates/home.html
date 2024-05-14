@@ -4,7 +4,9 @@
 	<head th:replace="fragments/head :: head('Home')"></head>
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('*')"></nav>
-		<div class="container ">
+		<div class="container " style="display: flex;
+		            justify-content: center;
+		            align-items: center;">
 			<img class="logo" th:src="@{/imgs/almatec-logo-hd.png}" alt="logo" />
 		</div>
 		<footer th:replace="fragments/footer :: footer"></footer>

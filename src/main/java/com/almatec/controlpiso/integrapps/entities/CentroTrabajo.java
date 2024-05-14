@@ -74,9 +74,41 @@ public class CentroTrabajo {
 	
 	@Column(name = "is_show")
 	private Boolean isShow;
+	
+	@Column(name = "f808_id")
+	private Integer idCentroTrabajoErp;
 
 	public CentroTrabajo() {
 		super();
+	}
+
+	public CentroTrabajo(Integer id, Integer idCia, String centroOperacion, String nombre, String um, Integer codigo,
+			String centroCostos, String idCentroTrabajoPadre, Boolean isActivo, String usuarioCrea, String usuarioEdita,
+			Date fechaCreacion, Date fechaEdicion, String codigoBarraMaquina, String codigoBarraHum, String idEstacion,
+			Integer tiempoDisponible, Boolean isControlPieza, Boolean isControlServicio, Boolean isShow,
+			Integer idCentroTrabajoErp) {
+		super();
+		this.id = id;
+		this.idCia = idCia;
+		this.centroOperacion = centroOperacion;
+		this.nombre = nombre;
+		this.um = um;
+		this.codigo = codigo;
+		this.centroCostos = centroCostos;
+		this.idCentroTrabajoPadre = idCentroTrabajoPadre;
+		this.isActivo = isActivo;
+		this.usuarioCrea = usuarioCrea;
+		this.usuarioEdita = usuarioEdita;
+		this.fechaCreacion = fechaCreacion;
+		this.fechaEdicion = fechaEdicion;
+		this.codigoBarraMaquina = codigoBarraMaquina;
+		this.codigoBarraHum = codigoBarraHum;
+		this.idEstacion = idEstacion;
+		this.tiempoDisponible = tiempoDisponible;
+		this.isControlPieza = isControlPieza;
+		this.isControlServicio = isControlServicio;
+		this.isShow = isShow;
+		this.idCentroTrabajoErp = idCentroTrabajoErp;
 	}
 
 	public Integer getId() {
@@ -239,6 +271,14 @@ public class CentroTrabajo {
 		this.isShow = isShow;
 	}
 
+	public Integer getIdCentroTrabajoErp() {
+		return idCentroTrabajoErp;
+	}
+
+	public void setIdCentroTrabajoErp(Integer idCentroTrabajoErp) {
+		this.idCentroTrabajoErp = idCentroTrabajoErp;
+	}
+
 	@Override
 	public String toString() {
 		return "CentroTrabajo [id=" + id + ", idCia=" + idCia + ", centroOperacion=" + centroOperacion + ", nombre="
@@ -248,7 +288,8 @@ public class CentroTrabajo {
 				+ ", fechaEdicion=" + fechaEdicion + ", codigoBarraMaquina=" + codigoBarraMaquina + ", codigoBarraHum="
 				+ codigoBarraHum + ", idEstacion=" + idEstacion + ", tiempoDisponible=" + tiempoDisponible
 				+ ", isControlPieza=" + isControlPieza + ", isControlServicio=" + isControlServicio + ", isShow="
-				+ isShow + "]";
-	}	
+				+ isShow + ", idCentroTrabajoErp=" + idCentroTrabajoErp + "]";
+	}
 
+	
 }

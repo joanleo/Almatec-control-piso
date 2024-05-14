@@ -10,7 +10,7 @@ public class OpProduccionDTO {
 	private String cliente;
 	private String itemRef;
 	private String itemDescripcion;
-	private Integer cant;
+	private Double cant;
 	
 	public OpProduccionDTO() {
 		super();
@@ -69,10 +69,10 @@ public class OpProduccionDTO {
 	public void setItemDescripcion(String itemDescripcion) {
 		this.itemDescripcion = itemDescripcion;
 	}
-	public Integer getCant() {
+	public Double getCant() {
 		return cant;
 	}
-	public void setCant(Integer cant) {
+	public void setCant(Double cant) {
 		this.cant = cant;
 	} 
 	@Override

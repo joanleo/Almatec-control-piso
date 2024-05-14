@@ -6,6 +6,11 @@
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 		
 		<div class="container" id="principal">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+			
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -39,10 +44,10 @@
 			</div>
 
 			<div class="row1"  style="justify-content: space-between;">
-                <button type="button" class="btn btn-primary" id="btn-reporte-piezas" onclick="isValid()">
+                <button type="button" class="btn btn-primary" id="btn-reporte-piezas" onclick="isValid(event)">
                     Reportar piezas
                 </button>
-                <button type="button" class="btn btn-secondary" id="btn-reporte-novedades" onclick="isValid()">
+                <button type="button" class="btn btn-secondary" id="btn-reporte-novedades" onclick="isValid(event)">
                     Reportar desperdicio
                 </button>
             </div>
@@ -61,7 +66,7 @@
 			</div>
 			
 			<div class="container my-4" id="piezas-proceso">
-				<div class="table-responsive" >
+				<div class="table-responsive rounded-3 shadow-sm" >
 					<table class="table table-striped" id="table-process" aria-describedby="table-process-description">
 						<thead class="table-light">
 							  <tr>
@@ -73,13 +78,13 @@
 								<th>Descripcion</th>
 								<th>Tiempo</th>
 								<th>Operario</th>
-								<th>Stdr</th>
+								<!-- <th>Stdr</th> -->
 								<th>Estado</th>
 								<th>Plano</th>
 							  </tr>
 						</thead>
 						<tbody id="body-table-piezas-proceso">
-							  <tr>
+							 <!-- <tr>
 								<td>1</td>
 								<td>IF-3</td>
 								<td>1</td>
@@ -93,7 +98,7 @@
 								<td id="plano">									
 									<a href="#" onclick="verPdf()">VIGA B9 CX-RV01</a>
 									</td>
-							  </tr>						
+							  </tr>-->						
 						</tbody>
 					</table>
 					<div id="table-process-description" class="visually-hidden">
@@ -110,7 +115,7 @@
 			</div>		
 			
 			<div class="container my-4" id="productividad-operario">
-				<div class="table-responsive" >
+				<div class="table-responsive rounded-3 shadow-sm" >
 					<table class="table table-striped table-production" id="table-produccion" aria-describedby="table-produccion-description">
 					  <thead class="table-light"> 
 						  <tr>
@@ -125,7 +130,7 @@
 						  </tr>
 					  </thead>
 					  <tbody id="body-table-productividad-operario">
-						  <tr>
+						  <!-- <tr>
 							<td>Joan Leon</td>
 							<td>6AM - 2PM</td>
 							<td>06:15 AM</td>
@@ -138,7 +143,7 @@
 							    </div>
 							</td>
 							<td>Activo</td>
-						  </tr>					  
+						  </tr>	-->				  
 					  </tbody>
 					</table>
 					<div id="table-produccion-description" class="visually-hidden">
@@ -168,9 +173,14 @@
 							  </div>							  
 						  </div>
 						  
+						  <div class="input-group my-3 size-m">
+							  <span class="input-group-text">Esquema: </span>
+							  <input type="text" aria-label="esquema" id="esquema" class="form-control" readonly style="text-align: right;"/>
+						  </div>
+						  
 						  <div class="row1" id="items-op" style="margin-top: 1rem; margin-bottom: 2rem;">
 							  <div class="container">
-								  <div class="table-responsive" >
+								  <div class="table-responsive rounded-3 shadow-sm" >
 									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-items-description">
 									  		<thead>
 									            <tr>
@@ -179,7 +189,7 @@
 									                <th>DESCRIPCION</th>
 									                <th>LONG</th>
 									                <th>CLIENTE</th>
-									                <th>PROYECTO</th>
+									                <th>PINTURA</th>
 									                <th>CANT SOL</th>
 									                <th>PESO UN</th>
 									                <th>PESO TTL</th>
@@ -242,7 +252,7 @@
 						  
 							<div class="row1" style="margin-top: 1rem; margin-bottom: 2rem;">
 							  <div class="container">
-								  <div class="table-responsive" >
+								  <div class="table-responsive rounded-3 shadow-sm" >
 									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-reporte-items-description">
 									  		<thead>
 									            <tr>
@@ -301,7 +311,7 @@
 						  
 							<div class="row1" style="margin-top: 1rem; margin-bottom: 2rem;">
 							  <div class="container">
-								  <div class="table-responsive" >
+								  <div class="table-responsive rounded-3 shadow-sm" >
 									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-novedades-items-description">
 									  		<thead>
 									            <tr>
@@ -378,12 +388,7 @@
 		<script src="/js/produccion.js"></script>
 		<script src="/js/logout.js"></script>
 		
-		<script>
-			function verPdf(){
-				const nombreDelArchivo = document.getElementById("plano").textContent
-				window.open(`http://10.75.98.3:8090/centros-trabajo/descargar-pdf/${nombreDelArchivo}.pdf`, '_blank');				
-			}
-		</script>
+		
 
 		
 	</body>

@@ -47,9 +47,9 @@
 					<tbody>
 						<tr th:each="novedad : ${novedades}">
 							<td th:text="${ novedad.proyecto }"></td>
-							<td th:text="${ novedad.fechaCreachion }"></td>
-							<td th:text="${ novedad.codigoErpItem } ?: ${ novedad.codigoErpPerfil }"></td>
-							<td th:text="${ novedad.descripcionItem } ?: ${ novedad.descripcionPerfil }"></td>
+							<td th:text="${#dates.format(novedad.fechaCreachion, 'dd/MM/yyyy')}"></td>
+							<td th:text="${ novedad.idItemFab == 0 ? novedad.idPerfil: 	novedad.idItemFab }"></td>
+							<td th:text="${ novedad.descripcion}"></td>
 							<td th:text="${ novedad.idCentroTrabajo }"></td>
 							<td th:text="${ novedad.nombreOperario }"></td>
 							<td th:text="${ novedad.sobrante }"></td>

@@ -1,20 +1,23 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
+import java.math.BigDecimal;
+
 import com.almatec.controlpiso.integrapps.entities.Operario;
 
 public class ReporteDTO {
 	private String proyecto;
 	private Integer numOp;
 	private String ref;
-	private Integer cantSol;
+	private BigDecimal cantSol;
 	private Integer cantFab;
 	private String centroTrabajo;
 	private Operario operario;
 	private Integer idCentroTrabajo;
 	private Integer idItemFab;
-	private Integer idPerfil;
+	private Integer idParte;
 	private Long idItem;
 	private Integer cantReportar;
+	private String lote;
 	
 	public String getProyecto() {
 		return proyecto;
@@ -28,7 +31,7 @@ public class ReporteDTO {
 		return ref;
 	}
 
-	public Integer getCantSol() {
+	public BigDecimal getCantSol() {
 		return cantSol;
 	}
 
@@ -44,7 +47,7 @@ public class ReporteDTO {
 		this.ref = ref;
 	}
 
-	public void setCantSol(Integer cant) {
+	public void setCantSol(BigDecimal cant) {
 		this.cantSol = cant;
 	}
 
@@ -88,16 +91,8 @@ public class ReporteDTO {
 		return idItemFab;
 	}
 
-	public Integer getIdPerfil() {
-		return idPerfil;
-	}
-
 	public void setIdItemFab(Integer idItemFab) {
 		this.idItemFab = idItemFab;
-	}
-
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
 	}
 
 	public Long getIdItem() {
@@ -116,12 +111,28 @@ public class ReporteDTO {
 		this.cantReportar = cantReportar;
 	}
 
+	public String getLote() {
+		return lote;
+	}
+
+	public void setLote(String lote) {
+		this.lote = lote;
+	}
+
+	public Integer getIdParte() {
+		return idParte;
+	}
+
+	public void setIdParte(Integer idParte) {
+		this.idParte = idParte;
+	}
+
 	@Override
 	public String toString() {
 		return "ReporteDTO [proyecto=" + proyecto + ", numOp=" + numOp + ", ref=" + ref + ", cantSol=" + cantSol
 				+ ", cantFab=" + cantFab + ", centroTrabajo=" + centroTrabajo + ", operario=" + operario
-				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idPerfil=" + idPerfil
-				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + "]";
+				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
+				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + "]";
 	}
 
 }

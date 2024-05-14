@@ -2,7 +2,7 @@ package com.almatec.controlpiso.erp.webservices.generated;
 
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 
-public class DoctoordenesdeproduccionDocumentosVersión01 implements Conector {
+public class DoctoordenesdeproduccionDocumentosVersion01 implements Conector {
 	private Integer F_NUMERO_REG;  //Numero consecutivo
 	private Integer F_TIPO_REG= 850;  //Valor fijo = 850
 	private Integer F_SUBTIPO_REG= 0;  //Valor fijo = 00
@@ -230,7 +230,7 @@ public class DoctoordenesdeproduccionDocumentosVersión01 implements Conector {
 		this.f850_consec_docto_pv = f850_consec_docto_pv;
 	}
 
-	public DoctoordenesdeproduccionDocumentosVersión01 () {
+	public DoctoordenesdeproduccionDocumentosVersion01 () {
 	// Constructor vacio para inicializar
 	}
 	@Override

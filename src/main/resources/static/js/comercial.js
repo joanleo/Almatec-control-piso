@@ -23,7 +23,7 @@ async function buscarPedidos(){
 	}
 	
 	const orders = await getOrders(filtro)
-	//console.log(orders)
+	console.log(orders)
 	let listOrders = createListObjetsOrder(orders)
 	
 	fillTableOrders(listOrders)	

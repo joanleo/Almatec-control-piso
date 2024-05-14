@@ -5,6 +5,7 @@ body{
 	flex-direction: column;
 	min-height: 100vh;
     margin: 0;
+    background-color: rgb(253, 253, 253);/*f5f9fa*/
 }
 
 .header{
@@ -54,10 +55,10 @@ body{
 	--bs-table-bg: rgb(0, 121, 54, 0.9);
 }
 
-.rounded{
+/*.rounded{
   border-radius: .375rem !important;
   border-width: 1px;
-}
+}*/
 
 .size-l{
     width: 20rem;
@@ -84,12 +85,12 @@ body{
 }
 
 .btn-primary{
-	background-color: rgb(0, 121, 54, 0.9) !important;
+	background-color: #007744 !important; /*rgb(0, 121, 54, 0.9)*/
 	--bs-btn-border-color: none !important; 
 }
 
 .btn-secondary{
-	background-color: rgb(255, 214, 0, 0.9) !important;
+	background-color: #FFEB3B !important;/*rgb(255, 214, 0, 0.9)*/
 	--bs-btn-border-color: none !important;
 	color: #000; 
 }
@@ -301,9 +302,61 @@ footer {
 .logo {
   max-width: 100%;
   height: auto;
+  background-color: transparent;
 }
 
+.hscroll{
+      overflow-x: auto;
+      overflow-y: scroll;
+  }
 
+#spinner:not([hidden]) {
+    position: fixed;
+    top: 35%;
+    left: 35%;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    background-color: rgba(143, 143, 143, 0.3);
+    width: 25rem;
+    height: 25rem;
+    border-radius: 1.5rem;
+  }
+  
+  #spinner > div {
+	margin-top: 1rem;
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: bold;
+	}
+  
+  #spinner::after{
+    content: "";
+    width: 15rem;
+    height: 15rem;
+    border: 0.4rem solid #f3f3f3;
+    border-top: 5px solid rgb(0, 121, 54, 0.9);
+    border-radius: 100%;
+    will-change: transform;
+    animation: spin 1s infinite linear;
+    z-index: 10000;
+    background-color: #706c6c;
+  }
+  
+  
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
 
 

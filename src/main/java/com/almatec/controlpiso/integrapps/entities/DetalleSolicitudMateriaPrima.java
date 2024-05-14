@@ -1,7 +1,6 @@
 package com.almatec.controlpiso.integrapps.entities;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,9 +25,9 @@ public class DetalleSolicitudMateriaPrima {
 	@Column(name = "Und_Erp")
 	private String undErp;
 	@Column(name = "Cant_Sol")
-	private BigDecimal cantSol = BigDecimal.ZERO;
+	private Double cantSol = 0.000;
 	@Column(name = "Cant_Entrega")
-	private BigDecimal cantEntrega = BigDecimal.ZERO;
+	private Double cantEntrega = 0.000;
 	@Column(name = "Lotes_Erp")
 	private String loteErp;
 	@Column(name = "Estado_Item")
@@ -39,13 +38,13 @@ public class DetalleSolicitudMateriaPrima {
 	private Integer idUsuarioSol = 0;
 	@Column(name = "Id_Usu_Erp")
 	private Integer idUsuarioErp = 0;
-	@Column(name = "Tipo_doc_Erp")
-	private LocalDateTime fecha;
+
+	private Date fecha;
 	
 	@PrePersist
     public void prePersist() {
         if (fecha == null) {
-        	fecha = LocalDateTime.now();
+        	fecha = new Date();
         }
 	}
 
@@ -69,11 +68,11 @@ public class DetalleSolicitudMateriaPrima {
 		return undErp;
 	}
 
-	public BigDecimal getCantSol() {
+	public Double getCantSol() {
 		return cantSol;
 	}
 
-	public BigDecimal getCantEntrega() {
+	public Double getCantEntrega() {
 		return cantEntrega;
 	}
 
@@ -97,7 +96,7 @@ public class DetalleSolicitudMateriaPrima {
 		return idUsuarioErp;
 	}
 
-	public LocalDateTime getFecha() {
+	public Date getFecha() {
 		return fecha;
 	}
 
@@ -117,11 +116,11 @@ public class DetalleSolicitudMateriaPrima {
 		this.undErp = undErp;
 	}
 
-	public void setCantSol(BigDecimal cantSol) {
+	public void setCantSol(Double cantSol) {
 		this.cantSol = cantSol;
 	}
 
-	public void setCantEntrega(BigDecimal cantEntrega) {
+	public void setCantEntrega(Double cantEntrega) {
 		this.cantEntrega = cantEntrega;
 	}
 
@@ -145,8 +144,16 @@ public class DetalleSolicitudMateriaPrima {
 		this.idUsuarioErp = idUsuarioErp;
 	}
 
-	public void setFecha(LocalDateTime fecha) {
+	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+
+	@Override
+	public String toString() {
+		return "DetalleSolicitudMateriaPrima [id=" + id + ", idSolicitud=" + idSolicitud + ", codigoErp=" + codigoErp
+				+ ", undErp=" + undErp + ", cantSol=" + cantSol + ", cantEntrega=" + cantEntrega + ", loteErp="
+				+ loteErp + ", idEstadoItem=" + idEstadoItem + ", bodegaEntrega=" + bodegaEntrega + ", idUsuarioSol="
+				+ idUsuarioSol + ", idUsuarioErp=" + idUsuarioErp + ", fecha=" + fecha + "]";
 	}
 
 	

@@ -3,12 +3,12 @@ package com.almatec.controlpiso.integrapps.dtos;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class OpCentroTrabajoDTO {
 	
 	private Integer idOp;
-	private String tipoOp;
-	private Integer numOp;
+	private String op;
 	private String cliente;
 	private String proyecto;
 	private Date fechaContraActual;
@@ -19,10 +19,9 @@ public class OpCentroTrabajoDTO {
 		super();
 	}
 
-	public OpCentroTrabajoDTO(Integer idOp2, String tipoOp2, Integer numOp2, String cliente2, String proyecto2) {
+	public OpCentroTrabajoDTO(Integer idOp2, String op, String cliente2, String proyecto2) {
 		this.idOp = idOp2;
-		this.tipoOp = tipoOp2;
-		this.numOp = numOp2;
+		this.op = op;
 		this.cliente = cliente2;
 		this.proyecto = proyecto2;
 
@@ -36,20 +35,12 @@ public class OpCentroTrabajoDTO {
 		this.idOp = idOp;
 	}
 
-	public String getTipoOp() {
-		return tipoOp;
+	public String getOp() {
+		return op;
 	}
 
-	public void setTipoOp(String tipoOp) {
-		this.tipoOp = tipoOp;
-	}
-
-	public Integer getNumOp() {
-		return numOp;
-	}
-
-	public void setNumOp(Integer numOp) {
-		this.numOp = numOp;
+	public void setOp(String op) {
+		this.op = op;
 	}
 
 	public String getCliente() {
@@ -91,12 +82,32 @@ public class OpCentroTrabajoDTO {
 	public void setEsquemaPintura(String esquemaPintura) {
 		this.esquemaPintura = esquemaPintura;
 	}
-
+ 
 	@Override
 	public String toString() {
-		return "OpCentroTrabajoDTO [idOp=" + idOp + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", cliente=" + cliente
-				+ ", proyecto=" + proyecto + ", fechaContraActual=" + fechaContraActual + ", esquemaPintura="
-				+ esquemaPintura + ", items=" + items + "]";
+		return "OpCentroTrabajoDTO [idOp=" + idOp + ", op=" + op + ", cliente=" + cliente + ", proyecto=" + proyecto
+				+ ", fechaContraActual=" + fechaContraActual + ", esquemaPintura=" + esquemaPintura + ", items=" + items
+				+ "]";
+	}
+ 
+	@Override
+	public int hashCode() {
+		return Objects.hash(cliente, esquemaPintura, fechaContraActual, idOp, items, op, proyecto);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OpCentroTrabajoDTO other = (OpCentroTrabajoDTO) obj;
+		return Objects.equals(cliente, other.cliente) && Objects.equals(esquemaPintura, other.esquemaPintura)
+				&& Objects.equals(fechaContraActual, other.fechaContraActual) && Objects.equals(idOp, other.idOp)
+				&& Objects.equals(items, other.items) && Objects.equals(op, other.op)
+				&& Objects.equals(proyecto, other.proyecto);
 	}
 
 }

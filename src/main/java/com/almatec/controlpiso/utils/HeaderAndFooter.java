@@ -39,20 +39,18 @@ public class HeaderAndFooter extends PdfPageEventHelper {
     
     @Override
     public void onStartPage(PdfWriter writer, Document document) {
-        // Aquí puedes configurar y agregar el encabezado en cada página
         PdfContentByte cb = writer.getDirectContent();
         
         int pageNumber = writer.getPageNumber();
 
         
         Font poweredByFont = new Font();
-        poweredByFont.setSize(8); // Puedes ajustar el tamaño de fuente si es necesario
+        poweredByFont.setSize(8); 
         Phrase poweredByPhrase = new Phrase("Powered by: www.integrapps.com", poweredByFont);
         ColumnText.showTextAligned(writer.getDirectContentUnder(),
                 Element.ALIGN_LEFT, poweredByPhrase,
                 document.left(), document.bottom(), 0);
 
-        // Agregar la numeración centrada
         Phrase pageNumberPhrase = new Phrase("Página " + pageNumber, poweredByFont);        
         ColumnText.showTextAligned(writer.getDirectContent(),
                 Element.ALIGN_CENTER, pageNumberPhrase,

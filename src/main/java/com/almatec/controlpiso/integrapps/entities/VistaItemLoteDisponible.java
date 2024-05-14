@@ -41,6 +41,9 @@ public class VistaItemLoteDisponible {
 	
 	@Column(name = "f_id_lote")
 	private String lote;
+	
+	@Column(name = "f150_id")
+	private String idBodega;
 
 	public VistaItemLoteDisponible() {
 		super();
@@ -86,13 +89,18 @@ public class VistaItemLoteDisponible {
 		return lote;
 	}
 
+	public String getIdBodega() {
+		return idBodega;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaItemLoteDisponible [idUnico=" + idUnico + ", idItem=" + idItem + ", descripcionItem="
 				+ descripcionItem + ", um=" + um + ", existencia=" + existencia + ", comprometida=" + comprometida
-				+ ", peso=" + peso + ", disponible=" + disponible + ", bodega=" + bodega + ", lote=" + lote + "]";
+				+ ", peso=" + peso + ", disponible=" + disponible + ", bodega=" + bodega + ", lote=" + lote
+				+ ", idBodega=" + idBodega + "]";
 	}
-	
+
 	
 
 }

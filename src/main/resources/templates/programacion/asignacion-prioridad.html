@@ -44,26 +44,28 @@
 					 <h3>Items</h3>
 					 <div th:each="item, stat : ${items}" th:id="'draggable-' + ${stat.index}" class="draggable my-3"
 				            draggable="true"
-				            ondragstart="drag(event);">	                    
-	                    <table class="table table-striped align-middle table-hover table-bordered rounded">
-			            <thead class="table-dark">
-			                <tr>
-			                    <th>Descripción</th>
-			                    <th>Cantidad</th>
-			                    <th>Proyecto</th>
-			                    <th>Prioridad</th>
-			                </tr>
-			            </thead>
-			            <tbody>
-			                <tr>
-			                    <td th:text="${item.idItem}" hidden></td>
-			                    <td th:text="${item.descripcion}"></td>
-			                    <td th:text="${item.cant}"></td>
-			                    <td th:text="${item.proyecto}"></td>
-			                    <td th:text="${item.prioridad}"></td>
-			                </tr>
-			            </tbody>
-			        </table>
+				            ondragstart="drag(event);">
+						<div class="table-responsive rounded-3 shadow-sm">
+		                    <table class="table table-striped align-middle table-hover table-bordered">
+					            <thead class="table-dark">
+					                <tr>
+					                    <th>Descripción</th>
+					                    <th>Cantidad</th>
+					                    <th>Proyecto</th>
+					                    <th>Prioridad</th>
+					                </tr>
+					            </thead>
+					            <tbody>
+					                <tr>
+					                    <td th:text="${item.idItem}" hidden></td>
+					                    <td th:text="${item.descripcion}"></td>
+					                    <td th:text="${item.cant}"></td>
+					                    <td th:text="${item.proyecto}"></td>
+					                    <td th:text="${item.prioridad}"></td>
+					                </tr>
+					            </tbody>
+					        </table>							
+						</div>                
 	                </div>
 					 
 				 </div>

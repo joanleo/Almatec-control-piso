@@ -12,88 +12,97 @@ import javax.persistence.Table;
 public class VistaPiezasOperarios {
 	
 	@Id
-	@Column(name = "identificador_unico")
+	@Column(name = "id")
 	private String id;
 	
-	@Column(name = "Reg_Pie_Dia_Id")
+	@Column(name = "id_reg_pieza")
 	private Integer idRegPieza;
 	
-	@Column(name = "C_proconfigproceso_id")
+	@Column(name = "id_config_proceso")
 	private Integer idProceso;
 	
-	@Column(name = "C_ciaorg_id")
-	private Integer idCia;
+	/*@Column(name = "C_ciaorg_id")
+	private Integer idCia;*/
 	
+	@Column(name = "id_centro_trabajo")
 	private Integer ct;
 	
-	@Column(name = "C_prooperario_id")
+	@Column(name = "id_operario")
 	private Integer idOperario;
 	
-	@Column(name = "E_activo")
+	@Column(name = "is_pieza_activa")
 	private Boolean isActivo;
 	
 	private String cliente;
 	
 	private String proyecto;
 	
-	@Column(name = "item_id")
+	@Column(name = "id_item_op")
 	private Long IdItem;
 	
-	@Column(name = "itemFabId")
+	@Column(name = "id_item")
 	private Integer idItemFab;
 	
-	@Column(name = "descripcionConjunto")
+	@Column(name = "descripcion")
 	private String descripcionItem;
 	
-	@Column(name = "ct_conjunto")
-	private Integer ctConjunto;
+	@Column(name = "cant_req")
+	private Integer cantReq;
 	
-	private Integer cantOp;
+	@Column(name = "peso_item")
+	private BigDecimal peso;
 	
-	@Column(name = "item_peso_b")
-	private BigDecimal pesoConjunto;
-	
-	private Integer idPerfil;
-	
-	private String descripcionPerfil;
-	
-	@Column(name = "ct_perfil")
-	private Integer ctPerfil;
-	
+	@Column(name = "codigo_erp")
 	private Integer codErp;
-	
-	@Column(name = "item_perf_peso")
-	private BigDecimal pesoPerfil;
-	
-	private Integer cantListaMateriales;
-	
-	@Column(name = "valor_aplicar")
+		
+	@Column(name = "long_item")
 	private BigDecimal longitud;
 	
 	private Integer prioridad;
 	
+	@Column(name = "id_op_ia")
 	private Integer idOp;
+	
+	@Column(name = "tipo_op_erp")
 	private String tipoOp;
+	
+	@Column(name = "num_op_erp")
 	private Integer numOp;
-	@Column(name = "Esq_Pintura")
+	
+	@Column(name = "esquema_pintura")
 	private String esquemaPintura;
-	
-	@Column(name = "tiempo_std_item")
-	private BigDecimal tiempoStdItem;
-	
-	@Column(name = "tiempo_std_perfil")
-	private BigDecimal tiempoStdPerfil;
-	
+		
 	@Column(name = "N_sstranscurrido")
 	private Integer tiempoTrancurrido;
 	
 	@Column(name = "N_ssreproceso")
 	private Integer tiempoReproceso;
 	
-	@Column(name = "A_Operario_Nombre")
+	@Column(name = "nombre_operario")
 	private String nombreOperario;
 	
+	@Column(name = "color")
+	private String color;
 	
+	@Column(name = "id_item_parte")
+	private Integer idParte;
+	
+	@Column(name = "cant_cumplida")
+	private Integer cantCumlida;
+	
+	@Column(name = "unidad_negocio")
+	private String und_negocio;
+	
+	@Column(name = "ruta_plano")
+	private String plano;
+
+	public VistaPiezasOperarios() {
+		super();
+	}
+
+	public String getId() {
+		return id;
+	}
 
 	public Integer getIdRegPieza() {
 		return idRegPieza;
@@ -101,10 +110,6 @@ public class VistaPiezasOperarios {
 
 	public Integer getIdProceso() {
 		return idProceso;
-	}
-
-	public Integer getIdCia() {
-		return idCia;
 	}
 
 	public Integer getCt() {
@@ -139,40 +144,16 @@ public class VistaPiezasOperarios {
 		return descripcionItem;
 	}
 
-	public Integer getCtConjunto() {
-		return ctConjunto;
+	public Integer getCantReq() {
+		return cantReq;
 	}
 
-	public Integer getCantOp() {
-		return cantOp;
-	}
-
-	public BigDecimal getPesoConjunto() {
-		return pesoConjunto;
-	}
-
-	public Integer getIdPerfil() {
-		return idPerfil;
-	}
-
-	public String getDescripcionPerfil() {
-		return descripcionPerfil;
-	}
-
-	public Integer getCtPerfil() {
-		return ctPerfil;
+	public BigDecimal getPeso() {
+		return peso;
 	}
 
 	public Integer getCodErp() {
 		return codErp;
-	}
-
-	public BigDecimal getPesoPerfil() {
-		return pesoPerfil;
-	}
-
-	public Integer getCantListaMateriales() {
-		return cantListaMateriales;
 	}
 
 	public BigDecimal getLongitud() {
@@ -199,18 +180,6 @@ public class VistaPiezasOperarios {
 		return esquemaPintura;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public BigDecimal getTiempoStdItem() {
-		return tiempoStdItem;
-	}
-
-	public BigDecimal getTiempoStdPerfil() {
-		return tiempoStdPerfil;
-	}
-
 	public Integer getTiempoTrancurrido() {
 		return tiempoTrancurrido;
 	}
@@ -223,23 +192,150 @@ public class VistaPiezasOperarios {
 		return nombreOperario;
 	}
 
-	public VistaPiezasOperarios() {
-		super();
+	public String getColor() {
+		return color;
+	}
+
+	public Integer getIdParte() {
+		return idParte;
+	}
+
+	public Integer getCantCumlida() {
+		return cantCumlida;
+	}
+
+	public String getUnd_negocio() {
+		return und_negocio;
+	}
+
+	public String getPlano() {
+		return plano;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setIdRegPieza(Integer idRegPieza) {
+		this.idRegPieza = idRegPieza;
+	}
+
+	public void setIdProceso(Integer idProceso) {
+		this.idProceso = idProceso;
+	}
+
+	public void setCt(Integer ct) {
+		this.ct = ct;
+	}
+
+	public void setIdOperario(Integer idOperario) {
+		this.idOperario = idOperario;
+	}
+
+	public void setIsActivo(Boolean isActivo) {
+		this.isActivo = isActivo;
+	}
+
+	public void setCliente(String cliente) {
+		this.cliente = cliente;
+	}
+
+	public void setProyecto(String proyecto) {
+		this.proyecto = proyecto;
+	}
+
+	public void setIdItem(Long idItem) {
+		IdItem = idItem;
+	}
+
+	public void setIdItemFab(Integer idItemFab) {
+		this.idItemFab = idItemFab;
+	}
+
+	public void setDescripcionItem(String descripcionItem) {
+		this.descripcionItem = descripcionItem;
+	}
+
+	public void setCantReq(Integer cantReq) {
+		this.cantReq = cantReq;
+	}
+
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
+	}
+
+	public void setCodErp(Integer codErp) {
+		this.codErp = codErp;
+	}
+
+	public void setLongitud(BigDecimal longitud) {
+		this.longitud = longitud;
+	}
+
+	public void setPrioridad(Integer prioridad) {
+		this.prioridad = prioridad;
+	}
+
+	public void setIdOp(Integer idOp) {
+		this.idOp = idOp;
+	}
+
+	public void setTipoOp(String tipoOp) {
+		this.tipoOp = tipoOp;
+	}
+
+	public void setNumOp(Integer numOp) {
+		this.numOp = numOp;
+	}
+
+	public void setEsquemaPintura(String esquemaPintura) {
+		this.esquemaPintura = esquemaPintura;
+	}
+
+	public void setTiempoTrancurrido(Integer tiempoTrancurrido) {
+		this.tiempoTrancurrido = tiempoTrancurrido;
+	}
+
+	public void setTiempoReproceso(Integer tiempoReproceso) {
+		this.tiempoReproceso = tiempoReproceso;
+	}
+
+	public void setNombreOperario(String nombreOperario) {
+		this.nombreOperario = nombreOperario;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public void setIdParte(Integer idParte) {
+		this.idParte = idParte;
+	}
+
+	public void setCantCumlida(Integer cantCumlida) {
+		this.cantCumlida = cantCumlida;
+	}
+
+	public void setUnd_negocio(String und_negocio) {
+		this.und_negocio = und_negocio;
+	}
+
+	public void setPlano(String plano) {
+		this.plano = plano;
 	}
 
 	@Override
 	public String toString() {
-		return "VistaPiezasOperarios [id=" + id + ", idRegPieza=" + idRegPieza + ", idProceso=" + idProceso + ", idCia="
-				+ idCia + ", ct=" + ct + ", idOperario=" + idOperario + ", isActivo=" + isActivo + ", cliente="
-				+ cliente + ", proyecto=" + proyecto + ", IdItem=" + IdItem + ", idItemFab=" + idItemFab
-				+ ", descripcionItem=" + descripcionItem + ", ctConjunto=" + ctConjunto + ", cantOp=" + cantOp
-				+ ", pesoConjunto=" + pesoConjunto + ", idPerfil=" + idPerfil + ", descripcionPerfil="
-				+ descripcionPerfil + ", ctPerfil=" + ctPerfil + ", codErp=" + codErp + ", pesoPerfil=" + pesoPerfil
-				+ ", cantListaMateriales=" + cantListaMateriales + ", longitud=" + longitud + ", prioridad=" + prioridad
-				+ ", idOp=" + idOp + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", esquemaPintura=" + esquemaPintura
-				+ ", tiempoStdItem=" + tiempoStdItem + ", tiempoStdPerfil=" + tiempoStdPerfil + ", tiempoTrancurrido="
-				+ tiempoTrancurrido + ", tiempoReproceso=" + tiempoReproceso + ", nombreOperario=" + nombreOperario
-				+ "]";
+		return "VistaPiezasOperarios [id=" + id + ", idRegPieza=" + idRegPieza + ", idProceso=" + idProceso + ", ct="
+				+ ct + ", idOperario=" + idOperario + ", isActivo=" + isActivo + ", cliente=" + cliente + ", proyecto="
+				+ proyecto + ", IdItem=" + IdItem + ", idItemFab=" + idItemFab + ", descripcionItem=" + descripcionItem
+				+ ", cantReq=" + cantReq + ", peso=" + peso + ", codErp=" + codErp + ", longitud=" + longitud
+				+ ", prioridad=" + prioridad + ", idOp=" + idOp + ", tipoOp=" + tipoOp + ", numOp=" + numOp
+				+ ", esquemaPintura=" + esquemaPintura + ", tiempoTrancurrido=" + tiempoTrancurrido
+				+ ", tiempoReproceso=" + tiempoReproceso + ", nombreOperario=" + nombreOperario + ", color=" + color
+				+ ", idParte=" + idParte + ", cantCumlida=" + cantCumlida + ", und_negocio=" + und_negocio + ", plano="
+				+ plano + "]";
 	}
+
 	
 }

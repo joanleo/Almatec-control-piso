@@ -7,16 +7,17 @@ import java.util.stream.Collectors;
 import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpCtDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
-import com.almatec.controlpiso.integrapps.entities.VistaItemsRutas;
+import com.almatec.controlpiso.integrapps.entities.VistaOpItemsMaterialesRuta;
 
 public class EstructuraDatos {
-    public static List<OpCentroTrabajoDTO> crearEstructura(List<VistaItemsRutas> vistas) {
+    public static List<OpCentroTrabajoDTO> crearEstructura(List<VistaOpItemsMaterialesRuta> vistas) {
     	//vistas.forEach(vista->System.out.println(vista));
-        Map<ClaveAgrupacion, List<VistaItemsRutas>> mapPorNumOp = vistas.stream()
+        Map<ClaveAgrupacion, List<VistaOpItemsMaterialesRuta>> mapPorNumOp = vistas.stream()
                 .collect(Collectors.groupingBy(
                 		vista -> new ClaveAgrupacion(
                         vista.getCliente(),
-                        vista.getProyecto())));
+                        vista.getUn(),
+                        vista.getIdOpIntegrapps())));
         //mapPorNumOp.forEach(vista->System.out.println(vista));
         return mapPorNumOp.entrySet().stream()
                 .map(entry -> {
@@ -27,13 +28,12 @@ public class EstructuraDatos {
                     //Set<ItemDTO> setItems = new HashSet<>(items);                    
 
                     OpCentroTrabajoDTO ordenProduccion = new OpCentroTrabajoDTO();
-                    ordenProduccion.setIdOp(entry.getValue().get(0).getId().getIdOp());
-                    ordenProduccion.setNumOp(entry.getValue().get(0).getNumOp());
-                    ordenProduccion.setTipoOp(entry.getValue().get(0).getTipoOp());
+                    ordenProduccion.setIdOp(entry.getValue().get(0).getIdOpIntegrapps());
+                    ordenProduccion.setOp(entry.getValue().get(0).getOp());
                     ordenProduccion.setCliente(entry.getValue().get(0).getCliente());
-                    ordenProduccion.setProyecto(entry.getValue().get(0).getProyecto());
-                    ordenProduccion.setFechaContraActual(entry.getValue().get(0).getFechaContraActual());
-                    ordenProduccion.setEsquemaPintura(entry.getValue().get(0).getEsquemaPintura());
+                    ordenProduccion.setProyecto(entry.getValue().get(0).getUn());
+                    //ordenProduccion.setFechaContraActual(entry.getValue().get(0).getFechaContraActual());
+                    ordenProduccion.setEsquemaPintura(entry.getValue().get(0).getEsquema_pintura());
                     ordenProduccion.setItems(items);
 
                     return ordenProduccion;
@@ -41,33 +41,32 @@ public class EstructuraDatos {
                 .collect(Collectors.toList());
     }
 
-    private static ItemOpCtDTO crearItemProduccion(VistaItemsRutas vista) {
+    private static ItemOpCtDTO crearItemProduccion(VistaOpItemsMaterialesRuta vista) {
         ComponenteDTO componente = crearComponente(vista);
         ItemOpCtDTO itemProduccion = new ItemOpCtDTO();
-        itemProduccion.setIdItem(vista.getIdItem());
-        itemProduccion.setIdItemFab(vista.getItemFabId());
-        itemProduccion.setDescripcion(vista.getDescripcionConjunto());
-        itemProduccion.setCant(vista.getCantOp());
-        itemProduccion.setIdCentroTrabajo(vista.getIdCentroTrabajoConjunto());
-        itemProduccion.setCentroTrabajo(vista.getCentroTrabajoConjunto());
-        itemProduccion.setPeso(vista.getPesoConjunto());
-        itemProduccion.setPintura(vista.getPintura());
+        itemProduccion.setItem_op_id(vista.getItem_op_id());
+        itemProduccion.setItem_id(vista.getItem_id());
+        itemProduccion.setItem_desc(vista.getItem_desc());
+        itemProduccion.setCant_req(vista.getCant_req());
+        itemProduccion.setItem_centro_t_id(vista.getItemCentroTId());
+        itemProduccion.setItem_centro_t_nombre(vista.getItem_centro_t_nombre());
+        itemProduccion.setItem_peso(vista.getItem_peso());
+        itemProduccion.setItem_color(vista.getItem_color());
         itemProduccion.setPrioridad(vista.getPrioridad());
         
         itemProduccion.addComponente(componente);
         return itemProduccion;
     }
 
-    private static ComponenteDTO crearComponente(VistaItemsRutas vista) {
+    private static ComponenteDTO crearComponente(VistaOpItemsMaterialesRuta vista) {
     	ComponenteDTO componente = new ComponenteDTO();
-        componente.setIdPerfil(vista.getIdPerfil());
-        componente.setCodErp(vista.getCodErp());
-        componente.setDescripcionPerfil(vista.getDescripcionPerfil());
-        componente.setCantListaMateriales(vista.getCantListaMateriales() * vista.getCantOp());
-        componente.setIdCentroTrabajoPerfil(vista.getIdCentroTrabajoPerfil());
-        componente.setCentroTrabajoPerfil(vista.getCentroTrabajoPerfil());
-        componente.setLongitud(vista.getLongitud());
-        componente.setPesoPerfil(vista.getPesoPerfil());
+        componente.setMaterial_id(vista.getMaterial_id());
+        componente.setMaterial_desc(vista.getMaterial_desc());
+        componente.setMaterial_cant(vista.getMaterial_cant().multiply(vista.getCant_req()));
+        componente.setMaterial_centro_t_id(vista.getMaterialCentroTId());
+        componente.setMaterial_centro_t_nombre(vista.getMaterial_centro_t_nombre());
+        componente.setMaterial_peso(vista.getMaterial_peso());
+        componente.setMaterial_long(vista.getItem_long());
 
         return componente;
     }

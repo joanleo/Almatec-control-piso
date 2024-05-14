@@ -61,6 +61,8 @@ public class SecurityConfig {
                 		.antMatchers("/css/**", "/js/**", "/imgs/**").permitAll()
                 		.antMatchers("/login").permitAll()
                 		.antMatchers("/api/**").permitAll()
+                		.antMatchers("/produccion/operarios-registrados/**").permitAll()
+                		.antMatchers("/ingenieria/crear-op/**").permitAll()
                 		.antMatchers("/logout").permitAll()
                         .antMatchers("/**").authenticated()
                         .anyRequest().authenticated())

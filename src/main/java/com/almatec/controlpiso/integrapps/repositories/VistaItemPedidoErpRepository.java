@@ -8,8 +8,18 @@ import com.almatec.controlpiso.integrapps.entities.VistaItemPedidoErp;
 
 public interface VistaItemPedidoErpRepository extends JpaRepository<VistaItemPedidoErp, Integer> {
 
-	List<VistaItemPedidoErp> findByTipoPedidoAndNoPedido(String tipoPedido, String idPedido);
+	List<VistaItemPedidoErp> findByTipoPedidoAndNoPedido(String tipoPedido, Integer idPedido);
 
-	List<VistaItemPedidoErp> findByTipoPedidoAndNoPedidoAndReferencia(String string, String noPedido, String referencia);
+	
+	//List<VistaItemPedidoErp> findByTipoPedidoAndNoPedidoAndReferencia(OrdenPv orden, String referencia);
+
+
+	List<VistaItemPedidoErp> findByRowIdOpAndReferencia(Integer rowIdOp, String referencia);
+
+
+	List<VistaItemPedidoErp> findByNoPedidoAndReferencia(Integer noPedido, String referencia);
+
+
+	List<VistaItemPedidoErp> findByRowIdOp(Integer rowIdOp);
 
 }

@@ -8,60 +8,91 @@ import java.util.Set;
 import com.almatec.controlpiso.integrapps.interfaces.CommonDTO;
 
 public class ItemOpCtDTO implements CommonDTO {
-	private Long idItem;
-	private Integer idItemFab;
-	private String descripcion;
-	private Integer cant;
-	private Integer idCentroTrabajo;
-	private String centroTrabajo;
-	private BigDecimal peso;
-	private String pintura;
+	private Long item_op_id;
+	private Integer item_id;
+	private String item_desc;
+	private BigDecimal cant_req;
+	private Integer item_centro_t_id;
+	private String item_centro_t_nombre;
+	private BigDecimal item_peso;
+	private String item_color;
 	private Set<ComponenteDTO> componentes = new HashSet<>();
 	private Integer prioridad;
-	
+
 	public ItemOpCtDTO() {
 		super();
 	}
 
-	public Integer getIdItemFab() {
-		return idItemFab;
+	public Long getItem_op_id() {
+		return item_op_id;
 	}
 
-	public void setIdItemFab(Integer id) {
-		this.idItemFab = id;
+	public Integer getItem_id() {
+		return item_id;
 	}
 
-	public String getDescripcion() {
-		return descripcion;
+	public String getItem_desc() {
+		return item_desc;
 	}
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+	public BigDecimal getCant_req() {
+		return cant_req;
 	}
 
-	public Integer getCant() {
-		return cant;
+	public Integer getItem_centro_t_id() {
+		return item_centro_t_id;
 	}
 
-	public void setCant(Integer cant) {
-		this.cant = cant;
+	public String getItem_centro_t_nombre() {
+		return item_centro_t_nombre;
 	}
 
-	public Integer getIdCentroTrabajo() {
-		return idCentroTrabajo;
+	public BigDecimal getItem_peso() {
+		return item_peso;
 	}
 
-	public void setIdCentroTrabajo(Integer idCentroTrabajo) {
-		this.idCentroTrabajo = idCentroTrabajo;
+	public String getItem_color() {
+		return item_color;
 	}
 
-	@Override
-	public String getCentroTrabajo() {
-		return centroTrabajo;
+	public Integer getPrioridad() {
+		return prioridad;
 	}
 
-	public void setCentroTrabajo(String centroTrabajo) {
-		this.centroTrabajo = centroTrabajo;
+	public void setItem_op_id(Long item_op_id) {
+		this.item_op_id = item_op_id;
+	}
+
+	public void setItem_id(Integer item_id) {
+		this.item_id = item_id;
+	}
+
+	public void setItem_desc(String item_desc) {
+		this.item_desc = item_desc;
+	}
+
+	public void setCant_req(BigDecimal cant_req) {
+		this.cant_req = cant_req;
+	}
+
+	public void setItem_centro_t_id(Integer item_centro_t_id) {
+		this.item_centro_t_id = item_centro_t_id;
+	}
+
+	public void setItem_centro_t_nombre(String item_centro_t_nombre) {
+		this.item_centro_t_nombre = item_centro_t_nombre;
+	}
+
+	public void setItem_peso(BigDecimal item_peso) {
+		this.item_peso = item_peso;
+	}
+
+	public void setItem_color(String item_color) {
+		this.item_color = item_color;
+	}
+
+	public void setPrioridad(Integer prioridad) {
+		this.prioridad = prioridad;
 	}
 
 	public Set<ComponenteDTO> getComponentes() {
@@ -72,46 +103,22 @@ public class ItemOpCtDTO implements CommonDTO {
 		this.componentes = componentes;
 	}
 
-	public BigDecimal getPeso() {
-		return peso;
-	}
-
-	public void setPeso(BigDecimal peso) {
-		this.peso = peso;
-	}
-
-	public String getPintura() {
-		return pintura;
-	}
-
-	public void setPintura(String pintura) {
-		this.pintura = pintura;
-	}	
-
-	public Long getIdItem() {
-		return idItem;
-	}
-
-	public void setIdItem(Long idItem) {
-		this.idItem = idItem;
-	}
-
-	public Integer getPrioridad() {
-		return prioridad;
-	}
-
-	public void setPrioridad(Integer prioridad) {
-		this.prioridad = prioridad;
-	}
-
 	public void addComponente(ComponenteDTO componente) {
 		componentes.add(componente);
 	}
 
 	@Override
+	public String toString() {
+		return "ItemOpCtDTO [item_op_id=" + item_op_id + ", item_id=" + item_id + ", item_desc=" + item_desc
+				+ ", cant_req=" + cant_req + ", item_centro_t_id=" + item_centro_t_id + ", item_centro_t_nombre="
+				+ item_centro_t_nombre + ", item_peso=" + item_peso + ", item_color=" + item_color + ", componentes="
+				+ componentes + ", prioridad=" + prioridad + "]";
+	}
+
+	@Override
 	public int hashCode() {
-		return Objects.hash(cant, centroTrabajo, componentes, descripcion, idCentroTrabajo, idItem, idItemFab, peso,
-				pintura, prioridad);
+		return Objects.hash(cant_req, componentes, item_centro_t_id, item_centro_t_nombre, item_color, item_desc,
+				item_id, item_op_id, item_peso, prioridad);
 	}
 
 	@Override
@@ -123,19 +130,30 @@ public class ItemOpCtDTO implements CommonDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		ItemOpCtDTO other = (ItemOpCtDTO) obj;
-		return Objects.equals(cant, other.cant) && Objects.equals(centroTrabajo, other.centroTrabajo)
-				&& Objects.equals(componentes, other.componentes) && Objects.equals(descripcion, other.descripcion)
-				&& Objects.equals(idCentroTrabajo, other.idCentroTrabajo) && Objects.equals(idItem, other.idItem)
-				&& Objects.equals(idItemFab, other.idItemFab) && Objects.equals(peso, other.peso)
-				&& Objects.equals(pintura, other.pintura) && Objects.equals(prioridad, other.prioridad);
+		return Objects.equals(cant_req, other.cant_req) && Objects.equals(componentes, other.componentes)
+				&& Objects.equals(item_centro_t_id, other.item_centro_t_id)
+				&& Objects.equals(item_centro_t_nombre, other.item_centro_t_nombre)
+				&& Objects.equals(item_color, other.item_color) && Objects.equals(item_desc, other.item_desc)
+				&& Objects.equals(item_id, other.item_id) && Objects.equals(item_op_id, other.item_op_id)
+				&& Objects.equals(item_peso, other.item_peso) && Objects.equals(prioridad, other.prioridad);
 	}
 
 	@Override
-	public String toString() {
-		return "ItemOpCtDTO [idItem=" + idItem + ", idItemFab=" + idItemFab + ", descripcion=" + descripcion + ", cant="
-				+ cant + ", idCentroTrabajo=" + idCentroTrabajo + ", centroTrabajo=" + centroTrabajo + ", peso=" + peso
-				+ ", pintura=" + pintura + ", componentes=" + componentes + ", prioridad=" + prioridad + "]";
+	public String getCentroTrabajo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	
+	@Override
+	public String getDescripcion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getCant() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

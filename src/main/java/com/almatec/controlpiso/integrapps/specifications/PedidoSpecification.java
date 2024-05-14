@@ -32,6 +32,9 @@ public class PedidoSpecification {
 				predicates.add(criteriaBuilder.like(root.get("estado"), "%" + filtro.getEstado() + "%"));
 			}
 			
+			if(filtro.getDescripcion() != null) {
+				predicates.add(criteriaBuilder.like(root.get("descripcion"), "%" + filtro.getDescripcion() + "%"));
+			}			
 
 			if (filtro.getFechaInicio() != null && filtro.getFechaFin() != null) {
 				System.out.println("Se envian ambas fechas");

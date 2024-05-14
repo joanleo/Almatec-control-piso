@@ -1,167 +1,220 @@
 let checkList
 let opsCargaCt
 let selectedCentroId
+let spinner = document.getElementById("spinner")
 
 function crearTabla() {
-    let table = document.createElement('table');
-    table.classList.add('table', 'table-striped', 'align-middle', 'table-hover', 'table-bordered', 'rounded');
-    return table;
+    let table = document.createElement('table')
+    table.classList.add('table', 'table-striped', 'align-middle', 'table-hover')
+    return table
 }
 
 function crearHeaderTabla(encabezados) {
-    let header = document.createElement('thead');
-    header.classList.add('table-dark');
-    let headerRow = document.createElement('tr');
+    let header = document.createElement('thead')
+    header.classList.add('table-dark')
+    let headerRow = document.createElement('tr')
     let names =''
     for (let name of encabezados) {
-        names += `<th scope="col">${name}</th>`;
+        names += `<th scope="col">${name}</th>`
     }
-    headerRow.innerHTML = names;
-    header.appendChild(headerRow);
-    return header;
+    headerRow.innerHTML = names
+    header.appendChild(headerRow)
+    return header
 }
 
-function agregarFilaATabla(table, data) {
+function crearTbodyTabla(id){
+	let tbody = document.createElement('tbody')
+	tbody.setAttribute('id', id)
+	return tbody
+}
+
+function agregarFilaATabla(tbody, data) {
     let row = document.createElement('tr')
     for (let item of data) {
         let cell = document.createElement('td')
-        cell.innerHTML = item;
+        cell.innerHTML = item
         row.appendChild(cell)
     }
-    table.appendChild(row)
+    tbody.appendChild(row)
 }
 
 function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes) {
-    while (table_items.rows.length > 1) {
-        table_items.deleteRow(1);
+	
+	document.getElementById('body-items').innerHTML = ''
+	document.getElementById('body-componentes').innerHTML = ''
+    /*while (table_items.rows.length > 1) {
+        table_items.deleteRow(1)
     }
     while (table_componentes.rows.length > 1) {
-        table_componentes.deleteRow(1);
-    }
+        table_componentes.deleteRow(1)
+    }*/
 
-    let foundItems = false;
-    let foundComponentes = false;
+    let foundItems = false
+    let foundComponentes = false
 
     document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked').forEach(function (checkbox) {
-        let selectedIndex = parseInt(checkbox.value);
-        let selectedOp = opsCargaCt[selectedIndex];
+        let selectedIndex = parseInt(checkbox.value)
+        let selectedOp = opsCargaCt[selectedIndex]
 
-        let items = selectedOp.items;
-        if (items && items.length > 0) {
-            for (item of items) {
-                if (selectedCentroId == item.idCentroTrabajo) {
-                    agregarFilaATabla(table_items, [item.descripcion, item.cant, selectedOp.proyecto]);
-                    foundItems = true;
+        let itemsOps = selectedOp.items
+        if (itemsOps && itemsOps.length > 0) {
+            for (const itemOp of itemsOps) {
+                if (itemOp.item_centro_t_id == selectedCentroId) {
+					let tbodyItems = document.getElementById("body-items")
+                    agregarFilaATabla(tbodyItems, [itemOp.item_desc, itemOp.cant_req, selectedOp.proyecto, selectedOp.op])
+                    foundItems = true
                     table_items.removeAttribute('hidden')
                 }
-
-                let componentes = item.componentes;
-                for (componente of componentes) {
-                    if (selectedCentroId == componente.idCentroTrabajoPerfil) {
-                        agregarFilaATabla(table_componentes, [componente.descripcionPerfil, componente.cantListaMateriales, selectedOp.proyecto]);
-                        foundComponentes = true;
-                        table_componentes.removeAttribute('hidden')
-                    }
-                }
+				if(!foundItems){
+	                let componentes = itemOp.componentes
+	                for (const componente of componentes) {
+	                    if (componente.material_centro_t_id == selectedCentroId) {
+							let tbodyComponentes = document.getElementById("body-componentes")
+	                        agregarFilaATabla(tbodyComponentes, [componente.material_desc, componente.material_cant, selectedOp.proyecto, selectedOp.op])
+	                        foundComponentes = true
+	                        table_componentes.removeAttribute('hidden')
+	                    }
+	                }					
+				}
             }
         }
-    });
+    })
 
-    mostrarOcultarTabla('title-items', foundItems);
-    mostrarOcultarTabla('title-componentes', foundComponentes);
-    mostrarOcultarTabla('detalle-op', foundItems);
-    mostrarOcultarTabla('componentes', foundComponentes);
+    mostrarOcultarTabla('title-items', foundItems)
+    mostrarOcultarTabla('wrapper-items', foundItems)
+    mostrarOcultarTabla('title-componentes', foundComponentes)
+    mostrarOcultarTabla('wrapper-componentes', foundComponentes)
 }
 
 function crearCheckBoxList(opsCargaCt, selectedCentroId, table_items, table_componentes) {
-    checkList = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]');
-    for (let index = 0; index < checkList.length; index++) {
-        checkList[index].addEventListener('change', function () {
-            // Llamar a la función para actualizar las tablas
-            actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes);
-        });
+    checkList = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]')
+    for (const element of checkList) {
+        element.addEventListener('change', function () {
+        	actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes)
+        })
     }
 }
 
 function mostrarOcultarTabla(elementId, condition) {
-    let element = document.getElementById(elementId);
+    let element = document.getElementById(elementId)
     if (condition) {
-        element.removeAttribute("hidden");
+        element.removeAttribute("hidden")
     } else {
-        element.setAttribute("hidden", true);
+        element.setAttribute("hidden", '')
     }
 }
 
+async function obtenerOpCentroT(ct){
+	spinner.removeAttribute('hidden')
+	try{
+		const response = await fetch(`/centros-trabajo/${ct}/ordenes-produccion`)
+		if(!response.ok){
+			throw new Error(response)
+		}
+
+		const data = await response.json()
+
+		spinner.setAttribute('hidden', '')
+		return data
+	}catch(error){
+		console.log("Error al tratar de obtener oprerarion en centro de trabajo", error)
+	}
+		
+}
+
 document.getElementById('centroSelect').addEventListener('change', async function () {
-    selectedCentroId = this.value;
-    opsCargaCt = await obtenerOpCentroT(selectedCentroId);
-    document.getElementById('ops-ct').innerHTML = '';
+    selectedCentroId = this.value
+    opsCargaCt = await obtenerOpCentroT(selectedCentroId)
+    document.getElementById('ops-ct').innerHTML = ''
+    document.getElementById('detalle-op').innerHTML = ''
+    document.getElementById('componentes').innerHTML = ''
+    document.getElementById('title-items').setAttribute('hidden', true)
+    document.getElementById('title-componentes').setAttribute('hidden', true)
 
     if (Array.isArray(opsCargaCt) && opsCargaCt.length > 0) {
-        let wrapper_table = document.createElement('div');
-        wrapper_table.classList.add('table-responsive', 'text-nowrap', 'my-5');
+        let wrapper_table = document.createElement('div')
+        wrapper_table.classList.add('table-responsive', 'text-nowrap', 'my-5','rounded-3', 'shadow-sm')
+        
+        let wrapper_table_items = document.createElement('div')
+        wrapper_table_items.classList.add('table-responsive', 'text-nowrap', 'my-5','rounded-3', 'shadow-sm')
+        wrapper_table_items.setAttribute('hidden', '')
+        wrapper_table_items.setAttribute('id', 'wrapper-items')
+        
+        let wrapper_table_componentes = document.createElement('div')
+        wrapper_table_componentes.classList.add('table-responsive', 'text-nowrap', 'my-5','rounded-3', 'shadow-sm')
+        wrapper_table_componentes.setAttribute('hidden', '')
+        wrapper_table_componentes.setAttribute('id', 'wrapper-componentes')
 
-        let table = crearTabla();
-        let encabezados = ['', 'CLIENTE', 'PROYECTO'];
-        let header = crearHeaderTabla(encabezados);
-        table.appendChild(header);
+        let table = crearTabla()
+        let encabezados = ['', 'CLIENTE', 'PROYECTO', 'OP']
+        let header = crearHeaderTabla(encabezados)
+        const tbody = crearTbodyTabla('ops')
+        table.appendChild(header)
+        table.appendChild(tbody)
 
-        let selectAllCheckbox = document.createElement('input');
-        selectAllCheckbox.type = 'checkbox';
+        let selectAllCheckbox = document.createElement('input')
+        selectAllCheckbox.type = 'checkbox'
         selectAllCheckbox.addEventListener('change', function () {
-            let isChecked = selectAllCheckbox.checked;
+            let isChecked = selectAllCheckbox.checked
 
 		    for(let checkbox of checkList){
-				checkbox.checked = isChecked;
+				checkbox.checked = isChecked
 			}
 		
 		    actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes)
-        });
+        })
 
-        let firstCell = header.querySelector('th'); // Obtener la primera celda
-        firstCell.appendChild(selectAllCheckbox);
+        let firstCell = header.querySelector('th')
+        firstCell.appendChild(selectAllCheckbox)
         
-        let checkboxCounter = 1;
+        let checkboxCounter = 1
         opsCargaCt.forEach(function (op, index) {
-            agregarFilaATabla(table, [`<input type="checkbox" value="${index}" id="checkbox_${checkboxCounter}" name="checkbox_${checkboxCounter}">`, op.cliente, op.proyecto]);
-            checkboxCounter++;
-        });
+            agregarFilaATabla(table, [`<input type="checkbox" value="${index}" id="checkbox_${checkboxCounter}" name="checkbox_${checkboxCounter}">`, op.cliente, op.proyecto, op.op])
+            checkboxCounter++
+        })
         
 
-        wrapper_table.appendChild(table);
-        document.getElementById("title-ops").removeAttribute("hidden");
-        document.getElementById('ops-ct').appendChild(wrapper_table);
+        wrapper_table.appendChild(table)
+        document.getElementById("title-ops").removeAttribute("hidden")
+        document.getElementById('ops-ct').appendChild(wrapper_table)
 
-        // Crear y gestionar las tablas de detalles
-        let table_items = crearTabla();
-        let encabezado_items = ['ITEM', 'CANT', 'PROYECTO'];
-        let header_items = crearHeaderTabla(encabezado_items);
+        let table_items = crearTabla()
+        let encabezado_items = ['ITEM', 'CANT', 'PROYECTO', 'OP']
+        let header_items = crearHeaderTabla(encabezado_items)
         table_items.appendChild(header_items)
         table_items.setAttribute('hidden', 'none')
+        const tbodyitem = crearTbodyTabla('body-items')
+        table_items.appendChild(tbodyitem)
+        wrapper_table_items.appendChild(table_items)
+        document.getElementById('detalle-op').appendChild(wrapper_table_items)
 
-        let table_componentes = crearTabla();
-        let encabezado_componentes = ['DESCRIPCION', 'CANT', 'PROYECTO'];
-        let header_componentes = crearHeaderTabla(encabezado_componentes);
-        table_componentes.appendChild(header_componentes);
+        let table_componentes = crearTabla()
+        let encabezado_componentes = ['DESCRIPCION', 'CANT', 'PROYECTO', 'OP']
+        let header_componentes = crearHeaderTabla(encabezado_componentes)
+        table_componentes.appendChild(header_componentes)
         table_componentes.setAttribute('hidden', 'none')
+        const tbodyComponentes = crearTbodyTabla('body-componentes')
+        table_componentes.appendChild(tbodyComponentes)
+        wrapper_table_componentes.appendChild(table_componentes)
 
-        document.getElementById('detalle-op').appendChild(table_items);
-        document.getElementById('componentes').appendChild(table_componentes);
+        
+        document.getElementById('componentes').appendChild(wrapper_table_componentes)
 
-        crearCheckBoxList(opsCargaCt, selectedCentroId, table_items, table_componentes);
+        crearCheckBoxList(opsCargaCt, selectedCentroId, table_items, table_componentes)
 
     }
-});
+})
 
 async function imprimirSeleccion() {
     let opsSeleccionadas = obtenerOPsSeleccionadas()
     let nombreCt
-    let cts = centrosTrabajo = await fetchCentrosT()
+    /*let cts = await fetchCentrosT()
     for(let ct of cts){
 		if(selectedCentroId == ct.id){
 			nombreCt = ct.nombre
 		}
-	}
+	}*/
+	spinner.removeAttribute('hidden')
     fetch(`/centros-trabajo/${selectedCentroId}/descargar`, {
 	    method: 'POST',
 	    headers: {
@@ -171,28 +224,28 @@ async function imprimirSeleccion() {
 	})
 	.then(response => response.blob())
     .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
         a.download = `${nombreCt}.pdf`
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        spinner.setAttribute('hidden', '')
     })
 	.catch(error => {
 	    console.error('Error:', error)
 	})
-    console.log("OPs seleccionadas:", opsSeleccionadas);
+    console.log("OPs seleccionadas:", opsSeleccionadas)
 }
 
 function obtenerOPsSeleccionadas() {
-    let opsSeleccionadas = [];
+    let opsSeleccionadas = []
     let checkboxesSeleccionados = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked')
 
-    checkboxesSeleccionados.forEach(function (checkbox) {
-		
+    checkboxesSeleccionados.forEach(function (checkbox) {		
         opsSeleccionadas.push(opsCargaCt[parseInt(checkbox.value)].idOp)
     })
 
-    return opsSeleccionadas;
+    return opsSeleccionadas
 }

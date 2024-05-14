@@ -5,6 +5,9 @@
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
 		
+		<div hidden id="spinner">
+			<div>Cargando ...</div>
+		</div>
 		<div class="container my-5" style="width:60%;">
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
@@ -20,7 +23,7 @@
 			 </div>
 			 <div class="card-body" style="margin: auto; width: 60%;">
 				 <h2 class="mb-5">Reporte  [[${reporte.centroTrabajo}]]</h2>
-	 		    <form method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/reporte}" th:object="${reporte}">
+	 		    <form id="reporteForm" method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/reporte}" th:object="${reporte}">
 			        <div class="form-group mb-3">
 			           <label for="nombre-operario">Operario: </label>
 			           	<input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly/>						   
@@ -55,11 +58,19 @@
 			           <label for="cant-reportar">Cant reportar: </label>
 				           <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}"  required />						   
 			       	</div>
-			       	<input type="hidden" id="operario" th:field="*{operario}" />
-			       	<input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" />
-			       	<input type="hidden" id="idItemFab" th:field="*{idItemFab}" />
-			       	<input type="hidden" id="idPerfil" th:field="*{idPerfil}" />
-			       	<input type="hidden" id="idItem" th:field="*{idItem}" />
+					
+					<div class="form-group mb-3">
+		               <label for="centroSelect" >Lote : </label>
+		                   <select id="loteSelect" class="form-control" name="lote" th:field="*{lote}" >
+		                   		<option value=""></option>
+		                        <option th:each="lot : ${lotes}" th:value="${lot}" th:text="${lot}"></option>
+		                   </select>			   
+		           	 </div>
+			       	<input type="hidden" id="operario" th:field="*{operario}" aria-hidden="true" />
+			       	<input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" aria-hidden="true" />
+			       	<input type="hidden" id="idItemFab" th:field="*{idItemFab}"	aria-hidden="true"  />
+			       	<input type="hidden" id="idItem" th:field="*{idItem}" aria-hidden="true"/>
+					<input type="hidden" id="idParte" th:field="*{idParte}" aria-hidden="true"/>
 			       	
 			       	<button type="submit" class="btn btn-primary my-5">Guardar</button>
 				 </form>
@@ -68,5 +79,10 @@
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script>
+			document.getElementById('reporteForm').addEventListener('submit', function() {
+				document.getElementById('spinner').removeAttribute('hidden')
+			});
+		</script>
 	</body>
 </html>

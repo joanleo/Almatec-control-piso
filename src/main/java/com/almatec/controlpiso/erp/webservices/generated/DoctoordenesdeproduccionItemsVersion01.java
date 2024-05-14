@@ -2,7 +2,7 @@ package com.almatec.controlpiso.erp.webservices.generated;
 
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 
-public class DoctoordenesdeproduccionItemsVersión01 implements Conector {
+public class DoctoordenesdeproduccionItemsVersion01 implements Conector {
 	private Integer F_NUMERO_REG;  //Numero consecutivo
 	private Integer F_TIPO_REG= 851;  //Valor fijo = 851
 	private Integer F_SUBTIPO_REG= 0;  //Valor fijo = 00
@@ -228,7 +228,7 @@ public class DoctoordenesdeproduccionItemsVersión01 implements Conector {
 	public void setF851_id_bodega(String f851_id_bodega) {
 		this.f851_id_bodega = f851_id_bodega;
 	}
-	public DoctoordenesdeproduccionItemsVersión01 () {
+	public DoctoordenesdeproduccionItemsVersion01 () {
 	// Constructor vacio para inicializar
 	}
 	@Override

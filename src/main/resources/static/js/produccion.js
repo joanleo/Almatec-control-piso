@@ -4,6 +4,8 @@ let centrosTrabajo
 let centroTSelected
 let configProceso
 
+let spinner = document.getElementById("spinner")
+
 function toggleTable() {
   let table = document.getElementById("table-produccion")
   let button = document.querySelector(".button-check-table")
@@ -25,7 +27,7 @@ function toggleVisibility(element, button) {
   }
 }
 
-let porcentaje
+/*let porcentaje
 let progressBar = document.getElementById('progress-bar')
 let improductivoStr = document.querySelector("#improductivo").textContent
 let productivoStr = document.querySelector("#productivo").textContent
@@ -37,16 +39,23 @@ if(improductivo + productivo !== 0){
 	porcentaje = Math.ceil((1- improductivo / (improductivo + productivo)) * 100)
 }
 progressBar.style.width = porcentaje + '%'
-progressBar.textContent = porcentaje + '%'
+progressBar.textContent = porcentaje + '%'*/
 
-async function llenarTablaProductividadOperario(){
+async function actualizarTablasConTiemposOperarios() {
+    const tiemposOperarios = await obtenerTiemposOperariosProceso();
+    llenarTablaProductividadOperario(tiemposOperarios)
+}
+
+actualizarTablasConTiemposOperarios()
+
+async function llenarTablaProductividadOperario(tiemposOperarios){
 	if(centroTSelected != null){
-		const tiemposOperarios = await obtenerTiemposOperariosProceso()
+		//const tiemposOperarios = await obtenerTiemposOperariosProceso()
 		let tBodyProductividad = document.getElementById("body-table-productividad-operario")
 		tBodyProductividad.innerHTML = ""
 		tiemposOperarios.forEach(operario => {
 			let row = document.createElement('tr')
-	        
+	        console.log(operario)
 	        let cellNombre = document.createElement('td')
 	        cellNombre.textContent = operario.nombreOperario
 	        row.appendChild(cellNombre)
@@ -75,11 +84,7 @@ async function llenarTablaProductividadOperario(){
 	        
 	        let porcentaje
 	        if(improductivo + productivo !== 0){
-				console.log("calculando porcentaje progess bar")
-				console.log(typeof(productivo) + " " + productivo)
-				console.log(typeof(improductivo)  + " " + improductivo)
 				porcentaje = Math.ceil((1- improductivo / (improductivo + productivo)) * 100)
-				console.log("Valor del rogress bar: " + porcentaje)
 			}
 			porcentaje = porcentaje ?? 100
 			let cellProgressBar = document.createElement('td')
@@ -94,7 +99,7 @@ async function llenarTablaProductividadOperario(){
 	        row.appendChild(cellProgressBar)
 	        
 	        let cellEstado = document.createElement('td')
-	        cellEstado.textContent = operario.isActive ? "Activo": "Inactivo"
+	        cellEstado.textContent = operario.isActivo ? "Activo": "Inactivo"
 	        row.appendChild(cellEstado)
 	        
 	        tBodyProductividad.appendChild(row)		
@@ -107,7 +112,7 @@ function formatearTiempo(segundos) {
     const horas = Math.floor(segundos / 3600);
     const minutos = Math.floor((segundos % 3600) / 60);
     const segundosRestantes = segundos % 60;
-    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundosRestantes).padStart(2, '0')}`;
+    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
 }
 
 function formatarFechaHora(fecha) {
@@ -150,8 +155,9 @@ async function llenarTablaPiezasOperario(){
 	        cellOp.textContent = pieza.tipoOp + "-" + pieza.numOp
 	        row.appendChild(cellOp)
 	        
+	        const itemProceso = pieza.idItemFab?? pieza.idParte
 	        let cellNumItem = document.createElement('td')
-	        cellNumItem.textContent = ""
+	        cellNumItem.textContent = pieza.idItem + "-" + itemProceso
 	        row.appendChild(cellNumItem)
 	        
 	        let cellcliente = document.createElement('td')
@@ -163,7 +169,7 @@ async function llenarTablaPiezasOperario(){
 	        row.appendChild(cellProyecto)
 	        
 	        let celldescripcion = document.createElement('td')
-	        celldescripcion.textContent = pieza.descripcion
+	        celldescripcion.textContent = pieza.descripcionItem
 	        row.appendChild(celldescripcion)
 	        
 	        let cellTiempo = document.createElement('td')
@@ -174,17 +180,28 @@ async function llenarTablaPiezasOperario(){
 	        cellOperario.textContent = pieza.nombreOperario
 	        row.appendChild(cellOperario)
 	        
-	        let cellStdr = document.createElement('td')
+	        /*let cellStdr = document.createElement('td')
 	        cellStdr.textContent = pieza.tiempoStd
-	        row.appendChild(cellStdr)
+	        row.appendChild(cellStdr)*/
 	        
 	        let cellEstado = document.createElement('td')
-	        cellEstado.textContent = pieza.isActive ? "Activo": "Inactivo"
+	        cellEstado.textContent = pieza.isActivo ? "Activo": "Inactivo"
 	        row.appendChild(cellEstado)
 	        
 	        let cellPlano = document.createElement('td')
-	        cellEstado.cellPlano = ""
-	        row.appendChild(cellPlano)
+	        console.log(pieza.plano)
+	        if (pieza.plano) {
+			    let linkPlano = document.createElement('a');
+			    linkPlano.textContent = "Descargar plano";
+			    linkPlano.href = "#"; // Puedes establecer la URL adecuada si tienes una disponible
+			    linkPlano.addEventListener("click", function() {
+			        verPdf(pieza.plano);
+			    });
+			    cellPlano.appendChild(linkPlano);
+			} else {
+			    cellPlano.textContent = "Sin plano";
+			}
+			row.appendChild(cellPlano);
 	        
 	        tBodyProductividad.appendChild(row)
 	    })
@@ -195,6 +212,11 @@ async function llenarTablaPiezasOperario(){
 		}*/		
 	}
 } 
+
+function verPdf(nombreDelArchivo) {
+    window.open(`http://10.75.98.3:8090/centros-trabajo/descargar-pdf/${nombreDelArchivo}.pdf`, '_blank');
+}
+
 
 async function mostrarOperariosCT(){
 	if(centroTSelected !== null && configProceso !== null){
@@ -340,7 +362,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			title.textContent = centroTSelected.nombre
 		}
 	    mostrarOperariosCT()
-	    llenarTablaProductividadOperario()
+	    //llenarTablaProductividadOperario()
+	    actualizarTablasConTiemposOperarios()
 	    llenarTablaPiezasOperario()
     })()
 })
@@ -363,7 +386,6 @@ document.getElementById('turno').addEventListener('change', function () {
             }
         });
     }
-    console.log("Turno seleccionado:", turnoSelected)
     
     saveToLocalStorage()
 })
@@ -413,6 +435,7 @@ async function configuraCentroTrabajo(codigo){
 		return
 	}
 	for(const ct of centrosTrabajo){
+		console.log(codigo)
 		if(codigo === ct.codigoBarraHum || codigo === ct){
 			centroTSelected = ct
 			title.textContent = ct.nombre
@@ -425,6 +448,7 @@ async function configuraCentroTrabajo(codigo){
 				configProceso = await responseConfiProceso.json()
 				mostrarAlert(`Centro de trabajo ${centroTSelected.nombre} registrado exitosamente`, "success")
 				saveToLocalStorage()
+				llenarTablaPiezasOperario()
 				return	
 			}catch(error){
 				console.log("Error al tratar de configurar el proceso el en centro de trabajo ", error)
@@ -476,6 +500,7 @@ async function registraUsuarioCT(codigo){
 		const data = await responseRegistroOperario.text()
 		if(data.includes("registrado")){
 			mostrarAlert(`Operario ${operario.nombre} ${data}.`, "warning")
+			actualizarTablasConTiemposOperarios()
 		}else{
 			mostrarAlert(`Operario ${operario.nombre} ${data}.`, "success")			
 		}
@@ -519,122 +544,126 @@ async function validaEvento(codigo){
 }
 
 async function obtenerOpCentroT(ct){
+	spinner.removeAttribute('hidden')
 	try{
+		console.log("buscando ops en el ct erp: ")
 		const response = await fetch(`/centros-trabajo/${ct}/ordenes-produccion`)
-		if(!response.ok){
-			throw new Error(response)
-		}
-
 		const data = await response.json()
 		console.log("respuesta ops CT: ",data)
+		spinner.setAttribute('hidden', '')
 		return data
 	}catch(error){
-		console.log("Error al tratar de obtener oprerarion en centro de trabajo", error)
+		console.log("Error al tratar de obtener OP en centro de trabajo", error)
 	}
 		
 }
 
+function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody, papa){
+	let row = document.createElement('tr')    
+    let cellNum = document.createElement('td')
+    cellNum.textContent = num
+    row.appendChild(cellNum)
+    
+    let idItemOP = isComponente? papa.item_op_id: item.item_op_id
+	
+	const ref = isComponente?item.material_id: item.item_id
+	let cellRef = document.createElement('td')
+	cellRef.textContent = idItemOP+'-'+ref
+	row.appendChild(cellRef)
+	
+	
+    let cellName = document.createElement('td')
+    const descripcion = isComponente? item.material_desc: item.item_desc
+    cellName.textContent = descripcion 
+    row.appendChild(cellName)
+    
+    let cellLongitud = document.createElement('td')
+	cellLongitud.textContent = isComponente ? item.material_long: ''
+	row.append(cellLongitud)
+
+    let cellCliente = document.createElement('td')
+    cellCliente.textContent = op.cliente
+    row.appendChild(cellCliente)
+    
+    let cellPintura = document.createElement('td')
+    cellPintura.textContent = item.item_color
+    row.appendChild(cellPintura)
+
+	const cant = isComponente ? item.material_cant : item.cant_req
+    let cellCantSol = document.createElement('td')
+    cellCantSol.textContent = cant
+    row.appendChild(cellCantSol)
+    
+    let peso = isComponente ? item.material_peso: item.item_peso 
+    let pesoUnitario = document.createElement('td')
+	pesoUnitario.textContent = peso
+	row.appendChild(pesoUnitario)
+	
+	let pesoTotal = document.createElement('td')
+	let resultadoPeso = peso * cant
+	pesoTotal.textContent = resultadoPeso.toFixed(2)
+	row.appendChild(pesoTotal)
+	
+	row.addEventListener('mouseover', function() {
+        row.style.cursor = 'pointer';
+    });
+
+    row.addEventListener('mouseout', function() {
+        row.style.cursor = 'default';
+    });
+	
+    row.addEventListener('click', function(){
+		const operarioSelected = document.getElementById("operario-selected").textContent
+		if(!operarioSelected){
+			console.log("validando operario seleccionado", operarioSelected)
+			mostrarAlert("No existe operario o no se ha seleccionado.", "danger")
+		}else{
+			const pieza = {
+				idItemOP: idItemOP,
+				descripcion: descripcion,
+				isComponente:  isComponente,
+				idItem: ref,
+			}
+			console.log(pieza)
+			confirmModal(pieza)
+		
+		}
+	})
+	
+	listadoItemsTbody.appendChild(row)
+}
+
 function cargarListadoItems(){
-	const operarioSelected = document.getElementById("operario-selected").textContent
+	let esquema = document.getElementById("esquema")	
 	let selectOpsCt = document.getElementById('op-selected')
     let opSelected = selectOpsCt.value
     let listadoItemsTbody = document.getElementById('listado-items')
     listadoItemsTbody.innerHTML = ''
-	let ops = opsCt.filter(item => item.idOp === parseInt(opSelected))
-    console.log(ops[0].items)
+	const ops = opsCt.filter(item => item.idOp === parseInt(opSelected))
+    esquema.value = ops[0].esquemaPintura ?? ''
+    console.log(ops[0])
     if (ops) {
-        ops.forEach(function(op, index) {
-			for(const item of op.items){
-		        let row = document.createElement('tr')
-		        
-	            let cellNum = document.createElement('td')
-	            cellNum.textContent = index + 1
-	            row.appendChild(cellNum)
-				
-	            let cellName = document.createElement('td')
-	            let componentes = item.componentes
-	            let descripcion
-	            let isComponente = false
-	            let cantListaMaterial
-	            let longitud
-	            let idComponente
-	            let ref
-	            let peso
-	            for(const componente of componentes){
-					if(centroTSelected.id === componente.idCentroTrabajoPerfil){
-						descripcion = componente.descripcionPerfil
-						isComponente = true
-						cantListaMaterial = componente.cantListaMateriales
-						longitud = componente.longitud
-						idComponente = componente.idPerfil
-						ref = componente.codErp
-						peso = componente.pesoPerfil
-					}
+        ops.forEach(function(op) {
+			let num = 1
+			for(const item of op.items){	
+            	const componentes = item.componentes;
+            
+	            if (item.item_centro_t_id === Number(centroTSelected.id)) {
+					console.log("no es componente")
+	                agregarFilaListadoItems(num, op, item, false, listadoItemsTbody);
+	                num++
+	            }
+				if(componentes.length > 0){
+		            for(const componente of componentes){
+						if (componente.material_centro_t_id === Number(centroTSelected.id)) {
+                        	agregarFilaListadoItems(num, op, componente, true, listadoItemsTbody, item);
+                    		num++
+                    	}
+					}					
 				}
-				
-				let idPieza = item.idItem
-				
-				ref = isComponente ? ref: ""
-				let cellRef = document.createElement('td')
-				cellRef.textContent = ref
-				row.appendChild(cellRef)
-				
-				descripcion = descripcion ?? item.descripcion
-	            cellName.textContent = descripcion 
-	            row.appendChild(cellName)
-	            
-	            let cellLongitud = document.createElement('td')
-				cellLongitud.textContent = isComponente ? longitud: ''
-				row.append(cellLongitud)
-
-	            let cellCliente = document.createElement('td')
-	            cellCliente.textContent = op.cliente
-	            row.appendChild(cellCliente)
-	            
-	            let cellProyecto = document.createElement('td')
-	            cellProyecto.textContent = op.proyecto
-	            row.appendChild(cellProyecto)
-
-	            let cellCantSol = document.createElement('td')
-	            cellCantSol.textContent = isComponente ? cantListaMaterial: item.cant
-	            row.appendChild(cellCantSol)
-	            
-	            let pesoUnitario = document.createElement('td')
-				pesoUnitario.textContent = isComponente ? peso: item.peso
-				row.appendChild(pesoUnitario)
-				
-				let pesoTotal = document.createElement('td')
-				let resultadoPeso = isComponente ? (peso * cantListaMaterial): (item.peso * item.cant)
-				pesoTotal.textContent = resultadoPeso.toFixed(2)
-				row.appendChild(pesoTotal)
-				
-				row.addEventListener('mouseover', function() {
-	                row.style.cursor = 'pointer';
-	            });
-	
-	            row.addEventListener('mouseout', function() {
-	                row.style.cursor = 'default';
-	            });
-				
-	            row.addEventListener('click', function(){
-					if(!operarioSelected){
-						console.log("validando operario seleccionado", operarioSelected)
-						mostrarAlert("No existe operario o no se ha seleccionado.", "danger")
-					}else{
-						const pieza = {
-							id: idPieza,
-							descripcionPieza: item.descripcion,
-							idComponente: idComponente,
-							descripcionComponente: descripcion
-						}
-						confirmModal(pieza)
-					
-					}
-				})						
-	                        
-	            listadoItemsTbody.appendChild(row)
-			}            
-        })
+			}
+							                                 
+		})            
     } else {
         let row = document.createElement('tr')
         let cell = document.createElement('td')
@@ -646,26 +675,34 @@ function cargarListadoItems(){
 
 function crearSelectCT(opsCt){
 	let opCtElement = document.getElementById("ops-ct")
+	
+	let container = document.createElement("div")
+    container.style.display = "flex"
+    container.style.alignItems = "center"
+    
 	let labelElement = document.createElement("label")
 	labelElement.textContent = "Seleccione OP: "
 	labelElement.setAttribute("for", "op-selected")
-	opCtElement.appendChild(labelElement)
+	labelElement.style.marginRight = "1rem"
+	labelElement.style.whiteSpace = "nowrap"
+	container.appendChild(labelElement)
 	
 	let selectElement = document.createElement("select")
 	selectElement.setAttribute("id", "op-selected")
+	selectElement.classList.add('form-control')
 	selectElement.addEventListener("change", function() {
-        cargarListadoItems()
+        cargarListadoItems()        
     })
 	if (Array.isArray(opsCt)) {
         opsCt.forEach(function (op) {
 	        const optionElement = document.createElement("option")
 	        selectElement.style.margin = "0 0 0 1rem"
 	        optionElement.value = op.idOp
-	        optionElement.text = "Proyecto-"+ op.proyecto
+	        optionElement.text = op.op
 	        selectElement.appendChild(optionElement)
         })
-
-        opCtElement.appendChild(selectElement)
+		container.appendChild(selectElement)
+        opCtElement.appendChild(container)
     } else {
         console.error("La variable opsCt no es un array.")
     }
@@ -673,14 +710,22 @@ function crearSelectCT(opsCt){
 
 function crearSelectOperariosCt(operariosCt){
 	let operariosCtElement = document.getElementById("operarios-ct")
+	
+	let container = document.createElement("div")
+    container.style.display = "flex"
+    container.style.alignItems = "center"
+    
 	let labelElement = document.createElement("label")
 	labelElement.textContent = "Seleccione operario: "
 	labelElement.setAttribute("for", "operario-selected")
-	operariosCtElement.appendChild(labelElement)
+	labelElement.style.marginRight = "1rem"
+	labelElement.style.whiteSpace = "nowrap"
+	container.appendChild(labelElement)
 	
 	let selectElement = document.createElement("select")
 	selectElement.setAttribute("id", "operario-selected")
 	selectElement.style.margin = "0 0 0 1rem"
+	selectElement.classList.add('form-control')
 	
 	operariosCt.forEach(function (operario){
 		const optionElement = document.createElement("option")
@@ -688,7 +733,8 @@ function crearSelectOperariosCt(operariosCt){
 		optionElement.text = operario.nombre
 		selectElement.appendChild(optionElement)
 	})
-	operariosCtElement.appendChild(selectElement)
+	container.appendChild(selectElement)
+	operariosCtElement.appendChild(container)
 }
 
 function limpiarElementos() {
@@ -710,11 +756,11 @@ async function asignaPiezaOperario(){
 	
     crearSelectCT(opsCt)
     crearSelectOperariosCt(operariosCt)
-    console.log("Items de la OP seleccionada")
     cargarListadoItems()
     modalAsignarPieza.show()
     modalAsignarPieza._element.addEventListener('hidden.bs.modal', function () {
     limpiarElementos()
+    llenarTablaPiezasOperario()
 })
 }
 
@@ -723,7 +769,7 @@ let confirm_modal;
 function confirmModal(item) {
 	const operarioSelected = document.getElementById("operario-selected")
 	const operarioSelectedName = operarioSelected.options[operarioSelected.selectedIndex].text;
-	const descripcion = item.descripcionComponente ? item.descripcionComponente: item.descripcion
+	const descripcion = item.descripcion
 	confirm_modal = new bootstrap.Modal('#modal-confirma-pieza', {
 		  keyboard: false
 		})
@@ -732,13 +778,16 @@ function confirmModal(item) {
 	confirm_modal_body.textContent = `Esta seguro que desea asignar la pieza ${descripcion} al operario ${operarioSelectedName}.`
 	itemAgregar = item
 	const btnAceptar = confirm_modal._element.querySelector(".btn-primary");
+
 	let piezaOperario = {
 		idProceso: configProceso.id,
 		idOperario: operarioSelected.value,
-		idPieza: item.id,
-		idPerfil: item.idComponente,
+		idItemOp: item.idItemOP,
+		idItem: item.idItem,
+		isComponente:  item.isComponente,
 		estaActivo: true
 	}
+	
     btnAceptar.setAttribute("data-item", JSON.stringify(piezaOperario));
 	confirm_modal.show()	
 }
@@ -776,10 +825,7 @@ function clearTable(table) {
 }
 
 function addRowToTable(table, operario, index) {
-    // Añade una nueva fila a la tabla
     let newRow = table.insertRow()
-
-    // Agrega celdas a la fila con la información del operario
     let cells = [
         index,
         operario.nombre,
@@ -942,7 +988,7 @@ async function obtenerPiezasOperarioCt(operarioDTO){
 }
 
 let modalReportar
-async function isValid(){
+async function isValid(event){
 	const element = event.target.id
 	console.log(element)
 	const valido = reportePiezasNovedades()
@@ -975,6 +1021,8 @@ async function handleKeyPressPiezasOperario(event) {
 			"idCentroTrabajo": centroTSelected.id,
 			"idConfigProceso": configProceso.id
 		}
+		
+		console.log(operarioDTO)
 	
 		let ops = await obtenerPiezasOperarioCt(operarioDTO)
 		if(ops.length == 0) {
@@ -1012,110 +1060,106 @@ async function handleKeyPressNovedadesOperario(event){
 	}
 }
 
-function mostrarPiezasOperario(ops, operario, idTbody){
+function mostrarPiezasOperario(items, operario, idTbody){
 	let listadoItemsTbody = document.getElementById(idTbody)
     listadoItemsTbody.innerHTML = ''
-    ops.forEach(function(op, index) {
-		for(const item of op.items){
-		    let row = document.createElement('tr')
-		    
-		    let cellNum = document.createElement('td')
-		    cellNum.textContent = index + 1
-		    row.appendChild(cellNum)
+	items.forEach((item, index) => {
+		if(item != null){
+	    const row = crearFilaMostrarPiezas(index, item, idTbody, operario)						
+	    listadoItemsTbody.appendChild(row)		                
 			
-		    let cellName = document.createElement('td')
-		    let componentes = item.componentes
-		    let descripcion
-		    let isComponente = false
-		    let cantListaMaterial
-		    let longitud
-		    let ref
-		    let peso
-		    for(const componente of componentes){
-				if(centroTSelected.id === componente.idCentroTrabajoPerfil){
-					descripcion = componente.descripcionPerfil
-					isComponente = true
-					cantListaMaterial = componente.cantListaMateriales
-					longitud = componente.longitud
-					ref = componente.codErp
-					peso = componente.pesoPerfil
-				}
-			}
-			
-			let idPieza = item.idItem
-			
-			ref = isComponente ? ref: ""
-			let cellRef = document.createElement('td')
-			cellRef.textContent = ref
-			row.appendChild(cellRef)
-			
-			descripcion = descripcion ?? item.descripcion
-		    cellName.textContent = descripcion 
-		    row.appendChild(cellName)
-		    
-		    let cellLongitud = document.createElement('td')
-			cellLongitud.textContent = isComponente ? longitud: ''
-			row.append(cellLongitud)
-		
-		    let cellCliente = document.createElement('td')
-		    cellCliente.textContent = op.cliente
-		    row.appendChild(cellCliente)
-		    
-		    let cellProyecto = document.createElement('td')
-		    cellProyecto.textContent = op.proyecto
-		    row.appendChild(cellProyecto)
-		
-		    let cellCantSol = document.createElement('td')
-		    cellCantSol.textContent = isComponente ? cantListaMaterial: item.cant
-		    row.appendChild(cellCantSol)
-		    
-		    let pesoUnitario = document.createElement('td')
-			pesoUnitario.textContent = isComponente ? peso: item.peso
-			row.appendChild(pesoUnitario)
-			
-			let pesoTotal = document.createElement('td')
-			let resultadoPeso = isComponente ? (peso * cantListaMaterial): (item.peso * item.cant)
-			pesoTotal.textContent = resultadoPeso.toFixed(2)
-			row.appendChild(pesoTotal)
-			
-			row.addEventListener('mouseover', function() {
-                row.style.cursor = 'pointer';
-            });
-
-            row.addEventListener('mouseout', function() {
-                row.style.cursor = 'default';
-            });
-			
-		    row.addEventListener('click', function(){
-				console.log("redirecciona a pagina donde se tomaran los datos de las piezas realizadas reportan novedad")
-				console.log(idTbody)
-				if(idTbody == 'listado-piezas-operario'){
-					const reporte = {
-						"idItem": idPieza,
-						"idCentroTabajo": centroTSelected.id,
-						"idOperario": operario.id
-					}
-					
-					console.log(reporte)
-					let locationUrl = window.location.href
-					console.log(locationUrl)
-					window.location.href = `/centros-trabajo/${centroTSelected.id}/reporte?idItem=` + idPieza +
-	                            '&idOperario=' + operario.id					
-				}
-				if(idTbody == 'listado-piezas-operario-novedades'){
-					window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=` + idPieza +
-	                            '&idOperario=' + operario.id
-				}
-			})						
-		                
-		    listadoItemsTbody.appendChild(row)
 		}
-	})
+		})
 }
 
-document.getElementById('codigo-operario-reporte').addEventListener('change', function () {
+document.getElementById('codigo-operario-reporte').addEventListener('change', function (event) {
 	(async()=>{
 	    await handleKeyPressPiezasOperario(event)		
 	})()
 })
 
+
+function crearFilaMostrarPiezas(index, item, idTbody, operario) {
+	console.log(item)
+    let row = document.createElement('tr')
+
+    let cellNum = document.createElement('td')
+    cellNum.textContent = index + 1
+    row.appendChild(cellNum)
+
+    let cellName = document.createElement('td')
+
+    let idPieza
+	if(item.idItem == null){
+		idPieza = 0
+	}else{
+    idPieza = item.idItem
+		
+	}
+
+    const ref = item.idItemFab ?? item.idParte
+    let cellRef = document.createElement('td')
+    cellRef.textContent = idPieza
+    row.appendChild(cellRef)
+
+    //descripcion = descripcion ?? item.descripcionItem
+    cellName.textContent = item.descripcionItem
+    row.appendChild(cellName)
+
+    let cellLongitud = document.createElement('td')
+    cellLongitud.textContent = item.longitud // isComponente ? longitud : ''
+    row.append(cellLongitud)
+
+    let cellCliente = document.createElement('td')
+    cellCliente.textContent = item.cliente
+    row.appendChild(cellCliente)
+
+    let cellProyecto = document.createElement('td')
+    cellProyecto.textContent = item.proyecto
+    row.appendChild(cellProyecto)
+
+    let cellCantSol = document.createElement('td')
+    cellCantSol.textContent = item.cantReq
+    row.appendChild(cellCantSol)
+
+    let pesoUnitario = document.createElement('td')
+    pesoUnitario.textContent = item.peso
+    row.appendChild(pesoUnitario)
+
+    let pesoTotal = document.createElement('td')
+    let resultadoPeso = item.cantReq * item.peso
+    pesoTotal.textContent = resultadoPeso.toFixed(2)
+    row.appendChild(pesoTotal)
+
+    row.addEventListener('mouseover', function() {
+        row.style.cursor = 'pointer'
+    })
+
+    row.addEventListener('mouseout', function() {
+        row.style.cursor = 'default'
+    })
+
+    row.addEventListener('click', function() {
+        console.log("redirecciona a pagina donde se tomaran los datos de las piezas realizadas reportan novedad")
+        console.log(idTbody)
+        if (idTbody == 'listado-piezas-operario') {
+            const reporte = {
+                "idItem": idPieza,
+                "idCentroTabajo": centroTSelected.id,
+                "idOperario": operario.id
+            }
+
+            console.log(reporte)
+            let locationUrl = window.location.href
+            console.log(locationUrl)
+            window.location.href = `/centros-trabajo/${centroTSelected.id}/reporte?idItem=` + idPieza +
+                '&idOperario=' + operario.id
+        }
+        if (idTbody == 'listado-piezas-operario-novedades') {
+            window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=` + idPieza +
+                '&idOperario=' + operario.id
+        }
+    })
+    console.log(row)
+    return row
+}

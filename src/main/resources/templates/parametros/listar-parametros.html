@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Comercial')">
+	</head>
+	<th:block >
+    </th:block>
+	<body>
+		
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div hidden id="spinner">
+			<div>Cargando ...</div>
+		</div>
+				 
+		<div class="container my-5" style="width: 100%; margin-left: 10rem;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+				<span th:text="${message}"></span>
+			  	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    	<span aria-hidden="true">&times;</span>
+			  	</button>
+			</div>
+			
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+				<span th:text="${error}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				 </button>
+			</div>
+
+			<div class="container" style="display: flex; flex-direction: column;align-items: center;">
+				<h1>Parametros de configracion</h1>			
+				<div id="parametros-container" style="margin-top: 2rem; display: flex; flex-direction: column;align-items: center;height: 100vh;flex-wrap: wrap;">
+			    </div>
+				<button id="guardarCambios" class="btn btn-primary mt-5">Guardar cambios</button>				
+			</div>		
+
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>	
+		<script src="/js/parametros.js"></script>	
+	</body>
+</html>

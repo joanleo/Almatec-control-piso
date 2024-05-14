@@ -6,9 +6,11 @@ public class PiezaOperarioDTO {
 	
 	private Integer idOperario;
 	
-	private Integer idPieza;
+	private Integer idItemOp;
 	
-	private Integer idPerfil;
+	private Integer idItem;
+	
+	private Boolean isComponente;
 	
 	private Boolean estaActivo;
 
@@ -20,36 +22,44 @@ public class PiezaOperarioDTO {
 		return idProceso;
 	}
 
-	public void setIdProceso(Integer idProceso) {
-		this.idProceso = idProceso;
-	}
-
 	public Integer getIdOperario() {
 		return idOperario;
+	}
+
+	public Integer getIdItemOp() {
+		return idItemOp;
+	}
+
+	public Integer getIdItem() {
+		return idItem;
+	}
+
+	public Boolean getIsComponente() {
+		return isComponente;
+	}
+
+	public Boolean getEstaActivo() {
+		return estaActivo;
+	}
+
+	public void setIdProceso(Integer idProceso) {
+		this.idProceso = idProceso;
 	}
 
 	public void setIdOperario(Integer idOperario) {
 		this.idOperario = idOperario;
 	}
 
-	public Integer getIdPieza() {
-		return idPieza;
+	public void setIdItemOp(Integer idItemOp) {
+		this.idItemOp = idItemOp;
 	}
 
-	public void setIdPieza(Integer idPieza) {
-		this.idPieza = idPieza;
+	public void setIdItem(Integer idItem) {
+		this.idItem = idItem;
 	}
 
-	public Integer getIdPerfil() {
-		return idPerfil;
-	}
-
-	public void setIdPerfil(Integer idProItem) {
-		this.idPerfil = idProItem;
-	}
-
-	public Boolean getEstaActivo() {
-		return estaActivo;
+	public void setIsComponente(Boolean isComponente) {
+		this.isComponente = isComponente;
 	}
 
 	public void setEstaActivo(Boolean estaActivo) {
@@ -58,9 +68,11 @@ public class PiezaOperarioDTO {
 
 	@Override
 	public String toString() {
-		return "PiezaOperarioDTO [idProceso=" + idProceso + ", idOperario=" + idOperario + ", idPieza=" + idPieza
-				+ ", idPerfil=" + idPerfil + ", estaActivo=" + estaActivo + "]";
+		return "PiezaOperarioDTO [idProceso=" + idProceso + ", idOperario=" + idOperario + ", idItemOp=" + idItemOp
+				+ ", idItem=" + idItem + ", isComponente=" + isComponente + ", estaActivo=" + estaActivo + "]";
 	}
+
+	
 
 }
 

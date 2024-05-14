@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.interfaces.CentroOperacionInterface;
 import com.almatec.controlpiso.integrapps.interfaces.CompaniaErp;
+import com.almatec.controlpiso.integrapps.interfaces.DatosOpItem;
 
 public interface CentroTrabajoRepository extends JpaRepository<CentroTrabajo, Integer> {
 
@@ -27,6 +28,13 @@ public interface CentroTrabajoRepository extends JpaRepository<CentroTrabajo, In
 	List<CentroOperacionInterface> buscarCentrosOperacion(@Param("cia") Integer cia);
 
 	List<CentroTrabajo> findByIdCiaAndIsShowTrue(Integer cia);
+
+	@Query(value = "SELECT orden_pv.Row850_id, orden_pv.Row851_id "
+			+ "FROM orden_pv "
+			+ "INNER JOIN items_op ON orden_pv.id_op_ia = items_op.id_op_ia ", nativeQuery = true)
+	DatosOpItem obtenerDatosOpItem(Long idItem);
+
+	CentroTrabajo findByIdCentroTrabajoErp(Integer idCT);
 
 	
 }

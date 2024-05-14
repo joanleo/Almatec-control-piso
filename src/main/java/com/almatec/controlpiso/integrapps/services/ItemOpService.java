@@ -2,7 +2,12 @@ package com.almatec.controlpiso.integrapps.services;
 
 import java.util.List;
 
+import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
+import com.almatec.controlpiso.integrapps.dtos.OpDTO;
+import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
+import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
 import com.almatec.controlpiso.integrapps.paging.Page;
 import com.almatec.controlpiso.integrapps.paging.PageArray;
 import com.almatec.controlpiso.integrapps.paging.PagingRequest;
@@ -25,5 +30,21 @@ public interface ItemOpService {
 
 	ItemOp obtenerItemPorId(Long itemId);
 
-	void guardarItemOp(ItemOp item);
+	ItemOp guardarItemOp(ItemOp item);
+
+	String obtenerStringListaMateriales(Integer id);
+
+	String obtenerStringRuta(Integer id);
+
+	List<ConsultaOpId> obtenerNumOps();
+
+	String obtenerStringPorIdOPIntegrappsYTipo(Integer idOPI, String ruta);
+
+	List<OpDTO> buscarItemsOpActivos();
+
+	Double obtenerValorAplicarTepItemCentroTrabajo(Integer idItemFab, Integer idCentroTrabajo);
+
+	ItemInterface obtenerItemFabricaPorId(Integer idItem);
+
+	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItemFab);
 }

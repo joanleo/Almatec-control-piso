@@ -6,6 +6,11 @@
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 				 
 		<div class="container my-5">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+						
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -20,7 +25,7 @@
 			 </div>
 			 
 			 <div class="form-group mb-3">
-               <label>Centro de trabajo : </label>
+               <label for="centroSelect" >Centro de trabajo : </label>
                    <select id="centroSelect" class="form-control"  required>
                    		<option value=""></option>
                         <option th:each="centro : ${centros}" th:value="${centro.id}" th:text="${centro.nombre}"></option>
@@ -34,19 +39,16 @@
 			 </div>
            	 
            	 <h2 hidden id="title-items">Items</h2>
-           	 <div class="form-group mt-4" id="detalle-op">
-						
+           	 <div class="form-group mt-4" id="detalle-op">						
 			 </div>
 			 
-			 <h2 hidden id="title-componentes">Componentes</h2>
-			 <div class="form-group mt-4" id="componentes">
-						
+			 <h2 hidden id="title-componentes">Partes</h2>
+			 <div class="form-group mt-4" id="componentes">						
 			 </div>
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-		<script src="/js/produccion.js"></script>
 		<script src="/js/carga-ct.js"></script>
 	</body>
 </html>

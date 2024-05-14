@@ -18,10 +18,8 @@ public class OrdenPv {
 	private Integer id;
 	@Column(name = "id_op_padre")
 	private Integer idPadre;
-	/*@Column(name = "Row850_id")
-	private Integer rowIdOpErp;
-	@Column(name = "Row851_id")
-	private Integer rowIdMovOpErp;*/
+	@Column(name = "Row430_id")
+	private Integer rowIdOp;
 	@Column(name = "Id_Emp_Ing")
 	private Integer idEmpIng;
 	@Column(name = "Tipo_OP")
@@ -53,7 +51,7 @@ public class OrdenPv {
 	@Column(name = "ord_und")
 	private String um;
 	@Column(name = "ord_cant")
-	private Integer cant;
+	private Double cant;
 	@Column(name = "Observaciones")
 	private String observaciones;
 	@Column(name = "Anulada")
@@ -104,6 +102,8 @@ public class OrdenPv {
 	private String itemRef;
 	@Column(name = "f120_descripcion")
 	private String itemDescripcion;
+	@Column(name = "kg_fabricar")
+	private Double kilosFabricar;
 	
 	public OrdenPv() {
 		super();
@@ -120,18 +120,12 @@ public class OrdenPv {
 	public void setIdPadre(Integer idPadre) {
 		this.idPadre = idPadre;
 	}
-	/*public Integer getRowIdOpErp() {
-		return rowIdOpErp;
+	public Integer getRowIdOp() {
+		return rowIdOp;
 	}
-	public void setRowIdOpErp(Integer rowIdOpErp) {
-		this.rowIdOpErp = rowIdOpErp;
+	public void setRowIdOp(Integer rowIdOp) {
+		this.rowIdOp = rowIdOp;
 	}
-	public Integer getRowIdMovOpErp() {
-		return rowIdMovOpErp;
-	}
-	public void setRowIdMovOpErp(Integer rowIdMovOpErp) {
-		this.rowIdMovOpErp = rowIdMovOpErp;
-	}*/
 	public Integer getIdEmpIng() {
 		return idEmpIng;
 	}
@@ -222,10 +216,10 @@ public class OrdenPv {
 	public void setUm(String um) {
 		this.um = um;
 	}
-	public Integer getCant() {
+	public Double getCant() {
 		return cant;
 	}
-	public void setCant(Integer cant) {
+	public void setCant(Double cant) {
 		this.cant = cant;
 	}
 	public String getObservaciones() {
@@ -378,14 +372,20 @@ public class OrdenPv {
 	public void setItemDescripcion(String itemDescripcion) {
 		this.itemDescripcion = itemDescripcion;
 	}
+	public Double getKilosFabricar() {
+		return kilosFabricar;
+	}
+	public void setKilosFabricar(Double kilosFabricar) {
+		this.kilosFabricar = kilosFabricar;
+	}
 	@Override
 	public String toString() {
-		return "OrdenPv [id=" + id + ", idPadre=" + idPadre + ", idEmpIng=" + idEmpIng + ", tipoOp=" + tipoOp
-				+ ", numOp=" + numOp + ", opErp=" + opErp + ", idEstadoDoc=" + idEstadoDoc + ", fecPlanIngR="
-				+ fecPlanIngR + ", fecRealIngR=" + fecRealIngR + ", codigoSgc=" + codigoSgc + ", respIngenieria="
-				+ respIngenieria + ", fechaIngenieria=" + fechaIngenieria + ", fechaContractual=" + fechaContractual
-				+ ", fConActual=" + fConActual + ", kgTotal=" + kgTotal + ", kgReal=" + kgReal + ", um=" + um
-				+ ", cant=" + cant + ", observaciones=" + observaciones + ", isAnulada=" + isAnulada
+		return "OrdenPv [id=" + id + ", idPadre=" + idPadre + ", rowIdOp=" + rowIdOp + ", idEmpIng=" + idEmpIng
+				+ ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", opErp=" + opErp + ", idEstadoDoc=" + idEstadoDoc
+				+ ", fecPlanIngR=" + fecPlanIngR + ", fecRealIngR=" + fecRealIngR + ", codigoSgc=" + codigoSgc
+				+ ", respIngenieria=" + respIngenieria + ", fechaIngenieria=" + fechaIngenieria + ", fechaContractual="
+				+ fechaContractual + ", fConActual=" + fConActual + ", kgTotal=" + kgTotal + ", kgReal=" + kgReal
+				+ ", um=" + um + ", cant=" + cant + ", observaciones=" + observaciones + ", isAnulada=" + isAnulada
 				+ ", fechaDespacho=" + fechaDespacho + ", adjunto=" + adjunto + ", fechaCompletada=" + fechaCompletada
 				+ ", fAper=" + fAper + ", barCodeHumano=" + barCodeHumano + ", barCodeMaquina=" + barCodeMaquina
 				+ ", ordFechaPlaneada=" + ordFechaPlaneada + ", bodega=" + bodega + ", eptUnoEE=" + eptUnoEE
@@ -393,8 +393,10 @@ public class OrdenPv {
 				+ ", fechaEntrega=" + fechaEntrega + ", fechaAProduccion=" + fechaAProduccion + ", esquemaPintura="
 				+ esquemaPintura + ", colorBastidores=" + colorBastidores + ", colorVigas=" + colorVigas
 				+ ", colorProtectores=" + colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente
-				+ ", estadoDoc=" + estadoDoc + ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion + "]";
+				+ ", estadoDoc=" + estadoDoc + ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion
+				+ ", kilosFabricar=" + kilosFabricar + "]";
 	}
+	
 	
 
 

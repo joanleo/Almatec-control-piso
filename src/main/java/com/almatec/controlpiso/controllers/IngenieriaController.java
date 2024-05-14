@@ -72,25 +72,23 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 		}
 		
 		@GetMapping("/pedidos/{idPedido}")
-		public String verDetallePedido(@PathVariable String idPedido, Model modelo) {
+		public String verDetallePedido(@PathVariable Integer idPedido, Model modelo) {
 			List<VistaItemPedidoErp> itemsPedido = vistaItemPedidosErp.buscarItemsPedido(idPedido);
-			String noPedido = itemsPedido.get(0).getNoPedido();
+			Integer noPedido = itemsPedido.get(0).getNoPedido();
 			modelo.addAttribute("items", itemsPedido);
 			modelo.addAttribute("noPedido", noPedido);
 			return "ingenieria/pedido";
 		}
 		
-		@PostMapping("/crear-op/{idOpI}")
-		public ResponseEntity<?> crearOrdenProduccion(@PathVariable Integer idOpI) {
-			System.out.println("Id op integraps: " + idOpI);
-			String referencia = "0024409";
-			OrdenPv orden = ordenPvService.obtenerOrdenPorId(idOpI);
-			List<VistaItemPedidoErp> items = vistaItemPedidosErp.buscarItemPedidoByReferencia(String.valueOf(idOpI), referencia);
-			for(VistaItemPedidoErp item: items) {
-				System.out.println(item);
-			}
+		@PostMapping("/crear-op/{noPedido}/{ref}")
+		public ResponseEntity<?> crearOrdenProduccion(@PathVariable Integer noPedido,
+					@PathVariable String ref) {
+
+			List<VistaItemPedidoErp> items = vistaItemPedidosErp.findByNoPedidopAndReferencia(noPedido, ref);
+			
 			try {
-				String response = xmlService.crearOrdenProduccion(items, orden);
+				xmlService.asignarParametros();
+				String response = xmlService.crearOrdenProduccionPapa(items, noPedido);
 				return ResponseEntity.ok(response);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -163,7 +161,6 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 		public PageArray detalleOp(@RequestBody PagingRequest pagingRequest,
 									  @PathVariable Integer numOp) {
 			
-			System.out.println("Items op: " + numOp);
 			//return itemOpService.obtenerItemsOp(numOp);
 			return itemOpService.obtenerItemsOpArray(pagingRequest, numOp);
 		}
@@ -172,8 +169,8 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 		@ResponseBody
 		public List<ItemOp> detalleOp(@PathVariable Integer numOp) {
 			
-			System.out.println("Items op: " + numOp);
 			return itemOpService.obtenerItemsOp(numOp);
 			//return itemOpService.obtenerItemsOpArray(pagingRequest, numOp);
 		}
+				
 	}

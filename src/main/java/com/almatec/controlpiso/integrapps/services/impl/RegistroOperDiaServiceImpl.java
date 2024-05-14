@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,10 +26,8 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 	private RegistroOperDiaRepository registroOperRepo;
 	
 	private String isOperarioRegistradoOtroCt(OperarioDTO operarioDTO) {
-		System.out.println("Validando si esta activo en otro ct");
 		Date fechaActual = new Date();
-		List<String> registros = registroOperRepo.findOperariosCT(operarioDTO, fechaActual);
-		
+		List<String> registros = registroOperRepo.findOperariosCT(operarioDTO, fechaActual);		
 		return registros.isEmpty() ? null : registros.get(0);
 	}
 
@@ -43,8 +40,6 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 			return "ya se encuentra registrado en el centro de trabajo " + otroCt;
 		}
 		RegistroOperDia registroOperario = registroOperRepo.findByIdCentroTAndFecha(operarioDTO, fechaActual);
-		System.out.println(operarioDTO);
-		System.out.println(registroOperario);
 		if(registroOperario == null) {
 			Date fecha = new Date();
 			registroOperRepo.agregarOperario(operarioDTO, fecha);
@@ -53,10 +48,7 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 		if(Objects.equals(registroOperario.getIdCentroT(), operarioDTO.getIdCentroTrabajo()) 
 				&& Objects.equals(registroOperario.getIdConfigProceso(), operarioDTO.getIdConfigProceso())) {
 			Boolean estado = (registroOperario.getIsActivo());
-			System.out.println("Estado operario registro NEGADO: "+ !estado);
-			System.out.println("Actualizando estado del operario...");
 			registroOperRepo.actualizaEstadoOperario(operarioDTO, !estado);
-			System.out.println("Estado del operario actualizado correctamente.");
 			return estado ? "retirado exitosamente" : "agregado exitosamente";
 		}
 		throw new ResourceNotFoundException("No se encontro el Operario con id " + operarioDTO.getIdOperario() + " en el centro de trabajo " + operarioDTO.getIdCentroTrabajo() );
@@ -82,10 +74,8 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 	public List<OperarioRegistradoDTO> obtenerOperariosRegistrados() {
 		Date fecha = new Date();
 		List<OperarioRegistrado> listOperariosInterface = registroOperRepo.findByFechaCreacion(fecha);
-		System.out.println(listOperariosInterface.get(0).getct_nombre());
 		List<OperarioRegistradoDTO> operarios = new ArrayList<>();
 		for(OperarioRegistrado oper: listOperariosInterface) {
-			System.out.println(oper.getoperario_nombre());
 			OperarioRegistradoDTO operario = new OperarioRegistradoDTO(oper);
 			operarios.add(operario);
 		}

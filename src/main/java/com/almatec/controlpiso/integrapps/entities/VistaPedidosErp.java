@@ -8,12 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-@Immutable
 @Table(name = "Pedidos_Erp_Estado")
 public class VistaPedidosErp {
 	
@@ -48,7 +46,7 @@ public class VistaPedidosErp {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date fecha;
 	
-	@Column(name = "f431_id_proyecto")
+	@Column(name = "f285_descripcion")
 	private String proyecto;
 	
 	@Column(name = "Vendedor")

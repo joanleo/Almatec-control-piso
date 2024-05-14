@@ -5,11 +5,12 @@ import java.math.BigDecimal;
 public class RowItemPdf {
 	private String descripcion;
 	private BigDecimal longitud;
-	private Integer cant;
+	private BigDecimal cant;
 	private String proyecto;
 	private String ref;
 	private BigDecimal peso;
 	private Integer prioridad;
+	private String color;
 	
 	public String getDescripcion() {
 		return descripcion;
@@ -23,10 +24,10 @@ public class RowItemPdf {
 	public void setLongitud(BigDecimal longitud) {
 		this.longitud = longitud;
 	}
-	public Integer getCant() {
+	public BigDecimal getCant() {
 		return cant;
 	}
-	public void setCant(Integer cant) {
+	public void setCant(BigDecimal cant) {
 		this.cant = cant;
 	}
 	public String getProyecto() {
@@ -53,13 +54,19 @@ public class RowItemPdf {
 	public void setPrioridad(Integer prioridad) {
 		this.prioridad = prioridad;
 	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
 	public RowItemPdf() {
 		super();
 	}
 	@Override
 	public String toString() {
 		return "RowItemPdf [descripcion=" + descripcion + ", longitud=" + longitud + ", cant=" + cant + ", proyecto="
-				+ proyecto + ", ref=" + ref + ", peso=" + peso + ", prioridad=" + prioridad + "]";
+				+ proyecto + ", ref=" + ref + ", peso=" + peso + ", prioridad=" + prioridad + ", color=" + color + "]";
 	}
 	
 }

@@ -19,7 +19,7 @@ public interface ReportePiezaCtRepository extends JpaRepository<ReportePiezaCt, 
 
 	@Query(value = "SELECT SUM(cant) "
 			+ "FROM pro_reporte_pieza_ct "
-			+ "WHERE item_perf_id = :idPerfil "
+			+ "WHERE item_parte_id = :idPerfil "
 			+ "AND C_centrotrabajo_id = :idCT "
 			+ "AND item_id = :idItem "
 			+ "GROUP BY item_id", nativeQuery = true)

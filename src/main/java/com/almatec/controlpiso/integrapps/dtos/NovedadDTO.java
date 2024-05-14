@@ -6,7 +6,7 @@ public class NovedadDTO {
 
 	private Long IdItem;	
 	private Integer idItemFab;	
-	private Integer idPerfil;	
+	private Integer idParte;	
 	private Integer idCentroTrabajo;	
 	private Operario operario;	
 	private Integer noConforme;	
@@ -24,7 +24,7 @@ public class NovedadDTO {
 	public NovedadDTO(ReporteDTO reporte) {
 		this.IdItem = reporte.getIdItem();
 		this.idItemFab = reporte.getIdItemFab();
-		this.idPerfil = reporte.getIdPerfil();
+		this.idParte = reporte.getIdParte();
 		this.idCentroTrabajo = reporte.getIdCentroTrabajo();
 		this.operario = reporte.getOperario();
 		this.centroTrabajo = reporte.getCentroTrabajo();
@@ -39,10 +39,6 @@ public class NovedadDTO {
 
 	public Integer getIdItemFab() {
 		return idItemFab;
-	}
-
-	public Integer getIdPerfil() {
-		return idPerfil;
 	}
 
 	public Integer getIdCentroTrabajo() {
@@ -89,10 +85,6 @@ public class NovedadDTO {
 		this.idItemFab = idItemFab;
 	}
 
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
-	}
-
 	public void setIdCentroTrabajo(Integer idCentroTrabajo) {
 		this.idCentroTrabajo = idCentroTrabajo;
 	}
@@ -127,6 +119,14 @@ public class NovedadDTO {
 
 	public void setRef(String ref) {
 		this.ref = ref;
+	}
+
+	public Integer getIdParte() {
+		return idParte;
+	}
+
+	public void setIdParte(Integer idParte) {
+		this.idParte = idParte;
 	}
 	
 	

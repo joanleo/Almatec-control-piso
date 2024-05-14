@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.integrapps.interfaces;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public interface ItemOpInterface {
@@ -11,7 +12,7 @@ public interface ItemOpInterface {
 	String getdescripcion();
 	String getmarca();
 	String getcodigo_erp();
-	String getpeso_unitario();
+	BigDecimal getpeso_unitario();
 	String getunidad();
 	Double getcant_req();
 	Boolean getespecial();
@@ -20,6 +21,7 @@ public interface ItemOpInterface {
 	String getruta_plano();
 	Date getfecha_crea();
 	Integer getid_estado();
-	Double cant_cumplida();
+	Double getcant_cumplida();
+	String getpintura();
 
 }

@@ -26,14 +26,11 @@ public class VistaTiemposOperarios {
 	@Column(name = "C_Pro_Item_Id")
 	private Integer idItem;
 	
-	@Column(name = "estado_turno")  
-	private Boolean isActiveTurno;
-	
 	@Column(name = "TmpActivo_A") 
 	private Float productivo;
 	
 	@Column(name = "E_activo")
-	private Boolean isActive;
+	private Boolean isActivo;
 	
 	@Column(name = "A_Operario_Nombre")
 	private String nombreOperario;
@@ -68,12 +65,6 @@ public class VistaTiemposOperarios {
 	public void setIdItem(Integer idItem) {
 		this.idItem = idItem;
 	}
-	public Boolean getIsActiveTurno() {
-		return isActiveTurno;
-	}
-	public void setIsActiveTurno(Boolean isActiveTurno) {
-		this.isActiveTurno = isActiveTurno;
-	}
 	public Float getProductivo() {
 		return productivo;
 	}
@@ -96,18 +87,26 @@ public class VistaTiemposOperarios {
 
 	public VistaTiemposOperariosId getId() {
 		return id;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
+	}	
 
 	public void setId(VistaTiemposOperariosId id) {
 		this.id = id;
 	}
+	
+	public Boolean getIsActivo() {
+		return isActivo;
+	}
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
+	public void setIsActivo(Boolean isActivo) {
+		this.isActivo = isActivo;
+	}
+
+	@Override
+	public String toString() {
+		return "VistaTiemposOperarios [id=" + id + ", fechaInicioTurno=" + fechaInicioTurno + ", fechaFinTurno="
+				+ fechaFinTurno + ", improductivo=" + improductivo + ", idItem=" + idItem + ", productivo=" + productivo 
+				+ ", isActivo=" + isActivo + ", nombreOperario="
+				+ nombreOperario + ", turno=" + turno + "]";
 	}
 
 	

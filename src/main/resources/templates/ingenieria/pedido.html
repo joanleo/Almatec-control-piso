@@ -5,6 +5,12 @@
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 		<div class="container my-5">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+			
+			
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -32,7 +38,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					    <form th:action="@{/ingenieria/crear-op}" method="post">
+					    <form id="opForm" th:action="@{/ingenieria/crear-op}" method="post">
 					        
 					        <tr th:each="item : ${items}" >
 								<input type="hidden" name="referencia" th:value="${item.referencia}" />
@@ -45,7 +51,7 @@
 					            <td th:text="${item.cantidad}"></td>
 					            <td th:text="${item.peso}"></td>
 					            <td th:if="${#strings.isEmpty(item.numOp)}">
-					                <button type="submit" class="btn btn-primary">Crear OP</button>
+					                <button type="button" class="btn btn-primary create-op-button">Crear OP</button>
 					            </td>
 					        </tr>
 					    </form>
@@ -56,5 +62,18 @@
 		</div>
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script>
+		    const createOpButtons = document.querySelectorAll('.create-op-button');
+			console.log(createOpButtons)
+		    createOpButtons.forEach(button => {
+		        button.addEventListener('click', function() {
+		            const noPedido = button.closest('tr').querySelector('[name="noPedido"]').value;
+		            const ref = button.closest('tr').querySelector('[name="referencia"]').value;
+					spinner.removeAttribute('hidden')
+		            document.getElementById('opForm').action = `/ingenieria/crear-op/${noPedido}/${ref}`;
+		            document.getElementById('opForm').submit();
+		        });
+		    });
+		</script>
 	</body>
 </html>

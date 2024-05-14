@@ -21,8 +21,8 @@ public class ReportePiezaCt {
 	@Column(name = "Item_fab_id")
 	private Integer idItemFab;
 	
-	@Column(name = "item_perf_id")
-	private Integer idPerfil;
+	@Column(name = "item_parte_id")
+	private Integer idParte;
 	
 	@Column(name = "C_centrotrabajo_id")
 	private Integer idCentroT;
@@ -45,13 +45,15 @@ public class ReportePiezaCt {
 	
 	@Column(name = "item_id")
 	private Long itemId;
-
-	@Override
-	public String toString() {
-		return "ReportePiezaCt [id=" + id + ", idItemFab=" + idItemFab + ", idPerfil=" + idPerfil + ", idCentroT="
-				+ idCentroT + ", idOperario=" + idOperario + ", cant=" + cant + ", docErp=" + docErp + ", fechaErp="
-				+ fechaErp + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", itemId=" + itemId + "]";
-	}
+	
+	private String lote;
+	
+	@Column(name = "is_consume")
+	private Boolean isConsume=false;
+	
+	@Column(name = "is_tep")
+	private Boolean isTep=false;
+	
 
 	public Integer getId() {
 		return id;
@@ -67,14 +69,6 @@ public class ReportePiezaCt {
 
 	public void setIdItemFab(Integer idItemFab) {
 		this.idItemFab = idItemFab;
-	}
-
-	public Integer getIdPerfil() {
-		return idPerfil;
-	}
-
-	public void setIdPerfil(Integer idPerfil) {
-		this.idPerfil = idPerfil;
 	}
 
 	public Integer getIdCentroT() {
@@ -141,9 +135,47 @@ public class ReportePiezaCt {
 		this.itemId = itemId;
 	}
 
+	public String getLote() {
+		return lote;
+	}
+
+	public void setLote(String lote) {
+		this.lote = lote;
+	}
+
+	public Integer getIdParte() {
+		return idParte;
+	}
+
+	public void setIdParte(Integer idParte) {
+		this.idParte = idParte;
+	}
+
+	public Boolean getIsConsume() {
+		return isConsume;
+	}
+
+	public void setIsConsume(Boolean isConsume) {
+		this.isConsume = isConsume;
+	}
+
+	public Boolean getIsTep() {
+		return isTep;
+	}
+
+	public void setIsTep(Boolean isTep) {
+		this.isTep = isTep;
+	}
+
 	public ReportePiezaCt() {
 		super();
 	}
 
-
+	@Override
+	public String toString() {
+		return "ReportePiezaCt [id=" + id + ", idItemFab=" + idItemFab + ", idParte=" + idParte + ", idCentroT="
+				+ idCentroT + ", idOperario=" + idOperario + ", cant=" + cant + ", docErp=" + docErp + ", fechaErp="
+				+ fechaErp + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", itemId=" + itemId
+				+ ", lote=" + lote + ", isConsume=" + isConsume + ", isTep=" + isTep + "]";
+	}
 }

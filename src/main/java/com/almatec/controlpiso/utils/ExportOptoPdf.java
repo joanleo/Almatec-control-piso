@@ -20,7 +20,7 @@ import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpCtDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.interfaces.CommonDTO;
-import com.almatec.controlpiso.integrapps.services.impl.VistaItemsRutasServiceImpl;
+import com.almatec.controlpiso.integrapps.services.impl.VistaOpItemsMaterialesRutaServiceImpl;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -85,10 +85,10 @@ public class ExportOptoPdf {
 		
 		OpCentroTrabajoDTO op = itemsOp.get(0);
 		List<ItemOpCtDTO> itemsOprod = op.getItems();
-		Set<ItemOpCtDTO> conjuntoItems = VistaItemsRutasServiceImpl.mergeItems(new ArrayList<>(itemsOprod));
+		Set<ItemOpCtDTO> conjuntoItems = VistaOpItemsMaterialesRutaServiceImpl.mergeItems(new ArrayList<>(itemsOprod));
 		
 		Map<Integer, List<ItemOpCtDTO>> itemsGroupedByCentroTrabajo = conjuntoItems.stream()
-	            .collect(Collectors.groupingBy(ItemOpCtDTO::getIdCentroTrabajo));
+	            .collect(Collectors.groupingBy(ItemOpCtDTO::getItem_centro_t_id));
 		
 		
 		List<ComponenteDTO> componentes = new ArrayList<>();
@@ -108,12 +108,12 @@ public class ExportOptoPdf {
 				cell.setVerticalAlignment(Element.ALIGN_CENTER);			
 				table.addCell(cell);
 				
-				phrase = new Phrase(item.getDescripcion(), font);
+				phrase = new Phrase(item.getItem_desc(), font);
 				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell.setPhrase(phrase);
 				table.addCell(cell);	
 				
-				phrase = new Phrase(item.getPintura(), font);
+				phrase = new Phrase(item.getItem_color(), font);
 				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell.setPhrase(phrase);
 				table.addCell(cell);
@@ -123,12 +123,12 @@ public class ExportOptoPdf {
 				cell.setPhrase(phrase);
 				table.addCell(cell);
 				
-				phrase = new Phrase(String.valueOf(item.getCant()), font);
+				phrase = new Phrase(String.valueOf(item.getCant_req()), font);
 				cell.setPhrase(phrase);
 				table.addCell(cell);
 				
-				BigDecimal peso = (item.getPeso() == null) ? BigDecimal.ZERO : item.getPeso();
-				BigDecimal pesoTotalCell = peso.multiply(new BigDecimal(item.getCant()));
+				BigDecimal peso = (item.getItem_peso() == null) ? BigDecimal.ZERO : item.getItem_peso();
+				BigDecimal pesoTotalCell = peso.multiply(item.getCant_req());
 				pesoTotal = pesoTotal.add(pesoTotalCell);
 				phrase = new Phrase(pesoTotalCell.toString(), font);
 				cell.setPhrase(phrase);
@@ -168,8 +168,8 @@ public class ExportOptoPdf {
 		}
 		
 		Map<Integer, Set<ComponenteDTO>> componentsGroupedByCentroTrabajo = componentes.stream()
-				.filter(componente -> componente.getIdCentroTrabajoPerfil() != 1 && componente.getIdCentroTrabajoPerfil() != 19)
-	            .collect(Collectors.groupingBy(ComponenteDTO::getIdCentroTrabajoPerfil,
+				.filter(componente -> componente.getMaterial_centro_t_id() != 1 && componente.getMaterial_centro_t_id() != 19)
+	            .collect(Collectors.groupingBy(ComponenteDTO::getMaterial_centro_t_id,
 	            		Collectors.toSet()));
 		
 		for (Entry<Integer, Set<ComponenteDTO>> entry : componentsGroupedByCentroTrabajo.entrySet()) {
@@ -177,7 +177,7 @@ public class ExportOptoPdf {
 		    List<CommonDTO> commonDTOList = new ArrayList<>(itemsParaCentroTrabajo);
 		    System.out.println("Componentes:");
 		    for(ComponenteDTO item: itemsParaCentroTrabajo) {
-		    	System.out.println(item.getDescripcion() + "    " + item.getCentroTrabajoPerfil());
+		    	System.out.println(item.getMaterial_desc() + "    " + item.getMaterial_centro_t_id());
 		    }
 		    addTableForComponent(commonDTOList, document);
 		}
@@ -264,7 +264,7 @@ public class ExportOptoPdf {
 			String path = "static/imgs/logo-almatec.png";
 			Image image = Image.getInstance(getClass().getClassLoader().getResource(path));
 			
-			String barcodeString = itemsOp.get(0).getTipoOp() + "-" + itemsOp.get(0).getNumOp();
+			String barcodeString = itemsOp.get(0).getOp();
 			
 			DateFormat dateFormatterCreacion = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String currentDateTime = dateFormatterCreacion.format(new Date());

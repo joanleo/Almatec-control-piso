@@ -1,116 +1,148 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-	<head th:replace="fragments/head :: head('Produccion :: Reporte piezas centro de trabajo')"></head>
-	<body>
-		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
-		
-		<div class="container my-5" style="width:90%;">
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <span th:text="${message}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
-			  </button>
-			</div>
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <span th:text="${error}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
-			  </button>
-			 </div>
- 		    <form method="POST" th:action="@{/materia-prima/solicitud}" th:object="${solicitudMP}" >
-			 <div class="card-body" style="margin: auto; width: 90%;">
-				 <div class="my-3" style="display: flex; justify-content: space-between;">
-					<div class="input-group my-3 size-l">
-			           <span class="input-group-text">Fecha Documento </span>
-			           <input type="date" class="form-control" id="fechaDoc" name="fechaDoc" th:field="*{solicitud.fechaDoc}" required style="text-align: right;" />
-			    	</div>
-			    	
-					<div class="input-group my-3 size-m">
-					  <span class="input-group-text">Solicitud No: </span>
-					  <input type="text" aria-label="consecutivo" id="noSol" class="form-control" readonly style="text-align: right;"/>
-					</div>
+	<!DOCTYPE html>
+	<html lang="es" xmlns:th="http://www.thymeleaf.org"
+		  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+		<head th:replace="fragments/head :: head('Produccion :: Solicitud Materia Prima')"></head>
+		<body>
+			<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+			
+			<div class="my-5" style="width: 80%; margin-left: 10rem;">
+				
+				<div hidden id="spinner">
+					<div>Cargando ...</div>
 				</div>
-				 	<h2 class="mb-5"> Solicitud de Materia Prima </h2>
-			    	<div class="my-3" style="display: flex; justify-content: space-between;">
-				    	<div class="input-group my-3 size-m">
-				           <span class="input-group-text">OP </span>
-				           <input type="text" class="form-control" id="op" name="op" th:field="*{solicitud.numOp}" required style="text-align: right;" />
+							
+							
+				<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+				  <span th:text="${message}"></span>
+				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+				    <span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+				<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+				  <span th:text="${error}"></span>
+				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+				    <span aria-hidden="true">&times;</span>
+				  </button>
+				 </div>
+	 		    <form id="solicitudForm" >
+				 <div class="card-body" style="margin: auto; width: 100%;">
+					 <div class="my-3" style="display: flex; justify-content: space-between;">
+						<div class="input-group my-3 size-l">
+				           <span class="input-group-text">Fecha Documento </span>
+				           <input type="text" class="form-control" id="fechaDoc" name="fechaDoc" th:field="*{solicitud.fechaDoc}" readonly style="text-align: right;" />
 				    	</div>
 				    	
-				    	<div class="input-group my-3 size-xxl">
-				           <span class="input-group-text">Solicitante </span>
-				           <input type="text" class="form-control" id="usuario" name="usuario" th:field="*{solicitud.idUsuarioSol}" required style="text-align: right;" />
-				    	</div>
-						
-					</div>
-					
-					<h3>Filtros</h3>
-					<div class="filtros" style="display: flex; justify-content: space-between;">
 						<div class="input-group my-3 size-m">
-						   	<span class="input-group-text">Código ERP </span>
-						    <input type="number" id="codigoErp" class="form-control" onkeyup="buscarItems()" name="codigoErp" />
+						  <span class="input-group-text">Solicitud No: </span>
+						  <input type="text" aria-label="consecutivo" th:value="${consecutivo}" id="noSol" class="form-control" readonly style="text-align: right;"/>
+						</div>
+					</div>
+					 	<h2 class="mb-5"> Solicitud de Materia Prima </h2>
+				    	<div class="my-3" style="display: flex; justify-content: space-between;">
+					    	<div class="input-group my-3 size-m">
+					           <span class="input-group-text">OP </span>
+			                   <select class="form-control" id="id-op" required>
+								   <option value="" disabled selected hidden>Selecciona numero de OP</option>
+			                       <option th:each="num : ${numsOps}" th:value="${num.idOpIa}" th:text="${num.numOp}"></option>
+			                   </select>	
+					    	</div>
+					    	
+					    	<div class="input-group my-3 size-xxl">
+					           <span class="input-group-text">Solicitante </span>
+					           <input type="text" class="form-control" id="usuario" name="usuario" th:value="${usuario.nombres}" readonly style="text-align: right;" />
+							   <input type="hidden" id="usuarioId" name="usuarioId" th:value="${usuario.id}" aria-hidden="true"/>
+					    	</div>
+							
 						</div>
 						
-						<div class="input-group my-3 size-m">
-						   	<span class="input-group-text">Unidad ERP </span>
-						    <input type="text" id="undErp" class="form-control" onkeyup="buscarItems()" name="undErp" />
+						<h3>Lista de materiales</h3>
+						<div style="display: flex; justify-content: center;" hidden id="select">
+							<div class="input-group my-3 size-xxl" >
+					           <span class="input-group-text">Item Seleccionado </span>
+					           <input type="text" class="form-control" id="itemSelec" readonly style="text-align: right;" />
+					    	</div>
+							<div class="input-group my-3 size-xxl" >
+					           <span class="input-group-text">Cantidad Pendiente </span>
+					           <input type="text" class="form-control" id="cantItemSelec" readonly style="text-align: right;" />
+							   <span class="input-group-text" id="umSelec"></span>
+					    	</div>							
+						</div>
+						<div class="filtros" style="display: flex;">
+							<div style="width: 50%; margin-right: 2rem;">
+								<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem;  max-height: 30rem; overflow-y: auto;">
+									<table class="table table-striped table-hover table-rounded caption-top">
+										<caption>Lista de materiales </caption>
+										<thead class="table-dark sticky-top">
+											<tr>
+												<th>#</th>
+												<th>Codigo</th>
+												<th>Descripcion</th>
+												<th>Um</th>
+												<th>Cant Req</th>
+												<th>Cant pend</th>
+											</tr>
+										</thead>
+										<tbody id="body-lista-materiales">
+											<tr>									
+											</tr>
+										</tbody>
+									</table>		 				
+								</div>
+							</div>
+							<div style="width: 50%;">
+								<div class="table-responsive hscroll rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem;  max-height: 30rem; overflow-y: auto;">
+									<table class="table table-striped table-hover table-rounded caption-top">
+										<caption>Disponibilidad </caption>
+										<thead class="table-dark sticky-top">
+											<tr>
+												<th>Codigo</th>
+												<th>Um</th>
+												<th>Bodega</th>
+												<th>Lote</th>
+												<th>Disponible</th>
+												<th>Accion</th>
+											</tr>
+										</thead>
+										<tbody id="disponible">
+											<tr>									
+											</tr>
+										</tbody>
+									</table>		 				
+								</div>
+							</div>						
 						</div>
 						
-						<div class="input-group my-3 size-l">
-						   	<span class="input-group-text">Lote </span>
-						    <input type="text" id="lote" class="form-control" onkeyup="buscarItems()" name="loteErp" />
-						</div>						
-					</div>
-					
-					<div class="table-responsive" style="margin-top: 3rem; margin-bottom: 2rem;">
-						<table class="table table-striped table-hover table-rounded caption-top">
-							<caption>Disponibilidad </caption>
-							<thead class="table-dark">
-								<tr>
-									<th>Codigo</th>
-									<th>Descripcion</th>
-									<th>Um</th>
-									<th>Bodega</th>
-									<th>Lote</th>
-									<th>Disponible</th>
-									<th>Accion</th>
-								</tr>
-							</thead>
-							<tbody id="disponible">
-								<tr>									
-								</tr>
-							</tbody>
-						</table>		 				
-					</div>
-					<h2>Detalles de la Solicitud</h2>
-					<div class="table-responsive" style="margin-top: 2rem;">
-						<table class="table table-striped table-hover table-rounded caption-top">
-							<caption>Detalle </caption>
-							<thead class="table-dark">
-								<tr>
-									<th>Codigo</th>
-									<th>Descripcion</th>
-									<th>Um</th>
-									<th>Bodega</th>
-									<th>Lote</th>
-									<th>Disponible</th>
-									<th>Cant Solicitada</th>
-								</tr>
-							</thead>
-							<tbody id="detalle-solicitud">
-							</tbody>
-						</table>		 				
-					</div>
-        			<button type="submit" class="btn btn-primary my-3">Crear Solicitud</button>
-			 </div>
-		 </form>
-		</div>
-		
-		<footer th:replace="fragments/footer :: footer"></footer>
-		
-		<script src="/js/materia-prima.js"></script>
-    
-		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-	</body>
-</html>
+						
+						<h2>Detalles de la Solicitud</h2>
+						<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 2rem;">
+							<table class="table table-striped table-hover table-rounded caption-top">
+								<caption>Detalle </caption>
+								<thead class="table-dark">
+									<tr>
+										<th>Codigo</th>
+										<th>Descripcion</th>
+										<th>Um</th>
+										<th>Bodega</th>
+										<th>Lote</th>
+										<th>Disponible</th>
+										<th>Cant Solicitada</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody id="detalle-solicitud">
+								</tbody>
+							</table>		 				
+						</div>
+						<input type="hidden" id="detalles" name="detalles" th:field="*{detalles}" aria-hidden="true">
+						<input type="hidden" id="detallesJson" name="detallesJson" aria-hidden="true">
+	        			<button type="submit" class="btn btn-primary my-3" onclick="enviarSolicitud()" id="submitForm">Crear Solicitud</button>
+				 </div>
+			 </form>
+			</div>
+			
+			<footer th:replace="fragments/footer :: footer"></footer>
+			
+			<script src="/js/materia-prima.js"></script>	    
+			<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		</body>
+	</html>

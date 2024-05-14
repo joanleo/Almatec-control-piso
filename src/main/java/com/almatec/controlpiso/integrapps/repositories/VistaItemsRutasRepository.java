@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.integrapps.entities.VistaItemsRutas;
+import com.almatec.controlpiso.integrapps.entities.VistaItemsRutasId;
 
-public interface VistaItemsRutasRepository extends JpaRepository<VistaItemsRutas, Long> {
+public interface VistaItemsRutasRepository extends JpaRepository<VistaItemsRutas, VistaItemsRutasId> {
 
 	@Query(value = "SELECT * "
 			+ "FROM view_items_rutas "

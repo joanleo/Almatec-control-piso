@@ -6,19 +6,12 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" style="justify-content: space-between;" id="navbarNav">
-      <ul class="navbar-nav">
-        <!--<li  class="nav-item">
-          <a class="nav-link" th:classappend="${selec == 'Ingenieria' ? 'active' : ''}" href="/ingenieria">Ingenieria</a>
-        </li>
-        <li  class="nav-item">
-          <a class="nav-link" th:classappend="${selec == 'Ingenieria' ? 'active' : ''}" href="/ingenieria/listar-ops">Consulta op</a>
-        </li>-->
-        
+    <div class="collapse navbar-collapse ms-4" style="justify-content: space-between;" id="navbarNav">
+      <ul class="navbar-nav">        
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+          <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Comercial
-          </a>
+          </button>
           <ul class="dropdown-menu">
 			<li><a class="dropdown-item" href="/comercial/pedidos">Pedidos</a></li>
           </ul>
@@ -49,13 +42,22 @@
 			  Produccion
 		  </a>
 		  <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/produccion/home">Dashboard</a></li>
+			<li><a class="dropdown-item" href="/produccion/home">Planta</a></li>
 			<li><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
 			<li><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
 			<li><a class="dropdown-item" href="/produccion/materia-prima/solicitud">Solicitud Materia prima</a></li>
 			<li><a class="dropdown-item" href="/produccion/operarios-registrados">Operarios registrados</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="/produccion/proyectos">Proyectos</a></li>
+          </ul>
+        </li>
+		
+		<li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+            Almacen
+          </a>
+          <ul class="dropdown-menu">
+			<li><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
           </ul>
         </li>
         
@@ -67,6 +69,7 @@
             <li><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
+			<li><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
           </ul>
         </li>
 

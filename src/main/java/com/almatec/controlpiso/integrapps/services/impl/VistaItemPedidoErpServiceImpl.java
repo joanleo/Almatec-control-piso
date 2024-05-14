@@ -18,16 +18,41 @@ public class VistaItemPedidoErpServiceImpl implements VistaItemPedidoErpService 
 	
 
 	@Override
-	public List<VistaItemPedidoErp> buscarItemsPedido(String idPedido) {
+	public List<VistaItemPedidoErp> buscarItemsPedido(Integer idPedido) {
 		return vistaItemPedidoRepo.findByTipoPedidoAndNoPedido("PV", idPedido);
 	}
 
 
 
 	@Override
-	public List<VistaItemPedidoErp> buscarItemPedidoByReferencia(String noPedido, String referencia) {
-		return vistaItemPedidoRepo.findByTipoPedidoAndNoPedidoAndReferencia("PV", noPedido, referencia);
+	public List<VistaItemPedidoErp> findByRowIdOpAndReferencia(Integer noPedido, String referencia) {
+		//return vistaItemPedidoRepo.findByTipoPedidoAndNoPedidoAndReferencia(OrdenPv, referencia);
+		//return vistaItemPedidoRepo.findByRowIdOpAndReferencia(noPedido, referencia);
+		return vistaItemPedidoRepo.findByNoPedidoAndReferencia(noPedido, referencia);
 	}
+
+
+
+	@Override
+	public List<VistaItemPedidoErp> findByNoPedidopAndReferencia(Integer noPedido, String ref) {
+		// TODO Auto-generated method stub
+		return vistaItemPedidoRepo.findByNoPedidoAndReferencia(noPedido, ref);
+	}
+
+
+
+	@Override
+	public List<VistaItemPedidoErp> findByRowIdOp(Integer rowIdOp) {
+		return vistaItemPedidoRepo.findByRowIdOp(rowIdOp);
+	}
+
+
+/*
+	@Override
+	public List<VistaItemPedidoErp> buscarItemPedidoByReferencia(String noPedido, String referencia) {
+		// TODO Auto-generated method stub
+		return null;
+	}*/
 
 
 

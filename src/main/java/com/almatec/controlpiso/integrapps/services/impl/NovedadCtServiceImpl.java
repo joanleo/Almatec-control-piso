@@ -41,8 +41,8 @@ public class NovedadCtServiceImpl implements NovedadCtService {
 
 	private NovedadCt generarNovedad(NovedadDTO novedadDTO) {
 		NovedadCt novedad = new NovedadCt();
-		if(novedadDTO.getIdPerfil() != null) {
-			novedad.setIdPerfil(novedadDTO.getIdPerfil());
+		if(novedadDTO.getIdParte() != null) {
+			novedad.setIdParte(novedadDTO.getIdParte());
 		}
 		novedad.setIdItem(novedadDTO.getIdItem());
 		novedad.setIdItmFab(novedadDTO.getIdItemFab());

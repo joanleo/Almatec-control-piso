@@ -6,7 +6,7 @@
 		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
 				 
 		<div class="container my-5">
-			<h1>Proyectos</h1>
+			<h1>Items pedido</h1>
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -37,8 +37,9 @@
 					<td th:text="${item.descripcion}"></td>
 					<td th:text="${item.cant}"></td>
 					<td th:text="${item.peso}"></td>
-					<td th:text="${item.cant}"></td>
-					<td th:text="${item.peso}"></td>
+					<td th:text="${item.cant - item.cantCumplida}"></td>
+					<td th:text="${(item.cant - item.cantCumplida) * item.peso}"></td>
+					<td th:text="${item.color}"></td>
 					
 					</tr>
 				</tbody>

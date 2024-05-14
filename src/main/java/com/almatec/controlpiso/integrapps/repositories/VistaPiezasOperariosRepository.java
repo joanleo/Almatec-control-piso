@@ -12,15 +12,19 @@ public interface VistaPiezasOperariosRepository extends JpaRepository<VistaPieza
 
 	@Query(value = "SELECT * "
 			+ "FROM view_piezas_operarios_proceso "
-			+ "WHERE C_proconfigproceso_id = :#{#operario.idConfigProceso} "
-			+ "AND ct = :#{#operario.idCentroTrabajo} "
-			+ "AND C_prooperario_id = :#{#operario.idOperario} ", nativeQuery = true)
+			+ "WHERE id_config_proceso = :#{#operario.idConfigProceso} "
+			+ "AND id_centro_trabajo = :#{#operario.idCentroTrabajo} "
+			+ "AND id_operario = :#{#operario.idOperario} ", nativeQuery = true)
 	List<VistaPiezasOperarios> findPiezasOperariosProceso(OperarioDTO operario);
 
-	@Query(value = "SELECT * "
+	@Query(value = "SELECT id, id_reg_pieza, id_config_proceso, id_centro_trabajo, "
+			+ "id_operario, is_pieza_activa, cliente, proyecto, id_item_op, id_item, descripcion, cant_req, peso_item, "
+			+ "codigo_erp, long_item, prioridad, id_op_ia, tipo_op_erp, num_op_erp, esquema_pintura, N_sstranscurrido, N_ssreproceso, "
+			+ "nombre_operario, color, id_item_parte, cant_cumplida, unidad_negocio, ruta_plano  "
 			+ "FROM view_piezas_operarios_proceso "
-			+ "WHERE C_proconfigproceso_id = :idConfig "
-			+ "AND ct = :idCT ", nativeQuery = true)
+			+ "WHERE id_config_proceso = :idConfig "
+			+ "AND id_centro_trabajo = :idCT "
+			+ "AND is_pieza_activa = 1 ", nativeQuery = true)
 	List<VistaPiezasOperarios> findPiezasOperariosProceso(Integer idCT, Integer idConfig);
 
 }

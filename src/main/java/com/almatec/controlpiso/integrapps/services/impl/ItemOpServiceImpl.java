@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,7 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
+import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
+import com.almatec.controlpiso.integrapps.dtos.ItemDTO;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpDTO;
+import com.almatec.controlpiso.integrapps.dtos.OpDTO;
+import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.OrdenPv;
+import com.almatec.controlpiso.integrapps.entities.RutaItem;
+import com.almatec.controlpiso.integrapps.interfaces.ConsultaOpIdInterface;
+import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
+import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
 import com.almatec.controlpiso.integrapps.paging.Column;
 import com.almatec.controlpiso.integrapps.paging.Direction;
@@ -24,10 +37,11 @@ import com.almatec.controlpiso.integrapps.paging.PageArray;
 import com.almatec.controlpiso.integrapps.paging.PagingRequest;
 import com.almatec.controlpiso.integrapps.repositories.ItemOpRepository;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
+import com.almatec.controlpiso.integrapps.services.ItemService;
+import com.almatec.controlpiso.integrapps.services.OrdenPvService;
+import com.almatec.controlpiso.integrapps.services.RutaItemService;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 public class ItemOpServiceImpl implements ItemOpService {
 	
@@ -111,7 +125,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 
 	@Override
 	public List<ItemOp> buscarItemsOp(Integer numOp) {
-		return itemOpRepo.findByIdPvIntegrapps(numOp);
+		return itemOpRepo.findByIdOpIntegrapps(numOp);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -190,8 +204,161 @@ public class ItemOpServiceImpl implements ItemOpService {
 	}
 
 	@Override
-	public void guardarItemOp(ItemOp item) {
-		itemOpRepo.save(item);		
+	public ItemOp guardarItemOp(ItemOp item) {
+		return itemOpRepo.saveAndFlush(item);		
 	}
+
+	@Override
+	public String obtenerStringListaMateriales(Integer id) {
+		return itemOpRepo.obtenerJsonPorId(id);
+	}
+
+	@Override
+	public String obtenerStringRuta(Integer id) {
+		return itemOpRepo.obtenerJsonPorId(id);
+	}
+
+	@Override
+	public List<ConsultaOpId> obtenerNumOps() {
+		List<ConsultaOpIdInterface> numOpInterface = itemOpRepo.obtenerNumsOps();
+		List<ConsultaOpId> numOps = new ArrayList<>();
+		numOpInterface.forEach(item->{
+			ConsultaOpId nuevo = new ConsultaOpId(item.getid_op_ia(), item.getNum_Op());
+			numOps.add(nuevo);
+		});
+		return numOps;
+	}
+
+	@Override
+	public String obtenerStringPorIdOPIntegrappsYTipo(Integer idOPI, String ruta) {
+		return itemOpRepo.obtenerJsonPorIdOPIntegrappsYTipo(idOPI, ruta);
+	}
+	
+	
+	
+	
+	
+	@Autowired
+	private ItemService itemService;
+	
+	@Autowired
+	private RutaItemService rutaItemService;
+	
+	@Autowired 
+	private OrdenPvService ordenPvService;
+
+	@Override
+	public List<OpDTO> buscarItemsOpActivos() {
+		List<ItemOp> itemsOpActivos = itemOpRepo.findByIsActivoTrueAndIdItemFabIsNot(0);
+		
+		Map<Integer, List<ItemOp>> mapPorIdOp = itemsOpActivos.stream()
+				.collect(Collectors.groupingBy(ItemOp::getIdOpIntegrapps));
+		
+		List<ItemOpDTO> itemsDTO = new ArrayList<>();
+		List<OpDTO> opsDTO = mapPorIdOp.entrySet().stream()
+				.map(entry ->{					
+					OpDTO opDTO = new OpDTO();
+					opDTO.setIdOp(entry.getKey());
+					OrdenPv ordenPv = ordenPvService.obtenerOrdenPorId(opDTO.getIdOp());
+					opDTO.setTipoOp(ordenPv.getTipoOp());
+					opDTO.setNumOp(ordenPv.getNumOp());
+					opDTO.setCliente(ordenPv.getCliente());
+					opDTO.setProyecto(ordenPv.getIdProyecto());
+					opDTO.setFechaContraActual(ordenPv.getFechaContractual());
+					opDTO.setEsquemaPintura(ordenPv.getEsquemaPintura());
+					/*opDTO.setItemsOps(entry.getValue().stream()
+		                        .map(this::crearItemsOpDTO)
+		                        .collect(Collectors.toList()));
+		                return opDTO;*/
+					List<ItemOpDTO> filteredItemsDTO = itemsOpActivos.stream()
+		                    .filter(item -> Objects.equals(item.getIdOpIntegrapps(), entry.getKey()))
+		                    .map(item -> crearItemsOpDTO(item, itemsDTO))
+		                    .collect(Collectors.toList());
+					itemsDTO.addAll(filteredItemsDTO);
+		            
+		            opDTO.setItemsOps(filteredItemsDTO);
+		            return opDTO;
+					})
+					
+				.collect(Collectors.toList());
+		opsDTO.forEach(System.out::println);
+		
+		return opsDTO;
+		
+	}
+	
+	private ItemOpDTO crearItemsOpDTO(ItemOp itemOp, List<ItemOpDTO> itemsDTO) {
+	    // Verificar si ya existe un ItemDTO con el mismo idItemOp
+	    Optional<ItemOpDTO> existingItemDTO = itemsDTO.stream()
+	            .filter(dto -> Objects.equals(dto.getIdItemOp(), itemOp.getId()))
+	            .findFirst();
+
+	    if (existingItemDTO.isPresent()) {
+	        // Si ya existe, sumar las cantidades
+	        ItemOpDTO itemOpDTO = existingItemDTO.get();
+	        itemOpDTO.setCant(itemOpDTO.getCant() + itemOp.getCant());
+	        itemOpDTO.setCantCumplida(itemOpDTO.getCantCumplida() + itemOp.getCantCumplida());
+	        return itemOpDTO;
+	    } else {
+	        // Si no existe, crear un nuevo ItemDTO
+	        ItemOpDTO newItemOpDTO = new ItemOpDTO();
+	        newItemOpDTO.setIdItemOp(itemOp.getId());
+	        newItemOpDTO.setCant(itemOp.getCant());
+	        newItemOpDTO.setCantCumplida(itemOp.getCantCumplida());
+	        newItemOpDTO.setColor(itemOp.getColor());
+
+	        // Obtener el item y su ruta
+	        Item itemFabrica = itemService.buscarItemFabrica(itemOp.getIdItemFab());
+	        List<RutaItem> ruta = rutaItemService.buscarRutaItem(itemFabrica.getIdItem());
+
+	        newItemOpDTO.setItemDTO(new ItemDTO(itemFabrica, ruta));
+	        return newItemOpDTO;
+	    }
+	}
+
+	/*private ItemOpDTO crearItemsOpDTO(ItemOp itemOp) {
+	    ItemOpDTO itemOpDTO = new ItemOpDTO();
+	    itemOpDTO.setIdItemOp(itemOp.getId());
+	    itemOpDTO.setCant(itemOp.getCant());
+	    itemOpDTO.setCantCumplida(itemOp.getCantCumplida());
+	    itemOpDTO.setColor(itemOp.getColor());
+
+	    Item itemFabrica = itemService.buscarItemFabrica(itemOp.getIdItemFab());
+	    List<RutaItem> ruta = rutaItemService.buscarRutaItem(itemFabrica.getIdItem());
+	    itemOpDTO.setItemDTO(new ItemDTO(itemFabrica, ruta));
+
+	    return itemOpDTO;
+	}*/
+
+
+	@Override
+	public Double obtenerValorAplicarTepItemCentroTrabajo(Integer idItemFab, Integer idCentroTrabajo) {
+		return itemOpRepo.obtenerValorAplicarTepItemCentroTrabajo(idItemFab, idCentroTrabajo);
+	}
+
+	@Override
+	public ItemInterface obtenerItemFabricaPorId(Integer idItem) {
+		System.out.println("Obteniendo itemFa");
+		try {
+			return itemOpRepo.obtenerItemFabricaPorId(idItem);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItem) {
+		try {
+			return itemOpRepo.obtenerListaMaterialesItemPorIdItem(idItem);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
 
 }
