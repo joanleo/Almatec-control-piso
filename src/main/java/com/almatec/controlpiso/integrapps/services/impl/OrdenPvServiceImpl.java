@@ -22,14 +22,12 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 
 	@Override
 	public List<OrdenPv> buscarProyectos() {
-		List<OrdenPv> proyectos = ordenPvRepo.findAll();
-		return proyectos;
+		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
 	}
 
 	@Override
 	public List<OrdenPv> buscarProyectos(String keyword) {
-		List<OrdenPv> proyectos = ordenPvRepo.buscarPorKeyword(keyword);
-		return proyectos;
+		return ordenPvRepo.buscarPorKeyword(keyword);
 	}
 
 	@Override
@@ -108,6 +106,12 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	@Override
 	public OrdenPv obtenerOrdenPorNumPv(Integer noPedido) {
 		return ordenPvRepo.findByNumOp(noPedido);
+	}
+
+	@Override
+	public List<OrdenPv> obtenerOpActivas() {
+		
+		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
 	}
 
 }

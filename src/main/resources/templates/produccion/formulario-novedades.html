@@ -64,6 +64,19 @@
 				           <input type="number" id="desperdicio" min="0" class="form-control" th:field="*{desperdicio}"  required style="text-align: right;"/>
 				           <span class="input-group-text"> kg </span> 				   
 			       	</div>
+					
+					<div class="input-group my-3">
+			           <span class="input-group-text">Lote: </span>
+						   <select id="loteSelect" class="form-control" name="lote" onchange="mostrarCodigo()" th:field="*{lote}" >
+   		                   		<option value=""></option>
+   		                        <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
+   		                   </select>				   
+			       	</div>
+					
+					<div class="input-group my-3">
+			           <span class="input-group-text">Codigo materia prima: </span>
+				           <input type="number" id="codErpMatriaPrima" class="form-control" th:field="*{codErpMp}"  readonly  required style="text-align: right;"/>
+			       	</div>
 			       	
 			       	
 			       	<input type="hidden" id="operario" th:field="*{operario}" />
@@ -71,13 +84,22 @@
 			       	<input type="hidden" id="idItemFab" th:field="*{idItemFab}" />
 			       	<input type="hidden" id="idParte" th:field="*{idParte}" />
 			       	<input type="hidden" id="idItem" th:field="*{idItem}" />
-			       	
-			       	<button type="submit" class="btn btn-primary my-5">Guardar</button>
+			       	<div class="d-grid">
+			       		<button type="submit" class="btn btn-primary my-5">Guardar</button>						
+					</div>
 				 </form>
 			 </div>
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/novedades.js"></script>
+		
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+	        var lotesConCodigosString = /*[[${lotesJson}]]*/ [];
+	        /*]]>*/
+	    </script>
+			
 	</body>
 </html>

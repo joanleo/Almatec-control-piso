@@ -242,6 +242,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setIdParte(idParte);
 		    reporte.setIdItem(idItem);
 		    reporte.setCantFab(cantFabricada);
+		    reporte.setColor(item.getItem_color());
 		    
 		    return reporte;
 		}
@@ -265,7 +266,9 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 
 	@Override
 	public CentroTrabajo buscarCentroTrabajoPorIdCtErp(Integer idCT) {
-		return centroTrabajoRepo.findByIdCentroTrabajoErp(idCT);
+		//return centroTrabajoRepo.findByIdCentroTrabajoErp(idCT);
+		return centroTrabajoRepo.findById(idCT)
+				.orElseThrow();
 	}
 
 }

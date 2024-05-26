@@ -3,10 +3,10 @@ package com.almatec.controlpiso.integrapps.services.impl;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,8 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	public ErrorMensaje guardarReporte(ReporteDTO reporteDTO) {
 		//Crea entidad reporte integrapps
 		ReportePiezaCt reporte = generaReporte(reporteDTO);
-		ErrorMensaje mensaje = new ErrorMensaje();
+		ErrorMensaje response = new ErrorMensaje();
+		String message = "";
 		try {
 			//Guardo entidad reporte en integrapps 
 			
@@ -50,9 +51,17 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			
 			if(isConsume) {
 				//Se realiza consumo y TEP
-				xmlService.crearTEPYConsumos(item, reporteDTO);
-				reporte.setIsConsume(true);//REVISAR RESPUESTA
-				reporte.setIsTep(true);
+				if(item.getCentroTConsumo() == null || Objects.equals(item.getCentroTConsumo(), reporteDTO.getIdCentroTrabajo())) {
+					String responseService = xmlService.crearTEPYConsumos(item, reporteDTO);
+					if("Operacion realizada exitosamente".equals(responseService)) {
+						reporte.setIsConsume(true);//REVISAR RESPUESTA
+						reporte.setIsTep(true);
+						item.setCentroTConsumo(reporte.getIdCentroT());
+						itemOpService.guardarItemOp(item);
+					}
+					message += responseService;
+					
+				}
 			}
 			/*
 			 * Se valida si es el utltimo centro de trabajoj por donde pasan las piezas, aqui se debera actualizar los itemOp,
@@ -63,26 +72,33 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 				//Se valida si no se ha reportado ninguna cantidad del itemOp
 				actualizarCantidadCumplida(reporteDTO, item);
 				itemOpService.guardarItemOp(item);
-				xmlService.crearEntrega(item, reporteDTO);
+				String responseEntrega = xmlService.crearEntrega(item, reporteDTO);
+				if("Entrega creada Exitosamente".equals(responseEntrega)) reporte.setIsTep(true);
+				message += responseEntrega;
 			} else{
-				xmlService.crearTEP(item, reporteDTO);
-				reporte.setIsTep(true);
+				String responseServiceTep = xmlService.crearTEP(item, reporteDTO);
+				if("TEP creado Exitosamente".equals(responseServiceTep)) reporte.setIsTep(true);
+				message += responseServiceTep;
 			}
-
-			mensaje.setMensaje("Reporte guardado exitosamente");
-			mensaje.setError(false);
+			if(!"".equals(message)) {
+				message += "\n" + "Reporte guardado exitosamente";
+			}else {
+				message += "Reporte guardado exitosamente";
+			}
+			response.setMensaje(message);
+			response.setError(false);
 			
 		} catch (DataIntegrityViolationException e) {
-	        mensaje.setMensaje("Error al guardar el reporte. Violación de integridad de datos: " + e.getMessage());
-	        mensaje.setError(true);
+	        response.setMensaje("Error al guardar el reporte. Violación de integridad de datos: " + e.getMessage());
+	        response.setError(true);
 	    } catch (Exception e) {
 	    	
-	        mensaje.setMensaje(obteneMensajeError(e));
-	        mensaje.setError(true);
+	        response.setMensaje(obteneMensajeError(e));
+	        response.setError(true);
 	    }finally {
 	    	reportePiezaCtRepository.save(reporte);			
 		}
-		return mensaje;
+		return response;
 	}
 
 	private void actualizarCantidadCumplida(ReporteDTO reporteDTO, ItemOp item) {
@@ -129,7 +145,6 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		return reportePiezaCtRepository.buscarCantidadesFabricadasPerfil(idItem, idPerfil, idCT);
 	}
 
-	@Autowired
 	public ReportePiezaCtServiceImpl(ReportePiezaCtRepository reportePiezaCtRepository, ItemOpService itemOpService,
 			XmlService xmlService) {
 		super();

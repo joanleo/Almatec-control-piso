@@ -16,6 +16,8 @@ public class NovedadDTO {
 	private Integer numOp;
 	private String proyecto;
 	private String ref;
+	private String lote;
+	private Integer codErpMp;
 	
 	public NovedadDTO() {
 		super();
@@ -127,6 +129,22 @@ public class NovedadDTO {
 
 	public void setIdParte(Integer idParte) {
 		this.idParte = idParte;
+	}
+
+	public String getLote() {
+		return lote;
+	}
+
+	public Integer getCodErpMp() {
+		return codErpMp;
+	}
+
+	public void setLote(String lote) {
+		this.lote = lote;
+	}
+
+	public void setCodErpMp(Integer codErpMp) {
+		this.codErpMp = codErpMp;
 	}
 	
 	

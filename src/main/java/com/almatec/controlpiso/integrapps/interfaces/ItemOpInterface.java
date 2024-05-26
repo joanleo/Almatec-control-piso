@@ -23,5 +23,6 @@ public interface ItemOpInterface {
 	Integer getid_estado();
 	Double getcant_cumplida();
 	String getpintura();
+	String getgrp_pintura();
 
 }

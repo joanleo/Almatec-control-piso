@@ -37,6 +37,11 @@ public class NovedadCt {
 	private Integer desperdicio;
 	
 	private Integer sobrante;
+	
+	private String lote;
+	
+	@Column(name = "cod_erp_mp")
+	private Integer codErpMp;
 
 	public NovedadCt() {
 		super();
@@ -115,13 +120,27 @@ public class NovedadCt {
 		this.idParte = idParte;
 	}
 
+	public String getLote() {
+		return lote;
+	}
+
+	public Integer getCodErpMp() {
+		return codErpMp;
+	}
+
+	public void setLote(String lote) {
+		this.lote = lote;
+	}
+
+	public void setCodErpMp(Integer codErpMp) {
+		this.codErpMp = codErpMp;
+	}
+
 	@Override
 	public String toString() {
 		return "NovedadCt [idNovedad=" + idNovedad + ", IdItem=" + IdItem + ", idItmFab=" + idItmFab + ", idParte="
 				+ idParte + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario + ", noConforme="
-				+ noConforme + ", desperdicio=" + desperdicio + ", sobrante=" + sobrante + "]";
+				+ noConforme + ", desperdicio=" + desperdicio + ", sobrante=" + sobrante + ", lote=" + lote
+				+ ", codErpMp=" + codErpMp + "]";
 	}
-	
-
-
 }

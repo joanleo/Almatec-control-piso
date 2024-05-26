@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Calidad :: Almatec')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Calidad')"></nav>
+		
+		<div class="container my-5" style="width:60%;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 <div class="card-body" style="margin: auto; width: 60%;">
+				 <div class="my-3" style="display: flex; justify-content: end;">
+					<div class="input-group size-m">
+					  <span class="input-group-text">Reporte Novedad No: </span>
+					  <input type="text" aria-label="consecutivo" class="form-control" th:value="*{consecutivo}" readonly style="text-align: right;"/>
+					</div>
+				</div>
+				 <h2 class="mb-5"> </h2>
+	 		    <form method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/novedades}" >
+			        <div class="input-group my-3">
+			           <span class="input-group-text">Operario: </span>
+			           	<input type="text" id="nombre-operario"  class="form-control" required readonly style="text-align: right;"/>						   
+					   
+			       	</div>
+			       	<div class="input-group my-3">
+			           <span class="input-group-text">Numero Op: </span>
+			           	<input type="number" id="num-op"  class="form-control"  readonly style="text-align: right;"/>						   
+			       	</div>
+			       	
+			       	<div class="input-group my-3">
+			           <span class="input-group-text">Proyecto: </span>
+				           <input type="text" id="proyecto"  class="form-control" required readonly style="text-align: right;"/>						   
+			       	</div>
+			       	
+			       	<div class="input-group my-3">
+			           <span class="input-group-text">Item: </span>
+				           <input type="text" id="item" class="form-control"  required readonly style="text-align: right;"/>					   
+			       	</div>
+			       	
+			       	<div class="input-group my-3">
+			           <span class="input-group-text">Unidades de mas: </span>
+			           <input type="number" id="cant-solic" min="0" class="form-control" required style="text-align: right;"/>
+			           <span class="input-group-text"> und </span> 					   
+			       	</div>
+			       	
+			       	<div class="input-group my-3">
+			           <span class="input-group-text">No conforme: </span>
+			           <input type="number" id="no-conforme" min="0" class="form-control"  required style="text-align: right;"/>
+			           <span class="input-group-text"> ml </span> 					   
+			       	</div>
+			       	
+			       	<div class="input-group my-3">
+			           <span class="input-group-text">Desperdicio/Chatarra: </span>
+				           <input type="number" id="desperdicio" min="0" class="form-control" required style="text-align: right;"/>
+				           <span class="input-group-text"> kg </span> 				   
+			       	</div>
+					
+					<div class="input-group my-3">
+			           <span class="input-group-text">Lote: </span>
+						   <select id="loteSelect" class="form-control" name="lote" >
+   		                   		<option value=""></option>
+   		                        <option></option>
+   		                   </select>				   
+			       	</div>
+					
+					<div class="input-group my-3">
+			           <span class="input-group-text">Codigo materia prima: </span>
+				           <input type="number" id="codErpMatriaPrima" class="form-control" readonly  required style="text-align: right;"/>
+			       	</div>
+			       	
+			       	<div class="d-grid">
+			       		<button type="submit" class="btn btn-primary my-5">Guardar</button>						
+					</div>
+				 </form>
+			 </div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+			
+	</body>
+</html>

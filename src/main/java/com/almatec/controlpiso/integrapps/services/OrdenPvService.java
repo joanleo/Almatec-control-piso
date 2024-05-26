@@ -29,4 +29,6 @@ public interface OrdenPvService {
 
 	OrdenPv obtenerOrdenPorNumPv(Integer noPedido);
 
+	List<OrdenPv> obtenerOpActivas();
+
 }

@@ -3,12 +3,12 @@ package com.almatec.controlpiso.integrapps.services;
 import java.util.List;
 
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
+import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 import com.almatec.controlpiso.integrapps.dtos.OpDTO;
-import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
-import com.almatec.controlpiso.integrapps.paging.Page;
 import com.almatec.controlpiso.integrapps.paging.PageArray;
 import com.almatec.controlpiso.integrapps.paging.PagingRequest;
 
@@ -24,7 +24,7 @@ public interface ItemOpService {
 	
 	PageArray obtenerItemsOpArray(PagingRequest pagingRequest, Integer idOp);
 
-	Page<ItemOp> obtenerPagina(List<ItemOp> itemsOp, PagingRequest pagingRequest);
+	//Page<ItemOp> obtenerPagina(List<ItemOp> itemsOp, PagingRequest pagingRequest);
 
 	List<ItemOp> obtenerItemsOpProduccion(Integer numOp);
 
@@ -47,4 +47,8 @@ public interface ItemOpService {
 	ItemInterface obtenerItemFabricaPorId(Integer idItem);
 
 	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItemFab);
+
+	void imprimirEtiquetas(List<DataItemImprimirDTO> data);
+
+	List<ItemOpDatable> obtenerItemsOpDataTable(Integer numOp);
 }

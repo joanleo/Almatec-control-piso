@@ -10,8 +10,6 @@
 	
 	import org.springframework.beans.factory.annotation.Autowired;
 	import org.springframework.data.repository.query.Param;
-	import org.springframework.http.HttpStatus;
-	import org.springframework.http.ResponseEntity;
 	import org.springframework.stereotype.Controller;
 	import org.springframework.ui.Model;
 	import org.springframework.web.bind.annotation.GetMapping;
@@ -20,16 +18,18 @@
 	import org.springframework.web.bind.annotation.RequestBody;
 	import org.springframework.web.bind.annotation.RequestMapping;
 	import org.springframework.web.bind.annotation.ResponseBody;
-	
+	import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 	import com.almatec.controlpiso.erp.webservices.XmlService;
-	import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
+import com.almatec.controlpiso.integrapps.entities.ItemOp;
 	import com.almatec.controlpiso.integrapps.entities.OrdenPv;
 	import com.almatec.controlpiso.integrapps.entities.VistaItemPedidoErp;
 	import com.almatec.controlpiso.integrapps.entities.VistaPedidosErp;
 	import com.almatec.controlpiso.integrapps.entities.VistaPedidosOpErp;
-import com.almatec.controlpiso.integrapps.paging.PageArray;
-import com.almatec.controlpiso.integrapps.paging.PagingRequest;
-import com.almatec.controlpiso.integrapps.services.ItemOpService;
+	import com.almatec.controlpiso.integrapps.paging.PageArray;
+	import com.almatec.controlpiso.integrapps.paging.PagingRequest;
+	import com.almatec.controlpiso.integrapps.services.ItemOpService;
 	import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 	import com.almatec.controlpiso.integrapps.services.VistaItemPedidoErpService;
 	import com.almatec.controlpiso.integrapps.services.VistaPedidosErpService;
@@ -39,13 +39,7 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 	
 	@Controller
 	@RequestMapping("/ingenieria")
-	public class IngenieriaController {
-		
-		@Autowired
-		private VistaPedidosErpService vistaPedidosErpService;
-		
-		@Autowired
-		private VistaItemPedidoErpService vistaItemPedidosErp;
+	public class IngenieriaController {		
 		
 		@Autowired
 		private VistaPedidosOpErpService vistaPedidosOpErpService;
@@ -54,47 +48,9 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 		private ItemOpService itemOpService;
 		
 		@Autowired
-		private XmlService xmlService;
+		private OrdenPvService ordenPvService;	
 		
-		@Autowired
-		private OrdenPvService ordenPvService;
-	
-		@GetMapping
-		public String listarPedidosVentaErp(Model modelo, @Param("keyword") String keyword) {
-			List<VistaPedidosErp>  pedidos = null;
-			if(keyword == null) {
-				pedidos = vistaPedidosErpService.buscarPedidosErp();
-			}else {
-				pedidos = vistaPedidosErpService.buscarPedidosErp(keyword);			
-			}
-			modelo.addAttribute("pedidos", pedidos);
-			return "ingenieria/listar-pedidos";
-		}
 		
-		@GetMapping("/pedidos/{idPedido}")
-		public String verDetallePedido(@PathVariable Integer idPedido, Model modelo) {
-			List<VistaItemPedidoErp> itemsPedido = vistaItemPedidosErp.buscarItemsPedido(idPedido);
-			Integer noPedido = itemsPedido.get(0).getNoPedido();
-			modelo.addAttribute("items", itemsPedido);
-			modelo.addAttribute("noPedido", noPedido);
-			return "ingenieria/pedido";
-		}
-		
-		@PostMapping("/crear-op/{noPedido}/{ref}")
-		public ResponseEntity<?> crearOrdenProduccion(@PathVariable Integer noPedido,
-					@PathVariable String ref) {
-
-			List<VistaItemPedidoErp> items = vistaItemPedidosErp.findByNoPedidopAndReferencia(noPedido, ref);
-			
-			try {
-				xmlService.asignarParametros();
-				String response = xmlService.crearOrdenProduccionPapa(items, noPedido);
-				return ResponseEntity.ok(response);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en la creación de la orden de produccion");
-		}
 		
 		@GetMapping("/listar-ops")
 		public String listarOps(Model modelo, @Param("keyword") String keyword) {
@@ -121,9 +77,7 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 		public String verDetalleOpNivel1(@PathVariable String idGrupo,
 										Model modelo) {
 			List<ItemOp> listaItemOp = itemOpService.obtenerItemsOpC2(idGrupo);
-			//ItemOp itemOp = itemOpService.obtenerItemsOp(idGrupo);
 			modelo.addAttribute("listaItemOp", listaItemOp);
-			//modelo.addAttribute("descripcion", itemOp.getDescripcion());
 			return "ingenieria/op-grupo1";
 		}
 		
@@ -160,17 +114,13 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 		@ResponseBody
 		public PageArray detalleOp(@RequestBody PagingRequest pagingRequest,
 									  @PathVariable Integer numOp) {
-			
-			//return itemOpService.obtenerItemsOp(numOp);
 			return itemOpService.obtenerItemsOpArray(pagingRequest, numOp);
 		}
 		
-		@GetMapping("/op/{numOp}/detalle")
+		@GetMapping("/op/{idOp}/detalle")
 		@ResponseBody
-		public List<ItemOp> detalleOp(@PathVariable Integer numOp) {
-			
-			return itemOpService.obtenerItemsOp(numOp);
-			//return itemOpService.obtenerItemsOpArray(pagingRequest, numOp);
+		public List<ItemOpDatable> detalleOp(@PathVariable Integer idOp) {			
+			return itemOpService.obtenerItemsOpDataTable(idOp);
 		}
 				
 	}

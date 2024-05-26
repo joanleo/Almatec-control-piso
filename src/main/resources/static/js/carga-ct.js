@@ -5,13 +5,13 @@ let spinner = document.getElementById("spinner")
 
 function crearTabla() {
     let table = document.createElement('table')
-    table.classList.add('table', 'table-striped', 'align-middle', 'table-hover')
+    table.classList.add('table', 'table-striped')//, 'align-middle', 'table-hover'
     return table
 }
 
 function crearHeaderTabla(encabezados) {
     let header = document.createElement('thead')
-    header.classList.add('table-dark')
+    header.classList.add('table-light')
     let headerRow = document.createElement('tr')
     let names =''
     for (let name of encabezados) {
@@ -169,7 +169,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         
         let checkboxCounter = 1
         opsCargaCt.forEach(function (op, index) {
-            agregarFilaATabla(table, [`<input type="checkbox" value="${index}" id="checkbox_${checkboxCounter}" name="checkbox_${checkboxCounter}">`, op.cliente, op.proyecto, op.op])
+            agregarFilaATabla(tbody, [`<input type="checkbox" value="${index}" id="checkbox_${checkboxCounter}" name="checkbox_${checkboxCounter}">`, op.cliente, op.proyecto, op.op])
             checkboxCounter++
         })
         

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
+import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
 import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioRegistradoDTO;
@@ -29,6 +30,7 @@ import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.OrdenPv;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 import com.almatec.controlpiso.integrapps.entities.VistaNovedades;
@@ -40,6 +42,7 @@ import com.almatec.controlpiso.integrapps.services.RegistroOperDiaService;
 import com.almatec.controlpiso.integrapps.services.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.integrapps.services.VistaItemLoteDisponibleService;
 import com.almatec.controlpiso.integrapps.services.VistaNovedadesService;
+import com.almatec.controlpiso.integrapps.services.impl.GestionProduccionService;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
 
@@ -73,6 +76,10 @@ public class ProduccionController {
 	
 	@Autowired
 	private ListaMService listaMaterialService;
+	
+	@Autowired
+	private GestionProduccionService gestionProduccionService;
+	
 	
 
 	@GetMapping("/home")
@@ -135,16 +142,9 @@ public class ProduccionController {
 	@ResponseBody
 	@PostMapping("/materia-prima/solicitud")
 	public ResponseEntity<Map<String, String>> crearsolicitudMateriaPrima(@RequestBody SolicitudMariaPrimaDTO solicitudMP) {
-		System.out.println(solicitudMP);
 		try {
 			SolicitudMateriaPrima solicitud = solicitudMateriaPrimaService.crearSolicitud(solicitudMP.getSolicitud());
 			detalleSolicitudMateriaPrimaService.crearDetalleSolicitud(solicitud.getId(), solicitudMP.getDetalles());
-			/*xmlService.crearTransferencia(solicitud, detalles, solicitud.getId());
-			DetalleTransferenciaInterface detalleTransf = serviceErp.obtenerDetalleTransferencia(solicitud.getId());
-			System.out.println(detalleTransf.getf350_fecha_ts_creacion());
-			solicitud.setNumDocErp(detalleTransf.getf350_consec_docto());
-			solicitud.setFechaDocEp(detalleTransf.getf350_fecha_ts_creacion());
-			solicitudMateriaPrimaService.actualizaSolicitud(solicitud);*/
 	        Map<String, String> respuesta = new HashMap<>();
 	        respuesta.put("mensaje", "Solicitud creada correctamente");
 	        respuesta.put("status", "ok");
@@ -166,15 +166,36 @@ public class ProduccionController {
 	@ResponseBody
 	@PostMapping("/items/disponibilidad")
 	public List<VistaItemLoteDisponible> obtenerItemsDispon(@RequestBody SpecItemLoteDTO filtro){
-		System.out.println(filtro);
 		return vistaItemLoteDisponibleService.searchItems(filtro);
 	}
 	
 	@GetMapping("/operarios-registrados")
 	public String obtenerOperariosRegistrados(Model modelo) {
 		List<OperarioRegistradoDTO> operarios = registroOperDiaService.obtenerOperariosRegistrados();
-		
 		modelo.addAttribute("operarios", operarios);
 		return "produccion/operarios-registrados";
+	}
+	
+	@GetMapping("/impresion-etiquetas")
+	public String mostrarOpImpresion(Model modelo) {
+		List<OrdenPv> ops = ordenPvService.obtenerOpActivas(); 		
+		modelo.addAttribute("ops", ops);
+		return "produccion/impresion-etiquetas";
+	}
+	
+	@ResponseBody
+	@GetMapping("/op/{idOp}/items")
+	public List<ItemOp> getItemsOpByIdOp(@PathVariable Integer idOp){
+		return  itemOpService.obtenerItemsOpProduccion(idOp);
+	}
+	
+	@ResponseBody
+	@PostMapping("/imprimir-etiquetas")
+	public void registrarDataItemImprimir(@RequestBody List<DataItemImprimirDTO> data) {
+		itemOpService.imprimirEtiquetas(data);
+	}
+	
+	public void crearInformeGeneral() {
+		gestionProduccionService.crearInformeGeneral();
 	}
 }

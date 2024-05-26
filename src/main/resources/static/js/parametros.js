@@ -17,18 +17,19 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 async function obtenerParametros() {
     spinner.removeAttribute('hidden')
-    const response = await fetch('/parametros');
+    const response = await fetch('/parametros')
     const data = await response.json();
 
-    const parametrosContainer = document.getElementById('parametros-container');
+    const parametrosContainer = document.getElementById('parametros-container')
     data.forEach(parametro => {
         const div = document.createElement('div');
-        div.classList.add('input-group', 'my-3', 'mx-3', 'size-xxl');
+        div.classList.add('input-group', 'my-3', 'mx-3')
+        div.style.width = '46%'
         div.innerHTML = `
 		                <span class="input-group-text">${parametro.nombre}</span>
 						<input type="text" class="form-control" style="text-align: right;" value="${parametro.valor}" data-id="${parametro.id}" data-nombre="${parametro.nombre}"/>
 		            `;
-        parametrosContainer.appendChild(div);
+        parametrosContainer.appendChild(div)
     })
     spinner.setAttribute('hidden','')
 }

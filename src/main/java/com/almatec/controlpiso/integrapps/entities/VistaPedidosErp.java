@@ -60,6 +60,19 @@ public class VistaPedidosErp {
 	
 	@Column(name = "f431_cant1_pedida")
 	private Integer cantPedida;
+	
+	@Column(name = "f120_id_unidad_inventario")
+	private String unidadMedidaInventario;
+	
+	@Column(name = "f120_id_unidad_adicional")
+	private String unidadMedidaAdicional;
+	
+	@Column(name = "f850_id_tipo_docto")
+	private String tipoOp;
+	
+	@Column(name = "f850_consec_docto")
+	private Integer numOp;
+
 
 	public VistaPedidosErp() {
 		super();
@@ -125,13 +138,29 @@ public class VistaPedidosErp {
 		return cantPedida;
 	}
 
+	public String getUnidadMedidaInventario() {
+		return unidadMedidaInventario;
+	}
+
+	public String getUnidadMedidaAdicional() {
+		return unidadMedidaAdicional;
+	}
+
+	public String getTipoOp() {
+		return tipoOp;
+	}
+
+	public Integer getNumOp() {
+		return numOp;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
 				+ ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", estado="
 				+ estado + ", fecha=" + fecha + ", proyecto=" + proyecto + ", vendedor=" + vendedor + ", idEstado="
-				+ idEstado + ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + "]";
-	}
-
-	
+				+ idEstado + ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + ", unidadMedidaInventario="
+				+ unidadMedidaInventario + ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", tipoOp=" + tipoOp
+				+ ", numOp=" + numOp + "]";
+	}	
 }

@@ -2,7 +2,10 @@ package com.almatec.controlpiso.integrapps.repositories;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -32,6 +35,8 @@ public interface OrdenPvRepository extends JpaRepository<OrdenPv, Integer> {
 
 	List<OrdenPv> findByIdProyecto(String idProyecto);
 
+	@Transactional
+	@Modifying
 	@Query(value = "UPDATE  orden_pv "
 			+ "SET Row850_id=:#{#creado.f850_rowid} , Row851_id=:#{#creado.f851_rowid} , Num_Op=:#{#creado.f850_consec_docto} , "
 			+ "op_UnoEE=:opUnoEE "
@@ -56,5 +61,8 @@ public interface OrdenPvRepository extends JpaRepository<OrdenPv, Integer> {
 			+ "AND (orden_pv_vw.Tipo_OP <> 'IF') "
 			+ "ORDER BY orden_pv_vw.id_op_ia DESC ", nativeQuery = true)
 	OrdenPv findByNumOp(@Param("noPedido") Integer noPedido);
+
+	List<OrdenPv> findByTipoOpAndIdEstadoDoc(String string, int i);
+
 
 }

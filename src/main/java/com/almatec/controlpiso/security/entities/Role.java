@@ -19,30 +19,30 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
-@Table(name = "Roles_Integrapps")
+@Table(name = "roles_web")
 public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Id_Rol")
+	@Column(name = "id_role")
 	private Integer idRol;
 	
-	@Column(name = "Rol_Nombre")
+	@Column(name = "nombre")
 	private String nombre;
 	
-	@Column(name = "Rol_Activo")
+	@Column(name = "is_active")
 	private Boolean isActivo;
 	
 	@JsonManagedReference
-	@OneToMany(targetEntity=Usuario.class, mappedBy="rol", fetch = FetchType.EAGER)
+	@OneToMany(targetEntity=Usuario.class, mappedBy="role", fetch = FetchType.EAGER)
     private Set<Usuario> usuarios = new HashSet<>();
 	
 	@ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-      name = "menusweb_roles", 
-      joinColumns = @JoinColumn(name = "idRol"),
-      inverseJoinColumns = @JoinColumn(name = "idMenu"))
-    private Set<Menu> menus;
+      name = "role_permissions", 
+      joinColumns = @JoinColumn(name = "role_id"), 
+      inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Set<Permission> permissions;
 
 	public Role() {
 		super();
@@ -83,22 +83,22 @@ public class Role {
 		this.usuarios = usuarios;
 	}
 
-	/*public Set<Menu> getMenus() {
-		return menus;
+
+	public Set<Permission> getPermissions() {
+		return permissions;
 	}
 
 
-	public void setMenus(Set<Menu> menus) {
-		this.menus = menus;
-	}*/
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
 
 
 	@Override
 	public String toString() {
 		return "Role [idRol=" + idRol + ", nombre=" + nombre + ", isActivo=" + isActivo + ", usuarios=" + usuarios
-				+"]";
+				+ ", permissions=" + permissions + "]";
 	}
-
 	
 	
 }

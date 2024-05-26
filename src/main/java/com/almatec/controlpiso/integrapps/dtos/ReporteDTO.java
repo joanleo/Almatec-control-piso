@@ -18,6 +18,7 @@ public class ReporteDTO {
 	private Long idItem;
 	private Integer cantReportar;
 	private String lote;
+	private String color;
 	
 	public String getProyecto() {
 		return proyecto;
@@ -127,12 +128,20 @@ public class ReporteDTO {
 		this.idParte = idParte;
 	}
 
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
 	@Override
 	public String toString() {
 		return "ReporteDTO [proyecto=" + proyecto + ", numOp=" + numOp + ", ref=" + ref + ", cantSol=" + cantSol
 				+ ", cantFab=" + cantFab + ", centroTrabajo=" + centroTrabajo + ", operario=" + operario
 				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
-				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + "]";
+				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color + "]";
 	}
 
 }

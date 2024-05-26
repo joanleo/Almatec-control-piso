@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  <head th:replace="fragments/head :: head('Produccion :: Impresion de etiquetas')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Produccion')"></nav>
+		
+		<div class="container my-5" style="width: 80%; margin-left: 10rem;">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+						
+						
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			 
+			<div id="ops" class="container" style="display: flex; flex-direction: column; justify-content: center;align-items: center;">
+				 <h2 class="mb-2"> Ordenes de Produccion </h2>
+				 <div class="input-group my-3 size-m">
+		         	<span class="input-group-text">OP </span>
+                    <select class="form-control" id="id-op" required>
+					   <option value="" disabled selected hidden>Selecciona numero de OP</option>
+                       <option th:each="num : ${ops}" th:value="${num.numOp}" th:text="${num.numOp}"></option>
+                    </select>	
+		    	 </div>
+			</div>
+
+			<div style="margin-right: 2rem;">
+				<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem; max-height: 30rem; overflow-y: auto;">
+					<div class="d-flex justify-content-between my-3">
+						<caption>Detalle Orden de Produccion </caption>	
+						<button class="btn btn-primary" onclick="obteneSeleccion()">Imprimir seleccion</button>						
+					</div>
+					<table id="detalle-op" class="table table-striped table-hover table-rounded caption-top">
+						<thead class="table-light sticky-top">
+							<tr>
+								<th><input type="checkbox" id="select-all"></th>
+								<th>Item</th>
+								<th>Descripcion</th>
+								<th>Cant</th>
+								<th>No Etiquetas</th>
+								<!--<th></th>-->
+							</tr>
+						</thead>
+						<tbody id="body-detalle-materia-prima">									
+						</tbody>
+					</table>		 				
+				</div>
+			</div>
+		</div>			
+			
+			<div class="modal" id="detalleImpresionModal" tabindex="-1" aria-labelledby="detalleImpresionModallLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="detalleImpresionModallLabel">Detalle Impresion</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body" id="detalleImpresionModalBody">
+					<div class="input-group my-3 size-xxl">
+			           <span class="input-group-text">Tipo de etiqueta </span>
+	                   <select class="form-control" id="tipo-etiqueta" required>
+						   <option value="" disabled selected hidden>Selecciona tipo de etiqueta</option>
+						   <option value="IDEF">Producto Terminado</option>
+					       <option value="IDEV">Viajera</option>
+	                   </select>	
+			    	 </div>
+					 
+					 <!--<div class="input-group my-3">
+ 			         	<span class="input-group-text">Cant de etiquetas: </span>
+                        <input type="number" min="1" id="cant-etiquetas" class="form-control" required />						   
+   			            <span class="input-group-text"> und </span> 					   
+	 			     </div>-->
+					 
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" id="btn-imprimir" >Imprimir</button>
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		
+
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/impresion-etiquetas.js"></script>
+	</body>
+</html>

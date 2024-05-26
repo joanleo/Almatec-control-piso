@@ -12,15 +12,13 @@
 			</div>
 			
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <span th:text="${message}"></span>
+			  <pre th:text="${message}"></pre>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
 			  </button>
 			</div>
 			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <span th:text="${error}"></span>
+			  <pre th:text="${error}"></pre>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
 			 
@@ -114,9 +112,9 @@
 				</button>
 			</div>		
 			
-			<div class="container my-4" id="productividad-operario">
+			<div class="container my-4 table-production" id="productividad-operario">
 				<div class="table-responsive rounded-3 shadow-sm" >
-					<table class="table table-striped table-production" id="table-produccion" aria-describedby="table-produccion-description">
+					<table class="table table-striped " id="table-produccion" aria-describedby="table-produccion-description">
 					  <thead class="table-light"> 
 						  <tr>
 							<th>Operario</th>

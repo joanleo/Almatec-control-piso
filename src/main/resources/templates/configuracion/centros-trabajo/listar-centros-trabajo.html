@@ -9,8 +9,8 @@
 			<h1>Centros de trabajo</h1>
 			<a class="btn btn-primary mt-4" th:href="@{/centros-trabajo/nuevo}" role="button">Nuevo</a>
 			<div class="table-responsive text-nowrap my-5 rounded-3 shadow-sm">
-				<table class="table table-striped align-middle table-hover table-bordered rounded"  aria-describedby="table-description">
-					<thead class="table-dark">
+				<table class="table table-striped align-middle table-hover rounded"  aria-describedby="table-description">
+					<thead class="table-light">
 						<tr>
 							<th>#</th>
 							<th>Nombre</thstyle="width: auto;">
@@ -22,8 +22,8 @@
 							<td style="width: 5rem;">[[${stat.index + 1}]]</td>
 							<td th:text="${ct.nombre}"></td>
 							<td style="width: 13rem; padding-left: 1rem;">
-								<a class="btn btn-primary" th:href="@{/centros-trabajo/actualizar/{id}(id=${ct.id})}" role="button">Editar</a>
-			                	<a class="btn btn-danger" href="#" role="button" onclick="confirmModal(this)" th:data-ct-id="${ct.id}">Eliminar</a>
+								<a class="btn btn-primary btn-sm" th:href="@{/centros-trabajo/actualizar/{id}(id=${ct.id})}" role="button">Editar</a>
+			                	<a class="btn btn-danger btn-sm" href="#" role="button" onclick="confirmModal(this)" th:data-ct-id="${ct.id}">Eliminar</a>
 							</td>
 						</tr>
 					</tbody>

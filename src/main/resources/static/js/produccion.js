@@ -7,7 +7,7 @@ let configProceso
 let spinner = document.getElementById("spinner")
 
 function toggleTable() {
-  let table = document.getElementById("table-produccion")
+  let table = document.getElementById("productividad-operario")
   let button = document.querySelector(".button-check-table")
 
   if (table && button) {
@@ -765,7 +765,7 @@ async function asignaPiezaOperario(){
 }
 
 let itemAgregar
-let confirm_modal;
+let confirm_modal
 function confirmModal(item) {
 	const operarioSelected = document.getElementById("operario-selected")
 	const operarioSelectedName = operarioSelected.options[operarioSelected.selectedIndex].text;

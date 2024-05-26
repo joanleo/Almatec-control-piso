@@ -16,8 +16,7 @@ public class VistaNovedadesServiceImpl implements VistaNovedadesService{
 	private VistaNovedadesRepository vistaNovedadesRepository;
 	
 	@Override
-	public List<VistaNovedades> obtenerNovedades() {		
-
+	public List<VistaNovedades> obtenerNovedades() {
 		return vistaNovedadesRepository.findAll();
 	}
 

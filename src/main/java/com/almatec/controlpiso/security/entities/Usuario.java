@@ -1,12 +1,20 @@
 package com.almatec.controlpiso.security.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -45,8 +53,16 @@ public class Usuario {
 	
 	@JsonBackReference
 	@ManyToOne()
-    @JoinColumn(name="role_id", referencedColumnName = "Id_Rol")
-    private Role rol;
+    @JoinColumn(name="id_role", referencedColumnName = "id_role")
+	private Role role;
+	
+	/*@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "usuario_rol_web",
+            joinColumns = @JoinColumn(name = "id_usuario", referencedColumnName = "usu_id"),
+            inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id_role"))
+	@MapKey(name = "cia")
+	private Set<Role> roles = new HashSet<>();*/
 	
 	@Column(name = "usu_docid")
 	private String cedula;
@@ -112,14 +128,6 @@ public class Usuario {
 	}
 
 
-	public Role getRol() {
-		return rol;
-	}
-
-	public void setRol(Role rol) {
-		this.rol = rol;
-	}
-
 	public String getContrasenaErp() {
 		return contrasenaErp;
 	}
@@ -135,12 +143,21 @@ public class Usuario {
 	public void setCedula(String cedula) {
 		this.cedula = cedula;
 	}
-	
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role roles) {
+		this.role = roles;
+	}
+
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", nombreUsuario=" + nombreUsuario + ", contrasena=" + contrasena + ", correo="
 				+ correo + ", nombres=" + nombres + ", cia=" + cia + ", isActivo=" + isActivo + ", contrasenaErp="
-				+ contrasenaErp + ", rol=" + rol.getNombre() + ", cedula=" + cedula + "]";
+				+ contrasenaErp + ", role=" + role + ", cedula=" + cedula + "]";
 	}
+	
 	
 }

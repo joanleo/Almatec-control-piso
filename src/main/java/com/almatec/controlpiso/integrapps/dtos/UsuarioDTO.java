@@ -1,5 +1,7 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
+import java.util.Set;
+
 import com.almatec.controlpiso.security.entities.Role;
 import com.almatec.controlpiso.security.entities.Usuario;
 
@@ -8,7 +10,7 @@ public class UsuarioDTO {
 	private Integer id;
 	private String nombreUsuario;
 	private String nombres;
-	private Role rol;
+	private Role role;
 	
 	public UsuarioDTO() {
 		super();
@@ -18,7 +20,7 @@ public class UsuarioDTO {
 		this.id = usuario.getId();
 		this.nombreUsuario = usuario.getNombreUsuario();
 		this.nombres = usuario.getNombres();
-		this.rol = usuario.getRol();
+		this.role = usuario.getRole();
 	}
 
 	public Integer getId() {
@@ -33,8 +35,8 @@ public class UsuarioDTO {
 		return nombres;
 	}
 
-	public Role getRol() {
-		return rol;
+	public Role getRole() {
+		return role;
 	}
 
 	public void setId(Integer id) {
@@ -49,7 +51,7 @@ public class UsuarioDTO {
 		this.nombres = nombres;
 	}
 
-	public void setRol(Role rol) {
-		this.rol = rol;
+	public void setRole(Role rol) {
+		this.role = rol;
 	}
 }

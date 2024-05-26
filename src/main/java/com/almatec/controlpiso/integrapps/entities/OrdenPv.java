@@ -104,6 +104,8 @@ public class OrdenPv {
 	private String itemDescripcion;
 	@Column(name = "kg_fabricar")
 	private Double kilosFabricar;
+	@Column(name = "f285_descripcion")
+	private String centroOperaciones;
 	
 	public OrdenPv() {
 		super();
@@ -378,6 +380,12 @@ public class OrdenPv {
 	public void setKilosFabricar(Double kilosFabricar) {
 		this.kilosFabricar = kilosFabricar;
 	}
+	public String getCentroOperaciones() {
+		return centroOperaciones;
+	}
+	public void setCentroOperaciones(String centroOperaciones) {
+		this.centroOperaciones = centroOperaciones;
+	}
 	@Override
 	public String toString() {
 		return "OrdenPv [id=" + id + ", idPadre=" + idPadre + ", rowIdOp=" + rowIdOp + ", idEmpIng=" + idEmpIng
@@ -394,10 +402,8 @@ public class OrdenPv {
 				+ esquemaPintura + ", colorBastidores=" + colorBastidores + ", colorVigas=" + colorVigas
 				+ ", colorProtectores=" + colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente
 				+ ", estadoDoc=" + estadoDoc + ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion
-				+ ", kilosFabricar=" + kilosFabricar + "]";
+				+ ", kilosFabricar=" + kilosFabricar + ", centroOperaciones=" + centroOperaciones + "]";
 	}
-	
-	
 
 
 }

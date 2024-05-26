@@ -55,7 +55,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioNuevo.setNombres(usuario.getNombres());
 		usuarioNuevo.setCedula(usuario.getCedula());
 		usuarioNuevo.setCorreo(usuario.getCorreo());
-		usuarioNuevo.setRol(usuario.getRol());
+		usuarioNuevo.setRole(usuario.getRole());
 		
 		try {
 			usuarioRepo.save(usuarioNuevo);

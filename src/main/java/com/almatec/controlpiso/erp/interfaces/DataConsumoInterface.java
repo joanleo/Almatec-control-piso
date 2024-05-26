@@ -7,6 +7,8 @@ public interface DataConsumoInterface {
 	Integer getf850_rowid();
 	Integer getf851_rowid();
 	Integer getf120_id();
+	String getf120_id_unidad_inventario();
+	
 
 
 }

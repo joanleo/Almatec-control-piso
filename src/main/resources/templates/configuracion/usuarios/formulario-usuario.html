@@ -18,8 +18,8 @@
 			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
-			 <h2 class="mb-5">Formulario Usuario</h2>
 			 <div class="card-body" style="margin: auto; width: 80%;">
+			 <h2 class="mb-5">Formulario Usuario</h2>
 	 		    <form th:object="${usuario}" th:action="@{/usuarios/guardar}" method="post">
 			        <input type="hidden" th:field="*{id}" />
 			        <div class="form-group mb-3">
@@ -47,15 +47,17 @@
 					   
 			       	</div>
 			       	<div class="form-group mb-3">
-	                   <label>Perfil : </label>
-		                   <select class="form-control" th:field="*{rol}" required>
+	                   <label for="role">Perfil : </label>
+		                   <select class="form-control" id="role" th:field="*{role}" required>
 		                   	<option value=""></option>
-		                       <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}" th:selected="${usuario.rol?.idRol == rol.idRol}"></option>
+		                       <option th:each="role : ${roles}" th:value="${role.idRol}" th:text="${role.nombre}" th:selected="${usuario.role?.idRol == role.idRol}"></option>
 		                   </select>						   
 					   
 	               	</div>
-			       	<button type="submit" class="btn btn-primary">Guardar</button>
-		        	<a class="btn btn-secondary" th:href="@{/usuarios}" role="button">Volver al Listado</a>
+					<div>
+			        	<a class="btn btn-secondary" th:href="@{/usuarios}" role="button">Volver al Listado</a>
+				       	<button type="submit" class="btn btn-primary">Guardar</button>						
+					</div>
 				 </form>
 			 </div>
 		</div>

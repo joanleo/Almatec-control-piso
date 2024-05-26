@@ -25,16 +25,16 @@
 			 </div>
 			 
 			 <div class="form-group mb-3">
-               <label for="centroSelect" >Centro de trabajo : </label>
+               <label for="centroSelect" >Centro de trabajo </label>
                    <select id="centroSelect" class="form-control"  required>
                    		<option value=""></option>
                         <option th:each="centro : ${centros}" th:value="${centro.id}" th:text="${centro.nombre}"></option>
                    </select>			   
            	 </div>
            	 
-           	 <button class="btn btn-primary" onclick="imprimirSeleccion()">Imprimir Selección</button>
+           	 <button class="btn btn-primary my-3" onclick="imprimirSeleccion()">Imprimir Selección</button>
            	 
-       	 	 <h2 hidden id="title-ops">OPs</h2>		
+       	 	 <h2 hidden id="title-ops" class="mt-5">OPs</h2>		
            	 <div class="form-group mt-4" id="ops-ct">
 			 </div>
            	 

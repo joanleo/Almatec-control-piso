@@ -35,6 +35,7 @@ import com.almatec.controlpiso.config.AppConfig;
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
 import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
 import com.almatec.controlpiso.integrapps.dtos.InfoParadaDTO;
+import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
 import com.almatec.controlpiso.integrapps.dtos.NovedadDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
@@ -56,6 +57,8 @@ import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.utils.ExportOpCentroTrabajoToPdf;
 import com.almatec.controlpiso.utils.ExportOptoPdf;
 import com.almatec.controlpiso.utils.UtilitiesApp;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
@@ -177,14 +180,17 @@ public class CentroTrabajoController {
 	public String reportePiezasCT(@PathVariable Integer idCT,
 								  @RequestParam Long idItem,
 								  @RequestParam Integer idOperario,
-								  Model modelo) {
+								  Model modelo) throws JsonProcessingException {
 		
 		System.out.println("buscando item controller");
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
-		List<String> lotes = listaMService.obtenerLotesOpPorItem(idItem);
+		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
+		
+		
 		
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
+		
 		return "produccion/formulario-reporte-piezas-ct";
 	}
 	
@@ -206,13 +212,18 @@ public class CentroTrabajoController {
 	public String reporteNovedadesCT(@PathVariable Integer idCT,
 								  @RequestParam Long idItem,
 								  @RequestParam Integer idOperario,
-								  Model modelo) {
+								  Model modelo) throws JsonProcessingException {
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
+		NovedadDTO novedad = new NovedadDTO(reporte);
 		Integer ultimoConsecutivo = novedadCtService.obtenerUltimoConsecutivo();
-		NovedadDTO novedad = new NovedadDTO(reporte); 
-		
+		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
+		ObjectMapper mapper = new ObjectMapper();
+	    String lotesJson = mapper.writeValueAsString(lotes);
+	    	    
 		modelo.addAttribute("novedad", novedad);
 		modelo.addAttribute("consecutivo", ultimoConsecutivo);
+		modelo.addAttribute("lotes", lotes);
+		modelo.addAttribute("lotesJson", lotesJson);
 		return "produccion/formulario-novedades";
 	}
 	

@@ -9,6 +9,7 @@ public class ConsultaOpCreadaDTO {
 	private Integer f850_consec_docto;
 	private Integer f851_rowid;
 	private Integer f120_id;
+	
 	public Integer getF850_rowid() {
 		return f850_rowid;
 	}

@@ -77,6 +77,15 @@ public class ItemOp {
 	
 	@Column(name = "cant_imp_eti")
 	private Integer canEtiqueta;
+	
+	@Column(name = "cod_pintura")
+	private Integer codigoPintura;
+	
+	@Column(name = "peso_pintura")
+	private Double pesoPintura;
+	
+	@Column(name = "ct_comsumo")
+	private Integer centroTConsumo;
 
 	public ItemOp() {
 		super();
@@ -101,6 +110,7 @@ public class ItemOp {
 		this.fechaCreacion = itemInterface.getfecha_crea();
 		this.cantCumplida = itemInterface.getcant_cumplida();
 		this.color = itemInterface.getpintura();
+		this.grupoColor = itemInterface.getgrp_pintura();
 	}
 
 	public Long getId() {
@@ -263,14 +273,39 @@ public class ItemOp {
 		this.canEtiqueta = canEtiqueta;
 	}
 
+	public Integer getCodigoPintura() {
+		return codigoPintura;
+	}
+
+	public Double getPesoPintura() {
+		return pesoPintura;
+	}
+
+	public void setCodigoPintura(Integer codigoPintura) {
+		this.codigoPintura = codigoPintura;
+	}
+
+	public void setPesoPintura(Double pesoPintura) {
+		this.pesoPintura = pesoPintura;
+	}
+
+	public Integer getCentroTConsumo() {
+		return centroTConsumo;
+	}
+
+	public void setCentroTConsumo(Integer centroTCnsumo) {
+		this.centroTConsumo = centroTCnsumo;
+	}
+
 	@Override
 	public String toString() {
-		return "ItemOp [id=" + id + ", idPvIntegrapps=" + idOpIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
+		return "ItemOp [id=" + id + ", idOpIntegrapps=" + idOpIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
 				+ grupo + ", codigoErp=" + codigoErp + ", descripcion=" + descripcion + ", marca=" + marca + ", peso="
 				+ peso + ", um=" + um + ", cant=" + cant + ", isEspecial=" + isEspecial + ", isReqPlano=" + isReqPlano
 				+ ", isActivo=" + isActivo + ", rutaPlano=" + rutaPlano + ", fechaCreacion=" + fechaCreacion
 				+ ", idEstado=" + idEstado + ", cantCumplida=" + cantCumplida + ", color=" + color + ", grupoColor="
-				+ grupoColor + ", canEtiqueta=" + canEtiqueta + "]";
+				+ grupoColor + ", canEtiqueta=" + canEtiqueta + ", codigoPintura=" + codigoPintura + ", pesoPintura="
+				+ pesoPintura + ", centroTCnsumo=" + centroTConsumo + "]";
 	}
 	
 	

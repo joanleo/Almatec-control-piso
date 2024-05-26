@@ -17,8 +17,10 @@ import org.springframework.util.StringUtils;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
+import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDTO;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 import com.almatec.controlpiso.integrapps.dtos.OpDTO;
 import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
@@ -36,6 +38,7 @@ import com.almatec.controlpiso.integrapps.paging.Page;
 import com.almatec.controlpiso.integrapps.paging.PageArray;
 import com.almatec.controlpiso.integrapps.paging.PagingRequest;
 import com.almatec.controlpiso.integrapps.repositories.ItemOpRepository;
+import com.almatec.controlpiso.integrapps.services.EventoService;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ItemService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
@@ -45,10 +48,13 @@ import com.almatec.controlpiso.integrapps.services.RutaItemService;
 @Service
 public class ItemOpServiceImpl implements ItemOpService {
 	
-	private static final Comparator<ItemOp> EMPTY_COMPARATOR = (e1, e2) -> 0;
+	private static final Comparator<ItemOpDatable> EMPTY_COMPARATOR = (e1, e2) -> 0;
 	
 	@Autowired
 	private ItemOpRepository itemOpRepo;
+	
+	@Autowired
+	private EventoService eventoService;
 
 	@Override
 	public List<ItemOp> obtenerItemsOp(Integer idOp) {
@@ -62,12 +68,12 @@ public class ItemOpServiceImpl implements ItemOpService {
 	}
 	
 	public PageArray obtenerItemsOpArray(PagingRequest pagingRequest, Integer idOp) {
-		pagingRequest.setColumns(Stream.of("codigoErp", "marca", "descripcion", "cant",
-				"peso", "codigoErp","codigoErp","codigoErp")
+		pagingRequest.setColumns(Stream.of("itemId", "marca", "descripcion", "cant",
+				"peso", "cantPentiente","pesoPendiente","color")
 				.map(Column :: new)
                 .collect(Collectors.toList()));
 		
-		Page<ItemOp> itemsOpPage = obtenerItemsOpPage(pagingRequest, idOp);
+		Page<ItemOpDatable> itemsOpPage = obtenerItemsOpPage(pagingRequest, idOp);
 		
 		PageArray pageArray = new PageArray();
 		pageArray.setRecordsFiltered(itemsOpPage.getRecordsFiltered());
@@ -80,20 +86,20 @@ public class ItemOpServiceImpl implements ItemOpService {
         return pageArray;
 	}
 	
-	private List<String> toStringList(ItemOp itemOp) {
-        return Arrays.asList(itemOp.getCodigoErp(), itemOp.getMarca(), itemOp.getDescripcion(),
-        		itemOp.getCant().toString(), itemOp.getPeso().toString(), itemOp.getCodigoErp(),
-        		itemOp.getCodigoErp(), itemOp.getCodigoErp());
+	private List<String> toStringList(ItemOpDatable itemOp) {
+        return Arrays.asList(itemOp.getItemId().toString(), itemOp.getMarca(), itemOp.getDescripcion(),
+        		itemOp.getCant().toString(), itemOp.getPeso().toString(), itemOp.getCantPentiente().toString(),
+        		itemOp.getPesoPendiente().toString(), itemOp.getColor());
     }
 
-	Page<ItemOp> obtenerItemsOpPage(PagingRequest pagingRequest, Integer idOp) {
-		List<ItemOp> itemsOp = obtenerItemsOp(idOp);
+	Page<ItemOpDatable> obtenerItemsOpPage(PagingRequest pagingRequest, Integer idOp) {
+		List<ItemOpDatable> itemsOp = obtenerItemsOpDataTable(idOp);
 		return obtenerPagina(itemsOp, pagingRequest);
 	}
 
-	public Page<ItemOp> obtenerPagina(List<ItemOp> itemsOp, PagingRequest pagingRequest) {
-		List<ItemOp> filtered = itemsOp.stream()
-                .sorted(sortEmployees(pagingRequest))
+	public Page<ItemOpDatable> obtenerPagina(List<ItemOpDatable> itemsOp, PagingRequest pagingRequest) {
+		List<ItemOpDatable> filtered = itemsOp.stream()
+                .sorted(sortItemsOp(pagingRequest))
                 .filter(filterItemsOp(pagingRequest))
                 .skip(pagingRequest.getStart())
                 .limit(pagingRequest.getLength())
@@ -103,7 +109,7 @@ public class ItemOpServiceImpl implements ItemOpService {
                 .filter(filterItemsOp(pagingRequest))
                 .count();
 
-		Page<ItemOp> page = new Page<>(filtered);
+		Page<ItemOpDatable> page = new Page<>(filtered);
 		page.setRecordsFiltered((int) count);
 		page.setRecordsTotal((int) count);
 		page.setDraw(pagingRequest.getDraw());
@@ -129,7 +135,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private Predicate<ItemOp> filterItemsOp(PagingRequest pagingRequest) {
+	private Predicate<ItemOpDatable> filterItemsOp(PagingRequest pagingRequest) {
         if (pagingRequest.getSearch() == null || StringUtils.isEmpty(pagingRequest.getSearch()
                                                                                   .getValue())) {
             return itemOp -> true;
@@ -138,8 +144,8 @@ public class ItemOpServiceImpl implements ItemOpService {
         String value = pagingRequest.getSearch()
                                     .getValue();
 
-        return itemOp -> itemOp.getCodigoErp()
-                                   .toLowerCase()
+        return itemOp -> itemOp.getItemId()
+                                   .toString()
                                    .contains(value)
                 || itemOp.getMarca()
                            .toLowerCase()
@@ -149,7 +155,7 @@ public class ItemOpServiceImpl implements ItemOpService {
                            .contains(value);
     }
 	
-	private Comparator<ItemOp> sortEmployees(PagingRequest pagingRequest) {
+	private Comparator<ItemOpDatable> sortItemsOp(PagingRequest pagingRequest) {
         if (pagingRequest.getOrder() == null) {
             return EMPTY_COMPARATOR;
         }
@@ -162,17 +168,17 @@ public class ItemOpServiceImpl implements ItemOpService {
             Column column = pagingRequest.getColumns()
                                          .get(columnIndex);
 
-            EntityComparators<ItemOp> itemOpComparator = EntityComparators.create();
-            itemOpComparator.addComparator("codigoErp", Direction.asc, ItemOp::getCodigoErp);
-            itemOpComparator.addComparator("codigoErp", Direction.desc, ItemOp::getCodigoErp);
+            EntityComparators<ItemOpDatable> itemOpComparator = EntityComparators.create();
+            itemOpComparator.addComparator("itemId", Direction.asc, ItemOpDatable::getItemId);
+            itemOpComparator.addComparator("itemId", Direction.desc, ItemOpDatable::getItemId);
 
-            itemOpComparator.addComparator("marca", Direction.asc, ItemOp::getMarca);
-            itemOpComparator.addComparator("marca", Direction.desc, ItemOp::getMarca);
+            itemOpComparator.addComparator("marca", Direction.asc, ItemOpDatable::getMarca);
+            itemOpComparator.addComparator("marca", Direction.desc, ItemOpDatable::getMarca);
 
-            itemOpComparator.addComparator("descripcion", Direction.asc, ItemOp::getDescripcion);
-            itemOpComparator.addComparator("descripcion", Direction.desc, ItemOp::getDescripcion);
+            itemOpComparator.addComparator("descripcion", Direction.asc, ItemOpDatable::getDescripcion);
+            itemOpComparator.addComparator("descripcion", Direction.desc, ItemOpDatable::getDescripcion);
             
-            Comparator<ItemOp> comparator = itemOpComparator.getComparator(column.getData(), order.getDir());
+            Comparator<ItemOpDatable> comparator = itemOpComparator.getComparator(column.getData(), order.getDir());
             if (comparator == null) {
                 return EMPTY_COMPARATOR;
             }
@@ -357,6 +363,26 @@ public class ItemOpServiceImpl implements ItemOpService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void imprimirEtiquetas(List<DataItemImprimirDTO> listData) {
+		
+		listData.forEach(data->{
+			eventoService.crearEventoImpresionEtiquetas(data);			
+		});
+		
+	}
+
+	@Override
+	public List<ItemOpDatable> obtenerItemsOpDataTable(Integer idOp) {
+		List<ItemOpInterface> listaItemsOpInterface = itemOpRepo.obtenerItemsOp(idOp);
+		List<ItemOpDatable> itemsOp = new ArrayList<>();
+		for(ItemOpInterface itemInterface: listaItemsOpInterface) {
+			ItemOpDatable item = new ItemOpDatable(itemInterface);
+			itemsOp.add(item);
+		}
+		return itemsOp;
 	}
 
 	

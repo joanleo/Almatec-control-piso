@@ -13,58 +13,78 @@
             Comercial
           </button>
           <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/comercial/pedidos">Pedidos</a></li>
+			<li><a class="dropdown-item" href="/comercial">Pedidos</a></li>
+			<li><a class="dropdown-item" href="/comercial/pedidos">Estado Pedidos</a></li>
           </ul>
         </li>
         
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Ingenieria
-          </a>
+          </button>
           <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/ingenieria">Pedidos</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="/ingenieria/status/proyectos">Status de proyectos</a></li>
           </ul>
         </li>
         
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Programacion
-          </a>
+          </button>
           <ul class="dropdown-menu">
 			<li><a class="dropdown-item" href="/programacion/asignar-prioridades">Prioridad</a></li>
           </ul>
         </li>
         
         <li  class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" th:classappend="${selec == 'Produccion' ? 'active' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="nav-link dropdown-toggle" th:classappend="${selec == 'Produccion' ? 'active' : ''}" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 			  Produccion
-		  </a>
+		  </button>
 		  <ul class="dropdown-menu">
 			<li><a class="dropdown-item" href="/produccion/home">Planta</a></li>
 			<li><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
 			<li><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
 			<li><a class="dropdown-item" href="/produccion/materia-prima/solicitud">Solicitud Materia prima</a></li>
 			<li><a class="dropdown-item" href="/produccion/operarios-registrados">Operarios registrados</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/produccion/proyectos">Proyectos</a></li>
+			<li><a class="dropdown-item" href="/produccion/impresion-etiquetas">Impresion de etiquetas</a></li>
+			<li><hr class="dropdown-divider"></li>
+            <li class="nav-item dropdown">
+				<div class="btn-group dropend">
+				  <button class="nav-link dropdown-toggle" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+				    Informes
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuClickableInside">
+				    <li><a class="dropdown-item" href="/informes/produccion/excel-general">General Excel</a></li>
+				    <li><a class="dropdown-item" href="/informes/produccion/excel-mes">Mensual</a></li>
+				  </ul>
+				</div>
+			</li>
           </ul>
         </li>
 		
 		<li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Almacen
-          </a>
+          </button>
           <ul class="dropdown-menu">
 			<li><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
           </ul>
         </li>
+		
+		<li class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+            Calidad
+          </button>
+          <ul class="dropdown-menu">
+			<li><a class="dropdown-item" href="/calidad/formulario">Formulario</a></li>
+          </ul>
+        </li>
         
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Configuracion
-          </a>
+          </button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
             <li><hr class="dropdown-divider"></li>
@@ -80,7 +100,7 @@
 			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 				<div id="navbar-nav" >
 					<a class="navbar-brand" >Bienvenido,  <span sec:authentication="principal.username"></span></a>				
-					<a sec:authorize="isAuthenticated()" class="navbar-brand text_color" th:href="@{/logout}" onclick="clearLocalStorage()">Cerrar sesión</a>
+					<a type="button" sec:authorize="isAuthenticated()" class="nav-link navbar-brand text_color" th:href="@{/logout}" onclick="clearLocalStorage()">Cerrar sesión</a>
 				</div>							
 			</div>
 	 </div>

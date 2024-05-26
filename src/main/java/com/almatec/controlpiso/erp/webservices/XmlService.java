@@ -238,7 +238,6 @@ public class XmlService {
 
 	    }
 	    String detalle = descomponerRespuestaXML(responseBody);
-	    System.out.println(detalle);
 	     
 		logger.info(detalle);
 		return detalle;
@@ -275,7 +274,6 @@ public class XmlService {
 			Node printTipoErrorNode = doc.getElementsByTagName("printTipoError").item(0);
 			// Obtener el valor de printTipoError
 			int printTipoError = Integer.parseInt(printTipoErrorNode.getTextContent());
-			System.out.println("errores " + printTipoError);
 			// Si printTipoError es diferente de cero, obtener los detalles de NewDataSet
 			if (printTipoError != 0) {
 				NodeList tableNodes = doc.getElementsByTagName("Table");
@@ -409,7 +407,7 @@ public class XmlService {
 
 	public String crearOrdenProduccionPapa(List<VistaItemPedidoErp> items, Integer orden) throws IOException {
 		
-		List<Conector> costosParametros = calcularCostoStandarItem(items.get(0).getReferencia(), "00102");
+		List<Conector> costosParametros = calcularCostoStandarItem(items.get(0), this.BODEGA_ENTREGA_ITEM_FACTURABLE);
 		
 		List<Conector> ordenProduccion = new ArrayList<>();
 		
@@ -447,7 +445,7 @@ public class XmlService {
 		encabezado.setF850_id_tipo_docto_pv("PV");
 		encabezado.setF850_consec_docto_pv(noPedido);
 		encabezado.setF850_notas(BODEGA_ENTREGA_ITEM_FACTURABLE);
-		//encabezado.setF850_notas(ordenPv.getItemDescripcion());
+		//encabezado.setF850_referencia_1(BODEGA_ENTREGA_ITEM_FACTURABLE);
 		return encabezado;
 	}
 
@@ -737,7 +735,7 @@ public class XmlService {
 		consumosXml.add(encabezado);
 		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
 		ItemInterface itemFab = itemOpService.obtenerItemFabricaPorId(idItem);
-		List<ConsumosdesdeCompromisosMovtoInventarioV4> movs = crearDetalleConsumo(itemFab, data, reporte);		
+		List<ConsumosdesdeCompromisosMovtoInventarioV4> movs = crearDetalleConsumo(itemFab, data, reporte, null);		
 		consumosXml.addAll(movs);
 		
 		String responseCrearConsumo = postImportarXML(consumosXml);
@@ -773,7 +771,8 @@ public class XmlService {
 	}
 
 
-	private List<ConsumosdesdeCompromisosMovtoInventarioV4> crearDetalleConsumo(ItemInterface itemFab, DataConsumoInterface data, ReporteDTO reporte) {
+	private List<ConsumosdesdeCompromisosMovtoInventarioV4> crearDetalleConsumo(ItemInterface itemFab, DataConsumoInterface data, ReporteDTO reporte,
+			ItemReporteConsumoDTO itemReporteDTO) {
 		System.out.println("Creando movimientos consumo");
 		List<ConsumosdesdeCompromisosMovtoInventarioV4> movs = new ArrayList<>();
 		ConsumosdesdeCompromisosMovtoInventarioV4 mov = new ConsumosdesdeCompromisosMovtoInventarioV4();
@@ -781,22 +780,34 @@ public class XmlService {
 		mov.setF470_id_co(this.C_O);
 		mov.setF470_id_tipo_docto(this.TIPO_DOC_CONSUMO);
 		mov.setF470_consec_docto(0);
-		mov.setF470_nro_registro(49983);//data.getf851_rowid()revisar Rowid item padre, item de la op de etrega o hijo 851
+		mov.setF470_nro_registro(data.getf851_rowid());//data.getf851_rowid()revisar Rowid item padre, item de la op de etrega o hijo 851
 		mov.setF470_id_item_padre(data.getf120_id());//revisar id item padre, item de la op de etrega o hijo 120
-		
-		Integer codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());
-		System.out.println(codErpMateriaPrima);
-		mov.setF470_id_item_comp(codErpMateriaPrima);//revisar id item lista materiales **************************
-		mov.setF470_id_bodega(this.BODEGA_ENTREGA_TRANSFERENCIA);//revisar
-		mov.setF470_id_lote(reporte.getLote());//revisar item lista materiales
+		Integer codErpMateriaPrima = 0;
+		if(itemReporteDTO == null) {
+			codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());
+			System.out.println(codErpMateriaPrima);
+			mov.setF470_id_item_comp(codErpMateriaPrima);//revisar id item lista materiales **************************			
+			System.out.println(itemFab);
+			BigDecimal cantConsumir = itemFab.getitem_peso_b().multiply(new BigDecimal(reporte.getCantReportar()));
+			mov.setF470_cant_base(cantConsumir.doubleValue());
+			if(codErpMateriaPrima == 26403) mov.setF470_id_lote("123456789");//Esta informacion esta quemada para pruebas 
+			if(codErpMateriaPrima == 18894) mov.setF470_id_lote("R1012522-2");//Esta informacion esta quemada para pruebas 
+		}else {
+			mov.setF470_id_item_comp(itemReporteDTO.getId());
+			mov.setF470_cant_base(itemReporteDTO.getCant());
+			if(itemReporteDTO.getId() == 26403) mov.setF470_id_lote("123456789");//Esta informacion esta quemada para pruebas 
+			if(itemReporteDTO.getId() == 18894) mov.setF470_id_lote("R1012522-2");//Esta informacion esta quemada para pruebas 
+		}
+		if(mov.getF470_id_lote().isBlank()) mov.setF470_id_lote(reporte.getLote());//revisar item lista materiales			
+		mov.setF470_id_bodega(this.BODEGA_ENTREGA_TRANSFERENCIA);//revisar		
 		mov.setF470_id_concepto(701);
 		mov.setF470_id_motivo(this.MOTIVO_CONSUMO);
 		mov.setF470_id_co_movto(this.C_O);
 		mov.setF470_id_un_movto("001");
-		mov.setF470_id_unidad_medida("KG");
-		System.out.println(itemFab);
-		BigDecimal cantConsumir = itemFab.getitem_peso_b().multiply(new BigDecimal(reporte.getCantReportar()));
-		mov.setF470_cant_base(cantConsumir.doubleValue()); 
+		mov.setF470_id_unidad_medida(data.getf120_id_unidad_inventario());
+		
+		//nO SE DEBE INCLUIR
+		mov.setF470_cant_2(10.0);
 		
 		
 		movs.add(mov);
@@ -809,6 +820,7 @@ public class XmlService {
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
 		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
+		System.out.println("Ruta: "+idRuta+" Centro trabajo: "+idCTErp);
 		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
 		DoctoTEPDocumentosVersión01 encabezado = crearEncabezadoTEP(item, reporte, idCTErp);
 		
@@ -879,6 +891,7 @@ public class XmlService {
 	
 	private void crearMovimiento(DataConsumoInterface data, DataTEP dataTE, String idCTErp, 
 			BigDecimal cantidadReportar, List<DoctoTEPMovimientosVersión01> movs, Double kilosReportar) {
+		System.out.println("Creando conector movs tep");
 		DoctoTEPMovimientosVersión01 mov = new DoctoTEPMovimientosVersión01();
 	    mov.setF_cia(this.CIA);
 	    mov.setF880_id_co(this.C_O);
@@ -889,6 +902,7 @@ public class XmlService {
     	mov.setF880_consec_docto_op(data.getf850_consec_docto());//revisar 850 consecutivo
     	mov.setF880_id_item(data.getf120_id());//Revisar id 120
     	mov.setF880_numero_operacion(dataTE.getf809_numero_operacion());//Revisar
+    	System.out.println(cantidadReportar);
     	mov.setF880_rowid_ctrabajo(idCTErp);//id centro trabajo
     	mov.setF880_ind_tipo_hora(1);//Revisar
     	mov.setF880_id_maquina(dataTE.getf807_id());//Revisar
@@ -897,18 +911,18 @@ public class XmlService {
 	    //MODIFICAR LA PARTE DECIMAL A MINUTOS DIVIDIR ENTRE 60
 	    double cantidad = cantidadReportar.doubleValue();
 	    int pEntera = (int) (cantidad / 1);
-	    int pDecimal = (int) ((cantidad - pEntera) * 100);
-	    double min = pDecimal / 60;
+	    double pDecimal = cantidad - pEntera;
+	    double min = pDecimal / 60.0;
 	    double horas = pEntera + min;
-	    BigInteger parteEntera = cantidadReportar.toBigInteger();
-	    BigDecimal parteDecimal = cantidadReportar.subtract(new BigDecimal(parteEntera));
-	    System.out.println("Parte decimal: " +parteDecimal+" "+pDecimal);
-	    BigDecimal minutos = parteDecimal.divide(BigDecimal.valueOf(60), 10, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
-	    System.out.println("Minutos: " +minutos+" "+min);
-	    BigDecimal resultadoFinal = new BigDecimal(parteEntera).add(minutos);
-	    System.out.println("Horas reportar: " +resultadoFinal+" "+horas);
+	    //BigInteger parteEntera = cantidadReportar.toBigInteger();
+	    //BigDecimal parteDecimal = cantidadReportar.subtract(new BigDecimal(parteEntera));
+	    System.out.println("Parte decimal: " +pDecimal);
+	    //BigDecimal minutos = parteDecimal.divide(BigDecimal.valueOf(60), 10, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+	    System.out.println("Minutos: " +min);
+	    //BigDecimal resultadoFinal = new BigDecimal(parteEntera).add(minutos);
+	    System.out.println("Horas reportar: " +horas);
 	    
-	    mov.setF880_horas(resultadoFinal.doubleValue());
+	    mov.setF880_horas(horas);
 	    movs.add(mov);
 		
 	}
@@ -978,7 +992,7 @@ public class XmlService {
 		return parametros;
 	}
 	
-	public List<Conector> calcularCostoStandarItem(String ref, String bodega) {
+	public List<Conector> calcularCostoStandarItem(VistaItemPedidoErp item, String bodega) {
 		List<Conector> costoXml = new ArrayList<>();
 		
 		ItemsParametrosVersion5 parametros = new ItemsParametrosVersion5();
@@ -987,7 +1001,7 @@ public class XmlService {
 		parametros.setF132_id_instalacion(this.INSTALACION);
 		parametros.setF132_abc_rotacion_veces("A");
 		parametros.setF132_abc_rotacion_costo("A");
-		parametros.setF132_id_um_venta_suge("POS");
+		parametros.setF132_id_um_venta_suge(item.getUnidadMedidaInventario());
 		parametros.setF132_mf_ind_mps(0);
 		parametros.setF132_mf_porc_rendimiento(100.0);
 		parametros.setF132_mf_ind_tipo_orden(1);
@@ -995,12 +1009,12 @@ public class XmlService {
 		parametros.setF132_mf_id_bodega_asigna(bodega);
 		parametros.setF132_mf_ind_generar_orden_prod(1);
 		parametros.setF132_mf_ind_item_critico(1);
-		parametros.setF120_referencia(ref);
+		parametros.setF120_referencia(item.getReferencia());
 		parametros.setF132_mf_ind_genera_ord_pln(0);
 		
 		costoXml.add(parametros);
 		
-		ManufacturaedicióndecostositemCostosV02 costo = creaConectorEdicionCosto(ref);
+		ManufacturaedicióndecostositemCostosV02 costo = creaConectorEdicionCosto(item.getReferencia());
 		
 		costoXml.add(costo);
 		
@@ -1113,8 +1127,7 @@ public class XmlService {
 		encabezado.setF850_id_clase_docto(701);
 		encabezado.setF850_tercero_planificador(this.PLANIFICADOR);
 		encabezado.setF850_id_instalacion("001");
-		encabezado.setF850_clase_op(this.CLASE_OP_HIJO);
-				
+		encabezado.setF850_clase_op(this.CLASE_OP_HIJO);				
 		encabezado.setF850_id_co_pv(this.C_O);
 		encabezado.setF850_id_tipo_docto_op_padre(ordenPadreIF.getTipoOp());
 		encabezado.setF850_consec_docto_op_padre(ordenPadreIF.getNumOp());
@@ -1146,7 +1159,8 @@ public class XmlService {
 		System.out.println("Item op: " + item.getDescripcion());
 		System.out.println("id item fab: " + item.getIdItemFab());
 		System.out.println("Cantidades a reportar del item op: " + reporte.getCantReportar());
-		Integer cantFabItemOp = parametroService.buscarCantidadesFabricadasConjunto(item.getId(), item.getIdItemFab(), reporte.getIdCentroTrabajo());
+		Integer cantFabItemOpEncontrada = parametroService.buscarCantidadesFabricadasConjunto(item.getId(), item.getIdItemFab(), reporte.getIdCentroTrabajo());
+		Integer cantFabItemOp = cantFabItemOpEncontrada == null ? 0: cantFabItemOpEncontrada;
 		System.out.println("Cantidades reportadas: "+ cantFabItemOp);
 		//Obtengo la lista de materiales del itempOp
 		List<ItemListaMateriaInterface> itemMateriales = itemOpService.obtenerListaMaterialesItemPorIdItem(item.getIdItemFab());
@@ -1163,14 +1177,14 @@ public class XmlService {
 				
 				if(cantFab == null) {
 					System.out.println("	Se debe realizar el consumo de codigo materia prima: "+lista.getid_materia_prima()+" para unidades "+lista.getcant_parte() * reporte.getCantReportar()+" unidades de "+lista.getid_parte());
-					itemReporta.add(new ItemReporteConsumoDTO(lista.getid_materia_prima(), lista.getcant_parte() * reporte.getCantReportar()) );
+					itemReporta.add(new ItemReporteConsumoDTO(lista.getid_materia_prima(), (double)(lista.getcant_parte() * reporte.getCantReportar())) );
 				}
-				else if(reporte.getCantReportar() <= (cantFab - cantFabItemOp)) {
+				else if(reporte.getCantReportar() <= Math.abs(cantFab - cantFabItemOp)) {
 					System.out.println(" 	No se debe realizar ningun consumo de materia prima");
 				}else {
-					int cantConsumir = (cantFab - cantFabItemOp);
+					int cantConsumir =  Math.abs(cantFab - cantFabItemOp);
 					System.out.println(" 	Se debe realizar el consumo de codigo materia prima: "+lista.getid_materia_prima()+" para unidades "+cantConsumir * reporte.getCantReportar()+" unidades de "+lista.getid_parte());
-					itemReporta.add(new ItemReporteConsumoDTO(lista.getid_materia_prima(),cantConsumir * reporte.getCantReportar()));
+					itemReporta.add(new ItemReporteConsumoDTO(lista.getid_materia_prima(), (double)(cantConsumir * reporte.getCantReportar())));
 				}
 				System.out.println("");
 				System.out.println("");
@@ -1181,29 +1195,51 @@ public class XmlService {
 				System.out.println("	Id erp:" + lista.getid_materia_prima()+" cantidad necesaria: "+lista.getcan_materia_prima());
 			});
 		}
+		System.out.println("Se debe realizar el consumo de pintura id:"+item.getCodigoPintura()+" cantidad necesaria: "+item.getPesoPintura());
+		itemReporta.add(new ItemReporteConsumoDTO(item.getCodigoPintura(), item.getPesoPintura() * reporte.getCantReportar()));
+		List<Conector> consumoYTep = new ArrayList<>();
+
+		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
+		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
+		String idRuta = "0" + data.getf120_id();
+		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
+		if(!itemReporta.isEmpty()) {
+			System.out.println("Ids Items a consumir: ");
+			System.out.println("Ruta: "+idRuta+" Centro trabajo: "+idCTErp);
+
+			ConsumosdesdeCompromisosConsumos encabezadoConsumo = crearEncabezadoConsumo(data);
+			consumoYTep.add(encabezadoConsumo);
+			Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+			itemReporta.forEach(i->{
+				System.out.println(i);
+				ItemInterface itemFab = itemOpService.obtenerItemFabricaPorId(idItem);
+				List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = crearDetalleConsumo(itemFab, data, reporte, i);
+				consumoYTep.addAll(movsConsumo);
+			});
+			
+		}
 		
-		System.out.println("Ids Items a consumir: ");
-		itemReporta.forEach(i->{
-			System.out.println(i);
-		});
+		DoctoTEPDocumentosVersión01 encabezadoTep = crearEncabezadoTEP(item,reporte, idCTErp);
+		consumoYTep.add(encabezadoTep);
+		
+		List<DoctoTEPMovimientosVersión01> movsTep = crearMovTiempos(reporte, data, dataTE, idCTErp);
+		consumoYTep.addAll(movsTep);
+		String responseConsumoYTep = postImportarXML(consumoYTep);
+		System.out.println(responseConsumoYTep 	);
 		
 		List<Conector> entregaXml = new ArrayList<>();
-		
-		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
-		
-		//crearConsumos(item, reporte);
-		
-		/*DoctoentregasDocumentosVersión02 encabezado = crearEncabezadoEntrega();
+		DoctoentregasDocumentosVersión02 encabezado = crearEncabezadoEntrega();
 		
 		entregaXml.add(encabezado);
 		
 		DoctoentregasMovimientosVersión01 mov = crearMovsEntrega(data, item, reporte);
 		
 		entregaXml.add(mov);
-		String responseEntrega = postImportarXML(entregaXml);		
+		String responseEntrega = postImportarXML(entregaXml);
+		System.out.println(responseEntrega);
 		if(!responseEntrega.equals(RESPUESTA_OK)) {
 			return responseEntrega;
-		}*/
+		}
 		
 		return "Entrega creada Exitosamente";
 	}
@@ -1313,16 +1349,17 @@ public class XmlService {
 		
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
-		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, reporte.getIdCentroTrabajo().toString());
+		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
+		System.out.println("Ruta: "+idRuta+" Centro trabajo: "+idCTErp);
+		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
 
 		ConsumosdesdeCompromisosConsumos encabezadoConsumo = crearEncabezadoConsumo(data);		
 		tepYConsumosXml.add(encabezadoConsumo);
 		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
 		ItemInterface itemFab = itemOpService.obtenerItemFabricaPorId(idItem);
-		List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = crearDetalleConsumo(itemFab, data, reporte);		
+		List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = crearDetalleConsumo(itemFab, data, reporte, null);		
 		tepYConsumosXml.addAll(movsConsumo);
 
-		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
 		DoctoTEPDocumentosVersión01 encabezadoTep = crearEncabezadoTEP(item,reporte, idCTErp);
 		tepYConsumosXml.add(encabezadoTep);
 		

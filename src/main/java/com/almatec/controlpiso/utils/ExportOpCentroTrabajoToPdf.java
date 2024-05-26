@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
@@ -136,7 +137,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 		List<RowItemPdf> rows = new ArrayList<>();
 		for(OpCentroTrabajoDTO op: opsToPdf) {
 			for(ItemOpCtDTO item: op.getItems()) {
-				if(item.getItem_centro_t_id() == centroTrabajo.getIdCentroTrabajoErp()) {
+				if(Objects.equals(item.getItem_centro_t_id(), centroTrabajo.getId())) {
 					RowItemPdf row = new RowItemPdf();
 					row.setDescripcion(item.getItem_desc());
 					row.setCant(item.getCant_req());
@@ -150,7 +151,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 					continue;
 				}
 				for(ComponenteDTO componente: item.getComponentes()) {
-					if(componente.getMaterial_centro_t_id() == centroTrabajo.getIdCentroTrabajoErp()) {
+					if(componente.getMaterial_centro_t_id() == centroTrabajo.getId()) {
 						RowItemPdf row = new RowItemPdf();
 		   				row.setDescripcion(componente.getMaterial_desc());
 		   				row.setLongitud(componente.getMaterial_long());

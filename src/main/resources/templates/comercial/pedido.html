@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-	<head th:replace="fragments/head :: head('Ingenieria : Detalle Pedido')"></head>
+	<head th:replace="fragments/head :: head('Comercial : Pedidos')"></head>
 	<body>
-		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		<nav th:replace="fragments/navbar :: nav-bar('Comercial')"></nav>
 		<div class="container my-5">
 			
 			<div hidden id="spinner">
@@ -23,10 +23,11 @@
 			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
-			 <h1>Items PV-[[${noPedido}]]</h1>
+			 <h1>[[${noPedido}]]</h1>
 			<div class="table-responsive text-nowrap my-5">
-				<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
-					<thead class="table-dark">
+				<table class="table table-striped align-middle table-hover table-bordered rounded caption-top" aria-describedby="table-description">
+					<caption>Items de la OP</caption>
+					<thead class="table-light">
 						<tr>
 							<th>Ref</th>
 							<th>Descripcion</th>
@@ -34,11 +35,12 @@
 							<th>Bodega</th>
 							<th>Cant</th>
 							<th>Peso</th>
+							<th>O.P</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
-					    <form id="opForm" th:action="@{/ingenieria/crear-op}" method="post">
+					    <form id="opForm" th:action="@{/comercial/crear-op}" method="post">
 					        
 					        <tr th:each="item : ${items}" >
 								<input type="hidden" name="referencia" th:value="${item.referencia}" />
@@ -50,8 +52,12 @@
 					            <td th:text="${item.bodega}"></td>
 					            <td th:text="${item.cantidad}"></td>
 					            <td th:text="${item.peso}"></td>
-					            <td th:if="${#strings.isEmpty(item.numOp)}">
-					                <button type="button" class="btn btn-primary create-op-button">Crear OP</button>
+								<td th:text="${item.tipoOp + '-' + item.numOp}">
+					            <td >
+									<button type="button" class="btn btn-primary create-op-button"
+									        th:if="${#strings.isEmpty(item.numOp)}">
+									        Crear OP
+								    </button>
 					            </td>
 					        </tr>
 					    </form>
@@ -70,7 +76,7 @@
 		            const noPedido = button.closest('tr').querySelector('[name="noPedido"]').value;
 		            const ref = button.closest('tr').querySelector('[name="referencia"]').value;
 					spinner.removeAttribute('hidden')
-		            document.getElementById('opForm').action = `/ingenieria/crear-op/${noPedido}/${ref}`;
+		            document.getElementById('opForm').action = `/comercial/crear-op/${noPedido}/${ref}`;
 		            document.getElementById('opForm').submit();
 		        });
 		    });

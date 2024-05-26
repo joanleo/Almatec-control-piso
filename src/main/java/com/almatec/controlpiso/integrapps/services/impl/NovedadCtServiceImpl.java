@@ -51,6 +51,8 @@ public class NovedadCtServiceImpl implements NovedadCtService {
 		novedad.setSobrante(novedadDTO.getSobrante());
 		novedad.setNoConforme(novedadDTO.getNoConforme());
 		novedad.setDesperdicio(novedadDTO.getDesperdicio());
+		novedad.setLote(novedadDTO.getLote());
+		novedad.setCodErpMp(novedadDTO.getCodErpMp());
 		return novedad;
 	}
 

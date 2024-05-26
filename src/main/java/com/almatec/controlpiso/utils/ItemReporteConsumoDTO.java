@@ -3,23 +3,23 @@ package com.almatec.controlpiso.utils;
 public class ItemReporteConsumoDTO {
 	
 	private Integer id;
-	private Integer cant;
+	private Double cant;
 	public Integer getId() {
 		return id;
 	}
-	public Integer getCant() {
+	public Double getCant() {
 		return cant;
 	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public void setCant(Integer cant) {
+	public void setCant(Double cant) {
 		this.cant = cant;
 	}
 	public ItemReporteConsumoDTO() {
 		super();
 	}
-	public ItemReporteConsumoDTO(Integer id, Integer cant) {
+	public ItemReporteConsumoDTO(Integer id, Double cant) {
 		super();
 		this.id = id;
 		this.cant = cant;

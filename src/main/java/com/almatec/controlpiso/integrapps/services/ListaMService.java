@@ -3,6 +3,7 @@ package com.almatec.controlpiso.integrapps.services;
 import java.util.List;
 
 import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
+import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
 import com.almatec.controlpiso.integrapps.entities.ListaM;
 
 public interface ListaMService {
@@ -13,7 +14,7 @@ public interface ListaMService {
 
 	void actualizarListaM(List<ListaM> listaMateriales);
 
-	List<String> obtenerLotesOpPorItem(Long idItem);
+	List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem);
 
 
 

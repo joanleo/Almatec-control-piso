@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
+import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.ListaM;
 import com.almatec.controlpiso.integrapps.interfaces.ListaMInterface;
@@ -46,7 +47,7 @@ public class ListaMServiceImpl implements ListaMService {
 	}
 
 	@Override
-	public List<String> obtenerLotesOpPorItem(Long idItem) {
+	public List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem) {
 		ItemOp item = itemOpService.obtenerItemPorId(idItem);
 		System.out.println("buscando lotes");
 		return listaMaterialRepo.obtenerLotesOpPorItem(item.getIdOpIntegrapps());

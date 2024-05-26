@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Comercial')">
+	</head>
+	<th:block >
+            <link rel="stylesheet" th:href="@{/css/comercial.css}">
+    </th:block>
+	<body>
+		
+		<nav th:replace="fragments/navbar :: nav-bar('Comercial')"></nav>
+				 
+		<div class="container my-5" style="width: 100%; margin-left: 10rem;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+				<span th:text="${message}"></span>
+			  	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    	<span aria-hidden="true">&times;</span>
+			  	</button>
+			</div>
+			
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+				<span th:text="${error}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				 </button>
+			</div>
+
+			<h1>Pedidos</h1>
+			
+			<div style="display: flex; flex-direction: column;">
+				<div style="display: flex;">
+					<div class="input-group my-3 mx-3 size-m">
+						<span class="input-group-text">UN </span>
+						<input type="text" id="un"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			       	
+			       	<div class="input-group my-3 mx-3 size-m">
+						<span class="input-group-text">Estado </span>
+						<input type="text" id="estado"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			       	
+			       	<div class="input-group my-3 mx-3 size-l">
+						<span class="input-group-text">Asesor </span>
+						<input type="text" id="asesor"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			       						
+			       	<div class="input-group my-3 mx-3 size-m">
+						<label for="start_date" class="input-group-text">Desde</label>
+						<input type="date" id="start_date" name="start_date"  class="form-control" onchange="buscarPedidos()"/>
+					</div>
+				</div>
+		       	
+		       	<div style="display: flex;">
+			       	<div class="input-group my-3 mx-3 size-m">
+						<span class="input-group-text">Descripcion </span>
+						<input type="text" id="descripcion"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			       	
+			       	<div class="input-group my-3 mx-3 size-m">
+						<span class="input-group-text">Cliente </span>
+						<input type="text" id="cliente"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>
+			       	
+			       	<div class="input-group my-3 mx-3 size-l">
+						<span class="input-group-text">Tipo </span>
+						<input type="text" id="tipo"  class="form-control" onkeyup="buscarPedidos()" style="text-align: right;"/>						   
+			       	</div>					   
+
+					<div class="input-group my-3 mx-3 size-m">
+						<label for="end_date" class="input-group-text">Hasta</label>
+						<input type="date" id="end_date" name="end_date" class="form-control" onchange="buscarPedidos()"/>
+					</div>
+			    </div>		       	
+			</div>
+			
+			<div class="table-responsive" style="margin-top: 3rem;">
+				<table class="table table-striped table-hover table-rounded caption-top">
+					<caption>Listado de pedidos</caption>
+					<thead class="table-light">
+						<tr>
+							<th>UN</th>
+							<th>Descripcion</th>
+							<th>Cliente</th>
+							<th>Posiciones</th>
+							<th>Estado</th>
+							<th>Peso Total[Kg]</th>
+							<th>Peso Pendiente [Kg]</th>
+							<th>Avance [%]</th>
+							<th>Fecha Pedido</th>
+							<th>Fecha Inicio de Entrega Produccion</th>
+							<th>Fecha Final Entrega Produccion</th>
+						</tr>
+					</thead>
+					<tbody id="orders">
+						<tr>
+							
+						</tr>
+					</tbody>
+				</table>		 				
+			</div>
+
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>		
+		<script src="/js/comercial.js"></script>
+	</body>
+</html>

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
 import com.almatec.controlpiso.integrapps.entities.ListaM;
 import com.almatec.controlpiso.integrapps.interfaces.ListaMInterface;
 
@@ -24,13 +25,13 @@ public interface ListaMRepository extends JpaRepository<ListaM, Integer> {
 
 	List<ListaM> findByIdOpIntegrapps(Integer idOp);
 
-	@Query(value = "SELECT   Mp_Sol_Det.Lotes_Erp "
-			+ "FROM  Mp_Sol "
-			+ "INNER JOIN Mp_Sol_Det ON Mp_Sol.id_sol_mp = Mp_Sol_Det.id_sol_mp "
-			+ "WHERE   (Mp_Sol.id_op_ia = :idOp) "
-			+ "AND (Mp_Sol_Det.Estado_Item = 1) "
-			+ "GROUP BY Mp_Sol_Det.Lotes_Erp ", nativeQuery = true)
-	List<String> obtenerLotesOpPorItem(@Param("idOp") Integer idOp);
+	@Query("SELECT new com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO(d.codigoErp, d.loteErp) " +
+           "FROM SolicitudMateriaPrima s " +
+           "JOIN DetalleSolicitudMateriaPrima d ON s.id = d.idSolicitud " +
+           "WHERE s.idOp = :idOp " +
+           "AND d.idEstadoItem = 1 " +
+           "GROUP BY d.loteErp, d.codigoErp")
+    List<LoteConCodigoDTO> obtenerLotesOpPorItem(@Param("idOp") Integer idOp);
 
 
 }

@@ -10,15 +10,13 @@
 		</div>
 		<div class="container my-5" style="width:60%;">
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <span th:text="${message}"></span>
+			  <pre  th:text="${message}"></pre >
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
 			  </button>
 			</div>
 			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <span th:text="${error}"></span>
+			  <pre  th:text="${error}"></pre >
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
 			 <div class="card-body" style="margin: auto; width: 60%;">
@@ -43,6 +41,11 @@
 			           <label for="item">Item: </label>
 				           <input type="text" id="item" class="form-control" th:field="*{ref}"  required readonly/>					   
 			       	</div>
+					
+					<div class="form-group mb-3">
+			           <label for="color">Color: </label>
+				           <input type="text" id="color" class="form-control" th:field="*{color}"  required readonly/>					   
+			       	</div>
 			       	
 			       	<div class="form-group mb-3">
 			           <label for="cant-solic">Cant solicitada: </label>
@@ -63,7 +66,7 @@
 		               <label for="centroSelect" >Lote : </label>
 		                   <select id="loteSelect" class="form-control" name="lote" th:field="*{lote}" >
 		                   		<option value=""></option>
-		                        <option th:each="lot : ${lotes}" th:value="${lot}" th:text="${lot}"></option>
+		                        <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
 		                   </select>			   
 		           	 </div>
 			       	<input type="hidden" id="operario" th:field="*{operario}" aria-hidden="true" />

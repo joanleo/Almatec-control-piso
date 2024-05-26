@@ -54,7 +54,7 @@ const initDataTable = async () => {
 	}
 	console.log("Se crea la tabla con el itemOp ", numOp)
 	console.log(dataTableOptions)
-	dataTable = $('#exampleArray').DataTable(dataTableOptions)
+	dataTable = $('#detalle').DataTable(dataTableOptions)
 
 	dataTableIsInicialized = true
 }
@@ -75,14 +75,20 @@ async function initOptions(){
 	buttons: [
 		{
             extend:    'excelHtml5',
-            text:      '<i class="fa-solid fa-file-csv" style="background-color: #F8F9FA;" ></i>',
             titleAttr: 'Exportar a Excel',
             className: 'btn btn-primary',
         },
+        {
+			extend: 'pdfHtml5',
+	        titleAttr: 'Exportar a PDF',
+	        className: 'btn btn-primary',
+	        orientation: 'landscape', // Orientación del PDF (portrait o landscape)
+	        pageSize: 'LEGAL'
+		}
 
 	],
     lengthMenu: [5,10,15,20,50,100],	
-	pageLength: 5,
+	pageLength: 20,
 	destroy: true,
 	language: {
     "processing": "Procesando...",
@@ -331,72 +337,3 @@ async function initOptions(){
 	}
 
 }
-
-	/*$('#exampleArray').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "ajax": {
-            "url": '/ingenieria/op/' + encodeURIComponent(numOp) + '/detalle',
-            "type": "POST",
-            "dataType": "json",
-            "contentType": "application/json",
-            "data": function (d) {
-                return JSON.stringify(d)
-            }
-        }
-    });
-	}
-async function llenarDetalleProyecto(event){
-	const rowOp = event.target.parentNode.parentNode
-	const data = rowOp.innerText.split("\t")
-	console.log(data)
-	const modalTitle = document.getElementById("detalleProyectoLabel")
-	modalTitle.innerText = "STATUS " + "  PROYECTO  " + data[2] + " " + data[1]
-	
-	const numOp = rowOp.id.split("-")[1] // data[3].split("-")[0]
-	
-	const itemsOp = await fethItemsOp(numOp)
-	
-	document.querySelector("#zona").value = data[3].split("-")[0]
-	document.querySelector("#sistema").value = data[3].split("-")[1]
-	document.querySelector("#esquema_pintura").value = data[8] 
-	document.querySelector("#fecha_instalacion").value = data[6]
-
-	document.querySelector("#color_bastidores").value = document.querySelector("#bastidores_"+numOp).value
-	document.querySelector("#color_vigas").value = document.querySelector("#vigas_"+numOp).value
-	document.querySelector("#color_protectores").value = document.querySelector("#protectores_"+numOp).value
-	
-	while (tabla_detalle_proyecto.hasChildNodes()) {
-		tabla_detalle_proyecto.removeChild(tabla_detalle_proyecto.firstChild)
-	}
-	let row
-	let contId = 0
-	for(const item of itemsOp){
-		row = tabla_detalle_proyecto.insertRow(contId)
-		row.setAttribute("id", "item_" + contId)
-		let cod_item = row.insertCell(0)
-		let marca = row.insertCell(1)
-		let descripcion = row.insertCell(2)
-		let cant = row.insertCell(3)
-		let peso = row.insertCell(4)
-		let cant_pend = row.insertCell(5)
-		let peso_pend = row.insertCell(6)
-		let pintura_bt = row.insertCell(7)
-		//let pintura_viga = row.insertCell(8)
-		//let pintura_prot = row.insertCell(9)
-		
-		cod_item.innerText = item["codigoErp"]
-		marca.innerText = item["marca"]
-		descripcion.innerText = item["descripcion"]
-		cant.innerText = item["cant"]
-		peso.innerText = item["peso"]
-		cant_pend.innerText = item["codigoErp"]
-		peso_pend.innerText = item["codigoErp"]
-		pintura_bt.innerText = item["codigoErp"]
-		//pintura_viga.innerText = item["codigoErp"]
-		//pintura_prot.innerText = item["codigoErp"]
-		
-		contId++
-	}
-	
-}*/
