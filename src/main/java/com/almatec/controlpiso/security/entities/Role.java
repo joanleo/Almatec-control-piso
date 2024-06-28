@@ -19,19 +19,19 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
-@Table(name = "roles_web")
+@Table(name = "web_roles")
 public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_role")
-	private Integer idRol;
+	private Long idRole;
 	
 	@Column(name = "nombre")
 	private String nombre;
 	
 	@Column(name = "is_active")
-	private Boolean isActivo;
+	private Boolean isActivo = true;
 	
 	@JsonManagedReference
 	@OneToMany(targetEntity=Usuario.class, mappedBy="role", fetch = FetchType.EAGER)
@@ -39,9 +39,9 @@ public class Role {
 	
 	@ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-      name = "role_permissions", 
-      joinColumns = @JoinColumn(name = "role_id"), 
-      inverseJoinColumns = @JoinColumn(name = "permission_id"))
+      name = "web_role_permissions", 
+      joinColumns = @JoinColumn(name = "id_role"), 
+      inverseJoinColumns = @JoinColumn(name = "id_permission"))
     private Set<Permission> permissions;
 
 	public Role() {
@@ -49,13 +49,13 @@ public class Role {
 	}
 
 
-	public Integer getIdRol() {
-		return idRol;
+	public Long getIdRole() {
+		return idRole;
 	}
 
 
-	public void setIdRol(Integer idRol) {
-		this.idRol = idRol;
+	public void setIdRole(Long idRol) {
+		this.idRole = idRol;
 	}
 
 
@@ -96,8 +96,7 @@ public class Role {
 
 	@Override
 	public String toString() {
-		return "Role [idRol=" + idRol + ", nombre=" + nombre + ", isActivo=" + isActivo + ", usuarios=" + usuarios
-				+ ", permissions=" + permissions + "]";
+		return "Role [idRole=" + idRole + ", nombre=" + nombre + ", isActivo=" + isActivo + ", permissions=" + permissions + "]";
 	}
 	
 	

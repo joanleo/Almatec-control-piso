@@ -53,7 +53,7 @@ public class EstructuraDatos {
         itemProduccion.setItem_peso(vista.getItem_peso());
         itemProduccion.setItem_color(vista.getItem_color());
         itemProduccion.setPrioridad(vista.getPrioridad());
-        
+        itemProduccion.setLongitud(vista.getItem_long());
         itemProduccion.addComponente(componente);
         return itemProduccion;
     }

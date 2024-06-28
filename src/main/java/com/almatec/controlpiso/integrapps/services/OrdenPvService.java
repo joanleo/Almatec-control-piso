@@ -5,13 +5,14 @@ import java.util.List;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
-import com.almatec.controlpiso.integrapps.entities.OrdenPv;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
+import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
 
 public interface OrdenPvService {
 
-	List<OrdenPv> buscarProyectos();
+	List<VistaOrdenPv> buscarProyectos();
 
-	List<OrdenPv> buscarProyectos(String keyword);
+	List<VistaOrdenPv> buscarProyectos(String keyword);
 
 	List<ProyectoProduccionDTO> buscarProyectosOrdenPv();
 
@@ -19,16 +20,16 @@ public interface OrdenPvService {
 
 	List<OpProduccionDTO> buscarOrdenesPorIdProyecto(String idProyecto);
 
-	OrdenPv obtenerOrdenPorId(Integer idPvIntegrapps);
+	VistaOrdenPv obtenerOrdenPorId(Integer idPvIntegrapps);
 
-	void guardarOrden(OrdenPv orden);
+	void guardarOrden(VistaOrdenPv orden);
 
-	void actualizarDatosOp(ConsultaOpCreadaDTO creado, OrdenPv ordenIntegrapps);
+	void actualizarDatosOp(ConsultaOpCreadaDTO creado, VistaOrdenPv ordenIntegrapps);
 
 	Integer obtenerNumOpPorIdOp(Integer idOpIntegrapps);
 
-	OrdenPv obtenerOrdenPorNumPv(Integer noPedido);
+	OrdenPvEstadoData obtenerOrdenPorNumPv(Integer noPedido);
 
-	List<OrdenPv> obtenerOpActivas();
+	List<VistaOrdenPv> obtenerOpActivas();
 
 }

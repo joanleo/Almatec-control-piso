@@ -2,12 +2,16 @@ package com.almatec.controlpiso.integrapps.entities;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
@@ -86,6 +90,9 @@ public class ItemOp {
 	
 	@Column(name = "ct_comsumo")
 	private Integer centroTConsumo;
+	
+	@Column(name = "cant_despacha")
+	private Integer cantDespachada;
 
 	public ItemOp() {
 		super();
@@ -297,6 +304,14 @@ public class ItemOp {
 		this.centroTConsumo = centroTCnsumo;
 	}
 
+	public Integer getCantDespachada() {
+		return cantDespachada;
+	}
+
+	public void setCantDespachada(Integer cantDespachada) {
+		this.cantDespachada = cantDespachada;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemOp [id=" + id + ", idOpIntegrapps=" + idOpIntegrapps + ", idItemFab=" + idItemFab + ", grupo="
@@ -305,9 +320,7 @@ public class ItemOp {
 				+ ", isActivo=" + isActivo + ", rutaPlano=" + rutaPlano + ", fechaCreacion=" + fechaCreacion
 				+ ", idEstado=" + idEstado + ", cantCumplida=" + cantCumplida + ", color=" + color + ", grupoColor="
 				+ grupoColor + ", canEtiqueta=" + canEtiqueta + ", codigoPintura=" + codigoPintura + ", pesoPintura="
-				+ pesoPintura + ", centroTCnsumo=" + centroTConsumo + "]";
-	}
-	
-	
+				+ pesoPintura + ", centroTConsumo=" + centroTConsumo + ", cantDespachada=" + cantDespachada + "]";
+	}	
 
 }

@@ -48,10 +48,6 @@ function fillTableOrders(listOrders) {
         cellCliente.textContent = order.cliente
         row.appendChild(cellCliente)
 
-        let cellPosiciones = document.createElement('td')
-        cellPosiciones.textContent = order.posiciones
-        row.appendChild(cellPosiciones)
-
         let cellEstado = document.createElement('td')
         let divBage = document.createElement('div')
         if(order.estado == "Cumplido"){
@@ -67,14 +63,19 @@ function fillTableOrders(listOrders) {
         <div class="user__badge" th:text="${proyecto.estadoDoc}"></div>
         */
         row.appendChild(cellEstado)
-
+		
         let cellPesoTotal = document.createElement('td')
+        cellPesoTotal.textContent = order.kgTotal
         row.appendChild(cellPesoTotal)
 
+		let pesoPendiente = order.kgTotal - order.kgCumplidos
         let cellPesoPendiente = document.createElement('td')
+        cellPesoPendiente.textContent = pesoPendiente.toFixed(3)
         row.appendChild(cellPesoPendiente)
 
+		let avance = (order.kgCumplidos / order.kgTotal) * 100
         let cellAvance = document.createElement('td')
+        cellAvance.textContent = avance.toFixed(2)
         row.appendChild(cellAvance)
 
         let cellFechaPedido = document.createElement('td')
@@ -95,10 +96,11 @@ function fillTableOrders(listOrders) {
 function createListObjetsOrder(orders) {
     let listOrders = []
     for (const item of orders) {
-        const un = item.proyecto
+        const un = item.co
         const descripcion = item.descripcion
         const cliente = item.razonSocial
-        const posiciones = item.cantPedida
+        const kgTotal = item.cantPedida
+        const kgCumplidos = item.kgCumplidos
         const estado = item.estado
         const asesor = item.vendedor
         const fecha = new Date(item.fecha + "T00:00:00")
@@ -111,7 +113,8 @@ function createListObjetsOrder(orders) {
             "un": un,
             "descripcion": descripcion,
             "cliente": cliente,
-            "posiciones": posiciones,
+            "kgTotal": kgTotal,
+            "kgCumplidos": kgCumplidos,
             "estado": estado,
             "asesor": asesor,
             "fecha": fechaFormateada

@@ -83,7 +83,7 @@ body{
 	width: 30rem;
 }
 
-.menus{
+.modulos{
 	display: flex;
 	flex-wrap: wrap;
 }
@@ -91,7 +91,14 @@ body{
 .btn-primary{
 	background-color: #11464A !important; /* #007744 rgb(0, 121, 54, 0.9)*/
 	--bs-btn-border-color: none !important;
-	color: #F4F4F5 !important;;
+	color: #F4F4F5 !important;
+}
+
+.active>.page-link, .page-link.active{
+    z-index: 3;
+    color: #F4F4F5 !important;;
+    background-color: #11464A !important;
+    border-color: #11464A !important;
 }
 
 .btn-secondary{
@@ -99,6 +106,14 @@ body{
 	--bs-btn-border-color: none !important;
 	color: #35404b; /*#000;*/ 
 	--bs-btn-hover-color: none;
+}
+
+.page-link{
+	color: #11464A !important;
+}
+
+.nav-link{
+	color: #11464A !important;
 }
 
 .filtro{
@@ -306,7 +321,7 @@ footer {
 }
 
 .logo {
-  max-width: 100%;
+  max-width: 70%;
   height: auto;
   background-color: transparent;
 }

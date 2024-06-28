@@ -52,7 +52,7 @@
 					            <td th:text="${item.bodega}"></td>
 					            <td th:text="${item.cantidad}"></td>
 					            <td th:text="${item.peso}"></td>
-								<td th:text="${item.tipoOp + '-' + item.numOp}">
+								<td th:text="${item.numOp != null && item.numOp != ''} ? ${item.tipoOp + '-' + item.numOp} : ''">
 					            <td >
 									<button type="button" class="btn btn-primary create-op-button"
 									        th:if="${#strings.isEmpty(item.numOp)}">

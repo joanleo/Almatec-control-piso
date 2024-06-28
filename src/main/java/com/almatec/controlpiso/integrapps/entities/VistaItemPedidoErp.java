@@ -57,8 +57,7 @@ public class VistaItemPedidoErp {
 	@Column(name = "f120_id_unidad_adicional")
 	private String unidadMedidaAdicional;
 
-	@Column(name = "f285_descripcion")
-	private String descripcionCOMov;
+
 
 	public VistaItemPedidoErp() {
 		super();
@@ -120,10 +119,6 @@ public class VistaItemPedidoErp {
 		return unidadMedidaAdicional;
 	}
 
-	public String getDescripcionCOMov() {
-		return descripcionCOMov;
-	}
-
 	public String getTipoOp() {
 		return tipoOp;
 	}
@@ -134,6 +129,6 @@ public class VistaItemPedidoErp {
 				+ noPedido + ", referencia=" + referencia + ", descripcion=" + descripcion + ", um=" + um + ", bodega="
 				+ bodega + ", cantidad=" + cantidad + ", peso=" + peso + ", tipoOp=" + tipoOp + ", numOp=" + numOp
 				+ ", fechaEntrega=" + fechaEntrega + ", unidadMedidaInventario=" + unidadMedidaInventario
-				+ ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", descripcionCOMov=" + descripcionCOMov + "]";
+				+ ", unidadMedidaAdicional=" + unidadMedidaAdicional + "]";
 	}
 }

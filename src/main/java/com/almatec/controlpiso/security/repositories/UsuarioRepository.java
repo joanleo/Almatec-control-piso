@@ -20,7 +20,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE usuarios "
+	@Query(value = "UPDATE web_usuarios "
 			+ "SET usu_activo = 0 "
 			+ "WHERE usu_id = :id", nativeQuery = true)
 	int inActivarUsuario(@Param("id") Integer id);

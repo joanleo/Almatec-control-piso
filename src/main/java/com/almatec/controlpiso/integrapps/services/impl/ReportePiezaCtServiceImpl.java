@@ -3,7 +3,6 @@ package com.almatec.controlpiso.integrapps.services.impl;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -49,9 +48,9 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			
 			boolean isConsume = centrosReporteConsumo.contains(reporte.getIdCentroT());
 			
-			if(isConsume) {
-				//Se realiza consumo y TEP
-				if(item.getCentroTConsumo() == null || Objects.equals(item.getCentroTConsumo(), reporteDTO.getIdCentroTrabajo())) {
+			
+			if(isConsume && item.getCentroTConsumo() == null) {
+					//Se realiza consumo y TEP
 					String responseService = xmlService.crearTEPYConsumos(item, reporteDTO);
 					if("Operacion realizada exitosamente".equals(responseService)) {
 						reporte.setIsConsume(true);//REVISAR RESPUESTA
@@ -61,14 +60,12 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 					}
 					message += responseService;
 					
-				}
-			}
-			/*
-			 * Se valida si es el utltimo centro de trabajoj por donde pasan las piezas, aqui se debera actualizar los itemOp,
-			 * consumir lo que este pendiente de la lista de materiales
-			 * realizar entrega de los item terminados
-			 */
-			else if (reporte.getIdCentroT() == 17) {
+			}else if (reporte.getIdCentroT() == 17) {
+				/*
+				 * Se valida si es el utltimo centro de trabajoj por donde pasan las piezas, aqui se debera actualizar los itemOp,
+				 * consumir lo que este pendiente de la lista de materiales
+				 * realizar entrega de los item terminados
+				 */
 				//Se valida si no se ha reportado ninguna cantidad del itemOp
 				actualizarCantidadCumplida(reporteDTO, item);
 				itemOpService.guardarItemOp(item);
@@ -80,6 +77,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 				if("TEP creado Exitosamente".equals(responseServiceTep)) reporte.setIsTep(true);
 				message += responseServiceTep;
 			}
+			
 			if(!"".equals(message)) {
 				message += "\n" + "Reporte guardado exitosamente";
 			}else {
@@ -95,9 +93,9 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	    	
 	        response.setMensaje(obteneMensajeError(e));
 	        response.setError(true);
-	    }finally {
-	    	reportePiezaCtRepository.save(reporte);			
-		}
+	    }
+    	
+		reportePiezaCtRepository.save(reporte);			
 		return response;
 	}
 

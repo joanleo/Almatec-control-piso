@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Ingenieria')"></head>
+	<style>
+		  #body-memos tr {
+		      cursor: pointer;
+		  }		
+	  </style>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		
+		<div hidden id="spinner">
+			<div>Cargando ...</div>
+		</div>
+				 
+		<div class="container my-5">
+			<h1>Memorandos</h1>
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			  </button>
+			 </div>
+			 
+			<!--- <div  id="filtro">
+			     <form class="filtro my-5">
+			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'nombre compania', 'nit'..." />
+			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
+			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
+			     </form>
+			</div> -->
+		 
+			<div class="table-responsive text-nowrap my-5">
+				<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
+					<thead>
+						<tr>
+							<th>Num Memo</th>
+							<th>Cliente</th>
+							<th>Proyecto</th>
+							<th>OP</th>
+							<th>Solicita</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody id="body-memos">
+						<tr th:each="memo: ${memos}">
+							<td th:text="${'M' + '-' + memo.idMemo}"></td>
+							<td th:text="${memo.cliente}"></td> 
+							<td th:text="${memo.proyecto}"></td>
+							<td th:text="${memo.op}"></td>
+							<td th:text="${memo.usuarioCrea}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div style="display: flex; flex-direction: column;" hidden id="memoSel">
+				<h3>Memo selecionado:</h3>
+				<div style="display: flex; justify-content: space-between;">
+					<div class="input-group my-3 size-s" >
+			           <span class="input-group-text">Memo</span>
+			           <input type="text" class="form-control" id="noMemo" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-m" >
+			           <span class="input-group-text">Proyecto </span>
+			           <input type="text" class="form-control" id="proyecto" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-m" >
+			           <span class="input-group-text">OP </span>
+			           <input type="text" class="form-control" id="opSel" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-l" >
+			           <span class="input-group-text">Cliente </span>
+			           <input type="text" class="form-control" id="cliente" readonly style="text-align: right;" />
+			    	</div>
+					
+				</div>
+				<div class="d-grid my-4">
+					<button class="btn btn-primary" type="button" onclick="aprobarMemo()">Aprobar Memo</button>
+				</div>		
+			</div>
+		
+			<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem; max-height: 30rem; overflow-y: auto;">
+				<table class="table table-striped table-hover table-rounded caption-top">
+					<caption>Detalle Memo </caption>
+					<thead class="table-light sticky-top">
+						<tr>
+							<th>Item</th>
+							<th>Descripcion</th>
+							<th>Cant</th>
+							<th>Accion</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody id="body-detalle-memo">									
+					</tbody>
+				</table>		 				
+			</div>
+			
+			<div class="form-floating" hidden id="obsContainer">
+			  <textarea class="form-control" placeholder="Observaciones del memorando" id="observaciones" style="height: 100px" required></textarea>
+			  <label for="observaciones">Observaciones</label>
+			</div>
+			
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/ingenieria/listar-memos.js"></script>
+	</body>
+</html>

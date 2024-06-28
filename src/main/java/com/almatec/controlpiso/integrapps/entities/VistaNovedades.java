@@ -24,8 +24,8 @@ public class VistaNovedades {
 	@Column(name = "item_parte_id")
 	private Integer idPerfil;
 	
-	@Column(name = "C_centrotrabajo_id")
-	private Integer idCentroTrabajo;
+	@Column(name = "centro_trabajo")
+	private String centroTrabajo;
 	
 	@Column(name = "C_prooperario_id")	
 	private Integer idOperario;
@@ -40,20 +40,23 @@ public class VistaNovedades {
 	
 	private Integer sobrante;
 	
-	@Column(name = "ind_registro_siesa")
-	private Boolean isRegistered;
-	
 	@Column(name = "descripcion")
 	private String descripcion;
 	
-	@Column(name = "Num_Op")
-	private Integer numOp;
-	
-	@Column(name = "Und_Neg")
-	private String proyecto;
+	private String op;
 	
 	@Column(name = "A_Operario_Nombre")
 	private String nombreOperario;
+	
+	@Column(name = "cod_erp_mp")
+	private Integer codigoErpMateriaPrima;
+	
+	@Column(name = "lote")
+	private String loteMateriaPrima;
+	
+	@Column(name = "ind_registro_siesa")
+	private Boolean enviadoErp;
+	
 
 	public VistaNovedades() {
 		super();
@@ -75,8 +78,8 @@ public class VistaNovedades {
 		return idPerfil;
 	}
 
-	public Integer getIdCentroTrabajo() {
-		return idCentroTrabajo;
+	public String getCentroTrabajo() {
+		return centroTrabajo;
 	}
 
 	public Integer getIdOperario() {
@@ -99,26 +102,28 @@ public class VistaNovedades {
 		return sobrante;
 	}
 
-	public Boolean getIsRegistered() {
-		return isRegistered;
-	}
-
 	public String getDescripcion() {
 		return descripcion;
 	}
 
-	public Integer getNumOp() {
-		return numOp;
-	}
-
-	public String getProyecto() {
-		return proyecto;
+	public String getOp() {
+		return op;
 	}
 
 	public String getNombreOperario() {
 		return nombreOperario;
 	}
 
-	
+	public Integer getCodigoErpMateriaPrima() {
+		return codigoErpMateriaPrima;
+	}
+
+	public String getLoteMateriaPrima() {
+		return loteMateriaPrima;
+	}
+
+	public Boolean getEnviadoErp() {
+		return enviadoErp;
+	}	
 
 }

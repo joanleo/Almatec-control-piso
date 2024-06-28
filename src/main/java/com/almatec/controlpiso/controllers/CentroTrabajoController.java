@@ -186,7 +186,7 @@ public class CentroTrabajoController {
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
 		
-		
+		System.out.println(idCT +"-"+ idItem + "-" + idOperario);
 		
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
@@ -334,17 +334,16 @@ public class CentroTrabajoController {
 	public void opsCentroTrabajo(HttpServletResponse response,
 							@PathVariable Integer idCT,
 							@RequestBody List<Integer> opsSeleccionadas) throws DocumentException, IOException {
+		CentroTrabajo centroT =  centroTrabajoService.buscarCentroTrabajoPorIdCtErp(idCT);
 		response.setContentType("application/pdf");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
 		String headerKey = "Content-Disposition";
-		String headerValue = "attachment; filename=Ops_" + idCT + "_" + currentDateTime + ".pdf";
+		String headerValue = "attachment; filename=carga_trabajo_" + centroT.getNombre() + "_" + currentDateTime + ".pdf";
 		response.setHeader(headerKey, headerValue);
 		
 		Set<OpCentroTrabajoDTO> opsCt = centroTrabajoService.buscarOpCT(idCT);
 		
-		CentroTrabajo centroT =  centroTrabajoService.buscarCentroTrabajoPorIdCtErp(idCT);
-		System.out.println("CT: " + centroT);
 		Rectangle letter = PageSize.LETTER;
 		float halfLetterHeight = letter.getHeight() / 2;
 		Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);

@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.integrapps.entities;
 
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,71 +7,73 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-@Table(name = "Pedidos_Erp_Estado")
+@Table(name = "view_pedidos_estado_erp")
 public class VistaPedidosErp {
-	
-	@Id
-	@Column(name = "f430_rowid")
-    private Long id;
 
-	@Column(name = "Nit_Cliente")
+	@Id
+	@Column(name = "pv_rowid")
+	private Long id;
+
+	@Column(name = "pv_cliente_nit")
 	private String nit;
-	
-	@Column(name = "Cliente")
+
+	@Column(name = "pv_cliente_razon_social")
 	private String razonSocial;
-	
-	@Column(name = "id_Sucursal")
+
+	@Column(name = "pv_cliente_sucursal")
 	private String sucursal;
-	
-	@Column(name = "Tipo_Pv")
+
+	@Column(name = "pv_tipo")
 	private String tipo;
-	
-	@Column(name = "No_Pv")
+
+	@Column(name = "pv_num")
 	private Integer noPv;
-	
-	@Column(name = "Pedido")
+
+	@Column(name = "pv_tipo_num")
 	private String pedidoNo;
-	
-	@Column(name = "Vlr_Neto")
+
+	@Column(name = "pv_valor_neto")
 	private String valor;
-	
-	@Column(name = "f054_descripcion")
-	private String estado;
-	
+
+	@Column(name = "pv_cliente_co_id_descripcion")
+	private String co;
+
 	@JsonFormat(pattern = "yyyy-MM-dd")
+	@Column(name = "pv_fecha")
 	private Date fecha;
-	
-	@Column(name = "f285_descripcion")
-	private String proyecto;
-	
-	@Column(name = "Vendedor")
+
+	@Column(name = "pv_vendedor_nombre")
 	private String vendedor;
-	
-	@Column(name = "Id_estado")
+
+	@Column(name = "pv_id_estado")
 	private Integer idEstado;
-	
-	@Column(name = "f120_descripcion")
+
+	@Column(name = "pv_estado")
+	private String estado;
+
+	@Column(name = "pv_item_descripcion")
 	private String descripcion;
-	
-	@Column(name = "f431_cant1_pedida")
+
+	@Column(name = "pv_item_cantidad")
 	private Integer cantPedida;
-	
-	@Column(name = "f120_id_unidad_inventario")
+
+	@Column(name = "pv_item_und_inventario")
 	private String unidadMedidaInventario;
-	
-	@Column(name = "f120_id_unidad_adicional")
+
+	@Column(name = "pv_item_und_adicional")
 	private String unidadMedidaAdicional;
-	
-	@Column(name = "f850_id_tipo_docto")
+
+	@Column(name = "pv_op_padre_tipo")
 	private String tipoOp;
-	
-	@Column(name = "f850_consec_docto")
+
+	@Column(name = "pv_op_padre_num")
 	private Integer numOp;
 
+	@Column(name = "pv_kg_cumplidos")
+	private Double kgCumplidos;
 
 	public VistaPedidosErp() {
 		super();
@@ -110,16 +111,12 @@ public class VistaPedidosErp {
 		return valor;
 	}
 
-	public String getEstado() {
-		return estado;
+	public String getCo() {
+		return co;
 	}
 
 	public Date getFecha() {
 		return fecha;
-	}
-
-	public String getProyecto() {
-		return proyecto;
 	}
 
 	public String getVendedor() {
@@ -128,6 +125,10 @@ public class VistaPedidosErp {
 
 	public Integer getIdEstado() {
 		return idEstado;
+	}
+
+	public String getEstado() {
+		return estado;
 	}
 
 	public String getDescripcion() {
@@ -154,13 +155,18 @@ public class VistaPedidosErp {
 		return numOp;
 	}
 
+	public Double getKgCumplidos() {
+		return kgCumplidos;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
-				+ ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", estado="
-				+ estado + ", fecha=" + fecha + ", proyecto=" + proyecto + ", vendedor=" + vendedor + ", idEstado="
-				+ idEstado + ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + ", unidadMedidaInventario="
+				+ ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", co=" + co
+				+ ", fecha=" + fecha + ", vendedor=" + vendedor + ", idEstado=" + idEstado + ", estado=" + estado
+				+ ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + ", unidadMedidaInventario="
 				+ unidadMedidaInventario + ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", tipoOp=" + tipoOp
-				+ ", numOp=" + numOp + "]";
-	}	
+				+ ", numOp=" + numOp + ", kgCumplidos=" + kgCumplidos + "]";
+	}
+
 }

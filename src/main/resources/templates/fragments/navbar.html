@@ -1,95 +1,99 @@
 <nav th:fragment="nav-bar(selec)" class="navbar navbar-expand-lg bg-body-tertiary rounded">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">
-		<img th:src="@{/imgs/logo-almatec.png}" alt="logo" />
+		<img th:src="@{/imgs/logo-guayacan-mini.png}" alt="logo" />
 	</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse ms-4" style="justify-content: space-between;" id="navbarNav">
       <ul class="navbar-nav">        
-        <li class="nav-item dropdown">
+        <li  class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_COMERCIAL'')')}">
           <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Comercial
           </button>
           <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/comercial">Pedidos</a></li>
-			<li><a class="dropdown-item" href="/comercial/pedidos">Estado Pedidos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial">Pedidos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTADO_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos">Estado Pedidos</a></li>
           </ul>
         </li>
         
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_INGENIERIA'')')}">
           <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Ingenieria
           </button>
           <ul class="dropdown-menu">
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/ingenieria/status/proyectos">Status de proyectos</a></li>
+            <li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTATUS_DE_PROYECTOS'')')}"><a class="dropdown-item" href="/ingenieria/status/proyectos">Status de proyectos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/nuevo">Crear memo</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/listar">Ver memos</a></li>
           </ul>
         </li>
         
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_PROGRAMACION'')')}">
           <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Programacion
           </button>
           <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/programacion/asignar-prioridades">Prioridad</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion/asignar-prioridades">Prioridad</a></li>
           </ul>
         </li>
         
-        <li  class="nav-item dropdown">
+        <li  class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_PRODUCCION'')')}">
           <button class="nav-link dropdown-toggle" th:classappend="${selec == 'Produccion' ? 'active' : ''}" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 			  Produccion
 		  </button>
 		  <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/produccion/home">Planta</a></li>
-			<li><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
-			<li><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
-			<li><a class="dropdown-item" href="/produccion/materia-prima/solicitud">Solicitud Materia prima</a></li>
-			<li><a class="dropdown-item" href="/produccion/operarios-registrados">Operarios registrados</a></li>
-			<li><a class="dropdown-item" href="/produccion/impresion-etiquetas">Impresion de etiquetas</a></li>
-			<li><hr class="dropdown-divider"></li>
-            <li class="nav-item dropdown">
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/home">Planta</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CAGA_X_CT'')')}"><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_SOLICITUD_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/produccion/materia-prima/solicitud">Solicitud Materia prima</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_OPERARIOS_REGISTRADOS'')')}"><a class="dropdown-item" href="/produccion/operarios-registrados">Operarios registrados</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_IMPRESION_DE_ETIQUETAS'')')}"><a class="dropdown-item" href="/produccion/impresion-etiquetas">Impresion de etiquetas</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_GENERAL'')') || #authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_MENSUAL'')')} " ><hr class="dropdown-divider"></li>
+            <li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_GENERAL'')') || #authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_MENSUAL'')')} " class="nav-item dropdown">
 				<div class="btn-group dropend">
 				  <button class="nav-link dropdown-toggle" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 				    Informes
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuClickableInside">
-				    <li><a class="dropdown-item" href="/informes/produccion/excel-general">General Excel</a></li>
-				    <li><a class="dropdown-item" href="/informes/produccion/excel-mes">Mensual</a></li>
+				    <li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_GENERAL'')')}"><a class="dropdown-item" href="/informes/produccion/excel-general">General Excel</a></li>
+				    <li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_MENSUAL'')')}"><a class="dropdown-item" href="/informes/produccion/excel-mes">Mensual</a></li>
 				  </ul>
 				</div>
 			</li>
           </ul>
         </li>
 		
-		<li class="nav-item dropdown">
+		<li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_ALMACEN'')')}">
           <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Almacen
           </button>
           <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Remision</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Remisiones</a></li>
           </ul>
         </li>
 		
-		<li class="nav-item dropdown">
+		<li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_CALIDAD'')')}">
           <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Calidad
           </button>
           <ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="/calidad/formulario">Formulario</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_FORMULARIO_CALIDAD'')')}"><a class="dropdown-item" href="/calidad/formulario">Formulario</a></li>
           </ul>
         </li>
         
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_CONFIGURACION'')')}">
           <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
             Configuracion
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
+            <li th:if="${#authorization.expression('hasAuthority(''ACCESS_CENTROS_DE_TRABAJO'')')}"><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
-			<li><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PERFILES_O_ROLES'')')}"><a class="dropdown-item" href="/roles">Perfiles o Roles</a></li>
+            <li th:if="${#authorization.expression('hasAuthority(''ACCESS_USUARIOS'')')}"><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PARAMETROS'')')}"><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
           </ul>
         </li>
 

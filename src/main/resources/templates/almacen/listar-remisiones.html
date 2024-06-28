@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  <head th:replace="fragments/head :: head('Almacen :: Remisiones')"></head>
+	
+	  <style>
+		  #body-remisiones tr {
+		      cursor: pointer;
+		  }
+		  .grid-container {
+		      display: grid;
+		      grid-template-columns: repeat(2, 1fr);
+		      gap: 16px;
+		  }
+
+	  </style>
+	  <body>
+		<nav th:replace="fragments/navbar :: nav-bar('Almacen')"></nav>
+		
+		<div class="container my-5" style="width: 80%; margin-left: 10rem;">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+						
+						
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 <h2 class="mb-2"> Remisiones </h2>
+			 <!--<div class="d-flex justify-content-start my-4">
+				<input type="search" class="form-control size-xxl">
+				<button type="button" class="btn btn-primary mx-3">Buscar</button>				
+			 </div>-->
+			<div style="display: flex; justify-content: center;">
+				<div class="table-responsive rounded-3 shadow-sm" style="width: 100%;">
+					<table class="table table-striped table-hover table-rounded caption-top">
+						<caption>Remisiones</caption>
+						<thead class="table-light sticky-top">
+							<tr>
+								<th># Remision</th>
+								<th>OP</th>
+								<th>Cliente</th>
+								<th>Proyecto</th>
+								<th>Fecha</th>
+							</tr>
+						</thead>
+						<tbody id="body-remisiones">
+							<tr	th:each="rem : ${remisionesPage.content}">
+								<td th:text="${'RM' + '-' + rem.idRemision}"></td>
+								<td th:text="${rem.op}"></td>
+								<td th:text="${rem.cliente}"></td>
+								<td th:text="${rem.proyecto}"></td>
+								<td th:text="${#dates.format(rem.fechaCreacion, 'yyyy-MM-dd')}"></td>
+							</tr>		
+						</tbody>
+					</table>
+					<nav aria-label="Page navigation example">
+					  <ul class="pagination">
+					    <li class="page-item" th:classappend="${remisionesPage.first ? 'disabled' : ''}">
+					      <a class="page-link" th:href="@{/almacen/remisiones (page=${remisionesPage.number - 1}, size=${remisionesPage.size})}" aria-label="previus">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+						<li class="page-item" th:each="i : ${#numbers.sequence(0, remisionesPage.totalPages - 1)}" th:classappend="${remisionesPage.number == i ? 'active' : ''}">
+		                    <a class="page-link" th:href="@{/almacen/remisiones (page=${i}, size=${remisionesPage.size})}" th:text="${i + 1}"></a>
+		                </li>
+					    <li class="page-item" th:classappend="${remisionesPage.last ? 'disabled' : ''}">
+					      <a class="page-link" th:href="@{/almacen/remisiones (page=${remisionesPage.number + 1}, size=${remisionesPage.size})}" aria-label="Next">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					  </ul>
+					</nav>		 				
+				</div>
+			</div>
+			
+			<div style="display: flex; flex-direction: column;" hidden id="remSel">
+				<h3>Remision selecionada:</h3>
+				<div style="display: flex; justify-content: space-between;">
+					<div class="input-group my-3 size-s" >
+			           <span class="input-group-text"># RM</span>
+			           <input type="text" class="form-control" id="noRm" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-m" >
+			           <span class="input-group-text">Fecha </span>
+			           <input type="text" class="form-control" id="fechaCreacion" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-m" >
+			           <span class="input-group-text">OP </span>
+			           <input type="text" class="form-control" id="opSel" readonly style="text-align: right;" />
+			    	</div>
+					<div class="input-group my-3 mx-3 size-l" >
+			           <span class="input-group-text">Cliente </span>
+			           <input type="text" class="form-control" id="cliente" readonly style="text-align: right;" />
+			    	</div>
+					
+				</div>
+				<div class="d-grid my-4">
+					<button class="btn btn-primary" type="button" onclick="imprimirRemision()">Imprimir remision</button>
+				</div>		
+			</div>			
+			
+			<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem; max-height: 30rem; overflow-y: auto;">
+				<table class="table table-striped table-hover table-rounded caption-top">
+					<caption>Detalle Remision </caption>
+					<thead class="table-light sticky-top">
+						<tr>
+							<th>Item</th>
+							<th>Descripcion</th>
+							<th>Cant</th>
+							<th>Peso Un [Kg]</th>
+							<th>Peso Ttl [Kg]</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody id="body-detalle-remision">									
+					</tbody>
+				</table>		 				
+			</div>
+			
+			<div class="modal" id="datosTransportadora" tabindex="-1" aria-labelledby="datosTransportadoraLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="datosTransportadoraLabel">Datos Transportadora</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body" id="datosTransportadoraBody">
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" onclick="imprimirDatos()">Imprimir</button>  
+				</div>
+			    </div>
+			  </div>
+			</div>
+ 		    
+			
+		</div>
+		
+
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/almacen/listar-remisiones.js"></script>
+	</body>
+</html>

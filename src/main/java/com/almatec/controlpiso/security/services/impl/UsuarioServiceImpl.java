@@ -34,8 +34,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public List<Usuario> buscarUsuarios() {
-		List<Usuario>  usuarios = usuarioRepo.findByIsActivoTrue();
-		return usuarios;
+		return usuarioRepo.findByIsActivoTrue();
 	}
 
 	@Override
@@ -46,12 +45,17 @@ public class UsuarioServiceImpl implements UsuarioService {
 					.orElseThrow(()-> new ResourceNotFoundException("No se encontro el usuario con id: " + usuario.getId()));
 		}else {
 			usuarioNuevo = new Usuario();
+			if(usuario.getContrasena() == null || "".equals(usuario.getContrasena())) {
+				return new ErrorMensaje(true, "Debe proporcionar una contraseña ");
+			}
 		}
 		
 		usuarioNuevo.setCia(22);
 		usuarioNuevo.setNombreUsuario(usuario.getNombreUsuario());
-		usuarioNuevo.setContrasenaErp(usuario.getContrasena());
-		usuarioNuevo.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+		if (!"".equals(usuario.getContrasena()) && !usuario.getContrasena().equals(usuarioNuevo.getContrasenaErp())) {
+		    usuarioNuevo.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+		    usuarioNuevo.setContrasenaErp(usuario.getContrasena());
+		}
 		usuarioNuevo.setNombres(usuario.getNombres());
 		usuarioNuevo.setCedula(usuario.getCedula());
 		usuarioNuevo.setCorreo(usuario.getCorreo());
@@ -61,6 +65,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuarioRepo.save(usuarioNuevo);
 			return new ErrorMensaje(false, "");
 		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
 			return new ErrorMensaje(true, "El nombre de usuario " + usuario.getNombreUsuario() + " ya existe.");
 		}
 	}
@@ -75,11 +80,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public void inActivarUsuario(Integer id) {
 		Usuario usuario = usuarioRepo.findById(id)
 				.orElseThrow(()-> new ResourceNotFoundException("No se encontro el usuario con id: " + id));
-		System.out.println("Se eliminara el usuario: " + usuario.getNombres());
 		
 		try {
 			usuarioRepo.inActivarUsuario(usuario.getId());
-			System.out.println("Servicio inactiva usuario");
 			
 		} catch (Exception e) {
 			System.out.println("Error al cambiar en la bd: " + e);

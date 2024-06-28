@@ -56,4 +56,17 @@ public class NovedadCtServiceImpl implements NovedadCtService {
 		return novedad;
 	}
 
+	@Override
+	public NovedadCt actualizaEstado(Integer idNovedad) {
+		NovedadCt novedad = novedadCtRepository.findById(idNovedad).orElseThrow();
+		novedad.setEnviadoErp(true);
+		try {
+			NovedadCt novedadSaved = novedadCtRepository.saveAndFlush(novedad);			
+			return novedadSaved;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
 }

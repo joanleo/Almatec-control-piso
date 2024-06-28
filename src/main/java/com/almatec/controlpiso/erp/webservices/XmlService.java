@@ -5,12 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
@@ -34,6 +36,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
+import com.almatec.controlpiso.comunicador.services.MensajeServices;
 import com.almatec.controlpiso.erp.dto.ListaMaterialesDTO;
 import com.almatec.controlpiso.erp.dto.RutaDTO;
 import com.almatec.controlpiso.erp.entities.ListaMaterial;
@@ -51,6 +55,8 @@ import com.almatec.controlpiso.erp.webservices.generated.DoctoinventariosDocumen
 import com.almatec.controlpiso.erp.webservices.generated.DoctoinventariosMovimientosVersion06;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoordenesdeproduccionDocumentosVersion01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoordenesdeproduccionItemsVersion01;
+import com.almatec.controlpiso.erp.webservices.generated.DoctoremisionescomercialMovtoventascomercialV9;
+import com.almatec.controlpiso.erp.webservices.generated.DoctoremisionescomercialRemisiónversión03;
 import com.almatec.controlpiso.erp.webservices.generated.Final;
 import com.almatec.controlpiso.erp.webservices.generated.Inicial;
 import com.almatec.controlpiso.erp.webservices.generated.ItemsParametrosVersion5;
@@ -58,7 +64,6 @@ import com.almatec.controlpiso.erp.webservices.generated.ItemsVersión05;
 import com.almatec.controlpiso.erp.webservices.generated.ListadematerialesListadematerialesv3;
 import com.almatec.controlpiso.erp.webservices.generated.ListadematerialesListadematerialesv4;
 import com.almatec.controlpiso.erp.webservices.generated.ManufacturaedicióndecostositemCostosV02;
-import com.almatec.controlpiso.erp.webservices.generated.OrdenesdeproduccionCompromisosCompromisosV4;
 import com.almatec.controlpiso.erp.webservices.generated.RutasRutasV01;
 import com.almatec.controlpiso.erp.webservices.generated.RutasoperacionesOperacionesV01;
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
@@ -69,16 +74,16 @@ import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
-import com.almatec.controlpiso.integrapps.entities.OrdenPv;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.entities.Parametro;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.VistaItemPedidoErp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
+import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 import com.almatec.controlpiso.integrapps.services.ParametroService;
-import com.almatec.controlpiso.integrapps.services.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.utils.ItemReporteConsumoDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,6 +110,9 @@ public class XmlService {
 	
 	@Autowired
 	private SolicitudMateriaPrimaService solicitudMateriaPrimaService;
+	
+	@Autowired
+	private MensajeServices mensajeService;
 
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -135,76 +143,38 @@ public class XmlService {
 	private String TIPO_SERVICIO;
 	
 	
-	public void asignarParametros() {		
-		List<Parametro> parametros = parametroService.obtenerParametros();
-		parametros.forEach(parametro->{
-			if(parametro.getNombre().contains("compania")) {
-				this.CIA = Integer.valueOf(parametro.getValor());
-			}
-			if(parametro.getNombre().contains("centro operacion")) {
-				this.C_O = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("intalacion")) {
-				this.INSTALACION = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("metodo")) {
-				this.METODO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo doc op papa")) {
-				this.TIPO_DOC_OP_PAPA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo doc op hijo")) {
-				this.TIPO_DOC_OP_HIJO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("clase op papa")) {
-				this.CLASE_OP_PAPA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("clase op hijo")) {
-				this.CLASE_OP_HIJO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo doc consumo")) {
-				this.TIPO_DOC_CONSUMO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo doc tep")) {
-				this.TIPO_DOC_TEP = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo doc transferencia")) {
-				this.TIPO_DOC_TRANSFERENCIA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo doc entrega")) {
-				this.TIPO_DOC_ENTREGA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("bodega de material")) {
-				this.BODEGA_MATERIAL = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("bodega de entrega de item facturable")) {
-				this.BODEGA_ENTREGA_ITEM_FACTURABLE = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("bodega entrega item hijo")) {
-				this.BODEGA_ENTREGA_ITEM_HIJO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("bodega entrega transferencia")) {
-				this.BODEGA_ENTREGA_TRANSFERENCIA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("motivo transferencia")) {
-				this.MOTIVO_TRANSFERENCIA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("motivo consumo")) {
-				this.MOTIVO_CONSUMO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("motivo entrega")) {
-				this.MOTIVO_ENTREGA = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("grupo impositivo")) {
-				this.GRUPO_IMPOSITIVO = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("planificador")) {
-				this.PLANIFICADOR = parametro.getValor();
-			}
-			if(parametro.getNombre().contains("tipo servicio")) {
-				this.TIPO_SERVICIO = parametro.getValor();
-			}
-		});
+	public void asignarParametros() {
+		Map<String, Consumer<Parametro>> acciones = new HashMap<>();
+		
+		acciones.put("compania", parametro -> this.CIA = Integer.valueOf(parametro.getValor()));
+	    acciones.put("centro operacion", parametro -> this.C_O = parametro.getValor());
+	    acciones.put("instalacion", parametro -> this.INSTALACION = parametro.getValor());
+	    acciones.put("metodo", parametro -> this.METODO = parametro.getValor());
+	    acciones.put("tipo doc op papa", parametro -> this.TIPO_DOC_OP_PAPA = parametro.getValor());
+	    acciones.put("tipo doc op hijo", parametro -> this.TIPO_DOC_OP_HIJO = parametro.getValor());
+	    acciones.put("clase op papa", parametro -> this.CLASE_OP_PAPA = parametro.getValor());
+	    acciones.put("clase op hijo", parametro -> this.CLASE_OP_HIJO = parametro.getValor());
+	    acciones.put("tipo doc consumo", parametro -> this.TIPO_DOC_CONSUMO = parametro.getValor());
+	    acciones.put("tipo doc tep", parametro -> this.TIPO_DOC_TEP = parametro.getValor());
+	    acciones.put("tipo doc transferencia", parametro -> this.TIPO_DOC_TRANSFERENCIA = parametro.getValor());
+	    acciones.put("tipo doc entrega", parametro -> this.TIPO_DOC_ENTREGA = parametro.getValor());
+	    acciones.put("bodega de material", parametro -> this.BODEGA_MATERIAL = parametro.getValor());
+	    acciones.put("bodega de entrega de item facturable", parametro -> this.BODEGA_ENTREGA_ITEM_FACTURABLE = parametro.getValor());
+	    acciones.put("bodega entrega item hijo", parametro -> this.BODEGA_ENTREGA_ITEM_HIJO = parametro.getValor());
+	    acciones.put("bodega entrega transferencia", parametro -> this.BODEGA_ENTREGA_TRANSFERENCIA = parametro.getValor());
+	    acciones.put("motivo transferencia", parametro -> this.MOTIVO_TRANSFERENCIA = parametro.getValor());
+	    acciones.put("motivo consumo", parametro -> this.MOTIVO_CONSUMO = parametro.getValor());
+	    acciones.put("motivo entrega", parametro -> this.MOTIVO_ENTREGA = parametro.getValor());
+	    acciones.put("grupo impositivo", parametro -> this.GRUPO_IMPOSITIVO = parametro.getValor());
+	    acciones.put("planificador", parametro -> this.PLANIFICADOR = parametro.getValor());
+	    acciones.put("tipo servicio", parametro -> this.TIPO_SERVICIO = parametro.getValor());
+
+	    List<Parametro> parametros = parametroService.obtenerParametros();
+	    parametros.forEach(parametro -> 
+	        acciones.entrySet().stream()
+	            .filter(entry -> parametro.getNombre().contains(entry.getKey()))
+	            .forEach(entry -> entry.getValue().accept(parametro))
+	    );
 	}
 
 
@@ -412,10 +382,10 @@ public class XmlService {
 		List<Conector> ordenProduccion = new ArrayList<>();
 		
 		ordenProduccion.addAll(costosParametros);
-		OrdenPv ordenPv = ordenPvService.obtenerOrdenPorNumPv(items.get(0).getNoPedido());
+		OrdenPvEstadoData ordenPv = ordenPvService.obtenerOrdenPorNumPv(items.get(0).getNoPedido());
 		DoctoordenesdeproduccionDocumentosVersion01 encabezadoOp = crearEncabezadoOpPapa(items.get(0).getNoPedido(), ordenPv);
 		ordenProduccion.add(encabezadoOp);
-		List<DoctoordenesdeproduccionItemsVersion01> detallesOp = crearDetalleOpPapa(items, orden);
+		List<DoctoordenesdeproduccionItemsVersion01> detallesOp = crearDetalleOpPapa(items);
 		ordenProduccion.addAll(detallesOp);
 		
 		String response = postImportarXML(ordenProduccion);
@@ -423,13 +393,14 @@ public class XmlService {
 		crearArchivo(ordenProduccion, consecutivo);
 		
 		if(RESPUESTA_OK.equals(response)) {
+			mensajeService.enviarEmailAprobacionPedidoVenta("PV-"+items.get(0).getNoPedido());
 			return "Orden creada exitosamente";
 		}else {
 			return response;
 		}
 	}
 
-	private DoctoordenesdeproduccionDocumentosVersion01 crearEncabezadoOpPapa(Integer noPedido, OrdenPv ordenPv) {
+	private DoctoordenesdeproduccionDocumentosVersion01 crearEncabezadoOpPapa(Integer noPedido, OrdenPvEstadoData ordenPv) {
 		DoctoordenesdeproduccionDocumentosVersion01 encabezado = new DoctoordenesdeproduccionDocumentosVersion01();
 		encabezado.setF_cia(this.CIA);
 		encabezado.setF_consec_auto_reg(1);
@@ -445,11 +416,12 @@ public class XmlService {
 		encabezado.setF850_id_tipo_docto_pv("PV");
 		encabezado.setF850_consec_docto_pv(noPedido);
 		encabezado.setF850_notas(BODEGA_ENTREGA_ITEM_FACTURABLE);
-		//encabezado.setF850_referencia_1(BODEGA_ENTREGA_ITEM_FACTURABLE);
+		encabezado.setF850_referencia_1(ordenPv.getCliente());
+		encabezado.setF850_referencia_2(ordenPv.getIdCo() + "-" + ordenPv.getCoDescripcion());
 		return encabezado;
 	}
 
-	private List<DoctoordenesdeproduccionItemsVersion01> crearDetalleOpPapa(List<VistaItemPedidoErp> items, Integer orden) {
+	private List<DoctoordenesdeproduccionItemsVersion01> crearDetalleOpPapa(List<VistaItemPedidoErp> items) {
 		List<DoctoordenesdeproduccionItemsVersion01> detalle = new ArrayList<>();
 		
 		int cont = 1;
@@ -543,52 +515,6 @@ public class XmlService {
 		return listaCrear;
 	}
 
-	public String crearRuta(List<RutaDTO> rutas) throws IOException {
-		/*List<Conector> rutaBorrarXml = new ArrayList<>();
-		List<RutaInterface> rutasI = listaMaterialService.obtenerRutasActual("2070811");
-		List<RutasoperacionesOperacionesV02> listaBorrar = new ArrayList<>();
-		for(RutaInterface item: rutasI) {
-			System.out.println(item.getf808_id() + " " + item.getf808_id_instalacion() + " " + item.getf809_numero_operacion() +" " + item.getf809_id_metodo());
-			RutasoperacionesOperacionesV02 borrar = new RutasoperacionesOperacionesV02();
-			borrar.setF_cia(22);
-			borrar.setF808_id("207811");
-			borrar.setF808_id_instalacion(item.getf808_id_instalacion());
-			borrar.setF809_id_metodo("0001");
-			borrar.setF809_numero_operacion(item.getf809_numero_operacion());
-			listaBorrar.add(borrar);
-		}
-		rutaBorrarXml.addAll(listaBorrar);
-		String responseBorrar = postImportarXML(rutaBorrarXml);
-		System.out.println(responseBorrar);*/
-		
-		List<Conector> rutaCrearXml = new ArrayList<>();
-		/*List<RutasoperacionesOperacionesV01> listaCrear = new ArrayList<>();
-		for(RutaDTO item: rutas) {
-			RutasoperacionesOperacionesV01 crear = new RutasoperacionesOperacionesV01();
-			crear.setF_cia(22);
-			crear.setF_numero_reg(0);
-			crear.setF808_id("207812");
-			crear.setF808_id_instalacion("001");
-			crear.setF809_id_metodo("0001");
-			crear.setF809_numero_operacion(item.getF809_numero_operacion());
-			crear.setF809_ind_estado(1);
-			crear.setF809_descripcion(item.getF809_descripcion());
-			crear.setF809_ind_operacion_externa(0);
-			crear.setF809_id_ctrabajo(item.getF809_id_ctrabajo());
-			crear.setF809_cantidad_base(item.getF809_cantidad_base());
-			crear.setF809_horas_maquina(item.getF809_horas_maquina());
-			crear.setF809_fecha_activacion(obtenerFechaFormateada());
-			crear.setF809_num_operarios_alistamiento("001");
-			crear.setF809_num_operarios_ejecucion("001");
-			crear.setF809_unidades_equivalentes(1.0);
-			listaCrear.add(crear);
-		}
-		rutaCrearXml.addAll(listaCrear);*/
-		//RutasRutasV01 ruta = crearConectorRuta();
-		//rutaCrearXml.add(ruta);
-		String responseCrear = postImportarXML(rutaCrearXml);
-		return responseCrear;
-	}
 	
 	public List<RutasoperacionesOperacionesV01> crearConectorRutaOperaciones(List<RutaDTO> rutas, String id) {
 				
@@ -632,20 +558,6 @@ public class XmlService {
 		return response;
 	}
 
-
-	public String crearRutaPorId(Integer id) throws IOException {
-		String response = null;
-		String jsonString = itemOpService.obtenerStringRuta(id);
-		ObjectMapper objectMapper = new ObjectMapper();
-		List<RutaDTO> miDTOList = new ArrayList<>();
-		try {
-            miDTOList = objectMapper.readValue(jsonString, new TypeReference<List<RutaDTO>>() {});
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-		response = crearRuta(miDTOList);
-		return response;
-	}
 
 	public ErrorMensaje crearTransferencia(SolicitudMateriaPrima solicitud, List<DetalleSolicitudMateriaPrima> detalles, Integer idSolIntegrapps) {
 		List<Conector> transferenciaXml = new ArrayList<>();
@@ -791,12 +703,18 @@ public class XmlService {
 			BigDecimal cantConsumir = itemFab.getitem_peso_b().multiply(new BigDecimal(reporte.getCantReportar()));
 			mov.setF470_cant_base(cantConsumir.doubleValue());
 			if(codErpMateriaPrima == 26403) mov.setF470_id_lote("123456789");//Esta informacion esta quemada para pruebas 
-			if(codErpMateriaPrima == 18894) mov.setF470_id_lote("R1012522-2");//Esta informacion esta quemada para pruebas 
+			if(codErpMateriaPrima == 18894) mov.setF470_id_lote("R1012522-2");//Esta informacion esta quemada para pruebas
+			if(codErpMateriaPrima == 26399) mov.setF470_id_lote("9876");//Esta informacion esta quemada para pruebas 
+			if(codErpMateriaPrima == 21703) mov.setF470_id_lote("654");//Esta informacion esta quemada para pruebas 
+			if(codErpMateriaPrima == 19330) mov.setF470_id_lote("E1032722-733");//Esta informacion esta quemada para pruebas 
 		}else {
 			mov.setF470_id_item_comp(itemReporteDTO.getId());
 			mov.setF470_cant_base(itemReporteDTO.getCant());
 			if(itemReporteDTO.getId() == 26403) mov.setF470_id_lote("123456789");//Esta informacion esta quemada para pruebas 
-			if(itemReporteDTO.getId() == 18894) mov.setF470_id_lote("R1012522-2");//Esta informacion esta quemada para pruebas 
+			if(itemReporteDTO.getId() == 18894) mov.setF470_id_lote("R1012522-2");//Esta informacion esta quemada para pruebas
+			if(itemReporteDTO.getId() == 26399) mov.setF470_id_lote("9876");//Esta informacion esta quemada para pruebas
+			if(itemReporteDTO.getId() == 21703) mov.setF470_id_lote("654");//Esta informacion esta quemada para pruebas
+			if(itemReporteDTO.getId() == 19330) mov.setF470_id_lote("E1032722-733");//Esta informacion esta quemada para pruebas
 		}
 		if(mov.getF470_id_lote().isBlank()) mov.setF470_id_lote(reporte.getLote());//revisar item lista materiales			
 		mov.setF470_id_bodega(this.BODEGA_ENTREGA_TRANSFERENCIA);//revisar		
@@ -805,17 +723,13 @@ public class XmlService {
 		mov.setF470_id_co_movto(this.C_O);
 		mov.setF470_id_un_movto("001");
 		mov.setF470_id_unidad_medida(data.getf120_id_unidad_inventario());
-		
-		//nO SE DEBE INCLUIR
-		mov.setF470_cant_2(10.0);
-		
-		
+				
 		movs.add(mov);
 		
 		return movs;
 	}
 	
-	public String crearTEP(ItemOp item, ReporteDTO reporte) {
+	public String crearTEP(ItemOp item, ReporteDTO reporte) throws IOException {
 		List<Conector> tepXml = new ArrayList<>();
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
@@ -828,8 +742,10 @@ public class XmlService {
 		
 		List<DoctoTEPMovimientosVersión01> movs = crearMovTiempos(reporte, data, dataTE, idCTErp);
 		tepXml.addAll(movs);
-		
+		System.out.println("Creando TEP");
 		String responseCrearTep = postImportarXML(tepXml);
+		System.out.println(responseCrearTep);
+		crearArchivo(tepXml, "TEP");
 		if(!responseCrearTep.equals(RESPUESTA_OK)) {
 			return responseCrearTep;
 		}
@@ -870,12 +786,16 @@ public class XmlService {
 		System.out.println("Valor aplicar: "+valorAplicar);
 
 	    BigDecimal cantReportarTotalHoras =  BigDecimal.valueOf(valorAplicar * reporte.getCantReportar());
-	    BigDecimal maxPorIteracion = new BigDecimal(101);
+	    System.out.println(cantReportarTotalHoras);
+	    BigDecimal maxPorIteracion = new BigDecimal(99);
 	    if (cantReportarTotalHoras.compareTo(maxPorIteracion) > 0) {
 	        int iteraciones = (int) Math.ceil(cantReportarTotalHoras.divide(maxPorIteracion, RoundingMode.UP).doubleValue());
 	        BigDecimal cantidadPorIteracion = cantReportarTotalHoras.divide(new BigDecimal(iteraciones), 2, RoundingMode.HALF_UP);
+	        System.out.println("cANTIDAD POR ITERACION: "+cantidadPorIteracion);
 	        Double kilosTotales = item.getitem_peso_b().multiply(new BigDecimal(cantPiezasReportar)).doubleValue();
+	        System.out.println("kILOS TOTALES " +kilosTotales);
 	        Double kiloIteracion = kilosTotales / iteraciones;
+	        System.out.println("KILOS POR ITERACION: " + kiloIteracion);
 
 	        for (int i = 0; i < iteraciones; i++) {
 	            BigDecimal cantReportarActual = (i == iteraciones - 1) ? cantReportarTotalHoras.subtract(cantidadPorIteracion.multiply(new BigDecimal(i))) : cantidadPorIteracion;
@@ -928,7 +848,7 @@ public class XmlService {
 	}
 
 
-	public ItemsVersión05 crearConectorItemEntrega(OrdenPv ordenIntegrapps) {
+	public ItemsVersión05 crearConectorItemEntrega(VistaOrdenPv ordenIntegrapps) {
 		
 		ItemsVersión05 item = new ItemsVersión05();
 		item.setF_cia(this.CIA);
@@ -939,8 +859,8 @@ public class XmlService {
 		String stringId = String.valueOf(id);
 		item.setF120_referencia("0"+ stringId);
 		if(!ordenIntegrapps.getZonaSistema().isEmpty() && ordenIntegrapps.getZonaSistema().length() > 1) {
-			item.setF120_descripcion(ordenIntegrapps.getZonaSistema() + " " + ordenIntegrapps.getUnidadNegocio());			
-			item.setF120_descripcion_corta(ordenIntegrapps.getZonaSistema() + " " + ordenIntegrapps.getUnidadNegocio());
+			item.setF120_descripcion(ordenIntegrapps.getIdCentroOperaciones()+ " " + ordenIntegrapps.getCentroOperaciones());			
+			item.setF120_descripcion_corta(ordenIntegrapps.getIdCentroOperaciones() + " " + ordenIntegrapps.getCentroOperaciones());
 		}
 		item.setF120_id_grupo_impositivo(this.GRUPO_IMPOSITIVO);
 		item.setF120_id_tipo_inv_serv(this.TIPO_SERVICIO);
@@ -952,10 +872,6 @@ public class XmlService {
 		item.setF120_ind_lote_asignacion(0);
 		item.setF120_id_unidad_inventario("KG");
 		item.setF120_factor_peso_inventario(1.0);
-		//item.setF120_id_unidad_adicional("POS");
-		//item.setF120_factor_adicional(1.1);
-		//item.setF120_factor_peso_adicional(1.0);
-		//item.setF120_factor_volumen_adicional(1.0);
 		item.setF120_id_unidad_orden("KG");
 		item.setF120_ind_lista_precios_ext(0);
 		item.setF121_ind_estado(1);
@@ -983,7 +899,7 @@ public class XmlService {
 		parametros.setF132_mf_ind_politica_orden(1);
 		
 		parametros.setF132_mf_id_ruta(idRuta);
-		parametros.setF132_mf_id_bodega_asigna(this.BODEGA_ENTREGA_ITEM_HIJO);//"00102"
+		parametros.setF132_mf_id_bodega_asigna(this.BODEGA_ENTREGA_ITEM_HIJO);
 		parametros.setF132_mf_ind_generar_orden_prod(1);
 		parametros.setF132_mf_ind_item_critico(1);
 		parametros.setF120_id(idItem); 
@@ -1032,12 +948,24 @@ public class XmlService {
 		costo.setF402_costo_este_nivel_uni(0.0001);
 		return costo;
 	}
-
+	
+	private RutasRutasV01 crearConectorRuta(ItemsVersión05 item) {
+		RutasRutasV01 ruta = new RutasRutasV01();
+		ruta.setF_cia(this.CIA);
+		ruta.setF_actualiza_reg(0);
+		ruta.setF808_id(item.getF120_id());
+		ruta.setF808_id_instalacion(this.INSTALACION);
+		ruta.setF808_descripcion(item.getF120_descripcion());
+		ruta.setF808_ind_estado(1);
+		ruta.setF808_ind_controla_sec_piso(0);
+		
+		return ruta;
+	} 
 
 	public String crearOPEntrega(Integer idOPI) throws IOException{
 		List<Conector> opXml = new ArrayList<>();
-		OrdenPv ordenIntegrapps = ordenPvService.obtenerOrdenPorId(idOPI);
-		OrdenPv ordenPadreIF = ordenPvService.obtenerOrdenPorId(ordenIntegrapps.getIdPadre());
+		VistaOrdenPv ordenIntegrapps = ordenPvService.obtenerOrdenPorId(idOPI);
+		VistaOrdenPv ordenPadreIF = ordenPvService.obtenerOrdenPorId(ordenIntegrapps.getIdPadre());
 		
 		List<Conector> itemRutaXml = new ArrayList<>();
 		ItemsVersión05 item = crearConectorItemEntrega(ordenIntegrapps);
@@ -1083,10 +1011,11 @@ public class XmlService {
 		List<ListadematerialesListadematerialesv4> listaMateriales = crearConectorLM(listaMaterialesDTO, Integer.valueOf(item.getF120_id()));
 		opXml.addAll(listaMateriales);
 				
+		Double cantBase = Double.valueOf(listaMateriales.get(0).getF820_cant_base());
 		DoctoordenesdeproduccionDocumentosVersion01 encabezadoOpEntrega = crearEncabezadoOPEntrega(ordenPadreIF);
 		opXml.add(encabezadoOpEntrega);
 		
-		DoctoordenesdeproduccionItemsVersion01 detalleOpEntrega = crearDetalleOpEntrega(item, ordenIntegrapps);
+		DoctoordenesdeproduccionItemsVersion01 detalleOpEntrega = crearDetalleOpEntrega(item, ordenIntegrapps, cantBase);
 		opXml.add(detalleOpEntrega);
 		
 		String responseOpEntrega = postImportarXML(opXml);		
@@ -1098,25 +1027,11 @@ public class XmlService {
 		ConsultaItemOpCreado creadoInterface = listaMaterialService.obtenerRowIdOpItemOp(item.getF120_id());
 		ConsultaOpCreadaDTO creado = new ConsultaOpCreadaDTO(creadoInterface);
 		ordenPvService.actualizarDatosOp(creado,ordenIntegrapps);
-		
+		mensajeService.enviarEmailCreacionOrdenProduccion(creado.getF850_id_tipo_docto() + '-' + creado.getF850_consec_docto());
 		return "OP Creada Exitosamente";
 	}
-	
-	private RutasRutasV01 crearConectorRuta(ItemsVersión05 item) {
-		RutasRutasV01 ruta = new RutasRutasV01();
-		ruta.setF_cia(this.CIA);
-		ruta.setF_actualiza_reg(0);
-		ruta.setF808_id(item.getF120_id());
-		ruta.setF808_id_instalacion(this.INSTALACION);
-		ruta.setF808_descripcion(item.getF120_descripcion());
-		ruta.setF808_ind_estado(1);
-		ruta.setF808_ind_controla_sec_piso(0);
-		
-		return ruta;
-	} 
 
-
-	private DoctoordenesdeproduccionDocumentosVersion01 crearEncabezadoOPEntrega(OrdenPv ordenPadreIF) {
+	private DoctoordenesdeproduccionDocumentosVersion01 crearEncabezadoOPEntrega(VistaOrdenPv ordenPadreIF) {
 		DoctoordenesdeproduccionDocumentosVersion01 encabezado = new DoctoordenesdeproduccionDocumentosVersion01();
 		encabezado.setF_cia(this.CIA);
 		encabezado.setF_consec_auto_reg(1);
@@ -1131,10 +1046,12 @@ public class XmlService {
 		encabezado.setF850_id_co_pv(this.C_O);
 		encabezado.setF850_id_tipo_docto_op_padre(ordenPadreIF.getTipoOp());
 		encabezado.setF850_consec_docto_op_padre(ordenPadreIF.getNumOp());
+		encabezado.setF850_referencia_1(ordenPadreIF.getCliente());
+		encabezado.setF850_referencia_2(ordenPadreIF.getIdCentroOperaciones() + "-" + ordenPadreIF.getCentroOperaciones());
 		return encabezado;
 	}
 	
-	private DoctoordenesdeproduccionItemsVersion01 crearDetalleOpEntrega(ItemsVersión05 item, OrdenPv ordenIntegrapps) {
+	private DoctoordenesdeproduccionItemsVersion01 crearDetalleOpEntrega(ItemsVersión05 item, VistaOrdenPv ordenIntegrapps, Double cantBase) {
 
 		DoctoordenesdeproduccionItemsVersion01 movimiento = new DoctoordenesdeproduccionItemsVersion01();
 		movimiento.setF_cia(this.CIA);
@@ -1143,7 +1060,7 @@ public class XmlService {
 		movimiento.setF851_id_item(Integer.valueOf(item.getF120_id()));
 		movimiento.setF851_id_unidad_medida("KG"); 
 		movimiento.setF851_porc_rendimiento(100.00);
-		movimiento.setF851_cant_planeada_base(ordenIntegrapps.getKilosFabricar());//ordenIntegrapps.getCant()
+		movimiento.setF851_cant_planeada_base(cantBase);//ordenIntegrapps.getCant()
 		movimiento.setF851_fecha_inicio(obtenerFechaFormateada());
 		movimiento.setF851_fecha_terminacion(obtenerFechaFormateada(ordenIntegrapps.getFechaEntrega()));
 		movimiento.setF851_id_tipo_docto(ordenIntegrapps.getTipoOp());
@@ -1163,7 +1080,7 @@ public class XmlService {
 		Integer cantFabItemOp = cantFabItemOpEncontrada == null ? 0: cantFabItemOpEncontrada;
 		System.out.println("Cantidades reportadas: "+ cantFabItemOp);
 		//Obtengo la lista de materiales del itempOp
-		List<ItemListaMateriaInterface> itemMateriales = itemOpService.obtenerListaMaterialesItemPorIdItem(item.getIdItemFab());
+		List<ItemListaMateriaInterface> itemMateriales = itemOpService.obtenerListaMaterialesItemPorIdItem(item.getId().intValue(), item.getIdItemFab());
 		System.out.println("Tipo item: " + itemMateriales.get(0).getitem_op_tipo());
 		List<ItemReporteConsumoDTO> itemReporta = new ArrayList<>();
 		if("CONJUNTO".equals(itemMateriales.get(0).getitem_op_tipo())) {
@@ -1237,6 +1154,7 @@ public class XmlService {
 		entregaXml.add(mov);
 		String responseEntrega = postImportarXML(entregaXml);
 		System.out.println(responseEntrega);
+		crearArchivo(entregaXml, "EP");
 		if(!responseEntrega.equals(RESPUESTA_OK)) {
 			return responseEntrega;
 		}
@@ -1274,76 +1192,11 @@ public class XmlService {
 		mov.setF470_id_un_movto("001");
 		Double cantBase = item.getPeso().multiply(new BigDecimal(reporte.getCantReportar())).doubleValue();
 		mov.setF470_cant_base_entrega(cantBase);
-		/*mov.setF470_cant_2_entrega(300.0);*/
 		return mov;
 	}
+	
 
-
-	public ErrorMensaje crearTransferenciaYCompromisoDesdeOP(SolicitudMateriaPrima solicitud,
-			List<DetalleSolicitudMateriaPrima> detalleSol, Integer idSolIntegrapps) {
-		List<Conector> transferenciaCompromisoXml = new ArrayList<>();
-		
-		String nota = listaMaterialService.obtenerConsecutivoNotasTransferencia(idSolIntegrapps.toString());
-		if(nota != null) {
-			if(nota.split("-").length > 1) {
-				Integer consec = Integer.valueOf(nota.split("-")[1]);
-				nota = idSolIntegrapps + "-" + (consec+1);
-			}else {
-				nota = idSolIntegrapps + "-" + 1;
-			}			
-		}else {
-			nota = idSolIntegrapps.toString();
-		}
-		DoctoinventariosDocumentosVersion02 encabezado = crearEncabezadoTransferencia(solicitud, idSolIntegrapps, nota);		
-		transferenciaCompromisoXml.add(encabezado);
-		
-		List<DoctoinventariosMovimientosVersion06> movs = crearMovimientosTransferencia(detalleSol, solicitud.getBodegaErp());		
-		transferenciaCompromisoXml.addAll(movs);
-		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(solicitud.getIdOp()); //tipo 850, consecutivo 850, rowid 850, id item padre 120
-		List<OrdenesdeproduccionCompromisosCompromisosV4> compromisos = crearConectorCompromisos(data, movs);
-		transferenciaCompromisoXml.addAll(compromisos);
-		
-		String responseCrear = postImportarXML(transferenciaCompromisoXml);
-		if(!responseCrear.equals(RESPUESTA_OK)) {
-			return new ErrorMensaje(true,responseCrear);
-		}
-		DetalleTransferenciaInterface transferencia = listaMaterialService.obtenerDetalleTransferencia(nota);
-		SolicitudMateriaPrima solicitudIntegrapps = solicitudMateriaPrimaService.obtenerSolicitudPorId(idSolIntegrapps);
-		solicitudIntegrapps.setNumDocErp(transferencia.getf350_consec_docto());
-		solicitudIntegrapps.setIdEstado(1);
-		solicitudIntegrapps.setFechaDocEp(transferencia.getf350_fecha_ts_creacion());
-		solicitudMateriaPrimaService.actualizaSolicitud(solicitudIntegrapps);
-		return new ErrorMensaje(false,responseCrear + "  se creo el documento de transferencia TRS-" + transferencia.getf350_consec_docto());
-		
-	}
-
-
-	private List<OrdenesdeproduccionCompromisosCompromisosV4> crearConectorCompromisos(DataConsumoInterface data, List<DoctoinventariosMovimientosVersion06> movs) {
-
-		List<OrdenesdeproduccionCompromisosCompromisosV4> compromisos = new ArrayList<>();
-		for(DoctoinventariosMovimientosVersion06 mov : movs) {
-			OrdenesdeproduccionCompromisosCompromisosV4 compromiso = new OrdenesdeproduccionCompromisosCompromisosV4();
-			compromiso.setF_cia(this.CIA);
-			compromiso.setF850_id_co(this.C_O);
-			compromiso.setF850_id_tipo_docto(this.TIPO_DOC_OP_HIJO);
-			compromiso.setF850_consec_docto(data.getf850_consec_docto());
-			compromiso.setF850_nro_registro(data.getf851_rowid());
-			compromiso.setF851_id_item_padre(data.getf120_id());
-			compromiso.setF860_id_item_comp(Integer.valueOf(mov.getF470_id_item()));
-			compromiso.setF860_id_bodega(this.BODEGA_ENTREGA_TRANSFERENCIA);
-			compromiso.setF860_id_lote(mov.getF470_id_lote());
-			compromiso.setF860_id_unidad_medida(mov.getF470_id_unidad_medida());
-			compromiso.setF860_cant_base(Double.valueOf(mov.getF470_cant_base()));			
-			
-			compromisos.add(compromiso);
-			
-		}
-		
-		return compromisos;
-	}
-
-
-	public String crearTEPYConsumos(ItemOp item, ReporteDTO reporte) {
+	public String crearTEPYConsumos(ItemOp item, ReporteDTO reporte) throws IOException {
 		System.out.println("Creando consumo y tep");
 		List<Conector> tepYConsumosXml = new ArrayList<>();
 		
@@ -1369,11 +1222,69 @@ public class XmlService {
 		
 		String responseCrearTepYConsumo = postImportarXML(tepYConsumosXml);
 		System.out.println(responseCrearTepYConsumo);
+		crearArchivo(tepYConsumosXml, "SCP_TEP");
 		if(!responseCrearTepYConsumo.equals(RESPUESTA_OK)) {
 			return responseCrearTepYConsumo;
 		}
 		return responseCrearTepYConsumo;
 		
+	}
+	
+	public String crearRemision() {
+		
+		List<Conector> remisionXml = new ArrayList<>();
+		
+		DoctoremisionescomercialRemisiónversión03 encabezadoRemision = crearEncabezado();
+		remisionXml.add(encabezadoRemision);
+		
+		List<DoctoremisionescomercialMovtoventascomercialV9> movRemision = crearMovRemision();
+		remisionXml.addAll(movRemision);
+		
+		String respuestaRemision = postImportarXML(remisionXml);
+		
+		System.out.println(respuestaRemision);
+		return null;
+	}
+
+
+	private List<DoctoremisionescomercialMovtoventascomercialV9> crearMovRemision() {
+
+
+		DoctoremisionescomercialMovtoventascomercialV9 mov = new DoctoremisionescomercialMovtoventascomercialV9();
+		mov.setF_cia(22);
+		mov.setF470_id_co("001");
+		mov.setF470_id_tipo_docto("RM");
+		mov.setF470_nro_registro(96256); //Rowid item pedido 431
+		mov.setF470_id_bodega(BODEGA_ENTREGA_ITEM_FACTURABLE);//definir el pedido en que bodega se monta, aqui deberia entregar el producto termino
+		mov.setF470_id_concepto(501);
+		mov.setF470_id_motivo("01");
+		mov.setF470_ind_obsequio(0);
+		mov.setF470_id_co_movto("001"); //Movimient del pedido 431
+		mov.setF470_id_lista_precio("001"); // Del pedido
+		mov.setF470_id_unidad_medida("KG");
+		mov.setF470_cant_base(1.0); //Cantidad a remisionar kg 
+		mov.setF470_ind_naturaleza(1);
+		mov.setF470_id_un_movto("001");// del pedido
+		mov.setF470_id_item(CIA); // del pedido
+		
+		return null;
+	}
+
+
+	private DoctoremisionescomercialRemisiónversión03 crearEncabezado() {
+		DoctoremisionescomercialRemisiónversión03 encabezado = new DoctoremisionescomercialRemisiónversión03();
+		encabezado.setF_cia(22);
+		encabezado.setF_consec_auto_reg(1);
+		encabezado.setF350_id_co("001");
+		encabezado.setF350_id_tipo_docto("RM");
+		encabezado.setF350_fecha(obtenerFechaFormateada());
+		encabezado.setF350_ind_estado(1);
+		encabezado.setF350_ind_impresion(0);
+		encabezado.setF430_id_tipo_docto("PV");
+		encabezado.setF430_consec_docto(54850); //consecutivo pedido
+		
+		
+		return null;
 	}
 	
 	

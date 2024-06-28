@@ -46,7 +46,7 @@ public interface ItemOpService {
 
 	ItemInterface obtenerItemFabricaPorId(Integer idItem);
 
-	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItemFab);
+	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItemFab, Integer idFab);
 
 	void imprimirEtiquetas(List<DataItemImprimirDTO> data);
 

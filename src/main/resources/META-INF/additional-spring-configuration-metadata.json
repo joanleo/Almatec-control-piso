@@ -33,5 +33,20 @@
     "name": "pdf.folder.path",
     "type": "java.lang.String",
     "description": "A description for 'pdf.folder.path'"
+  },
+  {
+    "name": "spring.datasource.comunicador.url",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.comunicador.url'"
+  },
+  {
+    "name": "spring.datasource.comunicador.username",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.comunicador.username'"
+  },
+  {
+    "name": "spring.datasource.comunicador.password",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.comunicador.password'"
   }
 ]}

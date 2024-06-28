@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.almatec.controlpiso.integrapps.dtos.VistaKgPorCtDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaTiemposOperarios;
 import com.almatec.controlpiso.integrapps.entities.VistaTiemposOperariosId;
 import com.almatec.controlpiso.integrapps.interfaces.TiemposOperarioInterface;
@@ -29,7 +28,8 @@ public interface VistaTiemposOperariosRepository extends JpaRepository<VistaTiem
 			+ "FROM view_kg_ct ", nativeQuery = true)
 	List<VistaKgPorCt> findVistaKgPorCt();
 
-	@Query(value = "SELECT  tipo_op, num_op, centro_operacion, desc_item_op, total_kg_sol, total_kg_mes, year_month, cliente, proyecto "
+	@Query(value = "SELECT  tipo_op AS TipoOp, num_op AS NumOp, pv_cliente_co_id_descripcion AS CentroOperaciones, "
+			+ "desc_item_op AS ItemOp, total_kg_sol AS TotalKgSol, total_kg_mes AS TotalKgMes, year_month AS AnoMes, cliente AS Cliente "
 			+ "FROM view_kg_cumplidos_mes", nativeQuery = true)
 	List<VistaKgMes> findVistaKgMes();
 

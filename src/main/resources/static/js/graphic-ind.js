@@ -29,7 +29,7 @@
 	  	//console.log("Graficando productividad")
 	  	chart_ind.draw(data_1, options)
 	  	llenarTablaProductividadOperario(tiemposOperarios)
-    }, 13000)
+    }, 2 * 60 * 1000)
 
   }
 

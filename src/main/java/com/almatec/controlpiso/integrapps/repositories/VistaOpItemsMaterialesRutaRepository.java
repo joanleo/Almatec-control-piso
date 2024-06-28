@@ -9,12 +9,21 @@ import com.almatec.controlpiso.integrapps.entities.VistaOpItemsMaterialesRuta;
 
 public interface VistaOpItemsMaterialesRutaRepository extends JpaRepository<VistaOpItemsMaterialesRuta, String> {
 
+	@Query(value = "SELECT * "
+			+ "FROM view_op_items_ruta "
+			+ "WHERE ((item_centro_t_id = :idCT) AND (estado_op = 1)) "
+			+ "OR ((item_centro_t_id = :idCT) AND (estado_op = 2)) "
+			+ "OR ((material_centro_t_id = :idCT2) AND (estado_op = 1)) "
+			+ "OR ((material_centro_t_id = :idCT2) AND (estado_op = 2)) "
+			+ "ORDER BY id_op_ia ASC", nativeQuery = true)
 	List<VistaOpItemsMaterialesRuta> findByItemCentroTIdOrMaterialCentroTId(Integer idCT, Integer idCT2);
 
 	@Query(value = "SELECT * "
 			+ "FROM view_op_items_ruta "
-			+ "WHERE ((item_op_id = :idItem) AND (item_centro_t_id = :idCT)) "
-			+ "OR ((item_op_id = :idItem) AND(material_centro_t_id = :idCT)) ", nativeQuery = true)
+			+ "WHERE ((item_op_id = :idItem) AND (item_centro_t_id = :idCT) AND (estado_op = 1)) "
+			+ "OR ((item_op_id = :idItem) AND (item_centro_t_id = :idCT) AND (estado_op = 2)) "
+			+ "OR ((item_op_id = :idItem) AND (material_centro_t_id = :idCT) AND (estado_op = 1)) "
+			+ "OR ((item_op_id = :idItem) AND (material_centro_t_id = :idCT) AND (estado_op = 2)) ", nativeQuery = true)
 	List<VistaOpItemsMaterialesRuta> buscarItemCt(Long idItem, Integer idCT);
 
 }

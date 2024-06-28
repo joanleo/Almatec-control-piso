@@ -20,12 +20,10 @@ public class GestionProduccionService {
 	
 	public List<VistaKgPorCtDTO> crearInformeGeneral() {
 		List<VistaKgPorCt> lista = vistaTiemposOperariosRepo.findVistaKgPorCt();
-		List<VistaKgPorCtDTO> result = lista
+		return lista
 				.stream()
 				.map(VistaKgPorCtDTO::new)
 				.collect(Collectors.toList());
-		result.forEach(System.out::println);
-		return result;
 	}
 
 	public List<VistaKgMesDTO> obtenerDataMes() {
@@ -34,7 +32,6 @@ public class GestionProduccionService {
 				.stream()
 				.map(VistaKgMesDTO::new)
 				.collect(Collectors.toList());
-		result.forEach(System.out::println);
 		return result;
 	}
 

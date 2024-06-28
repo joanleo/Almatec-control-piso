@@ -4,12 +4,22 @@
 	<head th:replace="fragments/head :: head('Configuracion :: Roles')"></head>
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('*')"></nav>				 
-		<div class="container my-5" style="width:60%;">
-			<h1>Menus</h1>
+		<div class="container my-5" style="width:50%;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			  </button>
+			 </div>
+			<h1>Roles</h1>
 			<a class="btn btn-primary mt-4" th:href="@{/roles/nuevo}" role="button">Nuevo</a>
-			<div class="table-responsive text-nowrap my-5">
-				<table class="table table-striped align-middle table-hover table-bordered rounded" aria-describedby="table-description">
-					<thead class="table-dark">
+			<div class="table-responsive text-nowrap my-5 rounded-3 shadow-sm">
+				<table class="table table-striped align-middle table-hover" aria-describedby="table-description">
+					<thead class="table-light">
 						<tr>
 							<th>#</th>
 							<th>Nombre</th>
@@ -20,9 +30,14 @@
 						<tr th:each="role, stat: ${roles}">
 							<td style="width: 3rem;">[[${stat.index + 1}]]</td>
 							<td th:text="${role.nombre}"></td>
-							<td style="width: 13rem; padding-left: 1rem;">
-								<a class="btn btn-primary" href="#" role="button">Editar</a>
-			                	<a class="btn btn-danger" href="#" role="button" th:data-ct-id="${role.idRol}">Eliminar</a>
+							<td>
+								<div style="display: flex; width: 13rem; padding-left: 1rem;">
+									<a class="btn btn-primary me-3" th:href="@{/roles/editar/{idRole}(idRole=${role.idRole})}" role="button">Editar</a>
+									<form action="/roles/eliminar" method="post">
+										<input type="hidden" name="idRole" th:value="${role.idRole}" />
+					                	<button  class="btn btn-danger" type="submit">Eliminar</button >
+									</form>									
+								</div>
 							</td>
 						</tr>
 					</tbody>

@@ -10,11 +10,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.security.entities.Role;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.repositories.UsuarioRepository;
 
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired

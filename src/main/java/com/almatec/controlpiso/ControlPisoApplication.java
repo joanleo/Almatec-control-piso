@@ -2,6 +2,7 @@ package com.almatec.controlpiso;
 
 import java.awt.image.BufferedImage;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -24,5 +25,10 @@ public class ControlPisoApplication {
     HttpMessageConverter<BufferedImage> createImageHttpMessageConverter() {
         return new BufferedImageHttpMessageConverter();
     }
+	
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
 
 }

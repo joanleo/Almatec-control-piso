@@ -40,6 +40,9 @@ public class NovedadCt {
 	
 	private String lote;
 	
+	@Column(name = "ind_registro_siesa")
+	private Boolean enviadoErp = false;
+	
 	@Column(name = "cod_erp_mp")
 	private Integer codErpMp;
 
@@ -136,11 +139,19 @@ public class NovedadCt {
 		this.codErpMp = codErpMp;
 	}
 
+	public Boolean getEnviadoErp() {
+		return enviadoErp;
+	}
+
+	public void setEnviadoErp(Boolean enviadoErp) {
+		this.enviadoErp = enviadoErp;
+	}
+
 	@Override
 	public String toString() {
 		return "NovedadCt [idNovedad=" + idNovedad + ", IdItem=" + IdItem + ", idItmFab=" + idItmFab + ", idParte="
 				+ idParte + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario + ", noConforme="
 				+ noConforme + ", desperdicio=" + desperdicio + ", sobrante=" + sobrante + ", lote=" + lote
-				+ ", codErpMp=" + codErpMp + "]";
+				+ ", enviadoErp=" + enviadoErp + ", codErpMp=" + codErpMp + "]";
 	}
 }

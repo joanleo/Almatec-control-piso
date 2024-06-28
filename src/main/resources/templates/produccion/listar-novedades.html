@@ -6,6 +6,10 @@
 		<nav th:replace="fragments/navbar :: nav-bar('Produccion')"></nav>
 				 
 		<div class="container my-5">
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+			
 			<h1>Novedades</h1>
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
@@ -32,12 +36,14 @@
 				<table class="table table-striped align-middle table-hover" aria-describedby="table-description">
 					<thead class="table-light">
 						<tr>
+							<th></th>
 							<th>Proyecto</th>
 							<th>Fecha</th>
-							<th>Codigo</th>
+							<!--<th>Codigo</th>-->
 							<th>Descripcion</th>
-							<th>Centro T</th>
-							<th>Operario</th>
+							<th>C. Trabajo</th>
+							<th>Cod M.P</th>
+							<th>Lote M.P</th>
 							<th>Sobrante (piezas)</th>
 							<th>No conforme (ml)</th>
 							<th >Desperdicio (ml)</th>
@@ -46,17 +52,19 @@
 					</thead>
 					<tbody>
 						<tr th:each="novedad : ${novedades}">
-							<td th:text="${ novedad.proyecto }"></td>
+							<td class="text-nowrap" th:text="${'N-' + novedad.idNovedad}"></td>
+							<td class="text-nowrap" th:text="${ novedad.op }"></td>
 							<td th:text="${#dates.format(novedad.fechaCreachion, 'dd/MM/yyyy')}"></td>
-							<td th:text="${ novedad.idItemFab == 0 ? novedad.idPerfil: 	novedad.idItemFab }"></td>
+							<!--<td th:text="${ novedad.idItemFab == 0 ? novedad.idPerfil: 	novedad.idItemFab }"></td>-->
 							<td th:text="${ novedad.descripcion}"></td>
-							<td th:text="${ novedad.idCentroTrabajo }"></td>
-							<td th:text="${ novedad.nombreOperario }"></td>
+							<td th:text="${ novedad.centroTrabajo }"></td>
+							<td th:text="${ novedad.codigoErpMateriaPrima }"></td>
+							<td th:text="${ novedad.loteMateriaPrima }"></td>
 							<td th:text="${ novedad.sobrante }"></td>
 							<td th:text="${ novedad.noConforme }"></td>
 							<td th:text="${ novedad.desperdicio }"></td>
 							<td>
-								<a role="button" class="btn btn-primary">Registro ERP</a>
+								<button th:if="${!novedad.enviadoErp}" type="button" class="btn btn-primary btn-sm" th:id="${novedad.idNovedad}" onclick="actualizaEstado(event)">Registrado</button>
 							</td>
 						</tr>
 					</tbody>
@@ -66,5 +74,6 @@
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/produccion/novedades.js"></script>
 	</body>
 </html>

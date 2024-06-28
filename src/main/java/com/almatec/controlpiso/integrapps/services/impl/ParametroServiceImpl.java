@@ -12,7 +12,6 @@ import com.almatec.controlpiso.integrapps.dtos.ParametroDTO;
 import com.almatec.controlpiso.integrapps.entities.Parametro;
 import com.almatec.controlpiso.integrapps.repositories.ParametroRepository;
 import com.almatec.controlpiso.integrapps.services.ParametroService;
-import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 
 @Transactional
 @Service

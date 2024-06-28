@@ -13,13 +13,12 @@ import com.almatec.controlpiso.integrapps.entities.VistaPedidosErp;
 public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp, Long>, JpaSpecificationExecutor<VistaPedidosErp> {
 
 	List<VistaPedidosErp> findByTipoAndEstadoOrderByNoPvDesc(String tipoP, Integer idEstado);
-
 	@Query(value = "SELECT * "
-			+ "FROM Pedidos_Erp_Estado "
-			+ "WHERE CONCAT(Pedidos_Erp_Estado.fecha, Pedidos_Erp_Estado.Pedido, Pedidos_Erp_Estado.Nit_Cliente, Pedidos_Erp_Estado.Cliente, Pedidos_Erp_Estado.f431_id_proyecto) "
+			+ "FROM view_pedidos_estado_erp "
+			+ "WHERE CONCAT(pv_fecha, pv_estado, pv_cliente_nit, pv_cliente_razon_social, pv_cliente_co_id_descripcion) "
 			+ "LIKE %:keyword% "
-			+ "AND Tipo_Pv = :tipoP "
-			+ "AND Id_estado = :idEstado", nativeQuery = true)
+			+ "AND pv_tipo = :tipoP "
+			+ "AND pv_id_estado = :idEstado", nativeQuery = true)
 	List<VistaPedidosErp> buscarPedidosErpFilterByKeyword(@Param("tipoP") String tipoP, 
 			@Param("idEstado") int idEstado, 
 			@Param("keyword") String keyword);

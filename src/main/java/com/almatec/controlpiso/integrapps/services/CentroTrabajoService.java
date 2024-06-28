@@ -12,7 +12,6 @@ import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.dtos.TiemposOperariosDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
-import com.almatec.controlpiso.integrapps.entities.VistaTiemposOperarios;
 import com.almatec.controlpiso.integrapps.interfaces.DatosOpItem;
 
 public interface CentroTrabajoService {

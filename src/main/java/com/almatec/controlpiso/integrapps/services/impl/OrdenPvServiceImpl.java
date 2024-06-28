@@ -10,7 +10,8 @@ import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
-import com.almatec.controlpiso.integrapps.entities.OrdenPv;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
+import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
 import com.almatec.controlpiso.integrapps.repositories.OrdenPvRepository;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 
@@ -21,12 +22,12 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	private OrdenPvRepository ordenPvRepo;
 
 	@Override
-	public List<OrdenPv> buscarProyectos() {
+	public List<VistaOrdenPv> buscarProyectos() {
 		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
 	}
 
 	@Override
-	public List<OrdenPv> buscarProyectos(String keyword) {
+	public List<VistaOrdenPv> buscarProyectos(String keyword) {
 		return ordenPvRepo.buscarPorKeyword(keyword);
 	}
 
@@ -60,9 +61,9 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 
 	@Override
 	public List<OpProduccionDTO> buscarOrdenesPorIdProyecto(String idProyecto) {
-		List<OrdenPv> ordenesBd = ordenPvRepo.findByIdProyecto(idProyecto);
+		List<VistaOrdenPv> ordenesBd = ordenPvRepo.findByIdProyecto(idProyecto);
 		List<OpProduccionDTO> ordenes = new ArrayList<>();
-		for(OrdenPv o: ordenesBd) {
+		for(VistaOrdenPv o: ordenesBd) {
 			OpProduccionDTO orden = new OpProduccionDTO();
 			orden.setTipoOp(o.getTipoOp());
 			orden.setNumOp(o.getNumOp());
@@ -80,13 +81,13 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	}
 
 	@Override
-	public OrdenPv obtenerOrdenPorId(Integer idPvIntegrapps) {
+	public VistaOrdenPv obtenerOrdenPorId(Integer idPvIntegrapps) {
 		return ordenPvRepo.findById(idPvIntegrapps)
 				.orElseThrow(()-> new ResourceNotFoundException("No se encontro la orden PV con id: " + idPvIntegrapps));
 	}
 
 	@Override
-	public void guardarOrden(OrdenPv orden) {
+	public void guardarOrden(VistaOrdenPv orden) {
 		ordenPvRepo.save(orden);
 		
 	}
@@ -97,19 +98,19 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	}
 
 	@Override
-	public void actualizarDatosOp(ConsultaOpCreadaDTO creado, OrdenPv ordenIntegrapps) {
+	public void actualizarDatosOp(ConsultaOpCreadaDTO creado, VistaOrdenPv ordenIntegrapps) {
 		String opUnoEE = creado.getF850_id_tipo_docto()+"-"+creado.getF850_consec_docto();
 		ordenPvRepo.actualizarOp(creado, opUnoEE, ordenIntegrapps);
 		
 	}
 
 	@Override
-	public OrdenPv obtenerOrdenPorNumPv(Integer noPedido) {
+	public OrdenPvEstadoData obtenerOrdenPorNumPv(Integer noPedido) {
 		return ordenPvRepo.findByNumOp(noPedido);
 	}
 
 	@Override
-	public List<OrdenPv> obtenerOpActivas() {
+	public List<VistaOrdenPv> obtenerOpActivas() {
 		
 		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
 	}

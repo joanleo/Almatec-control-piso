@@ -1,7 +1,5 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
-import java.util.Set;
-
 import com.almatec.controlpiso.security.entities.Role;
 import com.almatec.controlpiso.security.entities.Usuario;
 

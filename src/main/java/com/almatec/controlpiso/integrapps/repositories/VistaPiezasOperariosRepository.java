@@ -18,9 +18,9 @@ public interface VistaPiezasOperariosRepository extends JpaRepository<VistaPieza
 	List<VistaPiezasOperarios> findPiezasOperariosProceso(OperarioDTO operario);
 
 	@Query(value = "SELECT id, id_reg_pieza, id_config_proceso, id_centro_trabajo, "
-			+ "id_operario, is_pieza_activa, cliente, proyecto, id_item_op, id_item, descripcion, cant_req, peso_item, "
+			+ "id_operario, is_pieza_activa, cliente, c_o, id_item_op, id_item, descripcion, cant_req, peso_item, "
 			+ "codigo_erp, long_item, prioridad, id_op_ia, tipo_op_erp, num_op_erp, esquema_pintura, N_sstranscurrido, N_ssreproceso, "
-			+ "nombre_operario, color, id_item_parte, cant_cumplida, unidad_negocio, ruta_plano  "
+			+ "nombre_operario, color, id_item_parte, cant_cumplida, ruta_plano, cant_fabricada  "
 			+ "FROM view_piezas_operarios_proceso "
 			+ "WHERE id_config_proceso = :idConfig "
 			+ "AND id_centro_trabajo = :idCT "

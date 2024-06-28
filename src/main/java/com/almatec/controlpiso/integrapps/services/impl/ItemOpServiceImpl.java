@@ -24,7 +24,7 @@ import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 import com.almatec.controlpiso.integrapps.dtos.OpDTO;
 import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
-import com.almatec.controlpiso.integrapps.entities.OrdenPv;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.entities.RutaItem;
 import com.almatec.controlpiso.integrapps.interfaces.ConsultaOpIdInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
@@ -265,7 +265,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 				.map(entry ->{					
 					OpDTO opDTO = new OpDTO();
 					opDTO.setIdOp(entry.getKey());
-					OrdenPv ordenPv = ordenPvService.obtenerOrdenPorId(opDTO.getIdOp());
+					VistaOrdenPv ordenPv = ordenPvService.obtenerOrdenPorId(opDTO.getIdOp());
 					opDTO.setTipoOp(ordenPv.getTipoOp());
 					opDTO.setNumOp(ordenPv.getNumOp());
 					opDTO.setCliente(ordenPv.getCliente());
@@ -355,9 +355,9 @@ public class ItemOpServiceImpl implements ItemOpService {
 	}
 
 	@Override
-	public List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItem) {
+	public List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(Integer idItem, Integer idFab) {
 		try {
-			return itemOpRepo.obtenerListaMaterialesItemPorIdItem(idItem);
+			return itemOpRepo.obtenerListaMaterialesItemPorIdItem(idItem, idFab);
 			
 		}catch (Exception e) {
 			e.printStackTrace();

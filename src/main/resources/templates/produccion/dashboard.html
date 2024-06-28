@@ -23,8 +23,9 @@
 			 </div>
 			 
             
-			<div id="nombre-centro-trabajo" style="display: flex; justify-content: center; margin-bottom: 1rem;">
-				<h1 id="title-ct"></h1>				
+			<div id="title" style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 1rem;">
+				<h1 id="title-nombre-ct"></h1>
+				<span id="title-turno"></span>
 			</div>			
 			<div class="row1" id="lectura-codigos" style="justify-content: space-between;">
 				<div>
@@ -70,11 +71,11 @@
 							  <tr>
 								<th>#</th>
 								<th>OP</th>
-								<th>Item</th>
+								<!-- <th>Item</th>-->
 								<th>Cliente</th>
 								<th>Proyecto</th>
 								<th>Descripcion</th>
-								<th>Tiempo</th>
+								<th>Cant Pendiente</th>
 								<th>Operario</th>
 								<!-- <th>Stdr</th> -->
 								<th>Estado</th>
@@ -171,7 +172,7 @@
 							  </div>							  
 						  </div>
 						  
-						  <div class="input-group my-3 size-m">
+						  <div class="input-group my-3 ps-3 size-m">
 							  <span class="input-group-text">Esquema: </span>
 							  <input type="text" aria-label="esquema" id="esquema" class="form-control" readonly style="text-align: right;"/>
 						  </div>
@@ -181,7 +182,7 @@
 								  <div class="table-responsive rounded-3 shadow-sm" >
 									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-items-description">
 									  		<thead>
-									            <tr>
+									            <tr id="encabezado-listado-items">
 													<th>#</th>
 													<th>REF</th>
 									                <th>DESCRIPCION</th>
@@ -191,7 +192,6 @@
 									                <th>CANT SOL</th>
 									                <th>PESO UN</th>
 									                <th>PESO TTL</th>
-									                <th></th>
 									            </tr>
 									        </thead>
 									        <tbody id="listado-items">
@@ -383,11 +383,6 @@
 		<script src="/js/loader.js"></script>
 		<script src="/js/graphic-ind.js"></script>
 		<script src="/js/graphic-pie.js"></script>
-		<script src="/js/produccion.js"></script>
-		<script src="/js/logout.js"></script>
-		
-		
-
-		
+		<script src="/js/produccion/produccion.js"></script>
 	</body>
 </html>

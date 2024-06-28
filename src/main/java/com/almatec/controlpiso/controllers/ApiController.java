@@ -17,14 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaService;
+import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.erp.dto.ListaMaterialesDTO;
-import com.almatec.controlpiso.erp.dto.RutaDTO;
 import com.almatec.controlpiso.erp.webservices.XmlService;
 import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
-import com.almatec.controlpiso.integrapps.services.DetalleSolicitudMateriaPrimaService;
-import com.almatec.controlpiso.integrapps.services.SolicitudMateriaPrimaService;
 
 @Controller
 @RequestMapping("/api")
@@ -64,7 +63,7 @@ public class ApiController {
 	    }
 	}
 	
-	@ResponseBody
+	/*@ResponseBody
 	@PostMapping("/rutas")
 	public ResponseEntity<?> crearRutas(@RequestBody List<RutaDTO> ruta){
 		
@@ -80,7 +79,7 @@ public class ApiController {
 	    }
 	}
 	
-	/*@ResponseBody
+	@ResponseBody
 	@PostMapping("/rutas/{id}")
 	public ResponseEntity<?> crearRutasId(@PathVariable Integer id) throws IOException{
 		logger.info("Se recibe solicitud de creacion de ruta por id: {}", id);
@@ -111,7 +110,6 @@ public class ApiController {
 		List<DetalleSolicitudMateriaPrima> detalleSol = detalleSolicitudMateriaPrimaService.obtenerDetallePorIdSol(idSol);
 		xmlService.asignarParametros();
 		ErrorMensaje mensaje = xmlService.crearTransferencia(solicitud, detalleSol, idSol);
-		//ErrorMensaje mensaje = xmlService.crearTransferenciaYCompromisoDesdeOP(solicitud, detalleSol, idSol);
 		Map<String, Object> response = new HashMap<>();
 		if(Boolean.FALSE.equals(mensaje.getError())) {
 			response.put("status", "success");

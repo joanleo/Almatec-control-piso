@@ -16,6 +16,7 @@ public class ItemOpCtDTO implements CommonDTO {
 	private String item_centro_t_nombre;
 	private BigDecimal item_peso;
 	private String item_color;
+	private BigDecimal longitud;
 	private Set<ComponenteDTO> componentes = new HashSet<>();
 	private Integer prioridad;
 
@@ -107,12 +108,20 @@ public class ItemOpCtDTO implements CommonDTO {
 		componentes.add(componente);
 	}
 
+	public BigDecimal getLongitud() {
+		return longitud;
+	}
+
+	public void setLongitud(BigDecimal longitud) {
+		this.longitud = longitud;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemOpCtDTO [item_op_id=" + item_op_id + ", item_id=" + item_id + ", item_desc=" + item_desc
 				+ ", cant_req=" + cant_req + ", item_centro_t_id=" + item_centro_t_id + ", item_centro_t_nombre="
-				+ item_centro_t_nombre + ", item_peso=" + item_peso + ", item_color=" + item_color + ", componentes="
-				+ componentes + ", prioridad=" + prioridad + "]";
+				+ item_centro_t_nombre + ", item_peso=" + item_peso + ", item_color=" + item_color + ", longitud="
+				+ longitud + ", componentes=" + componentes + ", prioridad=" + prioridad + "]";
 	}
 
 	@Override
@@ -140,19 +149,16 @@ public class ItemOpCtDTO implements CommonDTO {
 
 	@Override
 	public String getCentroTrabajo() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getDescripcion() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Integer getCant() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

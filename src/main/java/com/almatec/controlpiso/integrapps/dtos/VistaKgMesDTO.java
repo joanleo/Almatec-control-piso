@@ -15,11 +15,11 @@ public class VistaKgMesDTO {
 	}
 
 	public VistaKgMesDTO(VistaKgMes item) {
-		op = item.gettipo_op() + "-" + item.getnum_op();
-		centrOperaciones = item.getcentro_operacion();
-		kgSol = item.gettotal_kg_sol();
-		kgMes = item.gettotal_kg_mes();
-		anoMes = item.getyear_month();
+		op = item.getTipoOp() + "-" + item.getNumOp();
+		centrOperaciones = item.getCentroOperaciones();
+		kgSol = item.getTotalKgSol();
+		kgMes = item.getTotalKgMes();
+		anoMes = item.getAnoMes();
 	}
 
 	public String getOp() {

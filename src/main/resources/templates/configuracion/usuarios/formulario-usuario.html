@@ -9,13 +9,11 @@
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
 			  </button>
 			</div>
 			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
 			  <span th:text="${error}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
 			 <div class="card-body" style="margin: auto; width: 80%;">
@@ -50,7 +48,7 @@
 	                   <label for="role">Perfil : </label>
 		                   <select class="form-control" id="role" th:field="*{role}" required>
 		                   	<option value=""></option>
-		                       <option th:each="role : ${roles}" th:value="${role.idRol}" th:text="${role.nombre}" th:selected="${usuario.role?.idRol == role.idRol}"></option>
+		                       <option th:each="role : ${roles}" th:value="${role.idRole}" th:text="${role.nombre}" th:selected="${usuario.role?.idRole == role.idRole}"></option>
 		                   </select>						   
 					   
 	               	</div>

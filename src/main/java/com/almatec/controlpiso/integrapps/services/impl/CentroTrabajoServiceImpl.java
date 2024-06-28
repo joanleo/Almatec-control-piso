@@ -244,6 +244,8 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setCantFab(cantFabricada);
 		    reporte.setColor(item.getItem_color());
 		    
+		    System.out.println(" Reporte ct" + reporte);
+		    
 		    return reporte;
 		}
 		

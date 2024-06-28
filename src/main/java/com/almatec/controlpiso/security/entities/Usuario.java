@@ -1,28 +1,24 @@
 package com.almatec.controlpiso.security.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity
-@Table(name = "usuarios", uniqueConstraints = { @UniqueConstraint(columnNames = { "usu_login" }) })
+@Table(name = "web_usuarios", uniqueConstraints = { @UniqueConstraint(columnNames = { "usu_login" }) })
 public class Usuario {
 
 	@Id
@@ -55,17 +51,13 @@ public class Usuario {
 	@ManyToOne()
     @JoinColumn(name="id_role", referencedColumnName = "id_role")
 	private Role role;
-	
-	/*@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "usuario_rol_web",
-            joinColumns = @JoinColumn(name = "id_usuario", referencedColumnName = "usu_id"),
-            inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id_role"))
-	@MapKey(name = "cia")
-	private Set<Role> roles = new HashSet<>();*/
-	
+		
 	@Column(name = "usu_docid")
 	private String cedula;
+	
+	@OneToMany(mappedBy = "usuarioCreaRemision")
+	@JsonBackReference
+	private List<Remision> remisionesCreadas;
 
 	public Usuario() {
 		super();

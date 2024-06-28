@@ -17,10 +17,15 @@ public interface ListaMRepository extends JpaRepository<ListaM, Integer> {
 			+ "Lista_MP_Ops.Tipo, Lista_MP_Ops.Fecha, Lista_MP_Ops.Estado, Lista_MP_Ops.Env_LM, UnoEE_Prueba.dbo.t120_mc_items.f120_id_cia, "
 			+ "UnoEE_Prueba.dbo.t120_mc_items.f120_descripcion "
 			+ "FROM  Lista_MP_Ops "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t120_mc_items "
-			+ "ON Lista_MP_Ops.Cod_Erp = UnoEE_Prueba.dbo.t120_mc_items.f120_id "
-			+ "WHERE   (UnoEE_Prueba.dbo.t120_mc_items.f120_id_cia = 22) "
-			+ "AND Lista_MP_Ops.id_op_ia = :idOP ", nativeQuery = true)
+			+ "LEFT JOIN UnoEE_Prueba.dbo.t120_mc_items "
+			+ "ON Lista_MP_Ops.Cod_Erp = UnoEE_Prueba.dbo.t120_mc_items.f120_id AND UnoEE_Prueba.dbo.t120_mc_items.f120_id_cia = 22"
+			+ "INNER JOIN orden_pv "
+			+ "ON Lista_MP_Ops.id_op_ia = orden_pv.id_op_ia "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t850_mf_op_docto "
+			+ "ON orden_pv.Row850_id = UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid "
+			+ "WHERE Lista_MP_Ops.id_op_ia = :idOP "
+			+ "AND ((UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
+			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2))", nativeQuery = true)
 	List<ListaMInterface> ObtenerListaInterdacePorIdOp(@Param("idOP") Integer idOP);
 
 	List<ListaM> findByIdOpIntegrapps(Integer idOp);

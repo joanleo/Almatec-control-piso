@@ -20,7 +20,7 @@ public class PedidoSpecification {
 			List<Predicate> predicates = new ArrayList<>();
 			
 			if(filtro.getUn() != null) {
-				predicates.add(criteriaBuilder.like(root.get("proyecto"), "%" + filtro.getUn() + "%"));
+				predicates.add(criteriaBuilder.like(root.get("co"), "%" + filtro.getUn() + "%"));
 			}
 			if(filtro.getAsesor() != null) {
 				predicates.add(criteriaBuilder.like(root.get("vendedor"), "%" + filtro.getAsesor() + "%"));

@@ -35,7 +35,6 @@ public class VistaItemPedidoErpServiceImpl implements VistaItemPedidoErpService 
 
 	@Override
 	public List<VistaItemPedidoErp> findByNoPedidopAndReferencia(Integer noPedido, String ref) {
-		// TODO Auto-generated method stub
 		return vistaItemPedidoRepo.findByNoPedidoAndReferencia(noPedido, ref);
 	}
 

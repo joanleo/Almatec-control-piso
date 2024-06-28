@@ -26,7 +26,6 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 
 	@Override
 	public Set<OpCentroTrabajoDTO> buscarOpCt(Integer idCT) {
-		System.out.println("Buscando items que pasan por el ct erp: "+ idCT);
 		List<VistaOpItemsMaterialesRuta> listaRutas = vistaOpItemsMaterialesRutaRepo.findByItemCentroTIdOrMaterialCentroTId(idCT, idCT);
 		Set<OpCentroTrabajoDTO> ordenesProduccion = new HashSet<>();
 		if(!listaRutas.isEmpty()) {
@@ -66,6 +65,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
         mergedItem.setItem_peso(itemDTOs.get(0).getItem_peso());
         mergedItem.setItem_color(itemDTOs.get(0).getItem_color());
         mergedItem.setPrioridad(itemDTOs.get(0).getPrioridad());
+        mergedItem.setLongitud(itemDTOs.get(0).getLongitud());
         	
         List<ComponenteDTO> mergedComponentes = itemDTOs.stream()
                 .flatMap(item -> item.getComponentes().stream())
@@ -87,12 +87,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 			List<ItemOpCtDTO> conjuntoItems = new ArrayList<>(mergeItems(new ArrayList<>(setItems)));			
 			op.setItems(conjuntoItems);
 		}
-		filterOrdenesProduccion.forEach(op->{
-			System.out.println(op.getOp());
-			op.getItems().forEach(item->{
-				System.out.println(item.getItem_id());
-			});
-		});
+
 		return filterOrdenesProduccion;
 	}
 

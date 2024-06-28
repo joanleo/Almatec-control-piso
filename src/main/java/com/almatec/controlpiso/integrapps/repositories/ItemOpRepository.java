@@ -11,6 +11,7 @@ import com.almatec.controlpiso.integrapps.interfaces.ConsultaOpIdInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
+import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemision;
 
 
 public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
@@ -44,14 +45,18 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 	@Query(value = "SELECT DISTINCT items_op.id_op_ia,orden_pv.Num_Op "
 			+ "FROM      items_op "
 			+ "INNER JOIN orden_pv ON items_op.id_op_ia = orden_pv.id_op_ia "
-			+ "AND orden_pv.Num_Op <> 0 ", nativeQuery = true)
+			+ "AND orden_pv.Num_Op <> 0 "
+			+ "LEFT JOIN UnoEE_Prueba.dbo.t850_mf_op_docto "
+			+ "ON orden_pv.Row850_id = UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid "
+			+ "WHERE   (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
+			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2)", nativeQuery = true)
 	List<ConsultaOpIdInterface> obtenerNumsOps();
 
 	@Query(value = "SELECT Json "
 			+ "FROM Apis_Json "
 			+ "WHERE Id_op_ia = :idOPI "
 			+ "AND Tipo = :tipo "
-			+ "AND Estado = 0", nativeQuery = true)
+			+ "AND Estado = 0 ", nativeQuery = true)
 	String obtenerJsonPorIdOPIntegrappsYTipo(@Param("idOPI")Integer idOPI, @Param("tipo")String tipo);
 
 
@@ -80,7 +85,29 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "INNER JOIN items_fabrica ON im.id_item = items_fabrica.Item_fab_Id "
 			+ "LEFT OUTER JOIN items_op ON items_fabrica.Item_fab_Id = items_op.Item_fab_Id "
 			+ "LEFT OUTER JOIN z_item_materia_prima AS im_1 ON im.id_materia_prima = im_1.id_item "
-			+ "WHERE items_fabrica.Item_fab_Id = :idItem ", nativeQuery = true)
-	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(@Param("idItem") Integer idItem);
+			+ "WHERE items_op.item_id = :idItem "
+			+ "AND items_fabrica.Item_fab_Id = :idFab ", nativeQuery = true)
+	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(@Param("idItem") Integer idItem, @Param("idFab") Integer idFab);
+
+	@Query(value = "SELECT DISTINCT io.id_op_ia AS IdOpIa, v.Tipo_OP AS TipoOp, v.Num_Op AS NumOp,"
+			+ "v.f200_razon_social AS Cliente,  RTRIM(v.f285_id) + '-' + RTRIM(v.f285_descripcion) AS Proyecto "
+			+ "FROM      items_op AS io "
+			+ "INNER JOIN view_orden_pv AS v ON io.id_op_ia = v.id_op_ia "
+			+ "WHERE   (v.id_est_doc = 1 AND io.cant_cumplida <= io.cant_req) "
+			+ "OR      (v.id_est_doc = 2 AND io.cant_cumplida <= io.cant_req)", nativeQuery = true)
+	List<OpConItemPendientePorRemision> buscarOpActivasConItemsPendientesPorEntregar();
+
+	@Query(value = "SELECT   io.item_id, io.id_op_ia, io.Item_fab_Id, io.grupo, io.marca, io.codigo_erp, io.descripcion, io.peso_unitario, "
+			+ "io.unidad, io.cant_req, io.cant_cumplida, io.cant_existencias, io.cant_despacha, io.pintura, io.grp_pintura, io.peso_pintura, "
+			+ "io.cod_pintura, io.activo, io.ruta_plano, io.id_estado, io.fecha_crea, io.especial, io.req_plano, io.cant_imp_eti, io.ct_comsumo "
+			+ "FROM      items_op AS io "
+			+ "INNER JOIN view_orden_pv AS v "
+			+ "ON io.id_op_ia = v.id_op_ia "
+			+ "WHERE  (io.id_op_ia = :idOpIa) "
+			+ "AND ((Item_fab_Id <> 0 AND cant_cumplida > 0) OR codigo_erp <> 0)"
+			+ "AND (v.id_est_doc = 1) "
+			+ "OR  (v.id_est_doc = 2) "
+			+ "ORDER BY io.Item_fab_Id", nativeQuery = true)
+	List<ItemOp> buscarItemsARemisionarPorIdOpIa(@Param("idOpIa") Integer idOpIa);
 
 }

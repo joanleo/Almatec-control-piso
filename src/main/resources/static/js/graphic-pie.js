@@ -30,7 +30,7 @@
 		data = google.visualization.arrayToDataTable(paradas)
 	  	//console.log("Graficando paradas")
 	  	chart.draw(data)
-    }, 13000)
+    }, 2 * 60 * 1000)
   }
   
   async function obtenerInfoParadas(){

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Ingenieria :: Nuevo memorando')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div class="container my-5" style="width:90%;">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+							
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			 </div>
+			 <div class="card-body" style="margin: auto; width: 80%;">
+			 <h2 class="mb-5">Formulario memorando</h2>
+	 		    <form id="memoForm">
+					<div class="row d-flex justify-content-between">
+						<div class="input-group my-3 size-m">
+				           <span class="input-group-text">OP </span>
+		                   <select class="form-control" id="id-op" required>
+							   <option value="" disabled selected hidden>Selecciona numero de OP</option>
+		                       <option th:each="num : ${numsOps}" th:value="${num.idOpIa}" th:text="${num.numOp}"></option>
+		                   </select>	
+				    	</div>
+						
+						<div class="input-group my-3 size-xxl">
+				           <span class="input-group-text">Solicitante </span>
+				           <input type="text" class="form-control" id="usuario" name="usuario" th:value="${usuario.nombres}" readonly style="text-align: right;" />
+						   <input type="hidden" id="usuarioId" name="usuarioId" th:value="${usuario.id}" aria-hidden="true"/>
+				    	</div>						
+					</div>
+					
+					<div id="items-op" class="my-4 d-flex justify-content-between"></div>
+					
+					<div class="table-responsive rounded-3 shadows-sm my-4">
+						<table class="table tavle-striped table-hover caption-top">
+							<caption>Items memorando</caption>
+							<thead class="table-light ">
+								<tr>
+									<th>Id</th>
+									<th>Descripcion</th>
+									<th class="text-nowrap">Cant Op</th>
+									<th>Cant Memo</th>
+									<th>Accion</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody id="body-detalle-memo">
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="form-floating">
+					  <textarea class="form-control" placeholder="Observaciones del memorando" id="observaciones" style="height: 100px" required></textarea>
+					  <label for="observaciones">Observaciones</label>
+					</div>
+									
+					<div class="d-grid my-5">
+						<button class="btn btn-primary" type="submit" id="submitMemo" >Crear memorando</button>
+					</div>
+				 </form>
+				 
+				 <div class="modal" id="respuestaModal" tabindex="-1" aria-labelledby="respuestaModalLabel" aria-hidden="true">
+					  <div class="modal-dialog">
+					    <div class="modal-content">
+					      <div class="modal-header" style="background-color: #007B63; color: #FFFFFF;">
+					        <h5 class="modal-title" id="respuestaModalLabel">Creacion de tranferencia</h5>
+					        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					      </div>
+					      <div class="modal-body" id="respuestaModalBody">
+					      </div>
+					      <div class="modal-footer">
+					        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					      </div>
+					    </div>
+					  </div>
+				</div>
+			 </div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/ingenieria/formulario-memo.js"></script>
+	</body>
+</html>

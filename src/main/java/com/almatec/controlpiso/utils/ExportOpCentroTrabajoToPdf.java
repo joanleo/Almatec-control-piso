@@ -62,21 +62,30 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
         }
 	}
 	
-	private void tableData(PdfPTable table, List<RowItemPdf> rows) {
+	private void tableData(PdfPTable table, List<RowItemPdf> rows, BigDecimal[] totalPesoTtl, boolean priority) {
 		Font font = FontFactory.getFont(FontFactory.HELVETICA);
 		font.setSize(7);
 		
+		BigDecimal total = BigDecimal.ZERO;
 		int count =  1;
 		for(RowItemPdf row: rows) {
+			System.out.println(row);
 			Phrase phrase = new Phrase(String.valueOf(count), font);
 			PdfPCell cell = new PdfPCell(phrase);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_CENTER);
 			table.addCell(cell);
 			
-			phrase = new Phrase(row.getRef(), font);
+			phrase = new Phrase(row.getOp(), font);
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setPhrase(phrase);
 			table.addCell(cell);
+			
+			phrase = new Phrase(row.getProyecto(), font);
+			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell.setPhrase(phrase);
+			table.addCell(cell);			
+			
 			
 			phrase = new Phrase(row.getDescripcion(), font);
 			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -100,29 +109,29 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			
-			BigDecimal pesoTotal = row.getPeso().multiply(row.getCant()).setScale(3, RoundingMode.HALF_UP);			
+			BigDecimal pesoTotal = row.getPeso().multiply(row.getCant()).setScale(3, RoundingMode.HALF_UP);
+			total = total.add(pesoTotal);
 			phrase = new Phrase(pesoTotal.toString(), font);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setPhrase(phrase);
-			table.addCell(cell);			
-						
-			phrase = new Phrase(row.getProyecto(), font);
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell.setPhrase(phrase);
-			table.addCell(cell);
+			table.addCell(cell);				
 			
 			phrase = new Phrase(row.getColor(), font);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			
-			String prioridad = row.getPrioridad() == null ? "" : row.getPrioridad().toString();
-			phrase = new Phrase(prioridad, font);
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell.setPhrase(phrase);
-			table.addCell(cell);
+			if(priority) {
+				String prioridad = row.getPrioridad() == null ? "" : row.getPrioridad().toString();
+				phrase = new Phrase(prioridad, font);
+				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell.setPhrase(phrase);
+				table.addCell(cell);			
+			}
 			count++;
 		}
+		
+		totalPesoTtl[0] = total;
 		
 	}
 	
@@ -130,7 +139,6 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 		List<OpCentroTrabajoDTO> opsToPdf = new ArrayList<>();
 		for(OpCentroTrabajoDTO op: opsCt) {
 			if(opsSeleccionadas.contains(op.getIdOp())) {
-				System.out.println(op);
 				opsToPdf.add(op);
 			}
 		}
@@ -141,28 +149,29 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 					RowItemPdf row = new RowItemPdf();
 					row.setDescripcion(item.getItem_desc());
 					row.setCant(item.getCant_req());
-					row.setProyecto(op.getOp());
+					row.setOp(op.getOp());
 					row.setPeso(item.getItem_peso());
 					row.setColor(item.getItem_color());
 					row.setPrioridad(item.getPrioridad());
 					row.setRef(item.getItem_id().toString());
+					row.setLongitud(item.getLongitud());
+					row.setProyecto(op.getProyecto());
 					rows.add(row);
-					System.out.println(row);
 					continue;
 				}
 				for(ComponenteDTO componente: item.getComponentes()) {
-					if(componente.getMaterial_centro_t_id() == centroTrabajo.getId()) {
+					if(Objects.equals(componente.getMaterial_centro_t_id(), centroTrabajo.getId())) {
 						RowItemPdf row = new RowItemPdf();
 		   				row.setDescripcion(componente.getMaterial_desc());
 		   				row.setLongitud(componente.getMaterial_long());
 		   				row.setCant(componente.getMaterial_cant());
-		   				row.setProyecto(op.getOp());
+		   				row.setOp(op.getOp());
 		   				row.setRef(componente.getMaterial_id().toString());
 		   				row.setPeso(componente.getMaterial_peso());
 		   				row.setPrioridad(item.getPrioridad());
-		   				
+		   				row.setColor(item.getItem_color());
+		   				row.setProyecto(op.getProyecto());
 		   				rows.add(row);
-		   				System.out.println(row);
 		   				break;
 					}
 				}
@@ -176,17 +185,37 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 	protected void addContent() throws DocumentException {
 
 		List<RowItemPdf> rows = obtenerFilas();
-		int columnsTable = 10;
-       	float[] columnsWidth = {0.4f, 0.7f, 2.5f, 0.7f, 0.8f, 0.7f, 1.0f, 1.2f, 1.3f, 1.2f};	       	
+		int[] centrosTrabajoPrioridad = {3,4,5,6,7,8,9,17};
        	List<String> columnsName = new ArrayList<>();
-		columnsName.addAll(Arrays.asList("#", "REF", "DESCRIPCION", "CANT", "LONG", "PESO UN", "PESO TTL", "OP", "COLOR", "PRIORIDAD"));
-		PdfPTable table = new PdfPTable(columnsTable);
+		//columnsName.addAll(Arrays.asList("#", "REF", "DESCRIPCION", "CANT", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "OP", "COLOR"));
+       	columnsName.addAll(Arrays.asList("#", "OP", "PROYECTO", "DESCRIPCION", "CANT", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "COLOR"));
+		
+		PdfPTable table = null;
+		boolean priority = false;
+		if (Arrays.stream(centrosTrabajoPrioridad).anyMatch(x -> x == centroTrabajo.getId())) {
+			//float[] columnsWidthPriority = {0.4f, 0.7f, 2.5f, 0.7f, 0.8f, 0.7f, 1.0f, 1.2f, 1.3f, 1.2f};
+			float[] columnsWidthPriority = {0.4f, 1.0f, 2.4f, 2.4f, 0.7f, 0.8f, 0.8f, 1.0f, 1.3f, 1.19f};
+			table = new PdfPTable(10);
+		    columnsName.add("PRIORIDAD");
+		    table.setWidths(columnsWidthPriority);
+		    priority = true;
+		}else {
+			float[] columnsWidth = {0.4f, 1.0f, 2.4f, 2.4f, 0.7f, 0.8f, 0.8f, 1.0f, 1.3f};	       	
+			table = new PdfPTable(9);
+			table.setWidths(columnsWidth);			
+		}
 		table.setWidthPercentage(100);
-		table.setWidths(columnsWidth);
 		table.setSpacingBefore(40);
 		tableHeader(table, columnsName);
-		tableData(table, rows);
+		
+		BigDecimal[] totalPesoTtl = new BigDecimal[1];
+		tableData(table, rows, totalPesoTtl, priority);
 		document.add(table);
+		
+		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+        Paragraph totalParagraph = new Paragraph("Carga Total: " + totalPesoTtl[0].toString(), font);
+        totalParagraph.setSpacingBefore(10);
+        document.add(totalParagraph);
 	}
 	
 	

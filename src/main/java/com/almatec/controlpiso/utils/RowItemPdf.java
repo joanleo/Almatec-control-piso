@@ -6,11 +6,12 @@ public class RowItemPdf {
 	private String descripcion;
 	private BigDecimal longitud;
 	private BigDecimal cant;
-	private String proyecto;
+	private String op;
 	private String ref;
 	private BigDecimal peso;
 	private Integer prioridad;
 	private String color;
+	private String proyecto;
 	
 	public String getDescripcion() {
 		return descripcion;
@@ -30,11 +31,11 @@ public class RowItemPdf {
 	public void setCant(BigDecimal cant) {
 		this.cant = cant;
 	}
-	public String getProyecto() {
-		return proyecto;
+	public String getOp() {
+		return op;
 	}
-	public void setProyecto(String proyecto) {
-		this.proyecto = proyecto;
+	public void setOp(String proyecto) {
+		this.op = proyecto;
 	}
 	public String getRef() {
 		return ref;
@@ -63,10 +64,17 @@ public class RowItemPdf {
 	public RowItemPdf() {
 		super();
 	}
+	public String getProyecto() {
+		return proyecto;
+	}
+	public void setProyecto(String proyecto) {
+		this.proyecto = proyecto;
+	}
 	@Override
 	public String toString() {
-		return "RowItemPdf [descripcion=" + descripcion + ", longitud=" + longitud + ", cant=" + cant + ", proyecto="
-				+ proyecto + ", ref=" + ref + ", peso=" + peso + ", prioridad=" + prioridad + ", color=" + color + "]";
+		return "RowItemPdf [descripcion=" + descripcion + ", longitud=" + longitud + ", cant=" + cant + ", op=" + op
+				+ ", ref=" + ref + ", peso=" + peso + ", prioridad=" + prioridad + ", color=" + color + ", proyecto="
+				+ proyecto + "]";
 	}
 	
 }
