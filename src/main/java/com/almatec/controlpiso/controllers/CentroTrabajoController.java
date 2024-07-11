@@ -98,6 +98,13 @@ public class CentroTrabajoController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	
+	@GetMapping("/listar")
+	@ResponseBody
+	public List<CentroTrabajo> listarCentrosTrabajo(Model modelo) {
+		Usuario usuario = util.obtenerUsuarioAtenticado();
+		return centroTrabajoService.buscarCentrosTrabajo(usuario.getCia());
+	}
+	
 	@GetMapping("/{idCT}/ordenes-produccion")
 	@ResponseBody
 	public Set<OpCentroTrabajoDTO> obtenerOpCentroTrabajo(@PathVariable Integer idCT){
@@ -131,14 +138,6 @@ public class CentroTrabajoController {
 		return centroTrabajoService.obtenerTiemposOperarios(idProceso);
 	}
 	
-
-	
-	@GetMapping("/listar")
-	@ResponseBody
-	public List<CentroTrabajo> listarCentrosTrabajo(Model modelo) {
-		Usuario usuario = util.obtenerUsuarioAtenticado();
-		return centroTrabajoService.buscarCentrosTrabajo(usuario.getCia());
-	}
 	
 	@ResponseBody
 	@PostMapping("/{idCT}/agregar-retirar-operario")
@@ -152,7 +151,6 @@ public class CentroTrabajoController {
 											   @PathVariable Integer idConfigP ){
 		return centroTrabajoService.buscarOperariosCtDia(idCT, idConfigP);
 	}
-	
 	
 		
 	
@@ -182,12 +180,9 @@ public class CentroTrabajoController {
 								  @RequestParam Integer idOperario,
 								  Model modelo) throws JsonProcessingException {
 		
-		System.out.println("buscando item controller");
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
-		
-		System.out.println(idCT +"-"+ idItem + "-" + idOperario);
-		
+				
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
 		
@@ -197,8 +192,7 @@ public class CentroTrabajoController {
 	@PostMapping("/{idCT}/reporte")
 	public String guardarReportePiezas(@ModelAttribute("reporte") ReporteDTO reporte,
 										RedirectAttributes flash) {
-		System.out.println("Controller reporte");
-		System.out.println(reporte);
+
 		ErrorMensaje mensaje = reportePiezaCtService.guardarReporte(reporte);
 		if(Boolean.TRUE.equals(mensaje.getError())) {
 			flash.addFlashAttribute("error", mensaje.getMensaje());
@@ -283,11 +277,8 @@ public class CentroTrabajoController {
 	
 	@GetMapping("/descargar-pdf/{nombreDelArchivo}")
     public ResponseEntity<Resource> descargarPDF(@PathVariable String nombreDelArchivo) throws IOException {
-		System.out.println("obtener planos");
-		System.out.println(appConfig.getPdfFolderPath());
-		System.out.println(nombreDelArchivo);
+
         Path path = Paths.get(appConfig.getPdfFolderPath(), nombreDelArchivo);
-        System.out.println(path);
         Resource resource = new UrlResource(path.toUri());
 
         return ResponseEntity.ok()

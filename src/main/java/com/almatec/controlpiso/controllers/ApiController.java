@@ -63,31 +63,6 @@ public class ApiController {
 	    }
 	}
 	
-	/*@ResponseBody
-	@PostMapping("/rutas")
-	public ResponseEntity<?> crearRutas(@RequestBody List<RutaDTO> ruta){
-		
-		System.out.println(ruta);
-		logger.info("Se recibe solicitud de creacion de ruta", ruta);
-		try {
-			xmlService.asignarParametros();
-			String response = xmlService.crearRuta(ruta);
-			return ResponseEntity.ok(response);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en la creación de la ruta"); 
-	    }
-	}
-	
-	@ResponseBody
-	@PostMapping("/rutas/{id}")
-	public ResponseEntity<?> crearRutasId(@PathVariable Integer id) throws IOException{
-		logger.info("Se recibe solicitud de creacion de ruta por id: {}", id);
-		xmlService.asignarParametros();
-		//String response = xmlService.crearEntrega();
-		return ResponseEntity.ok(response);
-	}*/
-	
 	@ResponseBody
 	@PostMapping("/entregas/crear-op/{idOPI}")
 	public ResponseEntity<?> crearOPEntrega(@PathVariable Integer idOPI){

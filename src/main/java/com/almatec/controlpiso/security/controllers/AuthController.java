@@ -34,11 +34,8 @@ public class AuthController {
         } catch (UsernameNotFoundException e) {
             // Manejar la excepción si el usuario no se encuentra
             return "redirect:/login"; // O cualquier otra acción apropiada
-        }
-        
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        System.out.println(userDetails);
-        authorities.forEach(System.out::println);*/
+        }*/
+
 		return "home";
 	}
 }

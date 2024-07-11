@@ -57,7 +57,6 @@ public abstract class ErpServiceAbstract {
         headersRequest.setContentType(MediaType.valueOf("text/xml; charset=utf-8"));
         List<Conector> datosObject = new ArrayList<>(conector);
         String planoXml = crearPlanoXml(datosObject);
-        System.out.println(planoXml);
         String soapRequest = crearBodyRequest(planoXml, 0);
         HttpEntity<String> requestEntity = new HttpEntity<>(soapRequest, headersRequest);
         ResponseEntity<String> response = null;
@@ -70,7 +69,6 @@ public abstract class ErpServiceAbstract {
             logger.error("Error al realizar la llamada al servicio web: {}", e.getMessage());
         }
         String detalle = descomponerRespuestaXML(responseBody);
-        System.out.println(detalle);
         logger.info(detalle);
         return detalle;
     }
@@ -144,7 +142,6 @@ public abstract class ErpServiceAbstract {
             Node printTipoErrorNode = doc.getElementsByTagName("printTipoError").item(0);
             // Obtener el valor de printTipoError
             int printTipoError = Integer.parseInt(printTipoErrorNode.getTextContent());
-            System.out.println("errores " + printTipoError);
             // Si printTipoError es diferente de cero, obtener los detalles de NewDataSet
             if (printTipoError != 0) {
                 NodeList tableNodes = doc.getElementsByTagName("Table");

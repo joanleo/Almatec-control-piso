@@ -72,4 +72,10 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 		}
 		return null;
 	}
+
+	@Override
+	public Integer obtenerItemOp(Integer numOp) {
+		
+		return listaMaterialRepo.obtenerItemOp(numOp);
+	}
 }

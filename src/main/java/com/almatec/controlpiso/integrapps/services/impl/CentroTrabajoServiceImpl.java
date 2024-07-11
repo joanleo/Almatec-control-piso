@@ -126,10 +126,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 			operarios.add(operario);
 		}
 		return operarios;
-	}
-	
-
-	
+	}	
 
 	@Override
 	public Set<OpCentroTrabajoDTO> buscarOpCT(Integer idCT) {
@@ -146,7 +143,6 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	public void asignarActualizarPiezaOperario(Integer idCT, List<PiezaOperarioDTO> piezas) {
 		try {
 			for(PiezaOperarioDTO pieza: piezas) {
-				System.out.println(pieza);
 				Integer idProceso = pieza.getIdProceso();
 				Integer idOperario = pieza.getIdOperario();
 				Integer idItemOp = pieza.getIdItemOp();
@@ -155,8 +151,6 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 				
 				LocalDateTime fecha = LocalDateTime.now();
 				if(registro != null) {
-					System.out.println("Registro encontrado:");
-					System.out.println(registro);
 					Boolean estaActivo = !registro.getIsActivo();
 					registro.setIsActivo(estaActivo);
 					registro.setFechaEdicion(fecha);
@@ -169,14 +163,10 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 				nuevoRegistro.setIdOperario(idOperario);
 				nuevoRegistro.setIdItem(idItemOp);
 				if(Boolean.TRUE.equals(pieza.getIsComponente())) {
-					System.out.println("Comparacion verdadera");
 					nuevoRegistro.setIdItemParte(idItem);				
 				}else {
-					System.out.println("NO ES COMPONENTE");
 					nuevoRegistro.setIdItemFab(idItem);
-					System.out.println("Debe actualizar itemfab");
 				}
-				System.out.println(nuevoRegistro);
 				nuevoRegistro.setFechaCreacion(fecha);
 				nuevoRegistro.setIsActivo(pieza.getEstaActivo());
 				registroPiezaService.actualizarRegistro(nuevoRegistro);
@@ -196,9 +186,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 
 	@Override
 	public ReporteDTO buscarItemCt(Long idItem, Integer idCT, Integer idOperario) {
-		System.out.println(idItem+" "+idCT+" "+idOperario);
 		Operario operario = operarioService.buscarOperarioPorId(idOperario);
-		//CentroTrabajo ct = buscarCentroTrabajo(idCT);
 		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemCt(idItem, idCT);
 		if (ops != null && !ops.isEmpty()) {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
@@ -243,9 +231,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setIdItem(idItem);
 		    reporte.setCantFab(cantFabricada);
 		    reporte.setColor(item.getItem_color());
-		    
-		    System.out.println(" Reporte ct" + reporte);
-		    
+		    		    
 		    return reporte;
 		}
 		

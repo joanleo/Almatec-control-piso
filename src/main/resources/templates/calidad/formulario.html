@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-	<head th:replace="fragments/head :: head('Calidad :: Almatec')"></head>
+	<head th:replace="fragments/head :: head('Calidad :: Almatec')">
+		
+	</head>
+	<style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+		.left {
+		  justify-self: start;
+		}
+
+		.right {
+		  justify-self: end;
+		}
+
+    </style>
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Calidad')"></nav>
 		
-		<div class="container my-5" style="width:60%;">
+		<div class="container my-5" style="width:80%;">
 			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
 			  <span th:text="${message}"></span>
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -18,68 +35,253 @@
 			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
-			 <div class="card-body" style="margin: auto; width: 60%;">
-				 <div class="my-3" style="display: flex; justify-content: end;">
+			 <div class="card-body" style="margin: auto; width: 80%;">
+				 <div class="my-3" style="display: flex; flex-direction: column; align-items: flex-end;">
 					<div class="input-group size-m">
-					  <span class="input-group-text">Reporte Novedad No: </span>
-					  <input type="text" aria-label="consecutivo" class="form-control" th:value="*{consecutivo}" readonly style="text-align: right;"/>
+					  <span class="input-group-text">FECHA Y HORA: </span>
+					  <input type="text" aria-label="Fecha" class="form-control" readonly style="text-align: right;"/>
+					</div>
+					
+					<div class="input-group size-m">
+					  <span class="input-group-text">OP #: </span>
+					  <input type="text" aria-label="orden de produccion" class="form-control" readonly style="text-align: right;"/>
 					</div>
 				</div>
+				
 				 <h2 class="mb-5"> </h2>
 	 		    <form method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/novedades}" >
-			        <div class="input-group my-3">
-			           <span class="input-group-text">Operario: </span>
-			           	<input type="text" id="nombre-operario"  class="form-control" required readonly style="text-align: right;"/>						   
-					   
-			       	</div>
-			       	<div class="input-group my-3">
-			           <span class="input-group-text">Numero Op: </span>
-			           	<input type="number" id="num-op"  class="form-control"  readonly style="text-align: right;"/>						   
-			       	</div>
-			       	
-			       	<div class="input-group my-3">
-			           <span class="input-group-text">Proyecto: </span>
-				           <input type="text" id="proyecto"  class="form-control" required readonly style="text-align: right;"/>						   
-			       	</div>
-			       	
-			       	<div class="input-group my-3">
-			           <span class="input-group-text">Item: </span>
-				           <input type="text" id="item" class="form-control"  required readonly style="text-align: right;"/>					   
-			       	</div>
-			       	
-			       	<div class="input-group my-3">
-			           <span class="input-group-text">Unidades de mas: </span>
-			           <input type="number" id="cant-solic" min="0" class="form-control" required style="text-align: right;"/>
-			           <span class="input-group-text"> und </span> 					   
-			       	</div>
-			       	
-			       	<div class="input-group my-3">
-			           <span class="input-group-text">No conforme: </span>
-			           <input type="number" id="no-conforme" min="0" class="form-control"  required style="text-align: right;"/>
-			           <span class="input-group-text"> ml </span> 					   
-			       	</div>
-			       	
-			       	<div class="input-group my-3">
-			           <span class="input-group-text">Desperdicio/Chatarra: </span>
-				           <input type="number" id="desperdicio" min="0" class="form-control" required style="text-align: right;"/>
-				           <span class="input-group-text"> kg </span> 				   
-			       	</div>
+					<div class="form-grid my-5">
+		                <div class="input-group size-l" >
+		                    <span class="input-group-text">UN:</span>
+		                    <input type="text" id="un" name="un" class="form-control"/>
+		                </div>
+						<div class="input-group size-l">
+						    <span class="input-group-text">PEDIDO/ZONA:</span>
+						    <input type="text" id="pedido" name="pedido" class="form-control"/>
+						</div>
+						<div class="input-group size-l">
+						    <span class="input-group-text">NOMBRE ITEM:</span>
+						    <input type="text" id="nombre" name="nombre" class="form-control"/>
+						</div>
+						<div class="input-group size-l">
+						    <span class="input-group-text">MARCA:</span>
+						    <input type="text" id="marca" name="marca" class="form-control"/>
+						</div>
+						<div class="input-group size-l">
+						    <span class="input-group-text">CANTIDAD:</span>
+						    <input type="text" id="cant" name="cant" class="form-control"/>
+						</div>
+						<div class="input-group size-l" >
+						    <span class="input-group-text">LOTE ACERO:</span>
+						    <input type="text" id="lote" name="lote" class="form-control"/>
+						</div>				               
+	            	</div>
+				
+		            <h3>PARÁMETROS</h3>
+		            
+					<div class="form-grid my-4" style="width: 90%; margin: auto;">
+						<div class="input-group size-m">
+						    <span class="input-group-text">ANCHO [mm]:</span>
+						    <input type="number" min="1" id="ancho" name="ancho" class="form-control"/>
+						</div>
+						<div class="input-group size-m">
+						    <span class="input-group-text">ALTURA [mm]:</span>
+						    <input type="number" min="1" id="altura" name="altura" class="form-control"/>
+						</div>
+						<div class="input-group size-m">
+						    <span class="input-group-text">LONGITUD [mm]:</span>
+						    <input type="number" min="1" id="longitud" name="longitud" class="form-control"/>
+						</div>
+						<div class="input-group size-m">
+						    <span class="input-group-text">RAL:</span>
+						    <input type="text" id="ral" name="ral" class="form-control"/>
+						</div>
+								                
+		                <div class="input-group checkbox-group size-m">
+		                    PESTAÑA:
+		                    <label for="pestanaSi" class="mx-3">SI
+			                    <input type="radio" id="pestanaSi" name="pestana" value="SI"/>											
+							</label>
+		                    <label for="pestanaNo">NO
+			                    <input type="radio" id="pestanaNo" name="pestana" value="NO"/>											
+							</label>
+		                </div>
+						<div class="input-group checkbox-group size-m">
+		                    ALETA:
+		                    <label for="aletaSi" class="mx-3">SI
+			                    <input type="radio" id="aletaSi" name="aleta" value="SI"/>											
+							</label>
+		                    <label for="aletaNo">NO
+			                    <input type="radio" id="aletaNo" name="aleta" value="NO"/>											
+							</label>
+		                </div>
+						
+						<div class="input-group checkbox-group size-m">
+		                    PERF. BORDE:
+		                    <label for="perfBordeSi" class="mx-3">SI
+			                    <input type="radio" id="perfBordeSi" name="perfBorde" value="SI"/>											
+							</label>
+		                    <label for="pestanaNo">NO
+			                    <input type="radio" id="perfBordeNo" name="perfBorde" value="NO"/>											
+							</label>
+		                </div>
+						
+						<div class="input-group checkbox-group size-m">
+		                    PERFORACIONES:
+		                    <label for="perforacionesSi" class="mx-3">SI
+			                    <input type="radio" id="perforacionesSi" name="perforaciones" value="SI"/>											
+							</label>
+		                    <label for="perforacionesNo">NO
+			                    <input type="radio" id="perforacionesNo" name="perforaciones" value="NO"/>											
+							</label>
+		                </div>
+						
+						<div class="input-group checkbox-group size-m">
+						    TROQUELADO:
+						    <label for="troqueladoSi" class="mx-3">SI
+						        <input type="radio" id="troqueladoSi" name="troquelado" value="SI"/>											
+							</label>
+						    <label for="troqueladoNo">NO
+						        <input type="radio" id="troqueladoNo" name="troquelado" value="NO"/>											
+							</label>
+						</div>
+
+						<div class="input-group checkbox-group size-m">
+						    CUADRATURA:
+						    <label for="cuadraturaSi" class="mx-3">SI
+						        <input type="radio" id="cuadraturaSi" name="cuadratura" value="SI"/>											
+							</label>
+						    <label for="cuadraturaNo">NO
+						        <input type="radio" id="cuadraturaNo" name="cuadratura" value="NO"/>											
+							</label>
+						</div>	
+
+						<div class="input-group checkbox-group size-m">
+						    CORONA:
+						    <label for="coronaSi" class="mx-3">SI
+						        <input type="radio" id="coronaSi" name="corona" value="SI"/>											
+							</label>
+						    <label for="pestanaNo">NO
+						        <input type="radio" id="coronaNo" name="corona" value="NO"/>											
+							</label>
+						</div>	
+						
+						<div class="input-group checkbox-group size-m">
+						    FLECHA H:
+						    <label for="flechaHSi" class="mx-3">SI
+						        <input type="radio" id="flechaHSi" name="flechaH" value="SI"/>											
+							</label>
+						    <label for="flechaHNo">NO
+						        <input type="radio" id="flechaHNo" name="flechaH" value="NO"/>											
+							</label>
+						</div>	
+						
+						<div class="input-group checkbox-group size-m">
+						    FLECHA V:
+						    <label for="flechaVSi" class="mx-3">SI
+						        <input type="radio" id="flechaVSi" name="flechaV" value="SI"/>											
+							</label>
+						    <label for="flechaVNo">NO
+						        <input type="radio" id="flechaVNo" name="flechaV" value="NO"/>											
+							</label>
+						</div>	
+						
+						<div class="input-group checkbox-group size-m">
+						    CORTE:
+						    <label for="corteSi" class="mx-3">SI
+						        <input type="radio" id="corteSi" name="corte" value="SI"/>											
+							</label>
+						    <label for="pestanaNo">NO
+						        <input type="radio" id="corteNo" name="corte" value="NO"/>											
+							</label>
+						</div>	
+						
+						<div class="input-group checkbox-group size-m">
+						    PUNZONADO:
+						    <label for="punzonadoSi" class="mx-3">SI
+						        <input type="radio" id="punzonadoSi" name="punzonado" value="SI"/>											
+							</label>
+						    <label for="punzonadoNo">NO
+						        <input type="radio" id="punzonadoNo" name="punzonado" value="NO"/>											
+							</label>
+						</div>
+						
+						<div class="input-group checkbox-group size-m">
+						    GRANALLADO:
+						    <label for="granalladoSi" class="mx-3">SI
+						        <input type="radio" id="granalladoSi" name="granallado" value="SI"/>											
+							</label>
+						    <label for="granalladoNo">NO
+						        <input type="radio" id="granalladoNo" name="granallado" value="NO"/>											
+							</label>
+						</div>
+						
+						<div class="input-group checkbox-group size-l">
+						    PASA PRUEBA CUADRICULA:
+						    <label for="pasaPruebaSi" class="mx-3">SI
+						        <input type="radio" id="pasaPruebaSi" name="pasaPrueba" value="SI"/>											
+							</label>
+						    <label for="punzonadoNo">NO
+						        <input type="radio" id="pasaPruebaNo" name="pasaPrueba" value="NO"/>											
+							</label>
+						</div>														
+															
+		            </div>
 					
-					<div class="input-group my-3">
-			           <span class="input-group-text">Lote: </span>
-						   <select id="loteSelect" class="form-control" name="lote" >
-   		                   		<option value=""></option>
-   		                        <option></option>
-   		                   </select>				   
-			       	</div>
+					<h3>REGISTRO ESPESORES:</h3>
+					<div class="form-grid my-5" style="width: 90%; margin: auto;">
+		                <div class="input-group size-m" >
+		                    <span class="input-group-text">1 Media [μm]:</span>
+		                    <input type="number" id="media1" name="media1" class="form-control"/>
+		                </div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">2 Media [μm]:</span>
+						    <input type="number" id="media2" name="media2" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">3 Media [μm]:</span>
+						    <input type="number" id="media3" name="media3" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">4 Media [μm]:</span>
+						    <input type="number" id="media4" name="media4" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">5 Media [μm]:</span>
+						    <input type="number" id="media5" name="media5" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">6 Media [μm]:</span>
+						    <input type="number" id="media6" name="media6" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">7 Media [μm]:</span>
+						    <input type="number" id="media7" name="media7" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">8 Media [μm]:</span>
+						    <input type="number" id="media8" name="media8" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">9 Media [μm]:</span>
+						    <input type="number" id="media9" name="media9" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">10 Media [μm]:</span>
+						    <input type="number" id="media10" name="media10" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">11 Media [μm]:</span>
+						    <input type="number" id="media11" name="media11" class="form-control"/>
+						</div>
+						<div class="input-group size-m" >
+						    <span class="input-group-text">12 Media [μm]:</span>
+						    <input type="number" id="media12" name="media12" class="form-control"/>
+						</div>
+					</div>
 					
-					<div class="input-group my-3">
-			           <span class="input-group-text">Codigo materia prima: </span>
-				           <input type="number" id="codErpMatriaPrima" class="form-control" readonly  required style="text-align: right;"/>
-			       	</div>
-			       	
-			       	<div class="d-grid">
-			       		<button type="submit" class="btn btn-primary my-5">Guardar</button>						
+					<div class="d-grid">
+					            <button type="submit" class="btn btn-primary">Guardar</button>						
 					</div>
 				 </form>
 			 </div>
@@ -87,6 +289,30 @@
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				 let containers = document.querySelectorAll(".form-grid")
+				 
+				 for (const element of containers) {
+					let elements = element.querySelectorAll("div")
+					for (let j = 0; j < elements.length; j++) {
+		        		if (j % 2 !== 0) {
+		          			elements[j].classList.add("right")
+		        		}
+		      		}
+		    	}
+				
+				let numberInputs = document.querySelectorAll("input[type='number']");
+
+				  for (const element of numberInputs) {
+				    element.addEventListener("input", function() {
+				      if (this.value < 1) {
+				        this.value = '';
+				      }
+				    });
+				  }
+			})
+		</script>
 			
 	</body>
 </html>

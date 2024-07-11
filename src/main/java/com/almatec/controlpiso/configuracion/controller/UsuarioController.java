@@ -72,7 +72,6 @@ public class UsuarioController {
 	@DeleteMapping("/eliminar/{id}")
 	public String eliminar(@PathVariable Integer id,
 							RedirectAttributes flash) {
-		System.out.println("Solicitud eliminacion usuario");
 		try {
 			usuarioService.inActivarUsuario(id);
 			flash.addFlashAttribute("message", "usuario eliminado exitosamente");

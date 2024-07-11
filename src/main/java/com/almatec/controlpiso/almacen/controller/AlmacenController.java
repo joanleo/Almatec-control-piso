@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.almacen.controller;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,12 +31,12 @@ import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaServi
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.impl.AlmacenService;
 import com.almatec.controlpiso.almacen.util.RemisionPdfService;
+import com.almatec.controlpiso.erp.webservices.XmlService;
 import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemision;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
-import com.lowagie.text.DocumentException;
 
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -58,6 +57,9 @@ public class AlmacenController {
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	@Autowired
+	private XmlService xmlServices;
+	
 	
 	@GetMapping("/solicitudes")
 	public String listarSolicitudesM(Model modelo) {
@@ -76,9 +78,7 @@ public class AlmacenController {
 	public String ListarRemisiones(Model modelo,
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-		//List<EncabezadoRemision> remisiones = almacenService.obtenerRemisiones();
 		Page<EncabezadoRemision> remisionesPage = almacenService.obtenerRemisionesPaginadas(page, size);
-		//remisiones.forEach(System.out::println);
 		modelo.addAttribute("remisionesPage", remisionesPage);
 		return "almacen/listar-remisiones";
 	}
@@ -120,7 +120,7 @@ public class AlmacenController {
 	@PostMapping("/remisiones/{idRemision}/pdf/generar")
 	public void generarPdfRemision(HttpServletResponse response, 
 			@PathVariable Long idRemision,
-			@RequestBody DataTransportadoraDTO dataTransportadora) throws DocumentException, IOException {
+			@RequestBody DataTransportadoraDTO dataTransportadora) throws Exception {
 		
 		response.setContentType("application/pdf");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -133,6 +133,8 @@ public class AlmacenController {
 		List<DetalleRemisionInterface> detallesRemision = almacenService.obtenerDetalleRemision(idRemision);
 
 		RemisionPdfService remision = new RemisionPdfService(encabezadoRemision, detallesRemision, dataTransportadora);
+		//xmlServices.asignarParametros();
+		//xmlServices.crearRemision(encabezadoRemision.getIdOpIa(), detallesRemision);
 		remision.createPdf(response);
 	}
 

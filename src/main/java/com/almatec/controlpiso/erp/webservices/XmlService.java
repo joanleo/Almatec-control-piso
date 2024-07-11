@@ -36,6 +36,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.almatec.controlpiso.almacen.interfaces.DetalleRemisionInterface;
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
 import com.almatec.controlpiso.erp.dto.ListaMaterialesDTO;
@@ -49,6 +50,7 @@ import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromiso
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosMovtoInventarioV4;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPDocumentosVersión01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPMovimientosVersión01;
+import com.almatec.controlpiso.erp.webservices.generated.DoctoentregasDocumentosVersión01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoentregasDocumentosVersión02;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoentregasMovimientosVersión01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoinventariosDocumentosVersion02;
@@ -283,6 +285,7 @@ public class XmlService {
 
 	private String crearConexion() {
 		String nombre = "Prueba";
+		System.out.println((this.CIA));
 		int cia = this.CIA;
 		String usuario = "integrapps";
 		String clave = "8888";
@@ -415,7 +418,6 @@ public class XmlService {
 		encabezado.setF850_id_co_pv(this.C_O);
 		encabezado.setF850_id_tipo_docto_pv("PV");
 		encabezado.setF850_consec_docto_pv(noPedido);
-		encabezado.setF850_notas(BODEGA_ENTREGA_ITEM_FACTURABLE);
 		encabezado.setF850_referencia_1(ordenPv.getCliente());
 		encabezado.setF850_referencia_2(ordenPv.getIdCo() + "-" + ordenPv.getCoDescripcion());
 		return encabezado;
@@ -858,7 +860,7 @@ public class XmlService {
 		item.setF120_id(id);
 		String stringId = String.valueOf(id);
 		item.setF120_referencia("0"+ stringId);
-		if(!ordenIntegrapps.getZonaSistema().isEmpty() && ordenIntegrapps.getZonaSistema().length() > 1) {
+		if(!ordenIntegrapps.getZona().isEmpty() && ordenIntegrapps.getZona().length() > 1) {
 			item.setF120_descripcion(ordenIntegrapps.getIdCentroOperaciones()+ " " + ordenIntegrapps.getCentroOperaciones());			
 			item.setF120_descripcion_corta(ordenIntegrapps.getIdCentroOperaciones() + " " + ordenIntegrapps.getCentroOperaciones());
 		}
@@ -1026,6 +1028,7 @@ public class XmlService {
 		//Actualizar tabla ordenPV rowid850 y rowid851, Num_Op,op_UnoEE,BarCodeH
 		ConsultaItemOpCreado creadoInterface = listaMaterialService.obtenerRowIdOpItemOp(item.getF120_id());
 		ConsultaOpCreadaDTO creado = new ConsultaOpCreadaDTO(creadoInterface);
+		crearArchivo(opXml, "OP-" + creado.getF850_consec_docto());
 		ordenPvService.actualizarDatosOp(creado,ordenIntegrapps);
 		mensajeService.enviarEmailCreacionOrdenProduccion(creado.getF850_id_tipo_docto() + '-' + creado.getF850_consec_docto());
 		return "OP Creada Exitosamente";
@@ -1047,7 +1050,7 @@ public class XmlService {
 		encabezado.setF850_id_tipo_docto_op_padre(ordenPadreIF.getTipoOp());
 		encabezado.setF850_consec_docto_op_padre(ordenPadreIF.getNumOp());
 		encabezado.setF850_referencia_1(ordenPadreIF.getCliente());
-		encabezado.setF850_referencia_2(ordenPadreIF.getIdCentroOperaciones() + "-" + ordenPadreIF.getCentroOperaciones());
+		encabezado.setF850_referencia_2(ordenPadreIF.getIdCentroOperaciones() + "-" + ordenPadreIF.getCentroOperaciones() + "-" + ordenPadreIF.getZona());
 		return encabezado;
 	}
 	
@@ -1154,7 +1157,7 @@ public class XmlService {
 		entregaXml.add(mov);
 		String responseEntrega = postImportarXML(entregaXml);
 		System.out.println(responseEntrega);
-		crearArchivo(entregaXml, "EP");
+		crearArchivo(entregaXml, "EP" + reporte.getNumOp());
 		if(!responseEntrega.equals(RESPUESTA_OK)) {
 			return responseEntrega;
 		}
@@ -1230,9 +1233,17 @@ public class XmlService {
 		
 	}
 	
-	public String crearRemision() {
+	public String crearRemision(Integer idOpIa, List<DetalleRemisionInterface> detallesRemision) throws Exception {
+		System.out.println("Creando xml");
 		
-		List<Conector> remisionXml = new ArrayList<>();
+		VistaOrdenPv ordenPv = ordenPvService.obtenerOrdenPorId(idOpIa);
+		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(ordenPv.getIdPadre());
+		Integer idItem = listaMaterialService.obtenerItemOp(ordenPv.getNumOp());
+		//crearConsumoOpPapa(idOpIa, detallesRemision, data, idItem);
+		
+		crearEntregaOpPapa(data, idItem, detallesRemision);
+		
+		/*List<Conector> remisionXml = new ArrayList<>();
 		
 		DoctoremisionescomercialRemisiónversión03 encabezadoRemision = crearEncabezado();
 		remisionXml.add(encabezadoRemision);
@@ -1242,19 +1253,83 @@ public class XmlService {
 		
 		String respuestaRemision = postImportarXML(remisionXml);
 		
-		System.out.println(respuestaRemision);
+		System.out.println(respuestaRemision);*/
 		return null;
 	}
 
 
+	private String crearEntregaOpPapa(DataConsumoInterface data, Integer idItem, List<DetalleRemisionInterface> detallesRemision) throws IOException {
+		List<Conector> entregaXml = new ArrayList<>();
+		DoctoentregasDocumentosVersión01 encabezado = crearEncabezadoEntregaOpPapa(true);
+		
+		entregaXml.add(encabezado);
+		
+		DoctoentregasMovimientosVersión01 mov = crearMovsEntregaOpPapa(data, idItem, detallesRemision);
+		
+		entregaXml.add(mov);
+		String responseEntrega = postImportarXML(entregaXml);
+		System.out.println(responseEntrega);
+		crearArchivo(entregaXml, "EP");
+		if(!responseEntrega.equals(RESPUESTA_OK)) {
+			return responseEntrega;
+		}
+		
+		return "Entrega creada Exitosamente";
+		
+	}
+
+
+	private DoctoentregasDocumentosVersión01 crearEncabezadoEntregaOpPapa(boolean b) {
+		DoctoentregasDocumentosVersión01 encabezado = new DoctoentregasDocumentosVersión01();
+		encabezado.setF_cia(this.CIA);
+		encabezado.setF_consec_auto_reg(1);
+		encabezado.setF350_id_co(this.C_O);
+		encabezado.setF350_id_tipo_docto(this.TIPO_DOC_ENTREGA);
+		encabezado.setF350_fecha(obtenerFechaFormateada());
+		encabezado.setF350_ind_estado(1);
+		encabezado.setF350_ind_impresión(0);
+		encabezado.setF350_id_clase_docto(720);
+		encabezado.setF350_notas("Creado por integrapps");
+		
+		return encabezado;
+	}
+
+
+	private DoctoentregasMovimientosVersión01 crearMovsEntregaOpPapa(DataConsumoInterface data, Integer idItem, List<DetalleRemisionInterface> detallesRemision) {
+		DoctoentregasMovimientosVersión01 mov = new  DoctoentregasMovimientosVersión01();
+		mov.setF_cia(this.CIA);
+		mov.setF470_id_co(this.C_O);
+		mov.setF470_id_tipo_docto(this.TIPO_DOC_ENTREGA);
+		mov.setF_numero_reg(data.getf851_rowid()); //rowId del item de la op 851
+		mov.setF850_id_tipo_docto(this.TIPO_DOC_OP_PAPA);
+		mov.setF850_consec_docto(data.getf850_consec_docto());
+		mov.setF470_id_item(data.getf120_id());
+		mov.setF470_id_bodega(this.BODEGA_ENTREGA_ITEM_FACTURABLE);
+		mov.setF470_id_concepto(701);
+		mov.setF470_id_motivo_entrega(this.MOTIVO_ENTREGA);
+		mov.setF470_id_co_movto(this.C_O);
+		mov.setF470_id_un_movto("001");
+		
+		Double cantConsumir = detallesRemision.stream()
+			    .map((DetalleRemisionInterface detalle) -> {
+			        return detalle.getCant() * detalle.getPeso();
+			    })
+			    .reduce(0.0, Double::sum);
+		
+		mov.setF470_cant_base_entrega(3500.0);
+		mov.setF470_id_ccosto_movto("160114");
+		return mov;
+	}
+
+
 	private List<DoctoremisionescomercialMovtoventascomercialV9> crearMovRemision() {
-
-
+		System.out.println("Creando movimentos");
+		List<DoctoremisionescomercialMovtoventascomercialV9> movs = new ArrayList<>();
 		DoctoremisionescomercialMovtoventascomercialV9 mov = new DoctoremisionescomercialMovtoventascomercialV9();
 		mov.setF_cia(22);
 		mov.setF470_id_co("001");
 		mov.setF470_id_tipo_docto("RM");
-		mov.setF470_nro_registro(96256); //Rowid item pedido 431
+		mov.setF470_nro_registro(42436); //Rowid item pedido 431
 		mov.setF470_id_bodega(BODEGA_ENTREGA_ITEM_FACTURABLE);//definir el pedido en que bodega se monta, aqui deberia entregar el producto termino
 		mov.setF470_id_concepto(501);
 		mov.setF470_id_motivo("01");
@@ -1262,16 +1337,18 @@ public class XmlService {
 		mov.setF470_id_co_movto("001"); //Movimient del pedido 431
 		mov.setF470_id_lista_precio("001"); // Del pedido
 		mov.setF470_id_unidad_medida("KG");
-		mov.setF470_cant_base(1.0); //Cantidad a remisionar kg 
+		mov.setF470_cant_base(2000.0); //Cantidad a remisionar kg 
 		mov.setF470_ind_naturaleza(1);
 		mov.setF470_id_un_movto("001");// del pedido
 		mov.setF470_id_item(CIA); // del pedido
 		
-		return null;
+		movs.add(mov);
+		return movs;
 	}
 
 
 	private DoctoremisionescomercialRemisiónversión03 crearEncabezado() {
+		System.out.println("Creando encabezado");
 		DoctoremisionescomercialRemisiónversión03 encabezado = new DoctoremisionescomercialRemisiónversión03();
 		encabezado.setF_cia(22);
 		encabezado.setF_consec_auto_reg(1);
@@ -1281,10 +1358,85 @@ public class XmlService {
 		encabezado.setF350_ind_estado(1);
 		encabezado.setF350_ind_impresion(0);
 		encabezado.setF430_id_tipo_docto("PV");
-		encabezado.setF430_consec_docto(54850); //consecutivo pedido
+		encabezado.setF430_consec_docto(29); //consecutivo pedido
 		
 		
-		return null;
+		return encabezado;
+	}
+	
+	public String crearConsumoOpPapa(Integer idOpIa, List<DetalleRemisionInterface> detallesRemision, DataConsumoInterface data, Integer idItem) throws Exception {
+		System.out.println("Creando consumo");
+		List<Conector> consumosXml = new ArrayList<>();
+		System.out.println("Numero op integrapps: " + idOpIa);
+		
+		ConsumosdesdeCompromisosConsumos encabezado = crearEncabezadoConsumoOpPapa(data);		
+		consumosXml.add(encabezado);
+		
+		List<ConsumosdesdeCompromisosMovtoInventarioV4> movs = crearDetalleConsumoOpPapa(data, idItem, detallesRemision);		
+		consumosXml.addAll(movs);
+		
+		String responseCrearConsumo = postImportarXML(consumosXml);
+		if(!responseCrearConsumo.equals(RESPUESTA_OK)) {
+			throw new ResourceNotFoundException("Error al crear consumo: " + responseCrearConsumo);
+		}
+		System.out.println(responseCrearConsumo);
+		return "Consumo creado Exitosamente";
+		
+	}
+
+	private ConsumosdesdeCompromisosConsumos crearEncabezadoConsumoOpPapa(DataConsumoInterface data) {
+		try {
+			ConsumosdesdeCompromisosConsumos encabezado = new ConsumosdesdeCompromisosConsumos();
+			encabezado.setF_cia(this.CIA);
+			encabezado.setF_consec_auto_reg(1);
+			encabezado.setF350_id_co(this.C_O);
+			encabezado.setF350_id_tipo_docto(this.TIPO_DOC_CONSUMO);
+			encabezado.setF350_consec_docto(0);
+			encabezado.setF350_id_fecha(obtenerFechaFormateada());
+			encabezado.setF350_ind_estado(1);
+			encabezado.setF350_ind_impresión(0);
+			encabezado.setF350_id_clase_docto(710);
+			encabezado.setF350_id_motivo(this.MOTIVO_CONSUMO);
+			encabezado.setF850_tipo_docto(this.TIPO_DOC_OP_PAPA);
+			encabezado.setF850_consec_docto(data.getf850_consec_docto());//Revisar  consecutivo op 850
+			return encabezado;
+		} catch (Exception e) {
+	        e.printStackTrace(); // o registra la excepción con un logger
+	    }
+	    return null;
+	}
+
+
+	private List<ConsumosdesdeCompromisosMovtoInventarioV4> crearDetalleConsumoOpPapa(DataConsumoInterface data, Integer idItem, List<DetalleRemisionInterface> detallesRemision) {
+		System.out.println("Creando movimientos consumo");
+		List<ConsumosdesdeCompromisosMovtoInventarioV4> movs = new ArrayList<>();
+		ConsumosdesdeCompromisosMovtoInventarioV4 mov = new ConsumosdesdeCompromisosMovtoInventarioV4();
+		mov.setF_cia(this.CIA);
+		mov.setF470_id_co(this.C_O);
+		mov.setF470_id_tipo_docto(this.TIPO_DOC_CONSUMO);
+		mov.setF470_consec_docto(0);
+		mov.setF470_nro_registro(data.getf851_rowid());//data.getf851_rowid()revisar Rowid item padre, item de la op de etrega o hijo 851
+		mov.setF470_id_item_padre(data.getf120_id());//revisar id item padre, item de la op de etrega o hijo 120
+
+		mov.setF470_id_item_comp(idItem);//revisar id item lista materiales **************************			
+		Double cantConsumir = detallesRemision.stream()
+			    .map((DetalleRemisionInterface detalle) -> {
+			        return detalle.getCant() * detalle.getPeso();
+			    })
+			    .reduce(0.0, Double::sum);
+
+		mov.setF470_cant_base(cantConsumir.doubleValue());
+
+		mov.setF470_id_bodega(this.BODEGA_ENTREGA_ITEM_FACTURABLE);//revisar		
+		mov.setF470_id_concepto(701);
+		mov.setF470_id_motivo(this.MOTIVO_CONSUMO);
+		mov.setF470_id_co_movto(this.C_O);
+		mov.setF470_id_un_movto("001");
+		mov.setF470_id_unidad_medida(data.getf120_id_unidad_inventario());
+				
+		movs.add(mov);
+		
+		return movs;
 	}
 	
 	

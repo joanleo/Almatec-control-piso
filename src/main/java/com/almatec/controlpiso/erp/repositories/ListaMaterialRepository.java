@@ -94,5 +94,15 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 			+ "AND (t806_mf_centros_trabajo.f806_id = :idCentroTrabajo)", nativeQuery = true)
 	DataTEP obtenerDataTEP(@Param("idRuta") String idRuta, @Param("idCentroTrabajo") String idCentroTrabajo);
 
+	@Query(value = "SELECT   TOP (1) t120_mc_items.f120_id "
+			+ "FROM      t850_mf_op_docto "
+			+ "INNER JOIN t851_mf_op_docto_item "
+			+ "ON t850_mf_op_docto.f850_rowid = t851_mf_op_docto_item.f851_rowid_op_docto "
+			+ "INNER JOIN t121_mc_items_extensiones "
+			+ "ON t851_mf_op_docto_item.f851_rowid_item_ext_padre = t121_mc_items_extensiones.f121_rowid "
+			+ "INNER JOIN t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = t120_mc_items.f120_rowid "
+			+ "WHERE   (t850_mf_op_docto.f850_consec_docto = :numOp)", nativeQuery = true)
+	Integer obtenerItemOp(@Param("numOp") Integer numOp);
+
 
 }

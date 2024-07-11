@@ -27,4 +27,6 @@ public interface ListaMaterialService {
 
 	DataTEP obtenerDataTEP(String idRuta, String idCentroTrabajo);
 
+	Integer obtenerItemOp(Integer numOp);
+
 }

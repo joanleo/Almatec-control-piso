@@ -19,6 +19,7 @@ public class ItemOpCtDTO implements CommonDTO {
 	private BigDecimal longitud;
 	private Set<ComponenteDTO> componentes = new HashSet<>();
 	private Integer prioridad;
+	private Integer cant_cumplida;
 
 	public ItemOpCtDTO() {
 		super();
@@ -116,12 +117,21 @@ public class ItemOpCtDTO implements CommonDTO {
 		this.longitud = longitud;
 	}
 
+	public Integer getCant_cumplida() {
+		return cant_cumplida;
+	}
+
+	public void setCant_cumplida(Integer cant_cumplida) {
+		this.cant_cumplida = cant_cumplida;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemOpCtDTO [item_op_id=" + item_op_id + ", item_id=" + item_id + ", item_desc=" + item_desc
 				+ ", cant_req=" + cant_req + ", item_centro_t_id=" + item_centro_t_id + ", item_centro_t_nombre="
 				+ item_centro_t_nombre + ", item_peso=" + item_peso + ", item_color=" + item_color + ", longitud="
-				+ longitud + ", componentes=" + componentes + ", prioridad=" + prioridad + "]";
+				+ longitud + ", componentes=" + componentes + ", prioridad=" + prioridad + ", cant_cumplida="
+				+ cant_cumplida + "]";
 	}
 
 	@Override

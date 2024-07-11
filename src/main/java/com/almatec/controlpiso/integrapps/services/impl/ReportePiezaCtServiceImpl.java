@@ -49,7 +49,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			boolean isConsume = centrosReporteConsumo.contains(reporte.getIdCentroT());
 			
 			
-			if(isConsume && item.getCentroTConsumo() == null) {
+			if(isConsume && (item.getCentroTConsumo() == null || item.getCentroTConsumo() == 0)) {
 					//Se realiza consumo y TEP
 					String responseService = xmlService.crearTEPYConsumos(item, reporteDTO);
 					if("Operacion realizada exitosamente".equals(responseService)) {

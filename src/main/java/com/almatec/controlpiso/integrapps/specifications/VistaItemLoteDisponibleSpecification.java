@@ -17,7 +17,6 @@ public class VistaItemLoteDisponibleSpecification {
 	public Specification<VistaItemLoteDisponible> getDisponibilidad(SpecItemLoteDTO filtro){
 		return(root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
-			System.out.println(filtro);
 			if(filtro.getCodigo() != null) {
 				predicates.add(criteriaBuilder.equal(root.get("idItem"), filtro.getCodigo()));
 			}

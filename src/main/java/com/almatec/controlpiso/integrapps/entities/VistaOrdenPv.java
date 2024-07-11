@@ -79,7 +79,7 @@ public class VistaOrdenPv {
 	@Column(name = "Und_Neg")
 	private String unidadNegocio;
 	@Column(name = "Zona_Desc")
-	private String zonaSistema;
+	private String zona;
 	@Column(name = "Fecha_Ent")
 	private Date fechaEntrega;
 	@Column(name = "Fecha_A_Prod")
@@ -110,301 +110,212 @@ public class VistaOrdenPv {
 	private Integer estadoOp;
 	@Column(name = "f285_id")
 	private String idCentroOperaciones;
+	@Column(name = "f120_id")
+	private Integer itemId;
 	
 	public VistaOrdenPv() {
 		super();
 	}
+
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+
 	public Integer getIdPadre() {
 		return idPadre;
 	}
-	public void setIdPadre(Integer idPadre) {
-		this.idPadre = idPadre;
-	}
+
 	public Integer getRowIdOp() {
 		return rowIdOp;
 	}
-	public void setRowIdOp(Integer rowIdOp) {
-		this.rowIdOp = rowIdOp;
-	}
+
 	public Integer getIdEmpIng() {
 		return idEmpIng;
 	}
-	public void setIdEmpIng(Integer idEmpIng) {
-		this.idEmpIng = idEmpIng;
-	}
+
 	public String getTipoOp() {
 		return tipoOp;
 	}
-	public void setTipoOp(String tipoOp) {
-		this.tipoOp = tipoOp;
-	}
+
 	public Integer getNumOp() {
 		return numOp;
 	}
-	public void setNumOp(Integer numOp) {
-		this.numOp = numOp;
-	}
+
 	public String getOpErp() {
 		return opErp;
 	}
-	public void setOpErp(String opErp) {
-		this.opErp = opErp;
-	}
+
 	public Integer getIdEstadoDoc() {
 		return idEstadoDoc;
 	}
-	public void setIdEstadoDoc(Integer idEstadoDoc) {
-		this.idEstadoDoc = idEstadoDoc;
-	}
+
 	public Date getFecPlanIngR() {
 		return fecPlanIngR;
 	}
-	public void setFecPlanIngR(Date fecPlanIngR) {
-		this.fecPlanIngR = fecPlanIngR;
-	}
+
 	public Date getFecRealIngR() {
 		return fecRealIngR;
 	}
-	public void setFecRealIngR(Date fecRealIngR) {
-		this.fecRealIngR = fecRealIngR;
-	}
+
 	public String getCodigoSgc() {
 		return codigoSgc;
 	}
-	public void setCodigoSgc(String codigoSgc) {
-		this.codigoSgc = codigoSgc;
-	}
+
 	public String getRespIngenieria() {
 		return respIngenieria;
 	}
-	public void setRespIngenieria(String respIngenieria) {
-		this.respIngenieria = respIngenieria;
-	}
+
 	public Date getFechaIngenieria() {
 		return fechaIngenieria;
 	}
-	public void setFechaIngenieria(Date fechaIngenieria) {
-		this.fechaIngenieria = fechaIngenieria;
-	}
+
 	public Date getFechaContractual() {
 		return fechaContractual;
 	}
-	public void setFechaContractual(Date fechaContractual) {
-		this.fechaContractual = fechaContractual;
-	}
+
 	public Date getfConActual() {
 		return fConActual;
 	}
-	public void setfConActual(Date fConActual) {
-		this.fConActual = fConActual;
-	}
+
 	public Double getKgTotal() {
 		return kgTotal;
 	}
-	public void setKgTotal(Double kgTotal) {
-		this.kgTotal = kgTotal;
-	}
+
 	public Double getKgReal() {
 		return kgReal;
 	}
-	public void setKgReal(Double kgReal) {
-		this.kgReal = kgReal;
-	}
+
 	public String getUm() {
 		return um;
 	}
-	public void setUm(String um) {
-		this.um = um;
-	}
+
 	public Double getCant() {
 		return cant;
 	}
-	public void setCant(Double cant) {
-		this.cant = cant;
-	}
+
 	public String getObservaciones() {
 		return observaciones;
 	}
-	public void setObservaciones(String observaciones) {
-		this.observaciones = observaciones;
-	}
+
 	public Boolean getIsAnulada() {
 		return isAnulada;
 	}
-	public void setIsAnulada(Boolean isAnulada) {
-		this.isAnulada = isAnulada;
-	}
+
 	public Date getFechaDespacho() {
 		return fechaDespacho;
 	}
-	public void setFechaDespacho(Date fechaDespacho) {
-		this.fechaDespacho = fechaDespacho;
-	}
+
 	public String getAdjunto() {
 		return adjunto;
 	}
-	public void setAdjunto(String adjunto) {
-		this.adjunto = adjunto;
-	}
+
 	public Date getFechaCompletada() {
 		return fechaCompletada;
 	}
-	public void setFechaCompletada(Date fechaCompletada) {
-		this.fechaCompletada = fechaCompletada;
-	}
+
 	public Date getfAper() {
 		return fAper;
 	}
-	public void setfAper(Date fAper) {
-		this.fAper = fAper;
-	}
+
 	public String getBarCodeHumano() {
 		return barCodeHumano;
 	}
-	public void setBarCodeHumano(String barCodeHumano) {
-		this.barCodeHumano = barCodeHumano;
-	}
+
 	public String getBarCodeMaquina() {
 		return barCodeMaquina;
 	}
-	public void setBarCodeMaquina(String barCodeMaquina) {
-		this.barCodeMaquina = barCodeMaquina;
-	}
+
 	public Date getOrdFechaPlaneada() {
 		return ordFechaPlaneada;
 	}
-	public void setOrdFechaPlaneada(Date ordFechaPlaneada) {
-		this.ordFechaPlaneada = ordFechaPlaneada;
-	}
+
 	public String getBodega() {
 		return bodega;
 	}
-	public void setBodega(String bodega) {
-		this.bodega = bodega;
-	}
+
 	public String getEptUnoEE() {
 		return eptUnoEE;
 	}
-	public void setEptUnoEE(String eptUnoEE) {
-		this.eptUnoEE = eptUnoEE;
-	}
+
 	public String getSciUnoEE() {
 		return sciUnoEE;
 	}
-	public void setSciUnoEE(String sciUnoEE) {
-		this.sciUnoEE = sciUnoEE;
-	}
+
 	public String getUnidadNegocio() {
 		return unidadNegocio;
 	}
-	public void setUnidadNegocio(String unidadNegocio) {
-		this.unidadNegocio = unidadNegocio;
+
+	public String getZona() {
+		return zona;
 	}
-	public String getZonaSistema() {
-		return zonaSistema;
-	}
-	public void setZonaSistema(String zonaSistema) {
-		this.zonaSistema = zonaSistema;
-	}
+
 	public Date getFechaEntrega() {
 		return fechaEntrega;
 	}
-	public void setFechaEntrega(Date fechaEntrega) {
-		this.fechaEntrega = fechaEntrega;
-	}
+
 	public Date getFechaAProduccion() {
 		return fechaAProduccion;
 	}
-	public void setFechaAProduccion(Date fechaAProduccion) {
-		this.fechaAProduccion = fechaAProduccion;
-	}
+
 	public String getEsquemaPintura() {
 		return esquemaPintura;
 	}
-	public void setEsquemaPintura(String pintura) {
-		this.esquemaPintura = pintura;
-	}
+
 	public String getColorBastidores() {
 		return colorBastidores;
 	}
-	public void setColorBastidores(String colorBastidores) {
-		this.colorBastidores = colorBastidores;
-	}
+
 	public String getColorVigas() {
 		return colorVigas;
 	}
-	public void setColorVigas(String colorVigas) {
-		this.colorVigas = colorVigas;
-	}
+
 	public String getColorProtectores() {
 		return colorProtectores;
 	}
-	public void setColorProtectores(String colorProtectores) {
-		this.colorProtectores = colorProtectores;
-	}
+
 	public String getIdProyecto() {
 		return idProyecto;
 	}
-	public void setIdProyecto(String id_proyecto) {
-		this.idProyecto = id_proyecto;
-	}
+
 	public String getCliente() {
 		return cliente;
 	}
-	public void setCliente(String cliente) {
-		this.cliente = cliente;
-	}
+
 	public String getEstadoDoc() {
 		return estadoDoc;
 	}
-	public void setEstadoDoc(String estadoDoc) {
-		this.estadoDoc = estadoDoc;
-	}
+
 	public String getItemRef() {
 		return itemRef;
 	}
-	public void setItemRef(String itemRef) {
-		this.itemRef = itemRef;
-	}
+
 	public String getItemDescripcion() {
 		return itemDescripcion;
 	}
-	public void setItemDescripcion(String itemDescripcion) {
-		this.itemDescripcion = itemDescripcion;
-	}
+
 	public Double getKilosFabricar() {
 		return kilosFabricar;
 	}
-	public void setKilosFabricar(Double kilosFabricar) {
-		this.kilosFabricar = kilosFabricar;
-	}
+
 	public String getCentroOperaciones() {
 		return centroOperaciones;
 	}
-	public void setCentroOperaciones(String centroOperaciones) {
-		this.centroOperaciones = centroOperaciones;
-	}
+
 	public Integer getEstadoOp() {
 		return estadoOp;
 	}
-	public void setEstadoOp(Integer estadoOp) {
-		this.estadoOp = estadoOp;
-	}
+
 	public String getIdCentroOperaciones() {
 		return idCentroOperaciones;
 	}
-	public void setIdCentroOperaciones(String idCentroOperaciones) {
-		this.idCentroOperaciones = idCentroOperaciones;
+
+	public Integer getItemId() {
+		return itemId;
 	}
+
 	@Override
 	public String toString() {
-		return "OrdenPv [id=" + id + ", idPadre=" + idPadre + ", rowIdOp=" + rowIdOp + ", idEmpIng=" + idEmpIng
+		return "VistaOrdenPv [id=" + id + ", idPadre=" + idPadre + ", rowIdOp=" + rowIdOp + ", idEmpIng=" + idEmpIng
 				+ ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", opErp=" + opErp + ", idEstadoDoc=" + idEstadoDoc
 				+ ", fecPlanIngR=" + fecPlanIngR + ", fecRealIngR=" + fecRealIngR + ", codigoSgc=" + codigoSgc
 				+ ", respIngenieria=" + respIngenieria + ", fechaIngenieria=" + fechaIngenieria + ", fechaContractual="
@@ -413,14 +324,13 @@ public class VistaOrdenPv {
 				+ ", fechaDespacho=" + fechaDespacho + ", adjunto=" + adjunto + ", fechaCompletada=" + fechaCompletada
 				+ ", fAper=" + fAper + ", barCodeHumano=" + barCodeHumano + ", barCodeMaquina=" + barCodeMaquina
 				+ ", ordFechaPlaneada=" + ordFechaPlaneada + ", bodega=" + bodega + ", eptUnoEE=" + eptUnoEE
-				+ ", sciUnoEE=" + sciUnoEE + ", unidadNegocio=" + unidadNegocio + ", zonaSistema=" + zonaSistema
+				+ ", sciUnoEE=" + sciUnoEE + ", unidadNegocio=" + unidadNegocio + ", zonaSistema=" + zona
 				+ ", fechaEntrega=" + fechaEntrega + ", fechaAProduccion=" + fechaAProduccion + ", esquemaPintura="
 				+ esquemaPintura + ", colorBastidores=" + colorBastidores + ", colorVigas=" + colorVigas
 				+ ", colorProtectores=" + colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente
 				+ ", estadoDoc=" + estadoDoc + ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion
 				+ ", kilosFabricar=" + kilosFabricar + ", centroOperaciones=" + centroOperaciones + ", estadoOp="
-				+ estadoOp + ", idCentroOperaciones=" + idCentroOperaciones + "]";
+				+ estadoOp + ", idCentroOperaciones=" + idCentroOperaciones + ", itemId=" + itemId + "]";
 	}
-
-
+	
 }

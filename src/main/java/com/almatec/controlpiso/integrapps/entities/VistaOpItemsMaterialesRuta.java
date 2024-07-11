@@ -46,6 +46,9 @@ public class VistaOpItemsMaterialesRuta {
 	private Integer materia_prima_material_id;
 	private String materia_prima_material_desc;
 	private BigDecimal materia_prima_material_cant;
+	
+	private String zona;
+	
 	public String getId() {
 		return id;
 	}
@@ -127,6 +130,9 @@ public class VistaOpItemsMaterialesRuta {
 	public BigDecimal getMaterial_long() {
 		return material_long;
 	}
+	public String getZona() {
+		return zona;
+	}
 	@Override
 	public String toString() {
 		return "VistaOpItemsMaterialesRuta [id=" + id + ", idOpIntegrapps=" + idOpIntegrapps + ", cliente=" + cliente
@@ -139,7 +145,7 @@ public class VistaOpItemsMaterialesRuta {
 				+ material_cant + ", materialCentroTId=" + materialCentroTId + ", material_centro_t_nombre="
 				+ material_centro_t_nombre + ", materia_prima_material_id=" + materia_prima_material_id
 				+ ", materia_prima_material_desc=" + materia_prima_material_desc + ", materia_prima_material_cant="
-				+ materia_prima_material_cant + "]";
+				+ materia_prima_material_cant + ", zona=" + zona + "]";
 	}
 		
 }

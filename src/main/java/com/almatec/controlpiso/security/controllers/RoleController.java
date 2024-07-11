@@ -56,8 +56,7 @@ public class RoleController {
 	
 	@PostMapping
 	public String guardarRole(@ModelAttribute("role") RoleDTO roleDTO, RedirectAttributes flash) {
-		System.out.println("se recibe la solicitud post");
-		System.out.println(roleDTO);
+
 		Set<Permission> permissionsSet = convertStringToPermissionsSet(roleDTO.getPermissions());
 		Role roleSave = new Role();
 		if(roleDTO.getIdRole() != null) {
@@ -70,7 +69,6 @@ public class RoleController {
 			role.setPermissions(permissionsSet);			
 			roleService.guardarRole(role);
 			
-			System.out.println(role);
 		}
 	    
 		flash.addFlashAttribute("message", "Role guardado exitosamente");

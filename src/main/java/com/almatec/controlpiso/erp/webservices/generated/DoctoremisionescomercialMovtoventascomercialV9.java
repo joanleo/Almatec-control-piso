@@ -12,6 +12,7 @@ public class DoctoremisionescomercialMovtoventascomercialV9 implements Conector 
 	private String f470_id_tipo_docto;  //Valida en maestro, código de tipo de documento
 	private Integer f470_consec_docto;  //Numero de documento
 	private Integer f470_nro_registro;  //Numero de registro del movimiento
+	private String f_campo;
 	private String f470_id_bodega;  //Valida en maestro, código de bodega
 	private String f470_id_ubicacion_aux;  //Valida en maestro, obligatorio si la bodega maneja ubiaciones
 	private String f470_id_lote;  //Valida en maestro, obligatorio si el item y la bodega manejan lotes
@@ -19,6 +20,7 @@ public class DoctoremisionescomercialMovtoventascomercialV9 implements Conector 
 	private String f470_id_motivo;  //Valida en maestro, código de motivo
 	private Integer f470_ind_obsequio;  //Indicador de obsequio 0=No, 1=Si
 	private String f470_id_co_movto;  //Valida en maestro, código de centro de operación del movimiento
+	private String f_campo_1;
 	private String f470_id_ccosto_movto;  //Obligatorio si la  cuenta contable exige ccosto. Valida en maestro, código de centro de costo del movimiento.
 	private String f470_id_proyecto;  //Valida en maestro, código de proyecto del movimiento
 	private String f470_id_lista_precio;  //Valida en maestro, código de la lista de precio
@@ -114,6 +116,12 @@ public class DoctoremisionescomercialMovtoventascomercialV9 implements Conector 
 		this.f470_nro_registro = f470_nro_registro;
 	}
 
+	public String getF_campo() {
+		return getFormattedValue(f470_id_bodega ,55);
+	}
+	public void setF_campo(String f_campo) {
+		this.f_campo = f_campo;
+	}
 	public String getF470_id_bodega () {
 		return getFormattedValue(f470_id_bodega ,5);
 	}
@@ -170,6 +178,12 @@ public class DoctoremisionescomercialMovtoventascomercialV9 implements Conector 
 		this.f470_id_co_movto = f470_id_co_movto;
 	}
 
+	public String getF_campo_1() {
+		return getFormattedValue(f470_id_ccosto_movto ,2);
+	}
+	public void setF_campo_1(String f_campo_1) {
+		this.f_campo_1 = f_campo_1;
+	}
 	public String getF470_id_ccosto_movto () {
 		return getFormattedValue(f470_id_ccosto_movto ,15);
 	}
@@ -371,6 +385,6 @@ public class DoctoremisionescomercialMovtoventascomercialV9 implements Conector 
 	}
 	@Override
 	public String getConector() {
-		return this.getF_numero_reg ()+this.getF_tipo_reg ()+this.getF_subtipo_reg ()+this.getF_version_reg ()+this.getF_cia ()+this.getF470_id_co  ()+this.getF470_id_tipo_docto ()+this.getF470_consec_docto ()+this.getF470_nro_registro ()+this.getF470_id_bodega ()+this.getF470_id_ubicacion_aux ()+this.getF470_id_lote ()+this.getF470_id_concepto ()+this.getF470_id_motivo ()+this.getF470_ind_obsequio ()+this.getF470_id_co_movto ()+this.getF470_id_ccosto_movto ()+this.getF470_id_proyecto ()+this.getF470_id_lista_precio ()+this.getF470_id_unidad_precio ()+this.getF470_id_unidad_medida ()+this.getF470_cant_base ()+this.getF470_cant_2 ()+this.getF470_vlr_bruto ()+this.getF470_ind_naturaleza ()+this.getF470_ind_solo_valor ()+this.getF470_ind_impto_asumido ()+this.getF470_notas ()+this.getF470_desc_variable ()+this.getF_desc_item ()+this.getF_id_um_inventario ()+this.getF470_id_item ()+this.getF470_referencia_item ()+this.getF470_codigo_barras ()+this.getF470_id_ext1_detalle ()+this.getF470_id_ext2_detalle ()+this.getF470_id_un_movto ();
+		return this.getF_numero_reg ()+this.getF_tipo_reg ()+this.getF_subtipo_reg ()+this.getF_version_reg ()+this.getF_cia ()+this.getF470_id_co  ()+this.getF470_id_tipo_docto ()+this.getF470_consec_docto ()+this.getF470_nro_registro ()+this.getF_campo()+ this.getF470_id_bodega ()+this.getF470_id_ubicacion_aux ()+this.getF470_id_lote ()+this.getF470_id_concepto ()+this.getF470_id_motivo ()+this.getF470_ind_obsequio ()+this.getF470_id_co_movto ()+this.getF_campo_1()+ this.getF470_id_ccosto_movto ()+this.getF470_id_proyecto ()+this.getF470_id_lista_precio ()+this.getF470_id_unidad_precio ()+this.getF470_id_unidad_medida ()+this.getF470_cant_base ()+this.getF470_cant_2 ()+this.getF470_vlr_bruto ()+this.getF470_ind_naturaleza ()+this.getF470_ind_solo_valor ()+this.getF470_ind_impto_asumido ()+this.getF470_notas ()+this.getF470_desc_variable ()+this.getF_desc_item ()+this.getF_id_um_inventario ()+this.getF470_id_item ()+this.getF470_referencia_item ()+this.getF470_codigo_barras ()+this.getF470_id_ext1_detalle ()+this.getF470_id_ext2_detalle ()+this.getF470_id_un_movto ();
 	}
 }

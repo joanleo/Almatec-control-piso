@@ -69,7 +69,6 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 		BigDecimal total = BigDecimal.ZERO;
 		int count =  1;
 		for(RowItemPdf row: rows) {
-			System.out.println(row);
 			Phrase phrase = new Phrase(String.valueOf(count), font);
 			PdfPCell cell = new PdfPCell(phrase);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);

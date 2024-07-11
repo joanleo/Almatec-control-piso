@@ -49,7 +49,6 @@ public class ListaMServiceImpl implements ListaMService {
 	@Override
 	public List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem) {
 		ItemOp item = itemOpService.obtenerItemPorId(idItem);
-		System.out.println("buscando lotes");
 		return listaMaterialRepo.obtenerLotesOpPorItem(item.getIdOpIntegrapps());
 	}
 

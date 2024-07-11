@@ -37,13 +37,10 @@ public class PedidoSpecification {
 			}			
 
 			if (filtro.getFechaInicio() != null && filtro.getFechaFin() != null) {
-				System.out.println("Se envian ambas fechas");
                 predicates.add(criteriaBuilder.between(root.<Date>get("fecha"), filtro.getFechaInicio(), filtro.getFechaFin()));
             } else if (filtro.getFechaInicio() != null) {
-            	System.out.println("Se envia inicio");
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.<Date>get("fecha"), filtro.getFechaInicio()));
             } else if (filtro.getFechaFin() != null) {
-            	System.out.println("Se envia fin");
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.<Date>get("fecha"), filtro.getFechaFin()));
             }
 			

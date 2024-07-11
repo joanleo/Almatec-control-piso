@@ -59,7 +59,6 @@ public class HeaderAndFooter extends PdfPageEventHelper {
 
         float originalWidth = logoImage.getWidth();
 		float originalHeight = logoImage.getHeight();
-		//System.out.println("Dimensiones originales de la imagen: " + originalWidth + " x " + originalHeight + " puntos.");
 		float width = originalWidth - 56;
 		float height = originalHeight - 25;
         float xPosition = document.left();

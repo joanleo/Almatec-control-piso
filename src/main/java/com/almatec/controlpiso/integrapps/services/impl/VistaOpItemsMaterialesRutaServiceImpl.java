@@ -66,6 +66,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
         mergedItem.setItem_color(itemDTOs.get(0).getItem_color());
         mergedItem.setPrioridad(itemDTOs.get(0).getPrioridad());
         mergedItem.setLongitud(itemDTOs.get(0).getLongitud());
+        mergedItem.setCant_cumplida(itemDTOs.get(0).getCant_cumplida());
         	
         List<ComponenteDTO> mergedComponentes = itemDTOs.stream()
                 .flatMap(item -> item.getComponentes().stream())

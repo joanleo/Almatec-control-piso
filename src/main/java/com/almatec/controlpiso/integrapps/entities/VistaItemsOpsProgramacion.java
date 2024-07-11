@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.integrapps.entities;
 
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,46 +13,28 @@ import javax.persistence.Table;
 public class VistaItemsOpsProgramacion {
 
 	@Id
+	@Column(name = "id")
+	private String id;
+	
 	@Column(name = "item_id")
 	private Long idItem;
 	
 	@Column(name = "id_op_ia")
 	private Integer idOp;
 	
-	@Column(name = "Tipo_OP")
+	@Column(name = "tipo_op")
 	private String tipoOp;
 	
-	@Column(name = "Num_Op")
-	private Integer numOp;
+	@Column(name = "num_op")
+	private Integer numOp;	
 	
-	@Column(name = "id_est_doc")
-	private Integer idEstadoDoc;
-	
-	@Column(name = "Anulada")
-	private Boolean isAnulada;
-	
-	@Column(name = "Und_Neg")
-	private String unidadNegocio;
-	
-	@Column(name = "Zona_Desc")
+	@Column(name = "zona")
 	private String zona;
-	
-	@Column(name = "Fecha_Ent")
-	private Date fecha;
-	
-	@Column(name = "Fecha_A_Prod")
-	private Date fechaProd;
-	
-	@Column(name = "f431_id_proyecto")
-	private String proyecto;
-	
-	@Column(name ="f200_razon_social")
+		
+	@Column(name ="cliente_nombre")
 	private String cliente;
 	
-	@Column(name = "estado_doc")
-	private String estadoDoc;
-	
-	@Column(name = "Item_fab_Id")
+	@Column(name = "item_fab_id")
 	private Integer idItemFab;
 	
 	@Column(name = "descripcion")
@@ -62,9 +45,49 @@ public class VistaItemsOpsProgramacion {
 	
 	@Column(name = "prioridad")
 	private Integer prioridad;
+	
+	@Column(name = "grupo")
+	private String grupo;
+	
+	@Column(name = "marca")
+	private String marca;
+	
+	@Column(name = "fecha_real_ing")
+	private Date fechaIng;
+	
+	@Column(name = "f285_descripcion")
+	private String centroOperacionNombre;
+	
+	@Column(name = "f285_id")
+	private String centroOperacionId;
+	
+	@Column(name = "esquema_pintura")
+	private Integer esquemaPintura;
+	
+	@Column(name = "cod_pintura")
+	private Integer codPintura;
+	
+	@Column(name = "peso_pintura")
+	private Double pesoPintura;
+	
+	@Column(name = "codigo_erp")
+	private Integer codErp;
+	
+	@Column(name = "kg_fabricar")
+	private Double totalKgOp;
+	
+	@Column(name = "id_centro_trabajo_prioridad")
+	private Integer idCentroTrabajoPrioridad;
+		
+	@Column(name = "cant_cumplida")
+	private Double cantCumplida;
 
 	public VistaItemsOpsProgramacion() {
 		super();
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public Long getIdItem() {
@@ -83,40 +106,12 @@ public class VistaItemsOpsProgramacion {
 		return numOp;
 	}
 
-	public Integer getIdEstadoDoc() {
-		return idEstadoDoc;
-	}
-
-	public Boolean getIsAnulada() {
-		return isAnulada;
-	}
-
-	public String getUnidadNegocio() {
-		return unidadNegocio;
-	}
-
 	public String getZona() {
 		return zona;
 	}
 
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public Date getFechaProd() {
-		return fechaProd;
-	}
-
-	public String getProyecto() {
-		return proyecto;
-	}
-
 	public String getCliente() {
 		return cliente;
-	}
-
-	public String getEstadoDoc() {
-		return estadoDoc;
 	}
 
 	public Integer getIdItemFab() {
@@ -135,16 +130,52 @@ public class VistaItemsOpsProgramacion {
 		return prioridad;
 	}
 
-	@Override
-	public String toString() {
-		return "VistaItemsOpsProgramacion [idItem=" + idItem + ", idOp=" + idOp + ", tipoOp=" + tipoOp + ", numOp="
-				+ numOp + ", idEstadoDoc=" + idEstadoDoc + ", isAnulada=" + isAnulada + ", unidadNegocio="
-				+ unidadNegocio + ", zona=" + zona + ", fecha=" + fecha + ", fechaProd=" + fechaProd + ", proyecto="
-				+ proyecto + ", cliente=" + cliente + ", estadoDoc=" + estadoDoc + ", idItemFab=" + idItemFab
-				+ ", descripcion=" + descripcion + ", cant=" + cant + ", prioridad=" + prioridad + "]";
+	public String getGrupo() {
+		return grupo;
 	}
-	
-	
-	
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public Date getFechaIng() {
+		return fechaIng;
+	}
+
+	public String getCentroOperacionNombre() {
+		return centroOperacionNombre;
+	}
+
+	public String getCentroOperacionId() {
+		return centroOperacionId;
+	}
+
+	public Integer getEsquemaPintura() {
+		return esquemaPintura;
+	}
+
+	public Integer getCodPintura() {
+		return codPintura;
+	}
+
+	public Double getPesoPintura() {
+		return pesoPintura;
+	}
+
+	public Integer getCodErp() {
+		return codErp;
+	}
+
+	public Double getTotalKgOp() {
+		return totalKgOp;
+	}
+
+	public Integer getIdCentroTrabajoPrioridad() {
+		return idCentroTrabajoPrioridad;
+	}
+
+	public Double getCantCumplida() {
+		return cantCumplida;
+	}
 
 }

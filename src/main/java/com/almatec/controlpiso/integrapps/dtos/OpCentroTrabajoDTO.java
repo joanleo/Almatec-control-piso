@@ -13,6 +13,7 @@ public class OpCentroTrabajoDTO {
 	private String proyecto;
 	private Date fechaContraActual;
 	private String esquemaPintura;
+	private String zona;
 	private List<ItemOpCtDTO> items = new ArrayList<>();
 	
 	public OpCentroTrabajoDTO() {
@@ -83,16 +84,24 @@ public class OpCentroTrabajoDTO {
 		this.esquemaPintura = esquemaPintura;
 	}
  
-	@Override
-	public String toString() {
-		return "OpCentroTrabajoDTO [idOp=" + idOp + ", op=" + op + ", cliente=" + cliente + ", proyecto=" + proyecto
-				+ ", fechaContraActual=" + fechaContraActual + ", esquemaPintura=" + esquemaPintura + ", items=" + items
-				+ "]";
+	public String getZona() {
+		return zona;
+	}
+
+	public void setZona(String zona) {
+		this.zona = zona;
 	}
  
 	@Override
+	public String toString() {
+		return "OpCentroTrabajoDTO [idOp=" + idOp + ", op=" + op + ", cliente=" + cliente + ", proyecto=" + proyecto
+				+ ", fechaContraActual=" + fechaContraActual + ", esquemaPintura=" + esquemaPintura + ", zona=" + zona
+				+ ", items=" + items + "]";
+	}
+
+	@Override
 	public int hashCode() {
-		return Objects.hash(cliente, esquemaPintura, fechaContraActual, idOp, items, op, proyecto);
+		return Objects.hash(cliente, esquemaPintura, fechaContraActual, idOp, items, op, proyecto, zona);
 	}
 
 	@Override
@@ -107,7 +116,9 @@ public class OpCentroTrabajoDTO {
 		return Objects.equals(cliente, other.cliente) && Objects.equals(esquemaPintura, other.esquemaPintura)
 				&& Objects.equals(fechaContraActual, other.fechaContraActual) && Objects.equals(idOp, other.idOp)
 				&& Objects.equals(items, other.items) && Objects.equals(op, other.op)
-				&& Objects.equals(proyecto, other.proyecto);
+				&& Objects.equals(proyecto, other.proyecto) && Objects.equals(zona, other.zona);
 	}
+
+	
 
 }

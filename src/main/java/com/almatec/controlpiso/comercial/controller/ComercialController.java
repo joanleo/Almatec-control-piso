@@ -82,7 +82,6 @@ public class ComercialController {
 	@ResponseBody
 	@PostMapping("/pedidos/filtrar")
 	public List<VistaPedidosErp> getPedidos(@RequestBody PedidoSpecDTO busquedaSpec){
-		System.out.println(busquedaSpec);
 		List<VistaPedidosErp> lista = vistaPedidosErpService.searchOrder(busquedaSpec);
 		return lista;
 	}

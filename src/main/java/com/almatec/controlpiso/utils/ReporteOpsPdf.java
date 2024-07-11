@@ -70,10 +70,8 @@ public class ReporteOpsPdf {
 	private void tableData(PdfPTable table) {
 		List<ItemOp> itemsC2 = new ArrayList<>();
 		for(ItemOp item: itemsOp) {
-			System.out.println(item.getId());
 			List<ItemOp> items = itemOpService.obtenerItemsOpC2(String.valueOf(item.getId()));
 			itemsC2.addAll(items);
-			System.out.println(items);
 		}
 		int count = 1;
 		for(ItemOp item: itemsC2) {

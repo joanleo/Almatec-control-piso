@@ -2,6 +2,7 @@ package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -119,15 +120,9 @@ public class ItemOpServiceImpl implements ItemOpService {
 
 	@Override
 	public List<ItemOp> obtenerItemsOpC2(String idGrupo) {
-		System.out.println("Padre: " + idGrupo);
 		return itemOpRepo.obtenerItemsOpC2(idGrupo);
 	}
 
-	/*@Override
-	public ItemOp obtenerItemsOp(String idGrupo) {
-		return itemOpRepo.findById(Long.valueOf(idGrupo))
-				.orElseThrow(()-> new ResourceNotFoundException("Item no encontrado"));
-	}*/
 
 	@Override
 	public List<ItemOp> buscarItemsOp(Integer numOp) {
@@ -287,7 +282,6 @@ public class ItemOpServiceImpl implements ItemOpService {
 					})
 					
 				.collect(Collectors.toList());
-		opsDTO.forEach(System.out::println);
 		
 		return opsDTO;
 		
@@ -344,7 +338,6 @@ public class ItemOpServiceImpl implements ItemOpService {
 
 	@Override
 	public ItemInterface obtenerItemFabricaPorId(Integer idItem) {
-		System.out.println("Obteniendo itemFa");
 		try {
 			return itemOpRepo.obtenerItemFabricaPorId(idItem);
 			
@@ -362,7 +355,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override

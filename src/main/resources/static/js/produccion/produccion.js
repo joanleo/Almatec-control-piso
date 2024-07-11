@@ -545,6 +545,7 @@ async function obtenerOpCentroT(ct){
 	try{
 		const response = await fetch(`/centros-trabajo/${ct}/ordenes-produccion`)
 		const data = await response.json()
+		data.sort((a, b) => b.idOp - a.idOp)
 		console.log("respuesta ops CT: ",data)
 		spinner.setAttribute('hidden', '')
 		return data

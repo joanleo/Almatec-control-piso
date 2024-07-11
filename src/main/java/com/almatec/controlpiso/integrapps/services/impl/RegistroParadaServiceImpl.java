@@ -31,7 +31,6 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 
 	@Override
 	public ErrorMensaje registrarActualizarParada(RegistroParadaDTO registroParadaDTO, Integer idCT) {
-		System.out.println("Service: Buscando registro parada");
 		RegistroParada registroParada = registroParadaRepository.findByIdConfigProcesoAndIdOperarioAndIdParada(
 				registroParadaDTO.getIdConfigProceso(), registroParadaDTO.getIdOperario(), registroParadaDTO.getIdParada());
 		LocalDateTime fecha = LocalDateTime.now();
@@ -39,7 +38,6 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 		RegistroOperDia registroOperario = registroOperDiaRepo.findByIdCentroTAndIdConfigProcesoAndIdOperario(idCT, registroParadaDTO.getIdConfigProceso(), registroParadaDTO.getIdOperario());
 		registroOperario.setFechaEdicion(fecha);
 		if(registroParada == null) {
-			System.out.println("No existe parada");
 			registroParada = new RegistroParada();
 			registroParada.setIdConfigProceso(registroParadaDTO.getIdConfigProceso());
 			registroParada.setIdOperario(registroParadaDTO.getIdOperario());
@@ -47,13 +45,11 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 			registroParada.setFechaCreacion(fecha);
 			registroOperario.setIdParada(registroParadaDTO.getIdParada().intValue());
 			try {
-				System.out.println("Guardando parada");
 				registroParadaRepository.save(registroParada);
 				registroOperDiaRepo.save(registroOperario);
-				System.out.println("Parada registrada exitosamente");
 				return new ErrorMensaje("Parada registrada exitosamente");
 			} catch (Exception e) {
-				System.out.println(e);
+				e.printStackTrace();;
 				return new ErrorMensaje(true, "Ocurrio un error al tratar de registrar la parada");
 			}
 		}else if(registroParada != null && !registroParada.getIsActivo()) {
@@ -61,13 +57,11 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 			registroParada.setFechaEdicion(fecha);
 			registroOperario.setIdParada(registroParadaDTO.getIdParada().intValue());
 			try {
-				System.out.println("Guardando parada");
 				registroParadaRepository.save(registroParada);
 				registroOperDiaRepo.save(registroOperario);
-				System.out.println("Parada registrada exitosamente");
 				return new ErrorMensaje("Parada registrada exitosamente");
 			} catch (Exception e) {
-				System.out.println(e);
+				e.printStackTrace();
 				return new ErrorMensaje(true, "Ocurrio un error al tratar de registrar la parada");
 			}
 		}

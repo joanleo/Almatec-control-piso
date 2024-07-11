@@ -68,7 +68,7 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 			orden.setTipoOp(o.getTipoOp());
 			orden.setNumOp(o.getNumOp());
 			orden.setUn(o.getUnidadNegocio());
-			orden.setZona(o.getZonaSistema().split("-")[0]);
+			orden.setZona(o.getZona());
 			orden.setEsquemaPintura(o.getEsquemaPintura());
 			orden.setIdProyecto(o.getIdProyecto());
 			orden.setCliente(o.getCliente());

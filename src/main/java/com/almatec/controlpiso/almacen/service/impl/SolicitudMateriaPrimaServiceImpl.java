@@ -44,7 +44,6 @@ public class SolicitudMateriaPrimaServiceImpl implements SolicitudMateriaPrimaSe
 	@Override
 	public SolicitudMateriaPrima crearSolicitud(SolicitudMateriaPrima solicitud) {
 		VistaOrdenPv ordenPv = ordenPvService.obtenerOrdenPorId(solicitud.getIdOp());
-		System.out.println(ordenPv);
 		solicitud.setTipoOp(ordenPv.getTipoOp());
 		solicitud.setNumOp(ordenPv.getNumOp());
 		return solicitudMateriaPrimaRepo.saveAndFlush(solicitud);
@@ -61,20 +60,16 @@ public class SolicitudMateriaPrimaServiceImpl implements SolicitudMateriaPrimaSe
 		detalleSol.forEach(item->{
 			item.setCantEntrega(item.getCantSol());
 			item.setIdEstadoItem(1);
-			System.out.println(item);
 		});
-		System.out.println("Actualizando detalles");
 		detalleSol = detalleSolService.actualizarDetalleSol(detalleSol);
 		List<ListaM> listaMateriales = listaMService.obtenerListaMPorIdOp(solicitud.getIdOp());
 		
-		System.out.println("Actualizando lista m");
 		detalleSol.forEach(detalleItem -> {
 	        listaMateriales.stream()
 	                .filter(listaItem -> listaItem.getCodigoErp().equals(detalleItem.getCodigoErp()))
 	                .findFirst()
 	                .ifPresent(listaItem -> {
 	                	listaItem.setCantEntregada(listaItem.getCantEntregada().add(new BigDecimal(detalleItem.getCantEntrega())));
-	                	System.out.println(listaItem);
 	                });
 	    });
 

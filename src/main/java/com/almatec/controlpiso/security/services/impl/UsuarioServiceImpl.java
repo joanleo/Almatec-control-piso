@@ -85,7 +85,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuarioRepo.inActivarUsuario(usuario.getId());
 			
 		} catch (Exception e) {
-			System.out.println("Error al cambiar en la bd: " + e);
+			e.printStackTrace();
 		}
 		
 	}

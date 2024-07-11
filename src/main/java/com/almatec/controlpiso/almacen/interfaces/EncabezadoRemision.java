@@ -14,5 +14,6 @@ public interface EncabezadoRemision {
 	String getDireccion();
 	String getCelular();
 	String getCiudad();
+	Integer getIdOpIa();
 	
 }

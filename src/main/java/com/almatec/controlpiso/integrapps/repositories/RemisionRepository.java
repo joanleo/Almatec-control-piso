@@ -27,7 +27,7 @@ public interface RemisionRepository extends JpaRepository<Remision, Long> {
 			+ "view_orden_pv.f200_razon_social AS Cliente, RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion) AS Proyecto, "
 			+ "web_usuarios.usu_nombre AS UsuarioCrea, UnoEE_Prueba.dbo.t015_mm_contactos.f015_contacto AS Contacto, "
 			+ "UnoEE_Prueba.dbo.t015_mm_contactos.f015_direccion1 AS Direccion, UnoEE_Prueba.dbo.t015_mm_contactos.f015_celular AS Celular, "
-			+ "UnoEE_Prueba.dbo.t013_mm_ciudades.f013_descripcion AS Ciudad "
+			+ "UnoEE_Prueba.dbo.t013_mm_ciudades.f013_descripcion AS Ciudad, remision.id_op_ia AS IdOpIa "
 			+ "FROM   remision "
 			+ "INNER JOIN view_orden_pv "
 			+ "ON remision.id_op_ia = view_orden_pv.id_op_ia "

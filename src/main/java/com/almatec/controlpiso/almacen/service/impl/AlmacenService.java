@@ -24,6 +24,7 @@ import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemisi
 import com.almatec.controlpiso.integrapps.repositories.ItemOpRepository;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
+import java.util.Collections;
 
 @Service
 public class AlmacenService {
@@ -46,13 +47,12 @@ public class AlmacenService {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	public List<ItemOp> obtenerItemsARemisionarPorIdOpIa(Integer idOpIa) {
 		try {
 			List<ItemOp> itemsOp = itemOpRepo.buscarItemsARemisionarPorIdOpIa(idOpIa);
-			itemsOp.forEach(System.out::println);
 			return itemsOp;
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -102,24 +102,11 @@ public class AlmacenService {
 	public List<EncabezadoRemision> obtenerRemisiones() {
 		try {
 			List<EncabezadoRemision> remisiones = remisionService.obtenerTodasLasRemisiones();
-			/*remisiones.forEach(System.out::println);
-			ModelMapper mapper = new ModelMapper();
-			PropertyMap<DetalleRemision, DetalleRemisionDTO> detalleMap = new PropertyMap<DetalleRemision, DetalleRemisionDTO>() {				
-				@Override
-				protected void configure() {
-					map().setItemOp(source.getItemOp().getId());
-					map().setCantidad(source.getCantidad());					
-				}
-			};
-			mapper.addMappings(detalleMap);
-			return  remisiones.stream()
-					.map(rem-> mapper.map(rem, RemisionDTO.class))
-					.collect(Collectors.toList());*/
 			return remisiones;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	public List<DetalleRemisionInterface> obtenerDetalleRemision(Long idRemision) {

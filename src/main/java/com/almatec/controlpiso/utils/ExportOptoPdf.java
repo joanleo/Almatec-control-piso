@@ -100,7 +100,6 @@ public class ExportOptoPdf {
 
 		for (Map.Entry<Integer, List<ItemOpCtDTO>> entry : itemsGroupedByCentroTrabajo.entrySet()) {
 			List<ItemOpCtDTO> items = entry.getValue();
-			System.out.println("Cant items: " + items.size());
 			for(ItemOpCtDTO item: items) {
 				Phrase phrase = new Phrase(String.valueOf(count), font);
 				PdfPCell cell = new PdfPCell(phrase);
@@ -175,10 +174,6 @@ public class ExportOptoPdf {
 		for (Entry<Integer, Set<ComponenteDTO>> entry : componentsGroupedByCentroTrabajo.entrySet()) {
 		    Set<ComponenteDTO> itemsParaCentroTrabajo = entry.getValue();
 		    List<CommonDTO> commonDTOList = new ArrayList<>(itemsParaCentroTrabajo);
-		    System.out.println("Componentes:");
-		    for(ComponenteDTO item: itemsParaCentroTrabajo) {
-		    	System.out.println(item.getMaterial_desc() + "    " + item.getMaterial_centro_t_id());
-		    }
 		    addTableForComponent(commonDTOList, document);
 		}
 	}
