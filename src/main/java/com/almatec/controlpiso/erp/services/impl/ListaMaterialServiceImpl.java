@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.erp.entities.ListaMaterial;
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
+import com.almatec.controlpiso.erp.interfaces.DataCostoStandarInterface;
 import com.almatec.controlpiso.erp.interfaces.DataTEP;
 import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
 import com.almatec.controlpiso.erp.interfaces.RutaInterface;
+import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.repositories.ListaMaterialRepository;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
@@ -22,14 +24,12 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 
 	@Override
 	public List<ListaMaterial> obtenerListaActual(Integer f820_id) {
-		List<ListaMaterial> lista = listaMaterialRepo.obtenerListaActual(f820_id);
-		return lista;
+		return listaMaterialRepo.obtenerListaActual(f820_id);
 	}
 
 	@Override
 	public List<RutaInterface> obtenerRutasActual(String f808_id) {
-		List<RutaInterface> rutas = listaMaterialRepo.obtenerRutas(f808_id);
-		return rutas;
+		return listaMaterialRepo.obtenerRutas(f808_id);
 	}
 
 	@Override
@@ -77,5 +77,17 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 	public Integer obtenerItemOp(Integer numOp) {
 		
 		return listaMaterialRepo.obtenerItemOp(numOp);
+	}
+
+	@Override
+	public DataCostoStandarInterface obtenerCostoStandar(Integer idItem) {
+		System.out.println("id del item: "+ idItem);
+		return listaMaterialRepo.obtenerCostoStandar(idItem);
+	}
+
+	@Override
+	public List<TarifaCostosSegmentoItem> obtenerCostosSegmentos(String ref) {
+		List<TarifaCostosSegmentoItem>  costos =listaMaterialRepo.encontrarCostosSegmentosItemPorRef(ref);
+		return costos;
 	}
 }

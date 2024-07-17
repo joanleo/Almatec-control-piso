@@ -43,8 +43,10 @@ import com.almatec.controlpiso.erp.dto.ListaMaterialesDTO;
 import com.almatec.controlpiso.erp.dto.RutaDTO;
 import com.almatec.controlpiso.erp.entities.ListaMaterial;
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
+import com.almatec.controlpiso.erp.interfaces.DataCostoStandarInterface;
 import com.almatec.controlpiso.erp.interfaces.DataTEP;
 import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
+import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosConsumos;
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosMovtoInventarioV4;
@@ -246,6 +248,7 @@ public class XmlService {
 			Node printTipoErrorNode = doc.getElementsByTagName("printTipoError").item(0);
 			// Obtener el valor de printTipoError
 			int printTipoError = Integer.parseInt(printTipoErrorNode.getTextContent());
+			System.out.println(printTipoError);
 			// Si printTipoError es diferente de cero, obtener los detalles de NewDataSet
 			if (printTipoError != 0) {
 				NodeList tableNodes = doc.getElementsByTagName("Table");
@@ -392,7 +395,7 @@ public class XmlService {
 		ordenProduccion.addAll(detallesOp);
 		
 		String response = postImportarXML(ordenProduccion);
-		String consecutivo = "OP_PV-" + items.get(0).getNoPedido();
+		String consecutivo = "IF-" + items.get(0).getNoPedido();
 		crearArchivo(ordenProduccion, consecutivo);
 		
 		if(RESPUESTA_OK.equals(response)) {
@@ -775,7 +778,7 @@ public class XmlService {
 
 
 	private List<DoctoTEPMovimientosVersión01> crearMovTiempos(ReporteDTO reporte, DataConsumoInterface data, DataTEP dataTE,String idCTErp) {
-		System.out.println("Creandomov tep ");
+		System.out.println("Creando mov tep ");
 		List<DoctoTEPMovimientosVersión01> movs = new ArrayList<>();
 		System.out.println(reporte);
 		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
@@ -814,6 +817,10 @@ public class XmlService {
 	private void crearMovimiento(DataConsumoInterface data, DataTEP dataTE, String idCTErp, 
 			BigDecimal cantidadReportar, List<DoctoTEPMovimientosVersión01> movs, Double kilosReportar) {
 		System.out.println("Creando conector movs tep");
+		System.out.println(data.getf120_id());
+		System.out.println(data.getf851_rowid());
+		System.out.println(data.getf850_consec_docto());
+		System.out.println(dataTE.getf809_numero_operacion());
 		DoctoTEPMovimientosVersión01 mov = new DoctoTEPMovimientosVersión01();
 	    mov.setF_cia(this.CIA);
 	    mov.setF880_id_co(this.C_O);
@@ -932,25 +939,65 @@ public class XmlService {
 		
 		costoXml.add(parametros);
 		
-		ManufacturaedicióndecostositemCostosV02 costo = creaConectorEdicionCosto(item.getReferencia());
+		List<ManufacturaedicióndecostositemCostosV02>  costo = creaConectoresEdicionCosto(item.getReferencia(), null);
 		
-		costoXml.add(costo);
+		costoXml.addAll(costo);
 		
 		return costoXml;
 	}
 
 
-	private ManufacturaedicióndecostositemCostosV02 creaConectorEdicionCosto(String ref) {
+	private List<ManufacturaedicióndecostositemCostosV02> creaConectoresEdicionCosto(String ref, List<ListaMaterialesDTO> listaMaterialesDTO) {
+		List<ManufacturaedicióndecostositemCostosV02> costos = new ArrayList<>();
+		Double costoStantar = 0.0001;
+		if(listaMaterialesDTO == null) {
+			costos.add(crearConectorCosto(ref, costoStantar, 901, null));
+			return costos;
+		}else {
+			costoStantar = calcularCostoStandar(listaMaterialesDTO);			
+			ManufacturaedicióndecostositemCostosV02 costo = crearConectorCosto(ref, costoStantar, 1, listaMaterialesDTO.get(0).getF820_cant_base());
+			costos.add(costo);
+			/*List<TarifaCostosSegmentoItem> segmentos = listaMaterialService.obtenerCostosSegmentos(ref);
+			segmentos.forEach(segmento->{
+				ManufacturaedicióndecostositemCostosV02 costoSegmento = crearConectorCosto(ref, segmento.getCostoTarifa(), segmento.getSegmento(), listaMaterialesDTO.get(0).getF820_cant_base());
+				costos.add(costoSegmento);
+			});*/
+			return costos;
+		}
+
+	}
+
+
+	private ManufacturaedicióndecostositemCostosV02 crearConectorCosto(String ref,
+			 Double costoCalculado, int segmento, Double cantBase) {
 		ManufacturaedicióndecostositemCostosV02 costo = new ManufacturaedicióndecostositemCostosV02();
 		costo.setF_cia(this.CIA);
 		costo.setF402_referencia_item(ref);
 		costo.setF402_id_instalacion(this.INSTALACION);
 		costo.setF402_id_grupo_costo(2);
-		costo.setF402_id_segmento_costo(901);
-		costo.setF402_costo_este_nivel_uni(0.0001);
+		costo.setF402_id_segmento_costo(segmento);
+		if(cantBase == null) {
+			costo.setF402_costo_este_nivel_uni(costoCalculado);
+		}else {
+			Double costoUnidad = costoCalculado / cantBase;
+			costo.setF402_costo_nivel_previo_uni(costoUnidad);			
+		}
 		return costo;
 	}
 	
+	private Double calcularCostoStandar(List<ListaMaterialesDTO> listaMaterialesDTO) {
+		return listaMaterialesDTO.stream()
+				.map(item->{
+					System.out.println(item);
+					DataCostoStandarInterface dataCostoItem = listaMaterialService.obtenerCostoStandar(item.getF820_id_hijo());
+					System.out.println(dataCostoItem.getIdItem()+" "+dataCostoItem.getTotalCostoStandar()+" "+dataCostoItem.getTotalCostoPrevio());
+					Double totalCosto = dataCostoItem.getTotalCostoPrevio() + dataCostoItem.getTotalCostoStandar(); 
+					return item.getF820_cant_requerida() * totalCosto;
+				})
+				.reduce(0.0, Double:: sum);		
+	}
+
+
 	private RutasRutasV01 crearConectorRuta(ItemsVersión05 item) {
 		RutasRutasV01 ruta = new RutasRutasV01();
 		ruta.setF_cia(this.CIA);
@@ -1000,8 +1047,6 @@ public class XmlService {
 		ItemsParametrosVersion5 parametros = crearParametros(ruta.getF808_id(), Integer.valueOf(item.getF120_id()));
 		opXml.add(parametros);
 		
-		ManufacturaedicióndecostositemCostosV02 costo = creaConectorEdicionCosto(item.getF120_referencia());
-		opXml.add(costo);
 		
 		String jsonStringLM = itemOpService.obtenerStringPorIdOPIntegrappsYTipo(idOPI, "LM");
 		List<ListaMaterialesDTO> listaMaterialesDTO = new ArrayList<>();
@@ -1010,6 +1055,10 @@ public class XmlService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+		List<ManufacturaedicióndecostositemCostosV02> costos = creaConectoresEdicionCosto(item.getF120_referencia(), listaMaterialesDTO);
+		opXml.addAll(costos);
+		
 		List<ListadematerialesListadematerialesv4> listaMateriales = crearConectorLM(listaMaterialesDTO, Integer.valueOf(item.getF120_id()));
 		opXml.addAll(listaMateriales);
 				
@@ -1425,7 +1474,7 @@ public class XmlService {
 			    })
 			    .reduce(0.0, Double::sum);
 
-		mov.setF470_cant_base(cantConsumir.doubleValue());
+		mov.setF470_cant_base(cantConsumir);
 
 		mov.setF470_id_bodega(this.BODEGA_ENTREGA_ITEM_FACTURABLE);//revisar		
 		mov.setF470_id_concepto(701);

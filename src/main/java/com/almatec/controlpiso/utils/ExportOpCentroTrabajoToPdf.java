@@ -83,7 +83,12 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 			phrase = new Phrase(row.getProyecto(), font);
 			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell.setPhrase(phrase);
-			table.addCell(cell);			
+			table.addCell(cell);		
+			
+			phrase = new Phrase(row.getZona(), font);
+			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell.setPhrase(phrase);
+			table.addCell(cell);
 			
 			
 			phrase = new Phrase(row.getDescripcion(), font);
@@ -97,18 +102,18 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 			table.addCell(cell);
 			
 			BigDecimal longitudBig = row.getLongitud();
-			String longitud = longitudBig != null ? longitudBig.toString(): "";			
+			String longitud = longitudBig != null ? longitudBig.setScale(2, RoundingMode.HALF_UP).toString(): "";			
 			phrase = new Phrase(longitud, font);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			
-			phrase = new Phrase(row.getPeso().toString(), font);
+			phrase = new Phrase(row.getPeso().setScale(2, RoundingMode.HALF_UP).toString(), font);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			
-			BigDecimal pesoTotal = row.getPeso().multiply(row.getCant()).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal pesoTotal = row.getPeso().multiply(row.getCant()).setScale(2, RoundingMode.HALF_UP);
 			total = total.add(pesoTotal);
 			phrase = new Phrase(pesoTotal.toString(), font);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -155,6 +160,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 					row.setRef(item.getItem_id().toString());
 					row.setLongitud(item.getLongitud());
 					row.setProyecto(op.getProyecto());
+					row.setZona(op.getZona());
 					rows.add(row);
 					continue;
 				}
@@ -162,7 +168,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 					if(Objects.equals(componente.getMaterial_centro_t_id(), centroTrabajo.getId())) {
 						RowItemPdf row = new RowItemPdf();
 		   				row.setDescripcion(componente.getMaterial_desc());
-		   				row.setLongitud(componente.getMaterial_long());
+		   				row.setLongitud(componente.getLongitud());
 		   				row.setCant(componente.getMaterial_cant());
 		   				row.setOp(op.getOp());
 		   				row.setRef(componente.getMaterial_id().toString());
@@ -170,6 +176,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 		   				row.setPrioridad(item.getPrioridad());
 		   				row.setColor(item.getItem_color());
 		   				row.setProyecto(op.getProyecto());
+		   				row.setZona(op.getZona());
 		   				rows.add(row);
 		   				break;
 					}
@@ -186,21 +193,19 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 		List<RowItemPdf> rows = obtenerFilas();
 		int[] centrosTrabajoPrioridad = {3,4,5,6,7,8,9,17};
        	List<String> columnsName = new ArrayList<>();
-		//columnsName.addAll(Arrays.asList("#", "REF", "DESCRIPCION", "CANT", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "OP", "COLOR"));
-       	columnsName.addAll(Arrays.asList("#", "OP", "PROYECTO", "DESCRIPCION", "CANT", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "COLOR"));
+       	columnsName.addAll(Arrays.asList("#", "OP", "PROYECTO", "ZONA", "DESCRIPCION", "CANT", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "COLOR"));
 		
 		PdfPTable table = null;
 		boolean priority = false;
 		if (Arrays.stream(centrosTrabajoPrioridad).anyMatch(x -> x == centroTrabajo.getId())) {
-			//float[] columnsWidthPriority = {0.4f, 0.7f, 2.5f, 0.7f, 0.8f, 0.7f, 1.0f, 1.2f, 1.3f, 1.2f};
-			float[] columnsWidthPriority = {0.4f, 1.0f, 2.4f, 2.4f, 0.7f, 0.8f, 0.8f, 1.0f, 1.3f, 1.19f};
-			table = new PdfPTable(10);
+			float[] columnsWidthPriority = {0.4f, 1.0f, 2.4f, 1.1f, 2.3f, 0.8f, 0.8f, 0.8f, 1.0f, 1.3f, 1.3f};
+			table = new PdfPTable(11);
 		    columnsName.add("PRIORIDAD");
 		    table.setWidths(columnsWidthPriority);
 		    priority = true;
 		}else {
-			float[] columnsWidth = {0.4f, 1.0f, 2.4f, 2.4f, 0.7f, 0.8f, 0.8f, 1.0f, 1.3f};	       	
-			table = new PdfPTable(9);
+			float[] columnsWidth = {0.4f, 1.0f, 2.4f, 1.1f, 2.3f, 0.8f, 0.8f, 0.8f, 1.0f, 1.3f};	       	
+			table = new PdfPTable(10);
 			table.setWidths(columnsWidth);			
 		}
 		table.setWidthPercentage(100);

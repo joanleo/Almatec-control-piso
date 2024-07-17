@@ -20,6 +20,7 @@ public class ItemOpCtDTO implements CommonDTO {
 	private Set<ComponenteDTO> componentes = new HashSet<>();
 	private Integer prioridad;
 	private Integer cant_cumplida;
+	private String marca;
 
 	public ItemOpCtDTO() {
 		super();
@@ -123,6 +124,14 @@ public class ItemOpCtDTO implements CommonDTO {
 
 	public void setCant_cumplida(Integer cant_cumplida) {
 		this.cant_cumplida = cant_cumplida;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
 	}
 
 	@Override

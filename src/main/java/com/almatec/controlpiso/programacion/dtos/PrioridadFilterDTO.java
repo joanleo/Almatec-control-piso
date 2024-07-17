@@ -1,14 +1,21 @@
 package com.almatec.controlpiso.programacion.dtos;
 
-public class PrioridadFilterDTO {
+import java.io.Serializable;
 
+public class PrioridadFilterDTO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -735396412614254670L;
 	private String descripcion;
     private Integer prioridad;
     private Integer cantidad;
     private String proyecto;
     private String zona;
+    private Integer centroTrabajoId;
     
-	public PrioridadFilterDTO() {
+public PrioridadFilterDTO() {
 		super();
 	}
 
@@ -50,6 +57,20 @@ public class PrioridadFilterDTO {
 
 	public void setZona(String zona) {
 		this.zona = zona;
+	}
+
+	public Integer getCentroTrabajoId() {
+		return centroTrabajoId;
+	}
+
+	public void setCentroTrabajoId(Integer centroTrabajoId) {
+		this.centroTrabajoId = centroTrabajoId;
+	}
+
+	@Override
+	public String toString() {
+		return "PrioridadFilterDTO [descripcion=" + descripcion + ", prioridad=" + prioridad + ", cantidad=" + cantidad
+				+ ", proyecto=" + proyecto + ", zona=" + zona + ", centroTrabajoId=" + centroTrabajoId + "]";
 	}
     
     

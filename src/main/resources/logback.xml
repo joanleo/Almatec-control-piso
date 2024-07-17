@@ -11,9 +11,7 @@
 
     <logger name="com.almatec.controlpiso" level="DEBUG"/>
 
-    <!-- <logger name="paquete.o.clase" level="DEBUG"/> -->
-
-    <root level="INFO">
+    <root level="DEBUG"> <!-- Cambiado a DEBUG para asegurar que todos los mensajes se registren -->
         <appender-ref ref="FILE"/>
     </root>
 </configuration>

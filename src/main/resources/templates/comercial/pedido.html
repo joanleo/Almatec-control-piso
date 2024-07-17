@@ -10,19 +10,8 @@
 				<div>Cargando ...</div>
 			</div>
 			
+			<div th:replace="fragments/alerts :: alerts"></div>	
 			
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <span th:text="${message}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
-			  </button>
-			</div>
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <span th:text="${error}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
-			  </button>
-			 </div>
 			 <h1>[[${noPedido}]]</h1>
 			<div class="table-responsive text-nowrap my-5">
 				<table class="table table-striped align-middle table-hover table-bordered rounded caption-top" aria-describedby="table-description">

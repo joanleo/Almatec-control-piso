@@ -3,8 +3,8 @@ package com.almatec.controlpiso.comercial.controller;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.almatec.controlpiso.erp.webservices.XmlService;
@@ -26,24 +25,25 @@ import com.almatec.controlpiso.integrapps.services.VistaPedidosErpService;
 @RequestMapping("/comercial")
 public class ComercialController {
 	
-	@Autowired
-	private VistaPedidosErpService vistaPedidosErpService;
-	
-	@Autowired
-	private VistaItemPedidoErpService vistaItemPedidosErp;
-	
-	@Autowired
-	private XmlService xmlService;
+	private final VistaPedidosErpService vistaPedidosErpService;
+    private final VistaItemPedidoErpService vistaItemPedidosErp;
+    private final XmlService xmlService;
+
+    public ComercialController(VistaPedidosErpService vistaPedidosErpService,
+                               VistaItemPedidoErpService vistaItemPedidosErp,
+                               XmlService xmlService) {
+        this.vistaPedidosErpService = vistaPedidosErpService;
+        this.vistaItemPedidosErp = vistaItemPedidosErp;
+        this.xmlService = xmlService;
+    }
 	
 	
 	@GetMapping
 	public String listarPedidosVentaErp(Model modelo, @Param("keyword") String keyword) {
-		List<VistaPedidosErp>  pedidos = null;
-		if(keyword == null) {
-			pedidos = vistaPedidosErpService.buscarPedidosErp();
-		}else {
-			pedidos = vistaPedidosErpService.buscarPedidosErp(keyword);			
-		}
+		List<VistaPedidosErp> pedidos = keyword == null ?
+	            vistaPedidosErpService.buscarPedidosErp() :
+	            vistaPedidosErpService.buscarPedidosErp(keyword);
+		
 		modelo.addAttribute("pedidos", pedidos);
 		return "comercial/listar-pedidos";
 	}
@@ -79,10 +79,9 @@ public class ComercialController {
 		return "comercial/pedidos-estado";
 	}
 	
-	@ResponseBody
 	@PostMapping("/pedidos/filtrar")
-	public List<VistaPedidosErp> getPedidos(@RequestBody PedidoSpecDTO busquedaSpec){
-		List<VistaPedidosErp> lista = vistaPedidosErpService.searchOrder(busquedaSpec);
-		return lista;
+	public ResponseEntity<List<VistaPedidosErp>> getPedidos(@RequestBody PedidoSpecDTO busquedaSpec){
+		List<VistaPedidosErp> pedidos = vistaPedidosErpService.searchOrder(busquedaSpec);
+		return ResponseEntity.ok(pedidos);
 	}
 }

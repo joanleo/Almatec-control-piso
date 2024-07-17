@@ -1,128 +1,69 @@
-async function buscarPedidos(){
-	const un = document.getElementById('un').value
-    const estado = document.getElementById('estado').value
-    const asesor = document.getElementById('asesor').value
-    const descripcion = document.getElementById('descripcion').value
-    const cliente = document.getElementById('cliente').value
-    const tipo = document.getElementById('tipo').value
-    const fechaInicio = document.getElementById('start_date').value
-    const fechaFin = document.getElementById('end_date').value
-    
-    const fechaInicioFormateada = fechaInicio ? new Date(fechaInicio).toISOString().slice(0, 10) : null;
-  	const fechaFinFormateada = fechaFin ? new Date(fechaFin).toISOString().slice(0, 10) : null;
-           
-    const filtro = {
-		"un": un,
-		"estado": estado,
-		"asesor": asesor,
-		"descripcion": descripcion,
-		"cliente": cliente,
-		"tipo": tipo,
-		"fechaInicio": fechaInicioFormateada,
-		"fechaFin": fechaFinFormateada
-	}
+async function buscarPedidos(){      
+	const filtro = {
+	        un: document.getElementById('un').value,
+	        estado: document.getElementById('estado').value,
+	        asesor: document.getElementById('asesor').value,
+	        descripcion: document.getElementById('descripcion').value,
+	        cliente: document.getElementById('cliente').value,
+	        tipo: document.getElementById('tipo').value,
+	        fechaInicio: formatDate(document.getElementById('start_date').value),
+	        fechaFin: formatDate(document.getElementById('end_date').value)
+	    };
 	
-	const orders = await getOrders(filtro)
-	console.log(orders)
-	let listOrders = createListObjetsOrder(orders)
-	
-	fillTableOrders(listOrders)	
+	try {
+        const orders = await getOrders(filtro);
+        const listOrders = createListObjectsOrder(orders);
+        fillTableOrders(listOrders);
+    } catch (error) {
+        console.error('Error al buscar pedidos:', error);
+    }
 	
 }
 
-function fillTableOrders(listOrders) {
-    let tbodyOrders = document.getElementById("orders")
-	tbodyOrders.innerHTML = ''
-    listOrders.forEach(order => {
-        let row = document.createElement('tr')
+const formatDate = (date) => date ? new Date(date).toISOString().slice(0, 10) : null;
 
-        let cellUn = document.createElement('td')
-        cellUn.textContent = order.un
-        row.appendChild(cellUn)
-
-        let cellDescripcion = document.createElement('td')
-        cellDescripcion.textContent = order.descripcion
-        row.appendChild(cellDescripcion)
-
-        let cellCliente = document.createElement('td')
-        cellCliente.textContent = order.cliente
-        row.appendChild(cellCliente)
-
-        let cellEstado = document.createElement('td')
-        let divBage = document.createElement('div')
-        if(order.estado == "Cumplido"){
-			divBage.classList.add("finished__badge")
-		}else if(order.estado == "Aprobado"){
-	        divBage.classList.add("approved__badge")			
-		}else{
-			divBage.classList.add("user__badge")
-		}
-        divBage.textContent = order.estado
-        cellEstado.appendChild(divBage)
-        /*
-        <div class="user__badge" th:text="${proyecto.estadoDoc}"></div>
-        */
-        row.appendChild(cellEstado)
-		
-        let cellPesoTotal = document.createElement('td')
-        cellPesoTotal.textContent = order.kgTotal
-        row.appendChild(cellPesoTotal)
-
-		let pesoPendiente = order.kgTotal - order.kgCumplidos
-        let cellPesoPendiente = document.createElement('td')
-        cellPesoPendiente.textContent = pesoPendiente.toFixed(3)
-        row.appendChild(cellPesoPendiente)
-
-		let avance = (order.kgCumplidos / order.kgTotal) * 100
-        let cellAvance = document.createElement('td')
-        cellAvance.textContent = avance.toFixed(2)
-        row.appendChild(cellAvance)
-
-        let cellFechaPedido = document.createElement('td')
-        cellFechaPedido.textContent = order.fecha
-        row.appendChild(cellFechaPedido)
-
-        let cellFechaInicioProd = document.createElement('td')
-        row.appendChild(cellFechaInicioProd)
-
-        let cellFinalProd = document.createElement('td')
-        row.appendChild(cellFinalProd)
-
-        tbodyOrders.appendChild(row)
-
-    })
-}
-
-function createListObjetsOrder(orders) {
-    let listOrders = []
-    for (const item of orders) {
-        const un = item.co
-        const descripcion = item.descripcion
-        const cliente = item.razonSocial
-        const kgTotal = item.cantPedida
-        const kgCumplidos = item.kgCumplidos
-        const estado = item.estado
-        const asesor = item.vendedor
-        const fecha = new Date(item.fecha + "T00:00:00")
-        const fechaFormateada = fecha.toLocaleDateString("es-CO", {
+const createListObjectsOrder = (orders) => {
+    return orders.map(item => ({
+        un: item.co,
+        descripcion: item.descripcion,
+        cliente: item.razonSocial,
+        kgTotal: item.cantPedida,
+        kgCumplidos: item.kgCumplidos,
+        estado: item.estado,
+        asesor: item.vendedor,
+        fecha: new Date(item.fecha + "T00:00:00").toLocaleDateString("es-CO", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
         })
-        const order = {
-            "un": un,
-            "descripcion": descripcion,
-            "cliente": cliente,
-            "kgTotal": kgTotal,
-            "kgCumplidos": kgCumplidos,
-            "estado": estado,
-            "asesor": asesor,
-            "fecha": fechaFormateada
-        }
-        listOrders.push(order)
+    }));
+};
+
+const fillTableOrders = (listOrders) => {
+    const tbodyOrders = document.getElementById("orders");
+    tbodyOrders.innerHTML = listOrders.map(order => `
+        <tr>
+            <td>${order.un}</td>
+            <td>${order.descripcion}</td>
+            <td>${order.cliente}</td>
+            <td><div class="${getStatusClass(order.estado)}">${order.estado}</div></td>
+            <td>${order.kgTotal}</td>
+            <td>${(order.kgTotal - order.kgCumplidos).toFixed(3)}</td>
+            <td>${((order.kgCumplidos / order.kgTotal) * 100).toFixed(2)}</td>
+            <td>${order.fecha}</td>
+            <td></td>
+            <td></td>
+        </tr>
+    `).join('');
+};
+
+const getStatusClass = (estado) => {
+    switch(estado) {
+        case "Cumplido": return "finished__badge";
+        case "Aprobado": return "approved__badge";
+        default: return "user__badge";
     }
-    return listOrders
-}
+};
 
 async function getOrders(filtro) {
     const response = await fetch('/comercial/pedidos/filtrar', {
@@ -133,6 +74,9 @@ async function getOrders(filtro) {
         body: JSON.stringify(filtro)
     })
 
-    const data = await response.json()
-    return data
+	if (!response.ok) {
+	        throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+
+    return await response.json();
 }

@@ -20,6 +20,7 @@ import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
 import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemDTO;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpCTPrioridadDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 import com.almatec.controlpiso.integrapps.dtos.OpDTO;
@@ -376,6 +377,12 @@ public class ItemOpServiceImpl implements ItemOpService {
 			itemsOp.add(item);
 		}
 		return itemsOp;
+	}
+
+	@Override
+	public List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(Integer idCT) {
+		List<ItemOpCTPrioridadDTO> opItems = itemOpRepo.findOpsItemsPorCentroTrabajo(idCT);
+		return opItems;
 	}
 
 	

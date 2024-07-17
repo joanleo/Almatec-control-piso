@@ -61,7 +61,8 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
             for (const itemOp of itemsOps) {
                 if (itemOp.item_centro_t_id == selectedCentroId) {
 					let tbodyItems = document.getElementById("body-items")
-                    agregarFilaATabla(tbodyItems, [itemOp.item_desc, itemOp.cant_req, selectedOp.proyecto, selectedOp.op])
+					console.log(itemOp)
+                    agregarFilaATabla(tbodyItems, [itemOp.item_desc, itemOp.cant_req, selectedOp.proyecto, selectedOp.op, itemOp.prioridad])
                     foundItems = true
                     table_items.removeAttribute('hidden')
                 }
@@ -179,7 +180,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         document.getElementById('ops-ct').appendChild(wrapper_table)
 
         let table_items = crearTabla()
-        let encabezado_items = ['ITEM', 'CANT', 'PROYECTO', 'OP']
+        let encabezado_items = ['ITEM', 'CANT', 'PROYECTO', 'OP', 'PRIORIDAD']
         let header_items = crearHeaderTabla(encabezado_items)
         table_items.appendChild(header_items)
         table_items.setAttribute('hidden', 'none')

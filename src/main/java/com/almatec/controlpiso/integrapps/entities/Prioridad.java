@@ -55,6 +55,14 @@ public class Prioridad {
 		super();
 	}
 
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public Long getIdItem() {
 		return idItem;
 	}
@@ -93,6 +101,22 @@ public class Prioridad {
 
 	public void setUsuarioEdita(Usuario usuarioEdita) {
 		this.usuarioEdita = usuarioEdita;
+	}
+
+	public LocalDateTime getFechaCrea() {
+		return fechaCrea;
+	}
+
+	public LocalDateTime getFechaEdita() {
+		return fechaEdita;
+	}
+
+	public void setFechaCrea(LocalDateTime fechaCrea) {
+		this.fechaCrea = fechaCrea;
+	}
+
+	public void setFechaEdita(LocalDateTime fechaEdita) {
+		this.fechaEdita = fechaEdita;
 	}
 	
 }

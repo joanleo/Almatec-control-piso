@@ -2,7 +2,6 @@ package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.PedidoSpecDTO;
@@ -14,11 +13,13 @@ import com.almatec.controlpiso.integrapps.specifications.PedidoSpecification;
 @Service
 public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 	
-	@Autowired
-	private VistaPedidosErpRepository vistaPedidosErpRepo;
-	
-	@Autowired
-	private PedidoSpecification filter;
+	private final VistaPedidosErpRepository vistaPedidosErpRepo;
+    private final PedidoSpecification filter;
+
+    public VistaPedidosErpServiceImpl(VistaPedidosErpRepository vistaPedidosErpRepo, PedidoSpecification filter) {
+        this.vistaPedidosErpRepo = vistaPedidosErpRepo;
+        this.filter = filter;
+    }
 
 	@Override
 	public List<VistaPedidosErp> buscarPedidosErp() {
@@ -32,8 +33,7 @@ public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 
 	@Override
 	public List<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec) {
-		List<VistaPedidosErp> orders = vistaPedidosErpRepo.findAll(filter.getOrders(busquedaSpec));
-		return orders; 
+		return vistaPedidosErpRepo.findAll(filter.getOrders(busquedaSpec)); 
 	}
 
 }

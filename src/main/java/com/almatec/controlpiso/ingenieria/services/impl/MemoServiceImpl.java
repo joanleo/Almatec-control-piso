@@ -54,16 +54,7 @@ public class MemoServiceImpl implements MemoService {
 			memo.setDetalles(detalles);
 			memo.setUsuarioCrea(usuario);
 			Memo memoSaved = memoRepo.save(memo);
-			/*memoSaved.getDetalles().forEach(detalle->{
-				ItemOp item = detalle.getItemOp();
-				if(detalle.getOperacion().equalsIgnoreCase("adicionar")) {
-					item.setCant(item.getCant() + detalle.getCantidad());					
-				}
-				if(detalle.getOperacion().equalsIgnoreCase("restar")) {
-					item.setCant(item.getCant() - detalle.getCantidad());					
-				}
-				itemOpRepo.save(item);
-			});*/
+			
 			PropertyMap<Memo, MemoDTO> detalleMap = new PropertyMap<Memo, MemoDTO>() {				
 				@Override
 				protected void configure() {
@@ -107,11 +98,23 @@ public class MemoServiceImpl implements MemoService {
 		PropertyMap<Memo, MemoDTO> memoMap = new PropertyMap<Memo, MemoDTO>() {				
 			@Override
 			protected void configure() {
-				map().setIdUsuario(source.getUsuarioCrea().getId());;
-				map().setId(source.getId());;					
+				map().setIdUsuario(source.getUsuarioCrea().getId());
+				map().setId(source.getId());
 			}
 		};
 		mapper.addMappings(memoMap);
+		
+		memo.getDetalles().forEach(detalle->{
+			ItemOp item = detalle.getItemOp();
+			if(detalle.getOperacion().equalsIgnoreCase("adicionar")) {
+				item.setCant(item.getCant() + detalle.getCantidad());					
+			}
+			if(detalle.getOperacion().equalsIgnoreCase("restar")) {
+				item.setCant(item.getCant() - detalle.getCantidad());					
+			}
+			itemOpRepo.save(item);
+		});
+
 		return mapper.map(memo, MemoDTO.class);
 	}
 

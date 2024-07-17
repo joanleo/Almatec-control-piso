@@ -32,4 +32,6 @@ public interface OrdenPvService {
 
 	List<VistaOrdenPv> obtenerOpActivas();
 
+	List<VistaOrdenPv> obtenerOrdenes();
+
 }

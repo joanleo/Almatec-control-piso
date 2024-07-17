@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.almatec.controlpiso.integrapps.dtos.ItemOpCTPrioridadDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ConsultaOpIdInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
@@ -109,5 +110,19 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "OR  (v.id_est_doc = 2) "
 			+ "ORDER BY io.Item_fab_Id", nativeQuery = true)
 	List<ItemOp> buscarItemsARemisionarPorIdOpIa(@Param("idOpIa") Integer idOpIa);
+
+	@Query("SELECT NEW com.almatec.controlpiso.integrapps.dtos.ItemOpCTPrioridadDTO( "
+			+ "io.id, io.descripcion, io.cant, io.cantCumplida, io.peso, item.longitud, "
+			+ "op.numOp, op.id, op.cliente, op.esquemaPintura, op.zona, op.centroOperaciones, "
+			+ "CASE WHEN p IS NOT NULL THEN p.itemPrioridad ELSE 0 END) " +
+		       "FROM ItemOp io " +
+		       "JOIN VistaOrdenPv op ON io.idOpIntegrapps = op.id " +
+		       "JOIN Item item ON io.idItemFab = item.idItem " +
+		       "JOIN RutaItem ir ON item.idItem = ir.idItem " +
+		       "JOIN CentroTrabajo ct ON ir.IdCentroTrabajo = ct.id " +
+		       "LEFT JOIN Prioridad p ON p.idItem = io.id AND p.centroTrabajo = ct.id " +
+		       "WHERE ct.id = :idCT ")
+	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(@Param("idCT") Integer idCT);
+
 
 }

@@ -12,7 +12,7 @@ public class ComponenteDTO implements CommonDTO {
 	private BigDecimal material_cant;
 	private Integer material_centro_t_id;
 	private String material_centro_t_nombre;
-	private BigDecimal material_long;
+	private BigDecimal longitud;
 	private BigDecimal material_peso;
 	
 	public ComponenteDTO() {
@@ -77,26 +77,26 @@ public class ComponenteDTO implements CommonDTO {
 		this.material_peso = material_peso;
 	}
 
-	public BigDecimal getMaterial_long() {
-		return material_long;
+	public BigDecimal getLongitud() {
+		return longitud;
 	}
 
-	public void setMaterial_long(BigDecimal material_long) {
-		this.material_long = material_long;
+	public void setLongitud(BigDecimal material_long) {
+		this.longitud = material_long;
 	}
 
 	@Override
 	public String toString() {
 		return "ComponenteDTO [material_id=" + material_id + ", material_desc=" + material_desc + ", material_cant="
 				+ material_cant + ", material_centro_t_id=" + material_centro_t_id + ", material_centro_t_nombre="
-				+ material_centro_t_nombre + ", material_long=" + material_long + ", material_peso=" + material_peso
+				+ material_centro_t_nombre + ", material_long=" + longitud + ", material_peso=" + material_peso
 				+ "]";
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(material_cant, material_centro_t_id, material_centro_t_nombre, material_desc, material_id,
-				material_long, material_peso);
+				longitud, material_peso);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class ComponenteDTO implements CommonDTO {
 				&& Objects.equals(material_centro_t_id, other.material_centro_t_id)
 				&& Objects.equals(material_centro_t_nombre, other.material_centro_t_nombre)
 				&& Objects.equals(material_desc, other.material_desc) && Objects.equals(material_id, other.material_id)
-				&& Objects.equals(material_long, other.material_long)
+				&& Objects.equals(longitud, other.longitud)
 				&& Objects.equals(material_peso, other.material_peso);
 	}
 

@@ -36,9 +36,9 @@ public class ItemOpDTO {
 	}
 
 
-	public Integer getPrioridad() {
+	/*public Integer getPrioridad() {
 		return prioridad;
-	}
+	}*/
 
 
 	public List<ItemComponenteDTO> getComponentes() {
@@ -61,9 +61,9 @@ public class ItemOpDTO {
 	}
 
 
-	public void setPrioridad(Integer prioridad) {
+	/*public void setPrioridad(Integer prioridad) {
 		this.prioridad = prioridad;
-	}
+	}*/
 
 
 	public void setComponentes(List<ItemComponenteDTO> componentes) {
@@ -93,8 +93,7 @@ public class ItemOpDTO {
 
 	@Override
 	public String toString() {
-		return "ItemOpDTO [idItemOp=" + idItemOp + ", cant=" + cant + ", cantCumplida=" + cantCumplida + ", prioridad="
-				+ prioridad + ", itemDTO=" + itemDTO + ", color=" + color + ", componentes=" + componentes + "]";
+		return "ItemOpDTO [idItemOp=" + idItemOp + ", cant=" + cant + ", cantCumplida=" + cantCumplida +  ", itemDTO=" + itemDTO + ", color=" + color + ", componentes=" + componentes + "]";
 	}
 
 

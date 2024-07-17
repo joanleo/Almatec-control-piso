@@ -47,8 +47,8 @@ public class EstructuraDatos {
     	}
         itemProduccion.setItem_op_id(vista.getItem_op_id());
         itemProduccion.setItem_id(vista.getItem_id());
-        itemProduccion.setItem_desc(vista.getItem_desc());
-        itemProduccion.setCant_req(vista.getCant_req());
+        itemProduccion.setItem_desc(vista.getItemDescripcion());
+        itemProduccion.setCant_req(vista.getCantReq());
         itemProduccion.setItem_centro_t_id(vista.getItemCentroTId());
         itemProduccion.setItem_centro_t_nombre(vista.getItem_centro_t_nombre());
         itemProduccion.setItem_peso(vista.getItem_peso());
@@ -56,6 +56,7 @@ public class EstructuraDatos {
         itemProduccion.setPrioridad(vista.getPrioridad());
         itemProduccion.setLongitud(vista.getItem_long());
         itemProduccion.setCant_cumplida(vista.getCant_cumplida().intValue());
+        itemProduccion.setMarca(vista.getMarca());
         return itemProduccion;
     }
 
@@ -63,11 +64,11 @@ public class EstructuraDatos {
     	ComponenteDTO componente = new ComponenteDTO();
         componente.setMaterial_id(vista.getMaterial_id());
         componente.setMaterial_desc(vista.getMaterial_desc());
-        componente.setMaterial_cant(vista.getMaterial_cant().multiply(vista.getCant_req()));
+        componente.setMaterial_cant(vista.getMaterial_cant().multiply(vista.getCantReq()));
         componente.setMaterial_centro_t_id(vista.getMaterialCentroTId());
         componente.setMaterial_centro_t_nombre(vista.getMaterial_centro_t_nombre());
         componente.setMaterial_peso(vista.getMaterial_peso());
-        componente.setMaterial_long(vista.getItem_long());
+        componente.setLongitud(vista.getItem_long());
 
         return componente;
     }

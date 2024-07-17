@@ -16,22 +16,22 @@ import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
 public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> {
 
 	@Query(value = "SELECT * "
-			+"FROM orden_pv_vw "
-			+"WHERE CONCAT(Und_Neg, f200_razon_social, f431_id_proyecto, Zona_Desc, estado_doc, Esq_Pintura) "
+			+"FROM view_orden_pv "
+			+"WHERE CONCAT(Und_Neg, f200_razon_social, f285_descripcion, Zona_Desc, estado_doc, Esq_Pintura) "
 			+"LIKE %:keyword% "
 			+"ORDER BY id_op_ia DESC", nativeQuery = true)
 	List<VistaOrdenPv> buscarPorKeyword(String keyword);
 
-	@Query(value = "SELECT f431_id_proyecto,f200_razon_social "
-			+"FROM orden_pv_vw "
-			+"GROUP BY f431_id_proyecto,f200_razon_social ", nativeQuery = true)
+	@Query(value = "SELECT f285_descripcion,f200_razon_social "
+			+"FROM view_orden_pv "
+			+"GROUP BY f285_descripcion,f200_razon_social ", nativeQuery = true)
 	List<Object[]> findProyects();
 
-	@Query(value = "SELECT f431_id_proyecto,f200_razon_social, Und_Neg "
-			+"FROM orden_pv_vw "
-			+"WHERE CONCAT(f431_id_proyecto,f200_razon_social, Und_Neg) "
+	@Query(value = "SELECT f285_descripcion,f200_razon_social, Und_Neg "
+			+"FROM view_orden_pv "
+			+"WHERE CONCAT(f285_descripcion,f200_razon_social, Und_Neg) "
 			+"LIKE %:keyword% "
-			+"GROUP BY f431_id_proyecto,f200_razon_social, Und_Neg ", nativeQuery = true)
+			+"GROUP BY f285_descripcion,f200_razon_social, Und_Neg ", nativeQuery = true)
 	List<Object[]> findProyects(@Param("keyword") String keyword);
 
 	List<VistaOrdenPv> findByIdProyecto(String idProyecto);
@@ -45,7 +45,7 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 	void actualizarOp(@Param("creado") ConsultaOpCreadaDTO creado, @Param("opUnoEE") String opUnoEE, @Param("ordenIntegrapps")VistaOrdenPv ordenIntegrapps);
 
 	@Query(value = "SELECT Num_Op "
-			+ "FROM orden_pv_vw "
+			+ "FROM view_orden_pv "
 			+ "WHERE id_op_ia = :idOpIntegrapps ", nativeQuery = true)
 	Integer obtenerNumOpPorIdOp(@Param("idOpIntegrapps") Integer idOpIntegrapps);
 

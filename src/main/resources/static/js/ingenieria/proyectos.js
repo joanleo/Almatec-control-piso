@@ -20,23 +20,20 @@ let dataTableIsInicialized = false;
 
 
 async function llenarDetalleProyecto(event){
-	console.log("click para llenar tabla")
 	const rowOp = event.target.parentNode.parentNode
 	const data = rowOp.innerText.split("\t")
+	
 	const modalTitle = document.getElementById("detalleProyectoLabel")
 	modalTitle.innerText = "STATUS " + "  PROYECTO  " + data[2] + " " + data[1]
 	
-	numOp = rowOp.id.split("-")[1] // data[3].split("-")[0]
-	console.log("Llenar detalle numOp",numOp)
+	numOp = rowOp.id.split("-")[1]
 	await initOptions()
 	await initDataTable()
 	
-	//const itemsOp = await fethItemsOp(numOp)
-	
-	document.querySelector("#zona").value = data[3].split("-")[0]
-	document.querySelector("#sistema").value = data[3].split("-")[1]
-	document.querySelector("#esquema_pintura").value = data[8] 
-	document.querySelector("#fecha_instalacion").value = data[6]
+	document.querySelector("#zona").value = data[2]
+	//document.querySelector("#sistema").value = data[3].split("-")[1]
+	document.querySelector("#esquema_pintura").value = data[7] 
+	document.querySelector("#fecha_instalacion").value = data[5]
 
 	document.querySelector("#color_bastidores").value = document.querySelector("#bastidores_"+numOp).value
 	document.querySelector("#color_vigas").value = document.querySelector("#vigas_"+numOp).value
@@ -44,20 +41,30 @@ async function llenarDetalleProyecto(event){
 
 }
 
+const getStatusClass = (estado) => {
+    switch(estado) {
+        case "Cumplido": return "finished__badge";
+        case "Aprobada": return "approved__badge";
+        default: return "user__badge";
+    }
+}
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-estado]').forEach(element => {
+        const estado = element.getAttribute('data-estado');
+        element.classList.add(getStatusClass(estado));
+    });
+});
 
 const initDataTable = async () => {
-	console.log("InitDataTable ", numOp)
 	if(dataTableIsInicialized){
-		console.log("Destruir tabla")
 		dataTable.destroy()
 	}
-	console.log("Se crea la tabla con el itemOp ", numOp)
-	console.log(dataTableOptions)
 	dataTable = $('#detalle').DataTable(dataTableOptions)
 
 	dataTableIsInicialized = true
 }
+
 async function initOptions(){
 	dataTableOptions = {
 	processing: true,

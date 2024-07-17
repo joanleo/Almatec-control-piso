@@ -154,9 +154,9 @@ public class VistaPiezasOperarios {
 		return codErp;
 	}
 
-	public BigDecimal getLongitud() {
+	/*public BigDecimal getLongitud() {
 		return longitud;
-	}
+	}*/
 
 	public Integer getPrioridad() {
 		return prioridad;

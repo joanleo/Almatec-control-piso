@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
 import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpCTPrioridadDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 import com.almatec.controlpiso.integrapps.dtos.OpDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
@@ -18,13 +19,9 @@ public interface ItemOpService {
 
 	List<ItemOp> obtenerItemsOpC2(String idGrupo);
 
-	//ItemOp obtenerItemsOp(String idGrupo);
-
 	List<ItemOp> buscarItemsOp(Integer numOp);
 	
 	PageArray obtenerItemsOpArray(PagingRequest pagingRequest, Integer idOp);
-
-	//Page<ItemOp> obtenerPagina(List<ItemOp> itemsOp, PagingRequest pagingRequest);
 
 	List<ItemOp> obtenerItemsOpProduccion(Integer numOp);
 
@@ -51,4 +48,6 @@ public interface ItemOpService {
 	void imprimirEtiquetas(List<DataItemImprimirDTO> data);
 
 	List<ItemOpDatable> obtenerItemsOpDataTable(Integer numOp);
+
+	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(Integer idCT);
 }

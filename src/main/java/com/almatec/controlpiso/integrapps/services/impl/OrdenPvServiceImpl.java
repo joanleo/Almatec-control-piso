@@ -115,4 +115,9 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
 	}
 
+	@Override
+	public List<VistaOrdenPv> obtenerOrdenes() {
+		return ordenPvRepo.findAll();
+	}
+
 }

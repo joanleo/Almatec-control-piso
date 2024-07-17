@@ -8,9 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.erp.entities.ListaMaterial;
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
+import com.almatec.controlpiso.erp.interfaces.DataCostoStandarInterface;
 import com.almatec.controlpiso.erp.interfaces.DataTEP;
 import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
 import com.almatec.controlpiso.erp.interfaces.RutaInterface;
+import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
 
 public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, Integer> {
@@ -104,5 +106,56 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 			+ "WHERE   (t850_mf_op_docto.f850_consec_docto = :numOp)", nativeQuery = true)
 	Integer obtenerItemOp(@Param("numOp") Integer numOp);
 
+	@Query(value = "SELECT t.IdItem, SUM(t.CostoStandar) AS TotalCostoStandar, SUM(t.costo_previo) AS TotalCostoPrevio "
+			+ "FROM ("
+			+ "    SELECT 	t402_cm_costos.f402_id_grupo_costo AS IdGrupoCosto, "
+			+ "				t120_mc_items.f120_id AS IdItem, "
+			+ "        		t402_cm_costos.f402_costo_este_nivel_uni AS CostoStandar, "
+			+ "				t402_cm_costos.f402_costo_nivel_previo_uni  AS costo_previo "
+			+ "    FROM "
+			+ "        t402_cm_costos "
+			+ "    INNER JOIN t121_mc_items_extensiones "
+			+ "	   ON t402_cm_costos.f402_rowid_item_ext = t121_mc_items_extensiones.f121_rowid "
+			+ "    INNER JOIN t120_mc_items "
+			+ "	   ON t121_mc_items_extensiones.f121_rowid_item = t120_mc_items.f120_rowid "
+			+ "    WHERE t120_mc_items.f120_id = :idItem "
+			+ "    AND t402_cm_costos.f402_id_cia = 22 "
+			+ "    AND t402_cm_costos.f402_id_grupo_costo = 2 "
+			+ "    GROUP BY 	t402_cm_costos.f402_id_grupo_costo, "
+			+ "					t402_cm_costos.f402_rowid_item_ext, "
+			+ "					t120_mc_items.f120_id, "
+			+ "	   				t402_cm_costos.f402_costo_nivel_previo_uni, "
+			+ "					t402_cm_costos.f402_costo_este_nivel_uni ) t "
+			+ "	   GROUP BY t.IdItem ", nativeQuery = true)
+	DataCostoStandarInterface obtenerCostoStandar(@Param("idItem")Integer idItem);
+
+	@Query(value = "SELECT t808_mf_rutas.f808_id_cia AS Cia, t808_mf_rutas.f808_id AS Ref, t804_mf_segmentos_costos.f804_id AS Segmento, SUM(t809_mf_rutas_operacion.f809_horas_maquina * t817_mf_tarifas.f817_tarifa) AS CostoTarifa\r\n"
+			+ "FROM      t808_mf_rutas "
+			+ "INNER JOIN t809_mf_rutas_operacion "
+			+ "		ON t808_mf_rutas.f808_rowid = t809_mf_rutas_operacion.f809_rowid_rutas "
+			+ "INNER JOIN t806_mf_centros_trabajo "
+			+ "		ON t809_mf_rutas_operacion.f809_rowid_ctrabajo = t806_mf_centros_trabajo.f806_rowid "
+			+ "INNER JOIN t817_mf_tarifas "
+			+ "		ON t806_mf_centros_trabajo.f806_rowid = t817_mf_tarifas.f817_rowid_ctrabajo "
+			+ "INNER JOIN t804_mf_segmentos_costos "
+			+ "		ON t817_mf_tarifas.f817_id_cia = t804_mf_segmentos_costos.f804_id_cia AND t817_mf_tarifas.f817_id_segmento_costo = t804_mf_segmentos_costos.f804_id "
+			+ "WHERE   (t808_mf_rutas.f808_id_cia = 22) "
+			+ "AND (t808_mf_rutas.f808_id = :ref) "
+			+ "AND (t817_mf_tarifas.f817_ind_tipo_tarifa = 2) "
+			+ "GROUP BY t808_mf_rutas.f808_id_cia, "
+			+ "			t808_mf_rutas.f808_id, "
+			+ "			t804_mf_segmentos_costos.f804_id", nativeQuery = true)
+	List<TarifaCostosSegmentoItem> encontrarCostosSegmentosItemPorRef(@Param("ref")String ref);
+
 
 }
+/*
+ * 
+ * @Query(value = "SELECT   t402_cm_costos.f402_id_grupo_costo AS IdGrupoCosto, t120_mc_items.f120_id AS IdItem, "
+		+ "SUM(t402_cm_costos.f402_costo_este_nivel_uni) AS CostoStandar "
+		+ "FROM      t402_cm_costos "
+		+ "INNER JOIN t121_mc_items_extensiones "
+		+ "ON t402_cm_costos.f402_rowid_item_ext = t121_mc_items_extensiones.f121_rowid "
+		+ "INNER JOIN t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = t120_mc_items.f120_rowid "
+		+ "WHERE   (t120_mc_items.f120_id = :idItem) AND (t402_cm_costos.f402_id_cia = 22) "
+		+ "AND (t402_cm_costos.f402_id_grupo_costo = 2) "   obtenerCostoStandar*/ 

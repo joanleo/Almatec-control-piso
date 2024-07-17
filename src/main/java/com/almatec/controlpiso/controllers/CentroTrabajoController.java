@@ -338,14 +338,14 @@ public class CentroTrabajoController {
 		Rectangle letter = PageSize.LETTER;
 		float halfLetterHeight = letter.getHeight() / 2;
 		Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);
-		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, halfLetter);
+		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, letter);
 		documento.export(response);
 	}
 	
-	@ResponseBody
 	@GetMapping("/{idCT}/proceso/{idConfigProceso}/paradas")
-	public List<InfoParadaDTO> obtenerInfoParadasCT(@PathVariable Integer idConfigProceso){
-		return registroParadaService.obtenerInfoParadasCT(idConfigProceso);
+	public ResponseEntity<List<InfoParadaDTO>> obtenerInfoParadasCT(@PathVariable Integer idConfigProceso){
+		List<InfoParadaDTO> paradas =  registroParadaService.obtenerInfoParadasCT(idConfigProceso);
+		return ResponseEntity.ok(paradas);
 	} 
 
 }

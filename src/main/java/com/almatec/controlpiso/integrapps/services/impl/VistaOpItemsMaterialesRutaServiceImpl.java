@@ -2,12 +2,21 @@ package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
@@ -16,6 +25,9 @@ import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaOpItemsMaterialesRuta;
 import com.almatec.controlpiso.integrapps.repositories.VistaOpItemsMaterialesRutaRepository;
 import com.almatec.controlpiso.integrapps.services.VistaOpItemsMaterialesRutaService;
+import com.almatec.controlpiso.integrapps.specifications.PrioridadSpecification;
+import com.almatec.controlpiso.programacion.dtos.PrioridadFilterDTO;
+import com.almatec.controlpiso.utils.AgrupacionPrioridad;
 import com.almatec.controlpiso.utils.EstructuraDatos;
 
 @Service
@@ -23,7 +35,12 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 	
 	@Autowired
 	private VistaOpItemsMaterialesRutaRepository vistaOpItemsMaterialesRutaRepo;
-
+	
+	@Autowired
+	private PrioridadSpecification prioridadSpecification;
+	
+	private static final Logger logger = LoggerFactory.getLogger(VistaOpItemsMaterialesRutaServiceImpl.class);
+	
 	@Override
 	public Set<OpCentroTrabajoDTO> buscarOpCt(Integer idCT) {
 		List<VistaOpItemsMaterialesRuta> listaRutas = vistaOpItemsMaterialesRutaRepo.findByItemCentroTIdOrMaterialCentroTId(idCT, idCT);
@@ -51,7 +68,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
     }
 	
 	private static String generateKey(ItemOpCtDTO item) {
-        return item.getItem_op_id() + "_" + item.getItem_id() + "_" + item.getItem_desc() + "_" + item.getCant_req();
+        return item.getItem_op_id() + "_" + item.getItem_id() + "_" + item.getItem_desc() + "_" + item.getCant_req() + "_" + item.getMarca();
     }
 	
 	private static ItemOpCtDTO mergeItemDTOs(List<ItemOpCtDTO> itemDTOs) {
@@ -67,6 +84,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
         mergedItem.setPrioridad(itemDTOs.get(0).getPrioridad());
         mergedItem.setLongitud(itemDTOs.get(0).getLongitud());
         mergedItem.setCant_cumplida(itemDTOs.get(0).getCant_cumplida());
+        mergedItem.setMarca(itemDTOs.get(0).getMarca());
         	
         List<ComponenteDTO> mergedComponentes = itemDTOs.stream()
                 .flatMap(item -> item.getComponentes().stream())
@@ -90,6 +108,50 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 		}
 
 		return filterOrdenesProduccion;
+	}
+
+	@Override
+	public Page<VistaOpItemsMaterialesRuta> obtenerItemsOpsPaginados(int page, int size, String sortDir,
+			String sortField, PrioridadFilterDTO filtro) {
+
+		Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortField);
+	    Pageable pageable = PageRequest.of(page, size, sort);
+		//Page<VistaOpItemsMaterialesRuta> prioridades = null;
+		try {
+			Specification<VistaOpItemsMaterialesRuta> spec = prioridadSpecification.getItemsPrioridades(filtro);
+			logger.info("Filtro service: " + filtro);
+
+	        // Obtener todos los elementos
+	        List<VistaOpItemsMaterialesRuta> allItems = vistaOpItemsMaterialesRutaRepo.findAll(spec);
+
+	        // Agrupar los elementos
+	        List<VistaOpItemsMaterialesRuta> contentAgrupado = agruparItems(allItems);
+
+	        // Aplicar la paginación manualmente
+	        int start = (int) pageable.getOffset();
+	        int end = Math.min((start + pageable.getPageSize()), contentAgrupado.size());
+	        List<VistaOpItemsMaterialesRuta> pageContent = contentAgrupado.subList(start, end);
+
+	        // Crear una nueva Page con el contenido agrupado y paginado
+	        return new PageImpl<>(pageContent, pageable, contentAgrupado.size());		
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Page.empty();
+		}
+	}
+	
+	private List<VistaOpItemsMaterialesRuta> agruparItems(List<VistaOpItemsMaterialesRuta> items) {
+		Map<AgrupacionPrioridad, VistaOpItemsMaterialesRuta> groupedItems = new LinkedHashMap<>();
+
+
+	    for (VistaOpItemsMaterialesRuta item : items) {
+	        AgrupacionPrioridad key = new AgrupacionPrioridad(item.getOp(), item.getItem_id());
+	        if (!groupedItems.containsKey(key)) {
+	            groupedItems.put(key, item);
+	        }
+	    }
+
+	    return new ArrayList<>(groupedItems.values());
 	}
 
 }

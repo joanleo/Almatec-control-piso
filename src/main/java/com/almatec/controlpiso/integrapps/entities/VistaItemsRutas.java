@@ -147,9 +147,9 @@ public class VistaItemsRutas {
 		return idItem;
 	}
 
-	public Integer getPrioridad() {
+	/*public Integer getPrioridad() {
 		return prioridad;
-	}
+	}*/
 
 	@Override
 	public int hashCode() {
@@ -192,7 +192,7 @@ public class VistaItemsRutas {
 				+ ", cantListaMateriales=" + cantListaMateriales + ", centroTrabajoPerfil=" + centroTrabajoPerfil
 				+ ", longitud=" + longitud + ", pesoConjunto=" + pesoConjunto + ", pesoPerfil=" + pesoPerfil
 				+ ", fechaContraActual=" + fechaContraActual + ", pintura=" + pintura + ", esquemaPintura="
-				+ esquemaPintura + ", prioridad=" + prioridad + "]";
+				+ esquemaPintura +"]";
 	}
 
 	

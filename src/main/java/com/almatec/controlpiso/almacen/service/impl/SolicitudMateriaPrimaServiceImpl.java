@@ -37,8 +37,16 @@ public class SolicitudMateriaPrimaServiceImpl implements SolicitudMateriaPrimaSe
 	
 	@Override
 	public Integer obtenerConsecutivo() {
-		Integer consecutivo = solicitudMateriaPrimaRepo.obtenerConsecutivo();
-		return consecutivo;
+		try {
+			Integer consecutivo = solicitudMateriaPrimaRepo.obtenerConsecutivo();
+			if(consecutivo == null) {
+				return 0;
+			}
+			return consecutivo;			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.almacen.service.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -64,25 +65,21 @@ public class AlmacenService {
 	public RemisionDTO guardarRemision(RemisionDTO remisionDTO) {
 		try {
 			Usuario usuario = usuarioService.buscarUsuarioPorId(remisionDTO.getIdUsuario());
+			
 			ModelMapper mapper = new ModelMapper();
 			Remision remision = mapper.map(remisionDTO, Remision.class);
+			
 			List<DetalleRemision> detalles = remisionDTO.getDetalles().stream()
-					.map(detalleDTO->{
-						DetalleRemision detalle = new DetalleRemision();
-						detalle.setCantidad(detalleDTO.getCantidad());
-						ItemOp item = itemOpRepo.findById(detalleDTO.getItemOp()).orElseThrow();
-						detalle.setItemOp(item);
-						detalle.setRemision(remision);
-						return detalle;
-					}).collect(Collectors.toList());
+					.map(detalleDTO -> mapDetalleDTOToEntity(detalleDTO, remision))
+					.collect(Collectors.toList());
+			
 			remision.setUsuarioCreaRemision(usuario);
 			remision.setDetalles(detalles);
+			
 			Remision remisionSaved = remisionService.guardarRemision(remision);
-			remisionSaved.getDetalles().forEach(detalle->{
-				ItemOp item = detalle.getItemOp();
-				item.setCantDespachada(item.getCantDespachada() + detalle.getCantidad());
-				itemOpRepo.save(item);
-			});
+			
+			actualizarCantidadesDespachadas(remisionSaved);
+			
 			PropertyMap<DetalleRemision, DetalleRemisionDTO> detalleMap = new PropertyMap<DetalleRemision, DetalleRemisionDTO>() {				
 				@Override
 				protected void configure() {
@@ -93,11 +90,28 @@ public class AlmacenService {
 			mapper.addMappings(detalleMap);
 			
 			return mapper.map(remisionSaved, RemisionDTO.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		} catch (IllegalArgumentException | NoSuchElementException e) {
+            throw new RuntimeException("Error al guardar la remisión: " + e.getMessage(), e);
+        }
 	}
+	
+	private DetalleRemision mapDetalleDTOToEntity(DetalleRemisionDTO detalleDTO, Remision remision) {
+        DetalleRemision detalle = new DetalleRemision();
+        detalle.setCantidad(detalleDTO.getCantidad());
+        ItemOp item = itemOpRepo.findById(detalleDTO.getItemOp())
+                .orElseThrow(() -> new NoSuchElementException("ItemOp no encontrado: " + detalleDTO.getItemOp()));
+        detalle.setItemOp(item);
+        detalle.setRemision(remision);
+        return detalle;
+    }
+	
+	private void actualizarCantidadesDespachadas(Remision remisionSaved) {
+        remisionSaved.getDetalles().forEach(detalle -> {
+            ItemOp item = detalle.getItemOp();
+            item.setCantDespachada(item.getCantDespachada() + detalle.getCantidad());
+            itemOpRepo.save(item);
+        });
+    }
 
 	public List<EncabezadoRemision> obtenerRemisiones() {
 		try {

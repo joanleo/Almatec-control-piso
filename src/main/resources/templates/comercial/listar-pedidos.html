@@ -7,25 +7,7 @@
 				 
 		<div class="container my-5">
 			<h1>Pedidos de venta</h1>
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <span th:text="${message}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			</div>
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <span th:text="${error}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			 </div>
-			 
-			<!--- <div  id="filtro">
-			     <form class="filtro my-5">
-			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'nombre compania', 'nit'..." />
-			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
-			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
-			     </form>
-			</div> -->
-		 
+			<div th:replace="fragments/alerts :: alerts"></div>		 
 			<div class="table-responsive text-nowrap my-5">
 				<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
 					<thead>

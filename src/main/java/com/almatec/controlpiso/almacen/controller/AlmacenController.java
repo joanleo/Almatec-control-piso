@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.almacen.controller;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,8 +8,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,8 +42,7 @@ import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemision;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
-
-import org.springframework.web.bind.annotation.ResponseBody;
+import com.lowagie.text.DocumentException;
 
 
 @Controller
@@ -60,6 +64,7 @@ public class AlmacenController {
 	@Autowired
 	private XmlService xmlServices;
 	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@GetMapping("/solicitudes")
 	public String listarSolicitudesM(Model modelo) {
@@ -68,10 +73,10 @@ public class AlmacenController {
 		return "almacen/solicitudes-materia-prima.html";
 	}
 	
-	@ResponseBody
 	@GetMapping("/detalle/solicitud/{idSolic}")
-	public List<DetalleSolicitudDTO> obtenerDetalleSolicitud(@PathVariable Integer idSolic) {
-		return detalleSolicitudMateriaPrimaService.obtenerDetalleDTOPorIdSolic(idSolic);
+	public ResponseEntity<List<DetalleSolicitudDTO>> obtenerDetalleSolicitud(@PathVariable Integer idSolic) {
+		List<DetalleSolicitudDTO> detalleSolicitud = detalleSolicitudMateriaPrimaService.obtenerDetalleDTOPorIdSolic(idSolic);
+		return ResponseEntity.ok(detalleSolicitud);
 	}
 	
 	@GetMapping("/remisiones")
@@ -95,47 +100,93 @@ public class AlmacenController {
 		return "almacen/formulario-remision";
 	}
 	
-	@ResponseBody
 	@GetMapping("/remisiones/{idOpIa}")
-	public List<ItemOp> obtenerItemsARemisionar(@PathVariable Integer idOpIa){		
-		return almacenService.obtenerItemsARemisionarPorIdOpIa(idOpIa);
+	public ResponseEntity<List<ItemOp>> obtenerItemsARemisionar(@PathVariable Integer idOpIa){		
+		List<ItemOp> itemRemisionar =almacenService.obtenerItemsARemisionarPorIdOpIa(idOpIa);
+		return ResponseEntity.ok(itemRemisionar);
 	}
 	
 	@PostMapping("/remisiones")
 	public ResponseEntity<?> guardarRemision(@RequestBody RemisionDTO remisionDTO){
 		try {
-			RemisionDTO remisionSaved = almacenService.guardarRemision(remisionDTO);
-			return ResponseEntity.ok(remisionSaved);
-		}catch(Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+            RemisionDTO remisionSaved = almacenService.guardarRemision(remisionDTO);
+            return ResponseEntity.ok(remisionSaved);
+        } catch (IllegalArgumentException e) {
+            logger.error("Error al guardar la remisión: Argumento inválido", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Argumento inválido - " + e.getMessage());
+        } catch (DataAccessException e) {
+            logger.error("Error al guardar la remisión: Error de acceso a datos", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: Problema de acceso a datos - " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error inesperado al guardar la remisión", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado - " + e.getMessage());
+        }
 	}
 	
-	@ResponseBody
 	@GetMapping("/remisiones/{idRemision}/detalle-remision")
-	public List<DetalleRemisionInterface> obtenerDetalleRemision(@PathVariable Long idRemision){		
-		return almacenService.obtenerDetalleRemision(idRemision);
+	public ResponseEntity<List<DetalleRemisionInterface>> obtenerDetalleRemision(@PathVariable Long idRemision){		
+		List<DetalleRemisionInterface> detalleRemision = almacenService.obtenerDetalleRemision(idRemision);		
+		return ResponseEntity.ok(detalleRemision);
 	}
 	
 	@PostMapping("/remisiones/{idRemision}/pdf/generar")
 	public void generarPdfRemision(HttpServletResponse response, 
 			@PathVariable Long idRemision,
-			@RequestBody DataTransportadoraDTO dataTransportadora) throws Exception {
+			@RequestBody DataTransportadoraDTO dataTransportadora) {
 		
+		try {
+	        setResponseHeaders(response, idRemision);
+
+	        EncabezadoRemision encabezadoRemision = almacenService.obtenerEncabezadoRemisionPorId(idRemision);
+	        List<DetalleRemisionInterface> detallesRemision = almacenService.obtenerDetalleRemision(idRemision);
+
+	        RemisionPdfService remision = new RemisionPdfService(encabezadoRemision, detallesRemision, dataTransportadora);
+	        //xmlServices.asignarParametros();
+	        //xmlServices.crearRemision(encabezadoRemision.getIdOpIa(), detallesRemision);
+	        remision.createPdf(response);
+	    } catch (DocumentException e) {
+	        handleDocumentException(response, e);
+	    } catch (IOException e) {
+	        handleIOException(response, e);
+	    } catch (Exception e) {
+	        handleGenericException(response, e);
+	    }
+	}
+
+	private void setResponseHeaders(HttpServletResponse response, Long idRemision) {
 		response.setContentType("application/pdf");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
 		String headerKey = "Content-Disposition";
 		String headerValue = "attachment; filename=RM_" + idRemision + "_" + currentDateTime + ".pdf";
-		response.setHeader(headerKey, headerValue);
-		
-		EncabezadoRemision encabezadoRemision = almacenService.obtenerEncabezadoRemisionPorId(idRemision);
-		List<DetalleRemisionInterface> detallesRemision = almacenService.obtenerDetalleRemision(idRemision);
-
-		RemisionPdfService remision = new RemisionPdfService(encabezadoRemision, detallesRemision, dataTransportadora);
-		//xmlServices.asignarParametros();
-		//xmlServices.crearRemision(encabezadoRemision.getIdOpIa(), detallesRemision);
-		remision.createPdf(response);
+		response.setHeader(headerKey, headerValue);		
 	}
+	
+	private void handleDocumentException(HttpServletResponse response, DocumentException e) {
+        logger.error("Error al generar el documento PDF", e);
+        try {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error al generar el documento PDF: " + e.getMessage());
+        } catch (IOException ioException) {
+            logger.error("Error al enviar el error HTTP en la respuesta", ioException);
+        }
+    }
+
+    private void handleIOException(HttpServletResponse response, IOException e) {
+        logger.error("Error de entrada/salida al generar el PDF", e);
+        try {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error de entrada/salida al generar el PDF: " + e.getMessage());
+        } catch (IOException ioException) {
+            logger.error("Error al enviar el error HTTP en la respuesta", ioException);
+        }
+    }
+
+    private void handleGenericException(HttpServletResponse response, Exception e) {
+        logger.error("Error al generar el PDF de la remisión", e);
+        try {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error al generar el PDF de la remisión: " + e.getMessage());
+        } catch (IOException ioException) {
+            logger.error("Error al enviar el error HTTP en la respuesta", ioException);
+        }
+    }
 
 }

@@ -142,6 +142,7 @@ public class ProduccionController {
 		Usuario usuarioP = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
 		UsuarioDTO usuario = new UsuarioDTO(usuarioP);
 		Integer consecutivo = solicitudMateriaPrimaService.obtenerConsecutivo();
+		System.out.println(consecutivo);
 		List<ConsultaOpId> numsOps = itemOpService.obtenerNumOps();
 		SolicitudMateriaPrima solicitud = new SolicitudMateriaPrima();
 		List<DetalleSolicitudMateriaPrima> detalles = new ArrayList<>();

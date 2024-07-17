@@ -10,6 +10,7 @@
 	
 	import org.springframework.beans.factory.annotation.Autowired;
 	import org.springframework.data.repository.query.Param;
+	import org.springframework.http.ResponseEntity;
 	import org.springframework.stereotype.Controller;
 	import org.springframework.ui.Model;
 	import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,6 @@
 	import org.springframework.web.bind.annotation.PostMapping;
 	import org.springframework.web.bind.annotation.RequestBody;
 	import org.springframework.web.bind.annotation.RequestMapping;
-	import org.springframework.web.bind.annotation.ResponseBody;
 
 	import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 	import com.almatec.controlpiso.integrapps.entities.ItemOp;
@@ -59,27 +59,26 @@
 		
 		@GetMapping("/status/proyectos")
 		public String estadoProyectos(Model modelo, @Param("keyword") String keyword) {
-			List<VistaOrdenPv> proyectos = null;
-			if(keyword == null) {
-				proyectos = ordenPvService.buscarProyectos();				
-			}else {
-				proyectos = ordenPvService.buscarProyectos(keyword);
-			}
+			List<VistaOrdenPv> proyectos = keyword == null ?
+					ordenPvService.buscarProyectos():
+					ordenPvService.buscarProyectos(keyword);
+			
 			modelo.addAttribute("proyectos", proyectos);
 			return "ingenieria/status-proyectos.html";
 		}
 		
 		@PostMapping("/op/{numOp}/detalle")
-		@ResponseBody
-		public PageArray detalleOp(@RequestBody PagingRequest pagingRequest,
+		public ResponseEntity<PageArray> detalleOp(@RequestBody PagingRequest pagingRequest,
 									  @PathVariable Integer numOp) {
-			return itemOpService.obtenerItemsOpArray(pagingRequest, numOp);
+			PageArray page = itemOpService.obtenerItemsOpArray(pagingRequest, numOp);
+			
+			return ResponseEntity.ok(page);
 		}
 		
 		@GetMapping("/op/{idOp}/detalle")
-		@ResponseBody
-		public List<ItemOpDatable> detalleOp(@PathVariable Integer idOp) {			
-			return itemOpService.obtenerItemsOpDataTable(idOp);
+		public ResponseEntity<List<ItemOpDatable>> detalleOp(@PathVariable Integer idOp) {			
+			List<ItemOpDatable> itemsOp = itemOpService.obtenerItemsOpDataTable(idOp);
+			return ResponseEntity.ok(itemsOp);
 		}
 				
 	}

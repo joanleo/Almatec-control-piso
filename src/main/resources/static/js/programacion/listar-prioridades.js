@@ -1,18 +1,23 @@
 let itemsGlobal = []
 let itemsOriginales = []
 const pageSize = 10
+let centrosTrabajoPrioridad = []
+let centroTrabajoSelectedId
+let spinner
 document.addEventListener('DOMContentLoaded', async function(){
+	spinner = document.getElementById('spinner')
 	spinner.removeAttribute('hidden')
 	const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9, 17];
 
 	const centrosTrabajo = await fetchCentrosT()
 	
-	const centrosTrabajoPrioridad = centrosTrabajo.filter(centro=>centrosTrabajoFilter.includes(centro.id))
+	centrosTrabajoPrioridad = centrosTrabajo.filter(centro=>centrosTrabajoFilter.includes(centro.id))
 	const select = document.getElementById('centroTrabajoSelect')
+	select.innerHTML = '';
 	
 	const optionDefault = document.createElement('option')
 	optionDefault.value = ''
-	optionDefault.text = ''
+	optionDefault.text = 'Seleccione un centro de trabajo'
 	optionDefault.disabled = true
 	optionDefault.selected = true
 	select.appendChild(optionDefault)
@@ -26,13 +31,79 @@ document.addEventListener('DOMContentLoaded', async function(){
 	spinner.setAttribute('hidden', '')
 	
 	select.addEventListener('change', async function() {
-		console.log(this.value)
-	    const idCentroTrabajo = this.value;
-	    const ordenesProduccionCentroTrabajo = await obtenerOpCentroT(idCentroTrabajo);
-	    
-		mostrarData(ordenesProduccionCentroTrabajo)
+		document.getElementById('filtroForm').reset();
+		centroTrabajoSelectedId = this.value;
+        if (centroTrabajoSelectedId) {
+            cargarDatos(centroTrabajoSelectedId);
+        } else {
+            document.getElementById('resultadosContainer').style.display = 'none';
+        }
 	  })
+	  
+	  addSortLinkListeners();
+		  
+		  document.addEventListener('click', function(e) {
+		          if (e.target.matches('.page-link')) {
+		              e.preventDefault();
+		              const url = new URL(e.target.href);
+		              const centroTrabajoId = document.getElementById('centroTrabajoSelect').value;
+		              cargarDatos(
+		                  centroTrabajoId,
+		                  url.searchParams.get('page'),
+		                  url.searchParams.get('size'),
+		                  url.searchParams.get('sortField'),
+		                  url.searchParams.get('sortDir')
+		              )
+		          }
+		      })		  			  
 })
+
+function addSortLinkListeners() {
+	document.querySelectorAll('.sort-link').forEach(link => {
+    	link.addEventListener('click', handleSortClick);
+	});
+}
+
+function handleSortClick(e) {
+      e.preventDefault();
+      const url = new URL(e.currentTarget.href);
+      const centroTrabajoId = document.getElementById('centroTrabajoSelect').value;
+      cargarDatos(
+          centroTrabajoId,
+          url.searchParams.get('page'),
+          url.searchParams.get('size'),
+          url.searchParams.get('sortField'),
+          url.searchParams.get('sortDir')
+      );
+  }
+
+function cargarDatos(centroTrabajoId, page = 0, size = 10, sortField = 'idOpIntegrapps', sortDir = 'desc') {
+	const descripcion = document.getElementById('descripcion').value;
+	const cantidad = document.getElementById('cantidad').value;
+	const proyecto = document.getElementById('proyecto').value;
+	const zona = document.getElementById('zona').value;
+	const prioridad = document.getElementById('prioridad').value;
+
+	const url = `/programacion?page=${page}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&centroTrabajoId=${centroTrabajoId}&descripcion=${encodeURIComponent(descripcion)}&cantidad=${encodeURIComponent(cantidad)}&proyecto=${encodeURIComponent(proyecto)}&zona=${encodeURIComponent(zona)}&prioridad=${encodeURIComponent(prioridad)}`;
+   
+		fetch(url, {
+	    	headers: {
+	        	'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+		.then(response => response.text())
+	    .then(html => {
+	    	document.getElementById('resultsTable').innerHTML = html;
+	        document.getElementById('resultadosContainer').style.display = 'block';
+				  
+			addSortLinkListeners();
+				  
+			const checkAllElement = document.getElementById('checkAll');
+	        if (checkAllElement) {
+	        	checkAllElement.addEventListener('change', handleSelectAll);
+        	}
+        });
+}
 
 async function fetchCentrosT(){
 	try{
@@ -50,7 +121,7 @@ async function fetchCentrosT(){
 async function obtenerOpCentroT(ct){
 	spinner.removeAttribute('hidden')
 	try{
-		const response = await fetch(`/centros-trabajo/${ct}/ordenes-produccion`)
+		const response = await fetch(`/programacion/centros-trabajo/${ct}/ordenes-produccion-prioridad`)
 		const data = await response.json()
 		data.sort((a, b) => b.idOp - a.idOp)
 		//console.log("respuesta ops CT: ",data)
@@ -63,182 +134,7 @@ async function obtenerOpCentroT(ct){
 		
 }
 
-function mostrarData(data){
-	console.log(data);
-	let items = data.flatMap(function(op) {
-	    return op.items.map(function(item) {
-	      return {
-	        item: item,
-	        cliente: op.cliente,
-	        proyecto: op.proyecto,
-	        zona: op.zona
-	      };
-	    });
-	  });
-
-	itemsOriginales = [...items]
-	llenarTabla(items)
-}
-
-function llenarTabla(items) {
-  console.log(items);
-
-  // Crea una copia de la lista de items para no modificar el original
-  itemsGlobal = items
-
-  // Define el tamaño de página y calcula el número de páginas  
-  const numPages = Math.ceil(itemsGlobal.length / pageSize);
-
-  // Crea la paginación
-  const pagination = document.createElement('ul');
-  pagination.classList.add('pagination', 'justify-content-center');
-  for (let i = 1; i <= numPages; i++) {
-    const li = document.createElement('li');
-    li.classList.add('page-item');
-    const a = document.createElement('a');
-    a.classList.add('page-link');
-    a.href = '#';
-    a.textContent = i;
-    a.dataset.page = i;
-    li.appendChild(a);
-    pagination.appendChild(li);
-  }
-  const paginationDiv = document.getElementById('pagination')
-  paginationDiv.innerHTML = ''
-  paginationDiv.appendChild(pagination);
-
-  // Agrega un controlador de eventos para detectar clics en los enlaces de paginación
-  pagination.addEventListener('click', function(event) {
-    event.preventDefault();
-    if (event.target.tagName === 'A') {
-      const page = parseInt(event.target.dataset.page);
-      mostrarPagina(page);
-    }
-  });
-
-  // Muestra la primera página
-  mostrarPagina(1);
-  
-  document.getElementById("resultsTable").removeAttribute('hidden')
-  document.getElementById("filtroForm").removeAttribute('hidden')
-  // Función para mostrar una página
-  
-}
-
-function filtrarTabla() {
-  // Obtiene los valores de los campos de búsqueda
-  const descripcion = document.getElementById('descripcion').value.toLowerCase();
-  const cantidad = document.getElementById('cantidad').value || '';
-  const proyecto = document.getElementById('proyecto').value.toLowerCase();
-  const zona = document.getElementById('zona').value.toLowerCase();
-  const prioridad = document.getElementById('prioridad').value || '';
-  
-  console.log(descripcion)
-  const itemsFiltrados = itemsOriginales.filter(item =>
-          item.item.item_desc.toLowerCase().includes(descripcion) &&
-          (cantidad === '' || item.item.cant_req.toString().includes(cantidad)) &&
-          item.proyecto.toLowerCase().includes(proyecto) &&
-          item.zona.toLowerCase().includes(zona) &&
-          (prioridad === '' || (item.item.prioridad !== null && item.item.prioridad.toString().includes(prioridad)))
-      );
-  console.log(itemsFiltrados)
-	
-  llenarTabla(itemsFiltrados)
-}
-
-function mostrarPagina(page) {
-    // Calcula el índice de inicio y fin de la página actual
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-
-    // Limpia el cuerpo de la tabla
-    const body = document.getElementById("body-detalle-programacion");
-    body.innerHTML = '';
-
-    // Agrega las filas de la página actual a la tabla
-    for (let i = start; i < end && i < itemsGlobal.length; i++) {
-      const item = itemsGlobal[i];
-
-      const row = document.createElement('tr');
-
-      const cellCheck = document.createElement('td');
-      const divCheck = document.createElement('div');
-      divCheck.classList.add('form-check');
-      const check = document.createElement('input');
-      check.classList.add('form-check-input', 'item-checkbox');
-      check.type = 'checkbox';
-      check.id = item.item.item_op_id + '-' + item.item.item_id;
-      divCheck.appendChild(check);
-      cellCheck.appendChild(divCheck);
-      row.appendChild(cellCheck);
-
-      const cellDescripcion = document.createElement('td');
-      cellDescripcion.textContent = item.item.item_desc;
-      row.appendChild(cellDescripcion);
-
-      const cellCant = document.createElement('td');
-      cellCant.textContent = item.item.cant_req;
-      row.appendChild(cellCant);
-
-      const cellProyecto = document.createElement('td');
-      cellProyecto.textContent = item.proyecto;
-      row.appendChild(cellProyecto);
-
-      const cellZona = document.createElement('td');
-      cellZona.textContent = item.zona;
-      row.appendChild(cellZona);
-
-      const cellPrioridad = document.createElement('td');
-      cellPrioridad.textContent = item.item.prioridad;
-      row.appendChild(cellPrioridad);
-	  
-	  const cellBoton = document.createElement('td');
-      const boton = document.createElement('button');
-      boton.classList.add('btn', 'btn-sm');
-      if (item.item.prioridad !== null) {
-          boton.textContent = 'Editar';
-          boton.classList.add('btn-primary');
-      } else {
-          boton.textContent = 'Asignar';
-          boton.classList.add('btn-success');
-      }
-      boton.onclick = function() {
-          // Aquí puedes añadir la lógica para editar o asignar
-          console.log('Botón clickeado para el item:', item);
-      };
-      cellBoton.appendChild(boton);
-      row.appendChild(cellBoton);
-
-      body.appendChild(row);
-    }
-
-	const currentPage = document.querySelector('.page-item.active .page-link');
-	  if (currentPage) {
-	    currentPage.parentNode.classList.remove('active');
-	  }
-	  
-    // Resalta el enlace de la página actual
-    const pageLink = document.querySelector(`a[data-page="${page}"]`);
-    pageLink.parentNode.classList.add('active');
-	
-	const tableContainer = document.querySelector('#resultsTable').parentNode;
-    if (!document.querySelector('#btnAsignarMultiple')) {
-        const btnAsignarMultiple = document.createElement('button');
-        btnAsignarMultiple.id = 'btnAsignarMultiple';
-        btnAsignarMultiple.textContent = 'Asignar seleccionados';
-        btnAsignarMultiple.classList.add('btn', 'btn-primary', 'mb-3');
-        btnAsignarMultiple.style.display = 'none';
-        btnAsignarMultiple.onclick = function() {
-            // Aquí puedes añadir la lógica para asignar múltiples items
-            console.log('Asignar múltiples items');
-        };
-        tableContainer.insertBefore(btnAsignarMultiple, tableContainer.firstChild);
-    }
-	
-	document.getElementById('checkAll').addEventListener('change', handleSelectAll);
-  }
-
-  function handleSelectAll() {
+ function handleSelectAll() {
 	console.log("check clickeado")
       const checkboxes = document.querySelectorAll('.item-checkbox');
       const selectAllCheckbox = document.querySelector('#checkAll');
@@ -255,22 +151,19 @@ function mostrarPagina(page) {
       btnAsignarMultiple.style.display = anyChecked ? 'block' : 'none';
   }
   
-  document.addEventListener('change', function(e) {
+ document.addEventListener('change', function(e) {
       if (e.target && e.target.classList.contains('item-checkbox')) {
           updateAsignarButtonVisibility();
       }
   })
-/*function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-}
+  
+
 
 function buscar() {
+	let centroTrabajoId = document.getElementById("centroTrabajoSelect").value
     let form = document.getElementById('filtroForm');
 	const formData = new FormData(form);
+	formData.append('centroTrabajoId', centroTrabajoId);
     const params = new URLSearchParams(formData).toString();
     const url = `${form.action}?${params}`;
 	
@@ -284,7 +177,6 @@ function buscar() {
 	    .then(html => {
 	        const parser = new DOMParser();
 	        const doc = parser.parseFromString(html, 'text/html');
-			console.log(doc)
 	        const newTable = doc.getElementById('resultsTable');
 	        document.getElementById('resultsTable').innerHTML = newTable.innerHTML;
 	    })
@@ -302,26 +194,120 @@ cantidadInput.addEventListener('input', buscar);
 proyectoInput.addEventListener('input', buscar);
 zonaInput.addEventListener('input', buscar);
 prioridadInput.addEventListener('input', buscar);
-*/
+
 
 function editarItem(button) {
-	let itemId = button.getAttribute('data-item-id');
-  	const itemsJson = JSON.parse(itemsJsonString)
-  	let item = itemsJson.find(function(item) {
-    	return item.idItem == itemId;
-  	});
-	document.getElementById("proyectoModal").value = item.centroOperacionNombre
-	document.getElementById("zonaModal").value = item.zona
-	document.getElementById("descripcionModal").value = item.descripcion
-	document.getElementById("prioridadModal").value = "Selecionar prioridad definir"
-	document.getElementById("centroTrabajoModal").value = "Seleccionar centro de trabajo"
-  	console.log(item);
-  
-  	const modalPrioridad = new bootstrap.Modal('#modal-prioridad')
+	const itemId = button.getAttribute('data-item-id');
+    const row = button.closest('tr');
+    const cells = row.children;
 
-	modalPrioridad.show()
-	modalPrioridad._element.addEventListener('hidden.bs.modal', function () {
+    const item = {
+        item_op_id: itemId,
+        proyecto: cells[6].textContent,
+        zona: cells[7].textContent,
+        descripcion: cells[4].textContent,
+        prioridad: cells[8].textContent
+    };
+
+    showPrioridadModal([item]);
+	/*modalPrioridad._element.addEventListener('hidden.bs.modal', function () {
 		console.log("Limpiar modal")
-	})
+	})*/
 
+}
+
+document.getElementById('btnAsignarMultiple').addEventListener('click', function() {
+    const selectedItems = getSelectedItems();
+    if (selectedItems.length > 0) {
+        showPrioridadModal(selectedItems);
+    }
+});
+
+function getSelectedItems() {
+    const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+    return Array.from(checkboxes).map(checkbox => {
+        const row = checkbox.closest('tr');
+        return {
+            item_op_id: Number(row.querySelector('td:nth-child(2)').textContent),
+            proyecto: row.querySelector('td:nth-child(7)').textContent,
+            zona: row.querySelector('td:nth-child(8)').textContent,
+            descripcion: row.querySelector('td:nth-child(5)').textContent,
+			prioridad: row.querySelector('td:nth-child(9)').textContent
+        };
+    });
+}
+
+function showPrioridadModal(items) {
+    document.getElementById('proyectoModal').value = items.map(item => item.proyecto).join(', ');
+    document.getElementById('zonaModal').value = items.map(item => item.zona).join(', ');
+    document.getElementById('descripcionModal').value = items.map(item => item.descripcion).join(', ');
+    document.getElementById('prioridadModal').value = items[0].prioridad || '';
+	const ctSelected = centrosTrabajoPrioridad.find(ct => ct.id == centroTrabajoSelectedId);
+    document.getElementById('centroTrabajoModal').value = ctSelected ? ctSelected.nombre : '';
+    document.getElementById('centroTrabajoModal').dataset.centrotrabajoId = centroTrabajoSelectedId;
+
+    document.getElementById('modal-prioridad').dataset.items = JSON.stringify(items);
+
+    const modal = new bootstrap.Modal(document.getElementById('modal-prioridad'));
+    modal.show();
+}
+
+document.getElementById('guardarPrioridad').addEventListener('click', function() {
+	const modal = bootstrap.Modal.getInstance(document.getElementById('modal-prioridad'));
+	modal.hide()
+	spinner.removeAttribute('hidden')
+    const prioridad = document.getElementById('prioridadModal').value;
+    const centroTrabajo = document.getElementById('centroTrabajoModal').dataset.centrotrabajoId;
+    const items = JSON.parse(document.getElementById('modal-prioridad').dataset.items);
+
+    const data = {
+        itemsId: items.map(item => item.item_op_id),
+		prioridad: Number(prioridad),
+        centroTrabajoId: Number(centroTrabajo)
+    };
+	
+    fetch('/programacion/guardar-prioridad-multiple', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+		if(data.status == 400){
+			throw new Error(data.errors[0].defaultMessage)
+		}
+        console.log('Success:', data);     
+        
+		mostrarAlert(data.mensaje, 'success')
+		cargarDatos(centroTrabajoSelectedId)
+        //código para actualizar la interfaz de usuario
+        //updateTable();
+    })
+    .catch((error) => {
+        console.error(error);
+		mostrarAlert(error, 'danger')
+    })
+	.finally(() => {
+			spinner.setAttribute('hidden', '');
+		}
+	)
+		
+	
+});
+
+function mostrarAlert(mensaje, tipo){
+	const alertElement = document.createElement('div')
+    	alertElement.className = `alert alert-${tipo} alert-dismissible fade show`
+    	alertElement.role = 'alert'
+    	alertElement.style.zIndex = '10000'
+        alertElement.innerHTML = `
+        <strong>${mensaje}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
+
+		const container = document.getElementById('flag')
+        document.getElementById('alerContainer').insertBefore(alertElement, container)
+        
+        setTimeout(() => alertElement.remove(), 5000)
 }

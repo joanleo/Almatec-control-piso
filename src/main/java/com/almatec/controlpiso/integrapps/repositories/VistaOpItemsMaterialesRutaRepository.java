@@ -2,12 +2,16 @@ package com.almatec.controlpiso.integrapps.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import com.almatec.controlpiso.integrapps.entities.VistaOpItemsMaterialesRuta;
 
-public interface VistaOpItemsMaterialesRutaRepository extends JpaRepository<VistaOpItemsMaterialesRuta, String> {
+public interface VistaOpItemsMaterialesRutaRepository extends JpaRepository<VistaOpItemsMaterialesRuta, String>, JpaSpecificationExecutor<VistaOpItemsMaterialesRuta> {
 
 	@Query(value = "SELECT * "
 			+ "FROM view_op_items_ruta "
@@ -25,5 +29,10 @@ public interface VistaOpItemsMaterialesRutaRepository extends JpaRepository<Vist
 			+ "OR ((item_op_id = :idItem) AND (material_centro_t_id = :idCT) AND (estado_op = 1)) "
 			+ "OR ((item_op_id = :idItem) AND (material_centro_t_id = :idCT) AND (estado_op = 2)) ", nativeQuery = true)
 	List<VistaOpItemsMaterialesRuta> buscarItemCt(Long idItem, Integer idCT);
+
+	Page<VistaOpItemsMaterialesRuta> findAll(Specification<VistaOpItemsMaterialesRuta> itemsPrioridades,
+			Pageable pageable);
+
+	List<VistaOpItemsMaterialesRuta> findAll(Specification<VistaOpItemsMaterialesRuta> spec);
 
 }

@@ -557,30 +557,42 @@ async function obtenerOpCentroT(ct){
 
 function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody, papa){
 	let row = document.createElement('tr')    
-    let cellNum = document.createElement('td')
+    /*let cellNum = document.createElement('td')
     cellNum.textContent = num
-    row.appendChild(cellNum)
+    row.appendChild(cellNum)*/
     
     let idItemOP = isComponente? papa.item_op_id: item.item_op_id
 	
 	const ref = isComponente?item.material_id: item.item_id
 	let cellRef = document.createElement('td')
 	cellRef.textContent = idItemOP+'-'+ref
+	cellRef.classList.add('text-nowrap')
 	row.appendChild(cellRef)
+	
+	let cellMarca = document.createElement('td')
+	cellMarca.textContent = isComponente? papa.marca: item.marca
+	cellMarca.classList.add('text-nowrap')
+	row.appendChild(cellMarca)
 	
 	
     let cellName = document.createElement('td')
     const descripcion = isComponente? item.material_desc: item.item_desc
-    cellName.textContent = descripcion 
+    cellName.textContent = descripcion
+	cellName.classList.add('text-nowrap')
     row.appendChild(cellName)
     
     let cellLongitud = document.createElement('td')
-	cellLongitud.textContent = isComponente ? item.material_long: ''
+	cellLongitud.textContent = item.longitud
 	row.append(cellLongitud)
 
-    let cellCliente = document.createElement('td')
-    cellCliente.textContent = op.cliente
-    row.appendChild(cellCliente)
+    let cellCO = document.createElement('td')
+    cellCO.textContent = op.proyecto
+	cellCO.classList.add('text-nowrap')
+    row.appendChild(cellCO)
+	
+	let cellZona = document.createElement('td')
+    cellZona.textContent = op.zona
+    row.appendChild(cellZona)
     
     let cellPintura = document.createElement('td')
     cellPintura.textContent = item.item_color
@@ -593,7 +605,7 @@ function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody,
     
     let peso = isComponente ? item.material_peso: item.item_peso 
     let pesoUnitario = document.createElement('td')
-	pesoUnitario.textContent = peso
+	pesoUnitario.textContent = peso.toFixed(2)
 	row.appendChild(pesoUnitario)
 	
 	let pesoTotal = document.createElement('td')
@@ -640,7 +652,15 @@ function cargarListadoItems(){
 	let selectOpsCt = document.getElementById('op-selected')
     let opSelected = selectOpsCt.value
     let listadoItemsTbody = document.getElementById('listado-items')
+	let thead = document.getElementById('encabezado-listado-items')
+	
     listadoItemsTbody.innerHTML = ''
+	
+	let prioridadCell = thead.querySelector('th[data-prioridad="true"]');
+    if (prioridadCell) {
+        thead.removeChild(prioridadCell);
+    }
+	
 	const ops = opsCt.filter(item => item.op === opSelected)
     esquema.value = ops[0].esquemaPintura ?? ''
 	const centrosPrioridad = localStorage.getItem('centrosTrabajoPrioridad')
@@ -649,6 +669,7 @@ function cargarListadoItems(){
 		let thead = document.getElementById('encabezado-listado-items')
 		let prioridadCell = document.createElement('th')
 		prioridadCell.textContent = "PRIORIDAD"
+		prioridadCell.setAttribute('data-prioridad', 'true')
 		thead.appendChild(prioridadCell)
 	}
     if (ops) {
@@ -820,7 +841,7 @@ async function asignaPiezaOperario(){
 	const modalAsignarPieza = new bootstrap.Modal('#asignarPieza')
 	opsCt = await obtenerOpCentroT(centroTSelected.id)
     let operariosCt = await obtenerOperariosCT()
-	
+	document.getElementById('listado-items').innerHTML = ''
     crearSelectCT(opsCt)
     crearSelectOperariosCt(operariosCt)
     //cargarListadoItems()
@@ -1094,6 +1115,7 @@ async function handleKeyPressPiezasOperario(event) {
 			
 		
 		let ops = await obtenerPiezasOperarioCt(operarioDTO)
+		console.log(ops)
 		ops = ops.filter(op => op.cantFabricada !== op.cantReq)
 		if(ops.length == 0) {
 			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
