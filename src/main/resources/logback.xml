@@ -11,7 +11,7 @@
 
     <logger name="com.almatec.controlpiso" level="DEBUG"/>
 
-    <root level="DEBUG"> <!-- Cambiado a DEBUG para asegurar que todos los mensajes se registren -->
+    <root level="INFO"> <!-- Cambiado a DEBUG para asegurar que todos los mensajes se registren -->
         <appender-ref ref="FILE"/>
     </root>
 </configuration>
