@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Listar Formularios :: Almatec')"></head>
+<body>
+    <nav th:replace="fragments/navbar :: nav-bar('Calidad')"></nav>
+    
+    <div class="container my-5">
+		<div hidden id="spinner">
+			<div>Cargando ...</div>
+		</div>
+						
+		<div th:replace="fragments/alerts :: alerts"></div>
+					
+        <h2>Listado de Formularios de Calidad</h2>
+        
+        <form th:action="@{/calidad/formularios}" method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" th:value="${search}" placeholder="Buscar por proyecto o zona">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            </div>
+        </form>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Proyecto</th>
+                    <th>Zona</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="formulario : ${formularios}">
+                    <td th:text="${formulario.id}"></td>
+                    <td th:text="${formulario.proyecto}"></td>
+                    <td th:text="${formulario.zona}"></td>
+                    <td th:text="${#temporals.format(formulario.fechaDoc, 'dd-MM-yyyy')}"></td>
+                    <td>
+                        <a th:href="@{/calidad/formulario/centro-trabajo/{idCT}(idCT=${formulario.idCentroTrabajo},id=${formulario.id},idItem=${formulario.idItem})}" class="btn btn-primary btn-sm">Editar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <nav aria-label="Page navigation" th:if="${formularios.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${formularios.number == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/calidad/formularios(page=${formularios.number - 1}, size=${formularios.size}, search=${search})}">Anterior</a>
+                </li>
+                <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, formularios.totalPages - 1)}"
+                    th:classappend="${pageNumber == formularios.number} ? 'active'">
+                    <a class="page-link" th:href="@{/calidad/formularios(page=${pageNumber}, size=${formularios.size}, search=${search})}"
+                       th:text="${pageNumber + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${formularios.number + 1 == formularios.totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/calidad/formularios(page=${formularios.number + 1}, size=${formularios.size}, search=${search})}">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    
+    <footer th:replace="fragments/footer :: footer"></footer>
+    <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+</body>
+</html>

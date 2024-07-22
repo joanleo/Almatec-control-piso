@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaService;
@@ -87,7 +88,11 @@ public class ProduccionController {
 	
 	
 	@GetMapping("/home")
-	public String homeProduction() {
+	public String homeProduction(@RequestParam(required = false) String alert,
+			@RequestParam(required = false) String mensaje,
+			Model model) {
+		model.addAttribute("alert", alert);
+		model.addAttribute("mensaje", mensaje);
 		return "produccion/dashboard";
 	}
 	
@@ -142,7 +147,6 @@ public class ProduccionController {
 		Usuario usuarioP = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
 		UsuarioDTO usuario = new UsuarioDTO(usuarioP);
 		Integer consecutivo = solicitudMateriaPrimaService.obtenerConsecutivo();
-		System.out.println(consecutivo);
 		List<ConsultaOpId> numsOps = itemOpService.obtenerNumOps();
 		SolicitudMateriaPrima solicitud = new SolicitudMateriaPrima();
 		List<DetalleSolicitudMateriaPrima> detalles = new ArrayList<>();

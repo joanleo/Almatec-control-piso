@@ -68,6 +68,10 @@ body{
     width: 20rem;
 }
 
+.size-xl{
+    width: 25rem !important;
+}
+
 .size-s{
     width: 9rem !important;
 }
@@ -94,9 +98,15 @@ body{
 	color: #F4F4F5 !important;
 }
 
+.btn-info{
+	background-color: #007B63 !important; 
+	--bs-btn-border-color: none !important;
+	color: #F4F4F5 !important;
+}
+
 .active>.page-link, .page-link.active{
     z-index: 3;
-    color: #F4F4F5 !important;;
+    color: #F4F4F5 !important;
     background-color: #11464A !important;
     border-color: #11464A !important;
 }

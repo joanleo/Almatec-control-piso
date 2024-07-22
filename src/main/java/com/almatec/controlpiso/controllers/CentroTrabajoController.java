@@ -178,7 +178,7 @@ public class CentroTrabajoController {
 	public String reportePiezasCT(@PathVariable Integer idCT,
 								  @RequestParam Long idItem,
 								  @RequestParam Integer idOperario,
-								  Model modelo) throws JsonProcessingException {
+								  Model modelo) {
 		
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
@@ -270,9 +270,6 @@ public class CentroTrabajoController {
 		centroTrabajoService.guardar(centroTrabajo);
 		return "redirect:/centros-trabajo";
 	}
-	
-	
-	
 	
 	
 	@GetMapping("/descargar-pdf/{nombreDelArchivo}")

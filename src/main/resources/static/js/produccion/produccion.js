@@ -351,6 +351,12 @@ async function calculateTurno() {
 	
 document.addEventListener('DOMContentLoaded', function () {
 	(async ()=> {
+		const params = new URLSearchParams(window.location.search)
+		const tipoParam = params.get('alert')
+        const mensajeParam = params.get('mensaje')
+		console.log(tipoParam)
+		console.log(mensajeParam)
+		mostrarAlert(mensajeParam, tipoParam)
 		loadFromLocalStorage()
 		await fillTurnosDropdown()
 		centrosTrabajo = await fetchCentrosT()
@@ -628,9 +634,11 @@ function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody,
     });
 	
     row.addEventListener('click', function(){
-		const operarioSelected = document.getElementById("operario-selected").textContent
-		if(!operarioSelected){
-			console.log("validando operario seleccionado", operarioSelected)
+		const operarioSelected = document.getElementById("operario-selected")
+		const datalist = document.getElementById("operarios")
+		const opcionSeleccionada = Array.from(datalist.options).find(opcion => opcion.value === operarioSelected.value)
+		if(!opcionSeleccionada){
+			console.log("validando operario seleccionado", opcionSeleccionada)
 			mostrarAlert("No existe operario o no se ha seleccionado.", "danger")
 		}else{
 			const pieza = {
@@ -638,8 +646,8 @@ function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody,
 				descripcion: descripcion,
 				isComponente:  isComponente,
 				idItem: ref,
-			}
-			confirmModal(pieza)
+		}
+		confirmModal(pieza)
 		
 		}
 	})
@@ -855,9 +863,9 @@ async function asignaPiezaOperario(){
 let itemAgregar
 let confirm_modal
 function confirmModal(item) {
-	const operarioSelected = document.getElementById("operario-selected");
-	const datalist = document.getElementById("operarios");
-	const opcionSeleccionada = Array.from(datalist.options).find(opcion => opcion.value === operarioSelected.value);
+	const operarioSelected = document.getElementById("operario-selected")
+	const datalist = document.getElementById("operarios")
+	const opcionSeleccionada = Array.from(datalist.options).find(opcion => opcion.value === operarioSelected.value)
 	
 	let idOperario
 	let operarioSelectedName
@@ -1049,15 +1057,6 @@ async function registrarActualizarPara(registroParadaDTO){
 	}
 }
 
-function reportePiezasNovedades(){
-	if(centroTSelected){
-		return true		
-	}else{
-		mostrarAlert("Debe seleccionar un centro de trabajo", "danger")
-		return false
-	}
-	
-}
 
 async function obtenerPiezasOperarioCt(operarioDTO){
 	try{
@@ -1080,10 +1079,20 @@ async function obtenerPiezasOperarioCt(operarioDTO){
 	}
 }
 
+function validaCentroTrabajo(){
+	if(centroTSelected){
+		return true		
+	}else{
+		mostrarAlert("Debe seleccionar un centro de trabajo", "danger")
+		return false
+	}
+	
+}
+
 let modalReportar
 async function isValid(event){
 	const element = event.target.id
-	const valido = reportePiezasNovedades()
+	const valido = validaCentroTrabajo()
 	if(valido){
 		if(element == "btn-reporte-piezas"){
 			modalReportar = new bootstrap.Modal('#reporte-piezas', {
@@ -1091,11 +1100,19 @@ async function isValid(event){
 			})
 			document.getElementById('listado-piezas-operario').innerHTML = ''
 			modalReportar.show()			
-		}else{
+		}
+		if(element == "btn-reporte-novedades"){
 			modalReportar = new bootstrap.Modal('#novedades', {
 			  keyboard: false
 			})
 			document.getElementById('listado-piezas-operario-novedades').innerHTML = ''
+			modalReportar.show()
+		}
+		if(element == "btn-reporte-calidad"){
+			modalReportar = new bootstrap.Modal('#reporte-calidad', {
+			  keyboard: false
+			})
+			document.getElementById('listado-piezas-operario-calidad').innerHTML = ''
 			modalReportar.show()
 		}
 	}	
@@ -1123,6 +1140,32 @@ async function handleKeyPressPiezasOperario(event) {
 		}else{
 		console.log("Piezas asignadas al operario: ", ops)
 		mostrarPiezasOperario(ops, operario, 'listado-piezas-operario')			
+		}
+    }
+}
+
+async function handleKeyPressCalidadOperario(event) {
+    if (event.key === 'Enter') {
+		const codigoOperElement = document.querySelector("#codigo-operario-calidad")
+		const codigoOper = codigoOperElement.value
+        const operario = await obtenerOperario(codigoOper.substring(3))
+        document.getElementById('codigo-operario-calidad').value = ''
+        const operarioDTO = {
+			"idOperario": operario.id,
+			"idCentroTrabajo": centroTSelected.id,
+			"idConfigProceso": configProceso.id
+		}
+			
+		
+		let ops = await obtenerPiezasOperarioCt(operarioDTO)
+		console.log(ops)
+		ops = ops.filter(op => op.cantFabricada !== op.cantReq)
+		if(ops.length == 0) {
+			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
+			modalReportar.hide()
+		}else{
+		console.log("Piezas asignadas al operario: ", ops)
+		mostrarPiezasOperario(ops, operario, 'listado-piezas-operario-calidad')			
 		}
     }
 }
@@ -1236,6 +1279,10 @@ function crearFilaMostrarPiezas(index, item, idTbody, operario) {
         }
         if (idTbody == 'listado-piezas-operario-novedades') {
             window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=` + idPieza +
+                '&idOperario=' + operario.id
+        }
+		if (idTbody == 'listado-piezas-operario-calidad') {
+            window.location.href = `/calidad/formulario/centro-trabajo/${centroTSelected.id}?idItem=` + idPieza +
                 '&idOperario=' + operario.id
         }
     })

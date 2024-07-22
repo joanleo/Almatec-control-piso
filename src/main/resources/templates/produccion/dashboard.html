@@ -10,21 +10,12 @@
 			<div hidden id="spinner">
 				<div>Cargando ...</div>
 			</div>
-			
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <pre th:text="${message}"></pre>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			</div>
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <pre th:text="${error}"></pre>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			 </div>
+							
+			<div th:replace="fragments/alerts :: alerts"></div>
 			 
             
 			<div id="title" style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 1rem;">
-				<h1 id="title-nombre-ct"></h1>
+				<h1 id="title-nombre-ct" aria-label="Nombre del centro de trabajo"></h1>
 				<span id="title-turno"></span>
 			</div>			
 			<div class="row1" id="lectura-codigos" style="justify-content: space-between;">
@@ -43,9 +34,15 @@
 			</div>
 
 			<div class="row1"  style="justify-content: space-between;">
-                <button type="button" class="btn btn-primary" id="btn-reporte-piezas" onclick="isValid(event)">
-                    Reportar piezas
-                </button>
+				<div class="d-flex" id="buton-left">
+	                <button type="button" class="btn btn-primary" id="btn-reporte-piezas" onclick="isValid(event)">
+	                    Reportar piezas
+	                </button>
+					
+					<button type="button" class="btn btn-info mx-5" id="btn-reporte-calidad" onclick="isValid(event)">
+	                    Reporte calidad
+	                </button>					
+				</div>
                 <button type="button" class="btn btn-secondary" id="btn-reporte-novedades" onclick="isValid(event)">
                     Reportar desperdicio
                 </button>
@@ -71,33 +68,16 @@
 							  <tr>
 								<th>#</th>
 								<th>OP</th>
-								<!-- <th>Item</th>-->
 								<th>Cliente</th>
 								<th>Proyecto</th>
 								<th>Descripcion</th>
 								<th>Cant Pendiente</th>
 								<th>Operario</th>
-								<!-- <th>Stdr</th> -->
 								<th>Estado</th>
 								<th>Plano</th>
 							  </tr>
 						</thead>
-						<tbody id="body-table-piezas-proceso">
-							 <!-- <tr>
-								<td>1</td>
-								<td>IF-3</td>
-								<td>1</td>
-								<td>Italcol</td>
-								<td>640IKEA - Zona 1</td>
-								<td>CX CONECTOR 60X40 CV2F</td>
-								<td>1.15</td>
-								<td>Joan Leon</td>
-								<td>1.15</td>
-								<td>Activo</td>
-								<td id="plano">									
-									<a href="#" onclick="verPdf()">VIGA B9 CX-RV01</a>
-									</td>
-							  </tr>-->						
+						<tbody id="body-table-piezas-proceso">				
 						</tbody>
 					</table>
 					<div id="table-process-description" class="visually-hidden">
@@ -128,21 +108,7 @@
 							<th>Estado</th>
 						  </tr>
 					  </thead>
-					  <tbody id="body-table-productividad-operario">
-						  <!-- <tr>
-							<td>Joan Leon</td>
-							<td>6AM - 2PM</td>
-							<td>06:15 AM</td>
-							<td id="productivo">4.35</td>
-							<td id="improductivo">1.15</td>
-							<td>04:00 PM</td>
-							<td>
-								<div class="progress-bar-container">
-							        <div id="progress-bar" class="progress-bar"></div>
-							    </div>
-							</td>
-							<td>Activo</td>
-						  </tr>	-->				  
+					  <tbody id="body-table-productividad-operario">			  
 					  </tbody>
 					</table>
 					<div id="table-produccion-description" class="visually-hidden">
@@ -183,7 +149,6 @@
 									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-items-description">
 									  		<thead>
 									            <tr id="encabezado-listado-items">
-													<!--<th>#</th>-->
 													<th>REF</th>
 													<th>MARCA</th>
 									                <th>DESCRIPCION</th>
@@ -197,7 +162,6 @@
 									            </tr>
 									        </thead>
 									        <tbody id="listado-items">
-									            <!-- Aquí se mostrará el listado de items -->
 									        </tbody>
 									 </table>
 								    <div id="tabla-items-description" class="visually-hidden">
@@ -278,9 +242,7 @@
 								 </div>
 							  </div>
 						  </div>
-					  </div>
-						  						  
-		      		
+					  </div>	  						  		      		
 		      </div>
 		      
 		      <div class="modal-footer">
@@ -291,6 +253,60 @@
 		  </div>
 		</div>
 		
+		
+		<div class="modal fade" id="reporte-calidad" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="reporteCalidadLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #F8F9FA;">
+		        <h1 class="modal-title fs-5" id="reporteCalidadLabel" >Reporte calidad operario</h1>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			  		<div class="container">
+						  <div class="row1" style="margin-top: 2rem; margin-bottom: 2rem;justify-content: center;">
+								<div class="input-group ">
+								  <span class="input-group-text">Operario: </span>
+								  <input type="text" aria-label="Codigo / Codigo de barras operario" id="codigo-operario-calidad" onkeypress="handleKeyPressCalidadOperario(event)" class="form-control">
+								</div>
+						  </div>
+						  
+							<div class="row1" style="margin-top: 1rem; margin-bottom: 2rem;">
+							  <div class="container">
+								  <div class="table-responsive rounded-3 shadow-sm" >
+									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-calidad-items-description">
+									  		<thead>
+									            <tr>
+													<th>#</th>
+													<th>REF</th>
+									                <th>DESCRIPCION</th>
+									                <th>LONG</th>
+									                <th>CLIENTE</th>
+									                <th>PROYECTO</th>
+									                <th>CANT SOL</th>
+									                <th>PESO UN</th>
+									                <th>PESO TTL</th>
+									                <th></th>
+									            </tr>
+									        </thead>
+									        <tbody id="listado-piezas-operario-calidad">
+									        </tbody>
+									 </table>
+								    <div id="tabla-calidad-items-description" class="visually-hidden">
+									  Esta tabla muestra items.
+								    </div>
+								 </div>
+							  </div>
+						  </div>
+					  </div>				      		
+		      </div>
+		      
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		      
+		    </div>
+		  </div>
+		</div>
 		
 		
 		<div class="modal fade" id="novedades" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="novedadesLabel" aria-hidden="true">
@@ -328,7 +344,6 @@
 									            </tr>
 									        </thead>
 									        <tbody id="listado-piezas-operario-novedades">
-									            <!-- Aquí se mostrará el listado de items -->
 									        </tbody>
 									 </table>
 								    <div id="tabla-novedades-items-description" class="visually-hidden">
