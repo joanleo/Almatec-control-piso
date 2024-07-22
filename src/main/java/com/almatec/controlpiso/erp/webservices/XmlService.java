@@ -868,8 +868,8 @@ public class XmlService {
 		String stringId = String.valueOf(id);
 		item.setF120_referencia("0"+ stringId);
 		if(!ordenIntegrapps.getZona().isEmpty() && ordenIntegrapps.getZona().length() > 1) {
-			item.setF120_descripcion(ordenIntegrapps.getIdCentroOperaciones()+ " " + ordenIntegrapps.getCentroOperaciones());			
-			item.setF120_descripcion_corta(ordenIntegrapps.getIdCentroOperaciones() + " " + ordenIntegrapps.getCentroOperaciones());
+			item.setF120_descripcion(ordenIntegrapps.getObservaciones());			
+			item.setF120_descripcion_corta(ordenIntegrapps.getObservaciones());
 		}
 		item.setF120_id_grupo_impositivo(this.GRUPO_IMPOSITIVO);
 		item.setF120_id_tipo_inv_serv(this.TIPO_SERVICIO);
@@ -957,11 +957,11 @@ public class XmlService {
 			costoStantar = calcularCostoStandar(listaMaterialesDTO);			
 			ManufacturaedicióndecostositemCostosV02 costo = crearConectorCosto(ref, costoStantar, 1, listaMaterialesDTO.get(0).getF820_cant_base());
 			costos.add(costo);
-			/*List<TarifaCostosSegmentoItem> segmentos = listaMaterialService.obtenerCostosSegmentos(ref);
+			List<TarifaCostosSegmentoItem> segmentos = listaMaterialService.obtenerCostosSegmentos(ref);
 			segmentos.forEach(segmento->{
 				ManufacturaedicióndecostositemCostosV02 costoSegmento = crearConectorCosto(ref, segmento.getCostoTarifa(), segmento.getSegmento(), listaMaterialesDTO.get(0).getF820_cant_base());
 				costos.add(costoSegmento);
-			});*/
+			});
 			return costos;
 		}
 
@@ -1098,8 +1098,16 @@ public class XmlService {
 		encabezado.setF850_id_co_pv(this.C_O);
 		encabezado.setF850_id_tipo_docto_op_padre(ordenPadreIF.getTipoOp());
 		encabezado.setF850_consec_docto_op_padre(ordenPadreIF.getNumOp());
-		encabezado.setF850_referencia_1(ordenPadreIF.getCliente());
-		encabezado.setF850_referencia_2(ordenPadreIF.getIdCentroOperaciones() + "-" + ordenPadreIF.getCentroOperaciones() + "-" + ordenPadreIF.getZona());
+		String referencia1 = ordenPadreIF.getCliente();
+		if (referencia1.length() > 30) {
+		    referencia1 = referencia1.substring(0, 30);
+		}
+		encabezado.setF850_referencia_1(referencia1);
+		String referencia2 = ordenPadreIF.getIdCentroOperaciones() + "-" + ordenPadreIF.getCentroOperaciones() + "-" + ordenPadreIF.getZona();
+		if (referencia2.length() > 30) {
+		    referencia2 = referencia2.substring(0, 30);
+		}
+		encabezado.setF850_referencia_2(referencia2);
 		return encabezado;
 	}
 	
