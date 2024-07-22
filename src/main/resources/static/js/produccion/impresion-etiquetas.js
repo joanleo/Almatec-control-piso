@@ -54,14 +54,12 @@ function llenarTablaDetalleOp(itemsOp){
 		row.appendChild(cellCant)
 		
 		let cellNoEtiquetas = document.createElement('td')
-		cellNoEtiquetas.innerHTML = `<input type=number class="form-control cant-etiquetas" min="1" max="${item.cant}" required>`
+		cellNoEtiquetas.innerHTML = `<input type=number class="form-control cant-etiquetas" min="1" max="${item.cant}" >`
 		cellNoEtiquetas.classList.add('size-s')
 		row.appendChild(cellNoEtiquetas)	
 		
 		row.querySelector('.cant-etiquetas').addEventListener('input', function() {
 				const valor = this.value
-				console.log(valor)
-				console.log(item.cant)
 		        if (this.value < 0) this.value = ''
 		        if(this.value > item.cant) this.value = item.cant
 		    })
@@ -107,7 +105,6 @@ async function imprimirEtiquetas(dataItems){
 		item.tipoEtiqueta = tipoEtiqueta
 	})
 	
-	console.log(dataItems)
 	spinner.removeAttribute('hidden')
 	try{
 		const request = await fetch(`imprimir-etiquetas`,{
@@ -119,7 +116,6 @@ async function imprimirEtiquetas(dataItems){
 		})
 		
 		const response = await request.text()
-		console.log(response)
 		if(request.ok){
 			window.location.reload()
 		} else {
@@ -144,10 +140,7 @@ document.getElementById('etiquetasForm').addEventListener('submit', function(eve
 function obteneSeleccion(){
 	console.log("imprimiendo")
 	const checkboxesMarcadosTodos = document.querySelectorAll('input[type="checkbox"]:checked')
-	const checkboxesMarcados = [...checkboxesMarcadosTodos].slice(1, -1)
-	console.log(checkboxesMarcadosTodos)
 	let listCheckboxes = []
-	console.log(checkboxesMarcadosTodos.length)
 	if(checkboxesMarcadosTodos.length > 0){
 		for (const element of checkboxesMarcadosTodos) {
 			const check = element
@@ -156,7 +149,6 @@ function obteneSeleccion(){
 			const idItemFab = fila.cells[1].textContent.split('-')[1]
 			const idOp = fila.cells[1].getAttribute("data-idOp")
 			const inputCantEtiquetas = fila.cells[4].querySelector('input') != null ? fila.cells[4].querySelector('input'): null
-			console.log(inputCantEtiquetas)
 			if(inputCantEtiquetas == null || inputCantEtiquetas.value == ''){
 				mostrarAlert("Debe digitar las cantidades de etiquetas a imprimir de todos los elementos seleccionados.", "danger")
 				return
