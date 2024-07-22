@@ -58,6 +58,7 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
 
         let itemsOps = selectedOp.items
         if (itemsOps && itemsOps.length > 0) {
+			itemsOps.sort((a, b) => a.prioridad - b.prioridad)
             for (const itemOp of itemsOps) {
                 if (itemOp.item_centro_t_id == selectedCentroId) {
 					let tbodyItems = document.getElementById("body-items")

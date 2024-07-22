@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaOpItemsMaterialesRuta;
 import com.almatec.controlpiso.programacion.dtos.PrioridadFilterDTO;
-import com.almatec.controlpiso.programacion.dtos.VistaOpItemsMaterialesRutaDTO;
 
 public interface VistaOpItemsMaterialesRutaService {
 

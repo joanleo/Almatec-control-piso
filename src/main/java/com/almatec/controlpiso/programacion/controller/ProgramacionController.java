@@ -29,7 +29,6 @@ import com.almatec.controlpiso.integrapps.services.VistaItemsOpsProgramacionServ
 import com.almatec.controlpiso.integrapps.services.VistaOpItemsMaterialesRutaService;
 import com.almatec.controlpiso.programacion.dtos.PrioridadFilterDTO;
 import com.almatec.controlpiso.programacion.dtos.PrioridadItemsDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Controller
 @RequestMapping("/programacion")
@@ -56,9 +55,7 @@ public class ProgramacionController {
             @RequestParam(required = false) Integer centroTrabajoId,
             PrioridadFilterDTO filtro,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-		
-		System.out.println("solicitud ordenada por: " + sortField);
-		System.out.println("solicitud ordenada: " + sortDir);
+
 		if (filtro == null) {
             filtro = new PrioridadFilterDTO();
         }
@@ -69,7 +66,6 @@ public class ProgramacionController {
 		if (centroTrabajoId != null) {
             filtro.setCentroTrabajoId(centroTrabajoId);
             itemsPage = vistaOpItemsMaterialesRutaService.obtenerItemsOpsPaginados(page, size, sortDir, sortField, filtro);
-            List<VistaOpItemsMaterialesRuta> lista = itemsPage.getContent();
         }
         
 		modelo.addAttribute("itemsPage", itemsPage);
@@ -86,7 +82,6 @@ public class ProgramacionController {
 	@PostMapping("/guardar-prioridad-multiple")
 	public ResponseEntity<?> guardarActuallizarPrioridades(@Valid @RequestBody PrioridadItemsDTO itemsPrioridad){
 		
-		System.out.println(itemsPrioridad);
 		prioridadService.guardarActualizarPrioridades(itemsPrioridad);
 		
 		try {
@@ -117,8 +112,7 @@ public class ProgramacionController {
 	}
 	
 	@GetMapping("/grafico-gantt")
-	public String mostrarGraficoGantt(Model modelo) {
-		
+	public String mostrarGraficoGantt(Model modelo) {		
 		
 		return "programacion/grafico-gantt";
 	}
