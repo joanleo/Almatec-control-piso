@@ -10,20 +10,9 @@
 				<div hidden id="spinner">
 					<div>Cargando ...</div>
 				</div>
-							
-							
-				<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-				  <span th:text="${message}"></span>
-				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-				    <span aria-hidden="true">&times;</span>
-				  </button>
-				</div>
-				<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-				  <span th:text="${error}"></span>
-				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-				    <span aria-hidden="true">&times;</span>
-				  </button>
-				 </div>
+								
+				<div th:replace="fragments/alerts :: alerts"></div>
+				
 	 		    <form id="solicitudForm" >
 				 <div class="card-body" style="margin: auto; width: 100%;">
 					 <div class="my-3" style="display: flex; justify-content: space-between;">

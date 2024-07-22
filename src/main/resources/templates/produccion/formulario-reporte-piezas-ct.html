@@ -8,20 +8,12 @@
 		<div hidden id="spinner">
 			<div>Cargando ...</div>
 		</div>
-		<div class="container my-5" style="width:60%;">
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <pre  th:text="${message}"></pre >
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			</div>
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <pre  th:text="${error}"></pre >
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			 </div>
-			 <div class="card-body" style="margin: auto; width: 60%;">
-				 <h2 class="mb-5">Reporte  [[${reporte.centroTrabajo}]]</h2>
-	 		    <form id="reporteForm" method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/reporte}" th:object="${reporte}">
+						
+		<div th:replace="fragments/alerts :: alerts"></div>
+			
+		<div class="card-body" style="margin: auto; width: 60%;">
+			<h2 class="mb-5">Reporte  [[${reporte.centroTrabajo}]]</h2>
+			<form id="reporteForm" method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/reporte}" th:object="${reporte}">
 			        <div class="form-group mb-3">
 			           <label for="nombre-operario">Operario: </label>
 			           	<input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly/>						   
