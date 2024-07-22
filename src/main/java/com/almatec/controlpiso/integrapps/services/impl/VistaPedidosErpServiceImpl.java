@@ -2,6 +2,8 @@ package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.PedidoSpecDTO;
@@ -34,6 +36,21 @@ public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 	@Override
 	public List<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec) {
 		return vistaPedidosErpRepo.findAll(filter.getOrders(busquedaSpec)); 
+	}
+
+	@Override
+	public Page<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec, Pageable pageable) {
+		return vistaPedidosErpRepo.findAll(filter.getOrders(busquedaSpec), pageable); 
+	}
+
+	@Override
+	public Page<VistaPedidosErp> buscarPedidosErp(Pageable pageable) {
+		return vistaPedidosErpRepo.findByTipo("PV",pageable);
+	}
+
+	@Override
+	public Page<VistaPedidosErp> buscarPedidosErp(String keyword, Pageable pageable) {
+		return vistaPedidosErpRepo.findByKeyword(keyword, pageable);
 	}
 
 }

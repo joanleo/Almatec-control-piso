@@ -7,7 +7,13 @@
 				 
 		<div class="container my-5">
 			<h1>Pedidos de venta</h1>
-			<div th:replace="fragments/alerts :: alerts"></div>		 
+			<div th:replace="fragments/alerts :: alerts"></div>
+			<form th:action="@{/comercial}" method="get">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Buscar" name="keyword" th:value="${keyword}">
+                    <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                </div>
+            </form>	 
 			<div class="table-responsive text-nowrap my-5">
 				<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
 					<thead>
@@ -23,7 +29,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="pedido : ${pedidos}">
+						<tr th:each="pedido : ${pedidosPage.content}">
 						<td th:text="${#dates.format(pedido.fecha, 'yyyy-MM-dd')}"></td>
 						<td th:text="${pedido.pedidoNo }"></td>
 						<td th:text="${pedido.numOp != null && pedido.numOp != ''} ? ${pedido.tipoOp + '-' + pedido.numOp} : ''"></td>
@@ -38,6 +44,15 @@
 					</tbody>
 				</table>
 			</div>
+			<nav aria-label="Page navigation" th:if="${pedidosPage.totalPages > 1}">
+                <ul class="pagination justify-content-center">
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, pedidosPage.totalPages - 1)}" th:classappend="${pedidosPage.number == i} ? 'active'">
+                        <a class="page-link" th:href="@{/comercial(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                    </li>
+
+                </ul>
+            </nav>
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>

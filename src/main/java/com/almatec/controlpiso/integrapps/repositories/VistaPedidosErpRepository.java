@@ -2,6 +2,8 @@ package com.almatec.controlpiso.integrapps.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -25,6 +27,18 @@ public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp
 
 	List<VistaPedidosErp> findAll(Specification<VistaPedidosErp> pedidos);
 
-	List<VistaPedidosErp> findByTipoAndIdEstadoOrderByNoPvDesc(String string, int i);
+	List<VistaPedidosErp> findByTipoAndIdEstadoOrderByNoPvDesc(String tipo, int numPv);
+	
+	@Query("SELECT p FROM VistaPedidosErp p WHERE " +
+			"p.tipo=PV AND " +
+            "p.pedidoNo LIKE %:keyword% OR " +
+            "p.numOp LIKE %:keyword% OR " +
+            "p.nit LIKE %:keyword% OR " +
+            "p.razonSocial LIKE %:keyword% OR " +
+            "p.co LIKE %:keyword% OR " +
+            "p.valor LIKE %:keyword%")
+    Page<VistaPedidosErp> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
+	
+	Page<VistaPedidosErp> findByTipo(String tipo, Pageable pageable);
 
 }

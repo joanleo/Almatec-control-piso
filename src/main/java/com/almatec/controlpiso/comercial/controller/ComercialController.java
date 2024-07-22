@@ -3,7 +3,11 @@ package com.almatec.controlpiso.comercial.controller;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.almatec.controlpiso.erp.webservices.XmlService;
@@ -39,12 +44,16 @@ public class ComercialController {
 	
 	
 	@GetMapping
-	public String listarPedidosVentaErp(Model modelo, @Param("keyword") String keyword) {
-		List<VistaPedidosErp> pedidos = keyword == null ?
-	            vistaPedidosErpService.buscarPedidosErp() :
-	            vistaPedidosErpService.buscarPedidosErp(keyword);
+	public String listarPedidosVentaErp(Model modelo,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @PageableDefault(size = 10) Pageable pageable) {
 		
-		modelo.addAttribute("pedidos", pedidos);
+		Page<VistaPedidosErp> page = (keyword == null || keyword.isEmpty())  ?
+		vistaPedidosErpService.buscarPedidosErp(pageable) :
+		vistaPedidosErpService.buscarPedidosErp(keyword, pageable);
+		
+		modelo.addAttribute("pedidosPage", page);
+		modelo.addAttribute("keyword", keyword);
 		return "comercial/listar-pedidos";
 	}
 	
@@ -80,8 +89,15 @@ public class ComercialController {
 	}
 	
 	@PostMapping("/pedidos/filtrar")
-	public ResponseEntity<List<VistaPedidosErp>> getPedidos(@RequestBody PedidoSpecDTO busquedaSpec){
-		List<VistaPedidosErp> pedidos = vistaPedidosErpService.searchOrder(busquedaSpec);
-		return ResponseEntity.ok(pedidos);
-	}
+	public ResponseEntity<Page<VistaPedidosErp>> getPedidos(
+            @RequestBody PedidoSpecDTO busquedaSpec,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(defaultValue = "co") String sort,
+            @RequestParam(defaultValue = "asc") String order) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sort));
+        Page<VistaPedidosErp> pedidos = vistaPedidosErpService.searchOrder(busquedaSpec, pageable); 
+        return ResponseEntity.ok(pedidos);
+    }
 }
