@@ -61,8 +61,6 @@ public class RoleServiceImpl implements RoleService {
 		try {
 			Role roleEdita = rolRepo.findById(idRole)
 					.orElseThrow();
-			System.out.println("Role a editar:");
-			System.out.println(roleEdita);
 			ModelMapper mapper = new ModelMapper();
 			return mapper.map(roleEdita, RoleDTO.class);
 		} catch (Exception e) {

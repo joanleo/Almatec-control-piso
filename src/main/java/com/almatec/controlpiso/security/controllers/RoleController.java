@@ -1,8 +1,14 @@
 package com.almatec.controlpiso.security.controllers;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,9 +88,30 @@ public class RoleController {
 		ObjectMapper mapper = new ObjectMapper();
 		String modulosJson = mapper.writeValueAsString(modulos);
 		
+		List<Map<String, String>> permissionsJson = Arrays.stream(role.getPermissions().split("\\], "))
+	        .map(permissionString -> {
+        		Map<String, String> permissionMap = new HashMap<>();
+                
+                // Usar expresiones regulares para extraer id y name
+                Pattern pattern = Pattern.compile("Permission \\[idPermiso=(\\d+), name=(.+)\\]?");
+                Matcher matcher = pattern.matcher(permissionString);
+                
+                if (matcher.find()) {
+                    permissionMap.put("id", matcher.group(1));
+                    permissionMap.put("name", matcher.group(2));
+                }
+                
+                return permissionMap;
+            })
+            .collect(Collectors.toList());
+	    
+	    String rolePermissionsJson = mapper.writeValueAsString(permissionsJson);
+		
 		modelo.addAttribute("role", role);
 		modelo.addAttribute("modulos", modulos);
 		modelo.addAttribute("modulosJson", modulosJson);
+		
+		modelo.addAttribute("rolePermissionsJson", rolePermissionsJson);
 		return "configuracion/roles/formulario-role";
 	}
 	
