@@ -80,8 +80,8 @@
           </button>
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Remision</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Remisiones</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Remision</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Remisiones</a></li>
           </ul>
         </li>   
 		
@@ -90,7 +90,7 @@
             Calidad
           </button>
           <ul class="dropdown-menu">
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_FORMULARIO_CALIDAD'')')}"><a class="dropdown-item" href="/calidad/formulario">Formulario</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_LISTAR_REPORTES_CALIDAD'')')}"><a class="dropdown-item" href="/calidad/formularios">Listar formularios</a></li>
           </ul>
         </li>
         
@@ -114,7 +114,7 @@
 			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 				<div id="navbar-nav" >
 					<a class="navbar-brand" >Bienvenido,  <span sec:authentication="principal.username"></span></a>				
-					<a type="button" sec:authorize="isAuthenticated()" class="nav-link navbar-brand text_color" th:href="@{/logout}" onclick="clearLocalStorage()">Cerrar sesión</a>
+					<a sec:authorize="isAuthenticated()" class="nav-link navbar-brand text_color" th:href="@{/logout}" onclick="clearLocalStorage()">Cerrar sesión</a>
 				</div>							
 			</div>
 	 </div>
