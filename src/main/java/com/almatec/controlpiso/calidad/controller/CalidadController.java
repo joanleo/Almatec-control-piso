@@ -1,18 +1,24 @@
 package com.almatec.controlpiso.calidad.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +26,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.almatec.controlpiso.calidad.dtos.ReporteCalidadDTO;
+import com.almatec.controlpiso.calidad.service.ExcelExportService;
+import com.almatec.controlpiso.calidad.service.PdfExportService;
 import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
+import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.ReporteCalidad;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
+import com.almatec.controlpiso.integrapps.services.OperarioService;
 import com.almatec.controlpiso.integrapps.services.ReporteCalidadService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.DocumentException;
 
 @Controller
 @RequestMapping("/calidad")
@@ -33,12 +44,21 @@ public class CalidadController {
 	
 	private final ListaMService listaMService;
 	private final ReporteCalidadService reporteCalidadService;
+	private final OperarioService operarioService;
+	private final PdfExportService pdfExportService;
+	private final ExcelExportService excelExportService;
 	
 	public CalidadController(ListaMService listaMService,
-			ReporteCalidadService reporteCalidadService) {
+			ReporteCalidadService reporteCalidadService,
+			OperarioService operarioService,
+			PdfExportService pdfExportService,
+			ExcelExportService excelExportService) {
 		super();
 		this.listaMService = listaMService;
 		this.reporteCalidadService = reporteCalidadService;
+		this.operarioService = operarioService;
+		this.pdfExportService = pdfExportService;
+		this.excelExportService = excelExportService;
 	}
 
 	@GetMapping("/formulario/centro-trabajo/{idCT}")
@@ -49,11 +69,18 @@ public class CalidadController {
 			  Model modelo) throws JsonProcessingException {
 		
 		ReporteCalidadDTO formulario;
+		Integer idOper=0;
+		String nombreOperario="";
 		if (id != null) {
 	        // Modo edición
 	        formulario = reporteCalidadService.obtenerFormularioPorId(id);
+	        idOper = formulario.getIdOperario();
+	    	nombreOperario = formulario.getNombreOperario();
 	    } else {
-	    	formulario = reporteCalidadService.buscarItemReporteCalidadCt(idItem, idCT, idOperario);	    	
+	    	formulario = reporteCalidadService.buscarItemReporteCalidadCt(idItem, idCT, idOperario);
+	    	Operario operario = operarioService.buscarOperarioPorId(idOperario);
+	    	idOper = operario.getId();
+	    	nombreOperario = operario.getNombre();
 	    }
 		
 		if (formulario.getFechaDoc() == null) {
@@ -68,6 +95,8 @@ public class CalidadController {
 		ObjectMapper mapper = new ObjectMapper();
 	    String lotesJson = mapper.writeValueAsString(lotes);
 
+	    modelo.addAttribute("idOperario", idOper);
+	    modelo.addAttribute("nombreOperario", nombreOperario);
 		modelo.addAttribute("formulario", formulario);
 		modelo.addAttribute("lotes", lotes);
 		modelo.addAttribute("lotesJson", lotesJson);
@@ -78,12 +107,6 @@ public class CalidadController {
 	
 	@PostMapping("/formulario/guardar")
 	public ResponseEntity<?> guardarFormularioCalidad(@RequestBody ReporteCalidadDTO formCalidad) {
-		System.out.println(formCalidad);
-		if(formCalidad.getId() != null && StringUtils.hasText(formCalidad.getId().toString())) {
-			System.out.println("Modo edicion: " + formCalidad.getId());			
-		}else {
-			System.out.println("No es modo edicion");
-		}
 		try {
 			ReporteCalidad reporte = reporteCalidadService.guardarReporteCalidad(formCalidad); 
 			return ResponseEntity.ok(reporte);
@@ -106,5 +129,51 @@ public class CalidadController {
 	    model.addAttribute("search", search);
 	    return "calidad/listar-formularios";
 	}
+	
+	@PostMapping("/exportar-pdf")
+    public ResponseEntity<ByteArrayResource> exportarPdf(@RequestBody List<Long> ids) throws IOException, DocumentException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+
+        for (Long id : ids) {
+            ReporteCalidadDTO formulario = reporteCalidadService.obtenerFormularioPorId(id);
+            ByteArrayOutputStream pdfOutputStream = pdfExportService.generarPdfFormulario(formulario);
+            
+            ZipEntry entry = new ZipEntry("formulario_" + id + ".pdf");
+            zos.putNextEntry(entry);
+            zos.write(pdfOutputStream.toByteArray());
+            zos.closeEntry();
+        }
+        
+        zos.close();
+        
+        ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
+        
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=formularios_calidad.zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(baos.size())
+                .body(resource);
+    }
+	
+	@PostMapping("/exportar-excel")
+    public ResponseEntity<byte[]> downloadGeneralExcelReport(@RequestBody List<Long> ids) throws Exception {
+        
+        List<ReporteCalidadDTO> reportes = new ArrayList<>();
+        for (Long id : ids) {
+            ReporteCalidadDTO formulario = reporteCalidadService.obtenerFormularioPorId(id);
+            reportes.add(formulario);
+        }
+
+        byte[] excelBytes = excelExportService.generateExcel(reportes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=reporte_calidad.xlsx");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(excelBytes);
+    }
 
 }

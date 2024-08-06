@@ -34,7 +34,9 @@
 					<input hidden type="text" id="formId" th:field="*{id}" />
 					<input hidden type="text" class="id-centro-trabajo" th:value="*{idCentroTrabajo}" />
 					<input hidden type="text" class="centro-trabajo" th:value="*{centroTrabajo}" />
-					<input hidden type="text" class="item" th:value="*{idItem}" name="idItem"  /> 
+					<input hidden type="text" class="item" th:value="*{idItem}" name="idItem"  />
+					<input hidden type="text" class="nombre-operario" th:value="${nombreOperario}" name="nombreOperario" />
+					<input hidden type="text" class="id-operario" th:value="${idOperario}" name="idOperario" />
 					<div class="d-flex justify-content-between my-3">
 						<div class="input-group size-m">
 						  <span class="input-group-text">FECHA Y HORA: </span>
@@ -70,7 +72,7 @@
 						</div>
 						<div class="input-group ">
 				           <span class="input-group-text">Lote: </span>
-							   <select id="loteSelect" class="form-control" name="lote" onchange="mostrarCodigo()" th:field="*{lote}" >
+							   <select id="loteSelect" class="form-control" name="lote" th:field="*{lote}" >
 	   		                   		<option value=""></option>
 	   		                        <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
 	   		                   </select>				   
@@ -103,109 +105,109 @@
 			                <div class="input-group checkbox-group size-m" id="pestanaContainer">
 			                    PESTAÑA:
 			                    <label for="pestanaSi" class="mx-3">SI
-				                    <input type="radio" id="pestanaSi" name="pestana" value="true"/>											
+				                    <input type="radio" id="pestanaSi" th:field="*{pestana}" name="pestana" value="true"/>											
 								</label>
 			                    <label for="pestanaNo">NO
-				                    <input type="radio" id="pestanaNo" name="pestana" value="false"/>											
+				                    <input type="radio" id="pestanaNo" th:field="*{pestana}" name="pestana" value="false"/>											
 								</label>
 			                </div>
 							<div class="input-group checkbox-group size-m" id="aletaContainer">
 			                    ALETA:
 			                    <label for="aletaSi" class="mx-3">SI
-				                    <input type="radio" id="aletaSi" name="aleta" value="true"/>											
+				                    <input type="radio" id="aletaSi" th:field="*{aleta}" name="aleta" value="true"/>											
 								</label>
 			                    <label for="aletaNo">NO
-				                    <input type="radio" id="aletaNo" name="aleta" value="false"/>											
+				                    <input type="radio" id="aletaNo" th:field="*{aleta}" name="aleta" value="false"/>											
 								</label>
 			                </div>
 							
 							<div class="input-group checkbox-group size-m" id="perfBordeContainer">
 			                    PERF. BORDE:
 			                    <label for="perfBordeSi" class="mx-3">SI
-				                    <input type="radio" id="perfBordeSi" name="perfBorde" value="true"/>											
+				                    <input type="radio" id="perfBordeSi" th:field="*{perfBorde}" name="perfBorde" value="true"/>											
 								</label>
 			                    <label for="perfBordeNo">NO
-				                    <input type="radio" id="perfBordeNo" name="perfBorde" value="false"/>											
+				                    <input type="radio" id="perfBordeNo" th:field="*{perfBorde}" name="perfBorde" value="false"/>											
 								</label>
 			                </div>
 							
 							<div class="input-group checkbox-group size-m" id="perforacionesContainer">
 			                    PERFORACIONES:
 			                    <label for="perforacionesSi" class="mx-3">SI
-				                    <input type="radio" id="perforacionesSi" name="perforaciones" value="true"/>											
+				                    <input type="radio" id="perforacionesSi" th:field="*{perforaciones}" name="perforaciones" value="true"/>											
 								</label>
 			                    <label for="perforacionesNo">NO
-				                    <input type="radio" id="perforacionesNo" name="perforaciones" value="false"/>											
+				                    <input type="radio" id="perforacionesNo" th:field="*{perforaciones}" name="perforaciones" value="false"/>											
 								</label>
 			                </div>
 							
 							<div class="input-group checkbox-group size-m" id="troqueladoContainer">
 							    TROQUELADO:
 							    <label for="troqueladoSi" class="mx-3">SI
-							        <input type="radio" id="troqueladoSi" name="troquelado" value="true"/>											
+							        <input type="radio" id="troqueladoSi" th:field="*{troquelado}" name="troquelado" value="true"/>											
 								</label>
 							    <label for="troqueladoNo">NO
-							        <input type="radio" id="troqueladoNo" name="troquelado" value="false"/>											
+							        <input type="radio" id="troqueladoNo" th:field="*{troquelado}" name="troquelado" value="false"/>											
 								</label>
 							</div>
 	
 							<div class="input-group checkbox-group size-m" id="cuadraturaContainer">
 							    CUADRATURA:
 							    <label for="cuadraturaSi" class="mx-3">SI
-							        <input type="radio" id="cuadraturaSi" name="cuadratura" value="true"/>											
+							        <input type="radio" id="cuadraturaSi" th:field="*{cuadratura}" name="cuadratura" value="true"/>											
 								</label>
 							    <label for="cuadraturaNo">NO
-							        <input type="radio" id="cuadraturaNo" name="cuadratura" value="false"/>											
+							        <input type="radio" id="cuadraturaNo" th:field="*{cuadratura}" name="cuadratura" value="false"/>											
 								</label>
 							</div>	
 	
-							<div class="input-group checkbox-group size-m" id="coronaContainer">
+							<div class="input-group checkbox-group size-m"  id="coronaContainer">
 							    CORONA:
 							    <label for="coronaSi" class="mx-3">SI
-							        <input type="radio" id="coronaSi" name="corona" value="true"/>											
+							        <input type="radio" id="coronaSi" th:field="*{corona}" name="corona" value="true"/>											
 								</label>
 							    <label for="coronaNo">NO
-							        <input type="radio" id="coronaNo" name="corona" value="false"/>											
+							        <input type="radio" id="coronaNo" th:field="*{corona}" name="corona" value="false"/>											
 								</label>
 							</div>	
 							
 							<div class="input-group checkbox-group size-m" id="flechaHContainer">
 							    FLECHA H:
 							    <label for="flechaHSi" class="mx-3">SI
-							        <input type="radio" id="flechaHSi" name="flechaH" value="true"/>											
+							        <input type="radio" id="flechaHSi" th:field="*{flechaH}" name="flechaH" value="true"/>											
 								</label>
 							    <label for="flechaHNo">NO
-							        <input type="radio" id="flechaHNo" name="flechaH" value="false"/>											
+							        <input type="radio" id="flechaHNo" th:field="*{flechaH}" name="flechaH" value="false"/>											
 								</label>
 							</div>	
 							
 							<div class="input-group checkbox-group size-m" id="flechaVContainer">
 							    FLECHA V:
 							    <label for="flechaVSi" class="mx-3">SI
-							        <input type="radio" id="flechaVSi" name="flechaV" value="true"/>											
+							        <input type="radio" id="flechaVSi" th:field="*{flechaV}" name="flechaV" value="true"/>											
 								</label>
 							    <label for="flechaVNo">NO
-							        <input type="radio" id="flechaVNo" name="flechaV" value="false"/>											
+							        <input type="radio" id="flechaVNo" th:field="*{flechaV}" name="flechaV" value="false"/>											
 								</label>
 							</div>	
 							
 							<div class="input-group checkbox-group size-m" id="corteContainer">
 							    CORTE:
 							    <label for="corteSi" class="mx-3">SI
-							        <input type="radio" id="corteSi" name="corte" value="true"/>											
+							        <input type="radio" id="corteSi" th:field="*{corte}" name="corte" value="true"/>											
 								</label>
 							    <label for="corteNo">NO
-							        <input type="radio" id="corteNo" name="corte" value="false"/>											
+							        <input type="radio" id="corteNo" th:field="*{corte}" name="corte" value="false"/>											
 								</label>
 							</div>	
 							
 							<div class="input-group checkbox-group size-m" id="punzonadoContainer">
 							    PUNZONADO:
 							    <label for="punzonadoSi" class="mx-3">SI
-							        <input type="radio" id="punzonadoSi" name="punzonado" value="true"/>											
+							        <input type="radio" id="punzonadoSi" th:field="*{punzonado}" name="punzonado" value="true"/>											
 								</label>
 							    <label for="punzonadoNo">NO
-							        <input type="radio" id="punzonadoNo" name="punzonado" value="false"/>											
+							        <input type="radio" id="punzonadoNo" th:field="*{punzonado}" name="punzonado" value="false"/>											
 								</label>
 							</div>
 							
@@ -222,10 +224,10 @@
 							<div class="input-group checkbox-group size-l" id="pasaPruebaContainer">
 							    PASA PRUEBA CUADRICULA:
 							    <label for="pasaPruebaSi" class="mx-3">SI
-							        <input type="radio" id="pasaPruebaSi" name="pasaPrueba" value="true"/>											
+							        <input type="radio" id="pasaPruebaSi" th:field="*{pasaPrueba}" name="pasaPrueba" value="true"/>											
 								</label>
 							    <label for="pasaPruebaNo">NO
-							        <input type="radio" id="pasaPruebaNo" name="pasaPrueba" value="false"/>											
+							        <input type="radio" id="pasaPruebaNo" th:field="*{pasaPrueba}" name="pasaPrueba" value="false"/>											
 								</label>
 							</div>														
 						</div>
@@ -235,51 +237,51 @@
 						<div class="form-grid my-5" style="width: 90%; margin: auto;">
 			                <div class="input-group size-m" >
 			                    <span class="input-group-text">1 Media [μm]:</span>
-			                    <input type="number" id="media1" name="media1" class="form-control"/>
+			                    <input type="number" id="media1" th:field="*{media1}" name="media1" class="form-control"/>
 			                </div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">2 Media [μm]:</span>
-							    <input type="number" id="media2" name="media2" class="form-control"/>
+							    <input type="number" id="media2" th:field="*{media2}"  name="media2" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">3 Media [μm]:</span>
-							    <input type="number" id="media3" name="media3" class="form-control"/>
+							    <input type="number" id="media3" th:field="*{media3}"  name="media3" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">4 Media [μm]:</span>
-							    <input type="number" id="media4" name="media4" class="form-control"/>
+							    <input type="number" id="media4" th:field="*{media4}"  name="media4" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">5 Media [μm]:</span>
-							    <input type="number" id="media5" name="media5" class="form-control"/>
+							    <input type="number" id="media5" th:field="*{media5}"  name="media5" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">6 Media [μm]:</span>
-							    <input type="number" id="media6" name="media6" class="form-control"/>
+							    <input type="number" id="media6" th:field="*{media6}" name="media6" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">7 Media [μm]:</span>
-							    <input type="number" id="media7" name="media7" class="form-control"/>
+							    <input type="number" id="media7" th:field="*{media7}" name="media7" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">8 Media [μm]:</span>
-							    <input type="number" id="media8" name="media8" class="form-control"/>
+							    <input type="number" id="media8" th:field="*{media8}" name="media8" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">9 Media [μm]:</span>
-							    <input type="number" id="media9" name="media9" class="form-control"/>
+							    <input type="number" id="media9" th:field="*{media9}" name="media9" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">10 Media [μm]:</span>
-							    <input type="number" id="media10" name="media10" class="form-control"/>
+							    <input type="number" id="media10" th:field="*{media10}" name="media10" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">11 Media [μm]:</span>
-							    <input type="number" id="media11" name="media11" class="form-control"/>
+							    <input type="number" id="media11" th:field="*{media11}" name="media11" class="form-control"/>
 							</div>
 							<div class="input-group size-m" >
 							    <span class="input-group-text">12 Media [μm]:</span>
-							    <input type="number" id="media12" name="media12" class="form-control"/>
+							    <input type="number" id="media12" th:field="*{media12}" name="media12" class="form-control"/>
 							</div>
 						</div>						
 					</div>

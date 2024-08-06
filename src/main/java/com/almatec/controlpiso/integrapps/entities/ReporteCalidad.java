@@ -2,8 +2,9 @@ package com.almatec.controlpiso.integrapps.entities;
 
 import javax.persistence.*;
 
+import com.almatec.controlpiso.security.entities.Usuario;
+
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "reporte_calidad")
@@ -12,6 +13,19 @@ public class ReporteCalidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(name = "prefijo")
+    private String prefijo = "FORCAL";
+    
+    @Column(name = "id_operario")
+    private Integer idOperario;
+    
+    @Column(name = "nombre_operario")
+	private String nombreOperario;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_usuario_aprueba")
+    private Usuario usuarioAprueba;
     
     @Column(name = "num_op")
     private Integer numOp;
@@ -33,9 +47,6 @@ public class ReporteCalidad {
 
     @Column(name = "proyecto")
     private String proyecto;
-
-    @Column(name = "pedido")
-    private String pedido;
 
     @Column(name = "item_descripcion")
     private String descripcionItem;
@@ -176,10 +187,6 @@ public class ReporteCalidad {
 
 	public String getProyecto() {
 		return proyecto;
-	}
-
-	public String getPedido() {
-		return pedido;
 	}
 
 	public String getDescripcionItem() {
@@ -346,10 +353,6 @@ public class ReporteCalidad {
 		this.proyecto = proyecto;
 	}
 
-	public void setPedido(String pedido) {
-		this.pedido = pedido;
-	}
-
 	public void setDescripcionItem(String ref) {
 		this.descripcionItem = ref;
 	}
@@ -480,6 +483,38 @@ public class ReporteCalidad {
 
 	public void setMedia12(Double media12) {
 		this.media12 = media12;
+	}
+
+	public Integer getIdOperario() {
+		return idOperario;
+	}
+
+	public String getNombreOperario() {
+		return nombreOperario;
+	}
+
+	public Usuario getUsuarioAprueba() {
+		return usuarioAprueba;
+	}
+
+	public void setIdOperario(Integer idOperario) {
+		this.idOperario = idOperario;
+	}
+
+	public void setNombreOperario(String nombreOperario) {
+		this.nombreOperario = nombreOperario;
+	}
+
+	public void setUsuarioAprueba(Usuario usuarioAprueba) {
+		this.usuarioAprueba = usuarioAprueba;
+	}
+
+	public String getPrefijo() {
+		return prefijo;
+	}
+
+	public void setPrefijo(String prefijo) {
+		this.prefijo = prefijo;
 	}
     
 }

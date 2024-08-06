@@ -19,12 +19,19 @@
                 <button class="btn btn-outline-secondary" type="submit">Buscar</button>
             </div>
         </form>
+		
+		<div class="d-flex justify-content-end mb-3">
+            <button id="exportarExcel" class="btn btn-success">Exportar a Excel</button>
+            <button id="exportarPdf" class="btn btn-danger mx-4">Exportar a PDF</button>
+        </div>
         
         <table class="table table-striped">
             <thead>
                 <tr>
+					<th><input type="checkbox" id="seleccionarTodos"></th>
                     <th>ID</th>
                     <th>Proyecto</th>
+					<th>Item</th>
                     <th>Zona</th>
                     <th>Fecha</th>
                     <th>Acciones</th>
@@ -32,8 +39,10 @@
             </thead>
             <tbody>
                 <tr th:each="formulario : ${formularios}">
+					<td><input type="checkbox" class="seleccionar-formulario" th:value="${formulario.id}"></td>
                     <td th:text="${formulario.id}"></td>
                     <td th:text="${formulario.proyecto}"></td>
+					<td th:text="${formulario.descripcionItem}"></td>
                     <td th:text="${formulario.zona}"></td>
                     <td th:text="${#temporals.format(formulario.fechaDoc, 'dd-MM-yyyy')}"></td>
                     <td>
@@ -62,5 +71,6 @@
     
     <footer th:replace="fragments/footer :: footer"></footer>
     <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	<script src="/js/calidad/listar-formularios.js"></script>
 </body>
 </html>

@@ -2,11 +2,13 @@ package com.almatec.controlpiso.calidad.dtos;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 public class ReporteCalidadDTO {
 	private Long id;
+	private String prefijo = "FORCAL";
+	private Integer idOperario;
+	private String nombreOperario;
 	private Integer numOp;
 	private String zona;
 	private Long idItem;
@@ -15,15 +17,16 @@ public class ReporteCalidadDTO {
     private String centroTrabajo;
     private LocalDateTime fechaDoc;
     private String proyecto;
-    private String pedido;
     private String descripcionItem;
     private String marca;
     private BigDecimal cantSol;
     private String lote;
+    
     private Double ancho;
     private Double altura;
     private Double longitud;
     private String ral;
+    
     private Boolean pestana;
     private Boolean aleta;
     private Boolean perfBorde;
@@ -37,6 +40,7 @@ public class ReporteCalidadDTO {
     private Boolean punzonado;
     private Boolean granallado;
     private Boolean pasaPrueba;
+    
     private Double media1;
     private Double media2;
     private Double media3;
@@ -112,10 +116,6 @@ public class ReporteCalidadDTO {
 
 	public String getProyecto() {
 		return proyecto;
-	}
-
-	public String getPedido() {
-		return pedido;
 	}
 
 	public String getDescripcionItem() {
@@ -262,10 +262,6 @@ public class ReporteCalidadDTO {
 		this.proyecto = proyecto;
 	}
 
-	public void setPedido(String pedido) {
-		this.pedido = pedido;
-	}
-
 	public void setDescripcionItem(String ref) {
 		this.descripcionItem = ref;
 	}
@@ -398,14 +394,39 @@ public class ReporteCalidadDTO {
 		this.media12 = media12;
 	}
 
+	public Integer getIdOperario() {
+		return idOperario;
+	}
+
+	public String getNombreOperario() {
+		return nombreOperario;
+	}
+
+	public void setIdOperario(Integer idOperario) {
+		this.idOperario = idOperario;
+	}
+
+	public void setNombreOperario(String nombreOperario) {
+		this.nombreOperario = nombreOperario;
+	}
+
+	public String getPrefijo() {
+		return prefijo;
+	}
+
+	public void setPrefijo(String prefijo) {
+		this.prefijo = prefijo;
+	}
+
 	@Override
 	public String toString() {
-		return "ReporteCalidadDTO [id=" + id + ", numOp=" + numOp + ", zona=" + zona + ", idItem=" + idItem + ", color="
-				+ color + ", idCentroTrabajo=" + idCentroTrabajo + ", centroTrabajo=" + centroTrabajo + ", fechaDoc="
-				+ fechaDoc + ", proyecto=" + proyecto + ", pedido=" + pedido + ", descripcionItem=" + descripcionItem
-				+ ", marca=" + marca + ", cantSol=" + cantSol + ", lote=" + lote + ", ancho=" + ancho + ", altura="
-				+ altura + ", longitud=" + longitud + ", ral=" + ral + ", pestana=" + pestana + ", aleta=" + aleta
-				+ ", perfBorde=" + perfBorde + ", perforaciones=" + perforaciones + ", troquelado=" + troquelado
+		return "ReporteCalidadDTO [id=" + id + ", prefijo=" + prefijo + ", idOperario=" + idOperario
+				+ ", nombreOperario=" + nombreOperario + ", numOp=" + numOp + ", zona=" + zona + ", idItem=" + idItem
+				+ ", color=" + color + ", idCentroTrabajo=" + idCentroTrabajo + ", centroTrabajo=" + centroTrabajo
+				+ ", fechaDoc=" + fechaDoc + ", proyecto=" + proyecto + ", descripcionItem="
+				+ descripcionItem + ", marca=" + marca + ", cantSol=" + cantSol + ", lote=" + lote + ", ancho=" + ancho
+				+ ", altura=" + altura + ", longitud=" + longitud + ", ral=" + ral + ", pestana=" + pestana + ", aleta="
+				+ aleta + ", perfBorde=" + perfBorde + ", perforaciones=" + perforaciones + ", troquelado=" + troquelado
 				+ ", cuadratura=" + cuadratura + ", corona=" + corona + ", flechaH=" + flechaH + ", flechaV=" + flechaV
 				+ ", corte=" + corte + ", punzonado=" + punzonado + ", granallado=" + granallado + ", pasaPrueba="
 				+ pasaPrueba + ", media1=" + media1 + ", media2=" + media2 + ", media3=" + media3 + ", media4=" + media4

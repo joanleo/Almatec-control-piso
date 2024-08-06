@@ -34,11 +34,13 @@ document.addEventListener('DOMContentLoaded',  function() {
 			}
             jsonData[key] = value			
         }
+		jsonData['id'] = document.querySelector('#formId').value
 		jsonData['centroTrabajo'] = document.querySelector('.centro-trabajo').value
 		jsonData['idCentroTrabajo'] = Number(document.querySelector('.id-centro-trabajo').value) 
 		jsonData['idItem'] = Number(document.querySelector('.item').value)
-		jsonData['id'] = document.querySelector('#formId').value
-		
+		jsonData['idOperario'] = Number(document.querySelector('.id-operario').value)
+		jsonData['nombreOperario'] = document.querySelector('.nombre-operario').value
+		console.log(jsonData)
         try{
 	        const response = await fetch('/calidad/formulario/guardar', {
 	            method: 'POST',

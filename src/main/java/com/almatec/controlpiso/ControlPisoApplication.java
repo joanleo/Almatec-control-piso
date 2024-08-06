@@ -10,9 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.BufferedImageHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @SpringBootApplication
+@EnableScheduling
 @ComponentScan("com.almatec.controlpiso")
 @EntityScan(basePackages = {"com.almatec.controlpiso.integrapps.entities","com.almatec.controlpiso.security.entities"})
 public class ControlPisoApplication {
@@ -27,7 +29,7 @@ public class ControlPisoApplication {
     }
 	
 	@Bean
-	public ModelMapper modelMapper() {
+	ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
 
