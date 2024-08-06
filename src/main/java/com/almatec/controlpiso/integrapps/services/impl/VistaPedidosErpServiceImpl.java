@@ -45,7 +45,7 @@ public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 
 	@Override
 	public Page<VistaPedidosErp> buscarPedidosErp(Pageable pageable) {
-		return vistaPedidosErpRepo.findByTipo("PV",pageable);
+		return vistaPedidosErpRepo.findByTipoAndIdEstadoOrderByFechaDesc("PV", 9, pageable);
 	}
 
 	@Override

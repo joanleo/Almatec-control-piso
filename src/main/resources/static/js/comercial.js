@@ -1,4 +1,4 @@
-async function buscarPedidos(page = 0, size = 10, sortField = 'co', sortDirection = 'asc') {
+async function buscarPedidos(page = 0, size = 10, sortField = 'fecha', sortDirection = 'desc') {
     const filtro = {
         un: document.getElementById('un').value,
         estado: document.getElementById('estado').value,

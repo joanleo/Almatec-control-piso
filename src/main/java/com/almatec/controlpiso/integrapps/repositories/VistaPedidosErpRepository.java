@@ -30,15 +30,22 @@ public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp
 	List<VistaPedidosErp> findByTipoAndIdEstadoOrderByNoPvDesc(String tipo, int numPv);
 	
 	@Query("SELECT p FROM VistaPedidosErp p WHERE " +
-			"p.tipo=PV AND " +
-            "p.pedidoNo LIKE %:keyword% OR " +
-            "p.numOp LIKE %:keyword% OR " +
-            "p.nit LIKE %:keyword% OR " +
-            "p.razonSocial LIKE %:keyword% OR " +
-            "p.co LIKE %:keyword% OR " +
-            "p.valor LIKE %:keyword%")
+		       "p.tipo = 'PV' AND " +
+		       "(" +
+		       "   CAST(p.pedidoNo AS string) LIKE %:keyword% OR " +
+		       "   p.numOp LIKE %:keyword% OR " +
+		       "   p.nit LIKE %:keyword% OR " +
+		       "   p.razonSocial LIKE %:keyword% OR " +
+		       "   p.co LIKE %:keyword% OR " +
+		       "   CAST(p.valor AS string) LIKE %:keyword% " +
+		       ") " +
+		       "ORDER BY p.fecha DESC, p.pedidoNo DESC")
     Page<VistaPedidosErp> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 	
-	Page<VistaPedidosErp> findByTipo(String tipo, Pageable pageable);
+	@Query("SELECT p "
+			+ "FROM VistaPedidosErp p "
+			+ "WHERE (p.tipo= :tipo AND p.idEstado <> :idEstado) " +
+		    "ORDER BY p.fecha DESC, p.pedidoNo DESC")
+	Page<VistaPedidosErp> findByTipoAndIdEstadoOrderByFechaDesc(String tipo, Integer idEstado, Pageable pageable);
 
 }

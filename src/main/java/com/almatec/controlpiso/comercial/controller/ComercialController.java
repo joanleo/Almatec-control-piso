@@ -93,8 +93,8 @@ public class ComercialController {
             @RequestBody PedidoSpecDTO busquedaSpec,
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam(defaultValue = "co") String sort,
-            @RequestParam(defaultValue = "asc") String order) {
+            @RequestParam(defaultValue = "fecha") String sort,
+            @RequestParam(defaultValue = "desc") String order) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sort));
         Page<VistaPedidosErp> pedidos = vistaPedidosErpService.searchOrder(busquedaSpec, pageable); 
