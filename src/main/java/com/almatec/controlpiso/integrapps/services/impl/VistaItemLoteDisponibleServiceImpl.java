@@ -3,6 +3,8 @@ package com.almatec.controlpiso.integrapps.services.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
@@ -21,8 +23,13 @@ public class VistaItemLoteDisponibleServiceImpl implements VistaItemLoteDisponib
 	private VistaItemLoteDisponibleSpecification filter;
 
 	@Override
-	public List<VistaItemLoteDisponible> searchItems(SpecItemLoteDTO filtro) {
-		return vistaItemLoteDisponibleRepository.findAll(filter.getDisponibilidad(filtro));
+	public List<VistaItemLoteDisponible> searchItems(SpecItemLoteDTO filtro, boolean transferencia) {
+		return vistaItemLoteDisponibleRepository.findAll(filter.getDisponibilidad(filtro, transferencia));
 	}
+	
+	@Override
+    public Page<VistaItemLoteDisponible> searchItems(SpecItemLoteDTO filtro, boolean transferencia, Pageable pageable) {
+        return vistaItemLoteDisponibleRepository.findAll(filter.getDisponibilidad(filtro, transferencia), pageable);
+    }
 
 }

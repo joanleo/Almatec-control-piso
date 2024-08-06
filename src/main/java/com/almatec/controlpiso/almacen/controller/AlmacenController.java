@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,10 +39,12 @@ import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaServi
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.impl.AlmacenService;
 import com.almatec.controlpiso.almacen.util.RemisionPdfService;
-import com.almatec.controlpiso.erp.webservices.XmlService;
+import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemision;
+import com.almatec.controlpiso.integrapps.services.VistaItemLoteDisponibleService;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
 import com.lowagie.text.DocumentException;
@@ -62,7 +67,7 @@ public class AlmacenController {
 	private UsuarioService usuarioService;
 	
 	@Autowired
-	private XmlService xmlServices;
+	private VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -152,6 +157,25 @@ public class AlmacenController {
 	        handleGenericException(response, e);
 	    }
 	}
+	
+	@GetMapping("/consulta-materia-prima")
+	public String consultaMateriaPrima(Model model) {
+		model.addAttribute("specItemLoteDTO", new SpecItemLoteDTO());
+        return "almacen/consulta-materia-prima";
+	}
+	
+	@GetMapping("/buscar-materia-prima")
+    public ResponseEntity<Page<VistaItemLoteDisponible>> buscarMateriaPrima(
+            @ModelAttribute SpecItemLoteDTO filtro,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+		System.out.println(filtro);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<VistaItemLoteDisponible> resultados = vistaItemLoteDisponibleService.searchItems(filtro, false, pageable);
+        
+        return ResponseEntity.ok(resultados);
+    }
 
 	private void setResponseHeaders(HttpServletResponse response, Long idRemision) {
 		response.setContentType("application/pdf");

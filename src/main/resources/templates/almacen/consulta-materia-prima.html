@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Almacen :: Consulta Materia Prima')"></head>
+	<body>
+		
+		<nav th:replace="fragments/navbar :: nav-bar('Almacen')" aria-label="Site menu"></nav>
+		
+		<div class="container my-5" style="width:90%;">
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+							
+			<div th:replace="fragments/alerts :: alerts"></div>	
+			
+			<div class="card-body" id="alerContainer" style="margin: auto; width: 90%;">
+				<form id="searchForm">
+		            <div class="d-flex align-items-center">
+		                <div class="me-3 size-l">
+		                    <input id="descripcion" type="text" class="form-control" name="descripcion" placeholder="Descripción...">
+		                </div>
+		                <div class="me-3 size-s">
+		                    <input id="codigo" type="number" class="form-control" name="codigo" placeholder="Codigo...">
+		                </div>
+		                <div class="me-3 size-m">
+		                    <input id="bodega" type="text" class="form-control" name="bodega" placeholder="Bodega...">
+		                </div>
+		                <button type="submit" class="btn btn-primary">Buscar</button>
+		            </div>
+		        </form>
+				
+				<div class="table-responsive text-nowrap my-5">
+					<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
+						<thead>
+							<tr>
+								<th>Codigo</th>
+								<th>Descripcion</th>
+								<th>Um</th>
+								<th>Bodega</th>
+								<th>Lote</th>
+								<th>Disponible</th>
+							</tr>
+						</thead>
+						<tbody id="resultados"></tbody>
+					</table>
+				</div>
+				
+				<div id="pagination">
+		            <!-- Los controles de paginación se agregarán aquí -->
+		        </div>
+				
+			</div>
+			
+		</div>
+				
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/almacen/consulta-materia-prima.js"></script>
+		
+
+	</body>
+</html>
+			

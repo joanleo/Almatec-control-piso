@@ -14,11 +14,19 @@ import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 @Component
 public class VistaItemLoteDisponibleSpecification {
 	
-	public Specification<VistaItemLoteDisponible> getDisponibilidad(SpecItemLoteDTO filtro){
+	public Specification<VistaItemLoteDisponible> getDisponibilidad(SpecItemLoteDTO filtro, boolean transferencia){
 		return(root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
+			
+			if(transferencia) {
+				predicates.add(criteriaBuilder.equal(root.get("idBodega"), "00101"));				
+			}
+			
 			if(filtro.getCodigo() != null) {
 				predicates.add(criteriaBuilder.equal(root.get("idItem"), filtro.getCodigo()));
+			}
+			if(filtro.getBodega() != null) {
+				predicates.add(criteriaBuilder.like(root.get("bodega"), "%"  +filtro.getBodega() + "%" ));
 			}
 			if(filtro.getUm() != null) {
 				predicates.add(criteriaBuilder.like(root.get("um"), "%" + filtro.getUm() + "%"));

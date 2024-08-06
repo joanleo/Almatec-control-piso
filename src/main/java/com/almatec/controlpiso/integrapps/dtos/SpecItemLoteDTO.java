@@ -6,6 +6,8 @@ public class SpecItemLoteDTO {
 	private String um;
 	private String lote;
 	private String descripcion;
+	private String bodega;
+	private Integer numOp;
 	
 	public SpecItemLoteDTO() {
 		super();
@@ -43,11 +45,26 @@ public class SpecItemLoteDTO {
 		this.descripcion = descripcion;
 	}
 
+	public String getBodega() {
+		return bodega;
+	}
+
+	public void setBodega(String bodega) {
+		this.bodega = bodega;
+	}
+
+	public Integer getNumOp() {
+		return numOp;
+	}
+
+	public void setNumOp(Integer numOp) {
+		this.numOp = numOp;
+	}
+
 	@Override
 	public String toString() {
-		return "SpecItemLoteDTO [codErp=" + codigo + ", um=" + um + ", lote=" + lote + ", descripcion=" + descripcion
-				+ "]";
+		return "SpecItemLoteDTO [codigo=" + codigo + ", um=" + um + ", lote=" + lote + ", descripcion=" + descripcion
+				+ ", bodega=" + bodega + ", numOp=" + numOp + "]";
 	}
-	
 	
 }
