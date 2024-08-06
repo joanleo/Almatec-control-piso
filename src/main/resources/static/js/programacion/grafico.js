@@ -78,7 +78,7 @@ function drawChart() {
 	  
 	const rows = lastTenOrders.map(orden => [
 		orden.id.toString(),
-	    orden.cliente,
+	    orden.centroOperaciones.split('-')[0] + ' -  ' + orden.observaciones,
 	    parseDate(orden.fecRealIngR),
 	    parseDate(orden.fechaEntrega),
 	    null,

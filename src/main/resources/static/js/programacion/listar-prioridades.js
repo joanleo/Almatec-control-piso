@@ -42,20 +42,42 @@ document.addEventListener('DOMContentLoaded', async function(){
 	  
 	  addSortLinkListeners();
 		  
-		  document.addEventListener('click', function(e) {
-		          if (e.target.matches('.page-link')) {
-		              e.preventDefault();
-		              const url = new URL(e.target.href);
-		              const centroTrabajoId = document.getElementById('centroTrabajoSelect').value;
-		              cargarDatos(
-		                  centroTrabajoId,
-		                  url.searchParams.get('page'),
-		                  url.searchParams.get('size'),
-		                  url.searchParams.get('sortField'),
-		                  url.searchParams.get('sortDir')
-		              )
-		          }
-		      })		  			  
+	  document.addEventListener('click', function(e) {
+          if (e.target.matches('.page-link')) {
+              e.preventDefault();
+              const url = new URL(e.target.href);
+              const centroTrabajoId = document.getElementById('centroTrabajoSelect').value;
+              cargarDatos(
+                  centroTrabajoId,
+                  url.searchParams.get('page'),
+                  url.searchParams.get('size'),
+                  url.searchParams.get('sortField'),
+                  url.searchParams.get('sortDir')
+              )
+          }
+      })
+	  const checkAllElement = document.getElementById('checkAll');
+      if (checkAllElement) {
+          checkAllElement.addEventListener('change', handleSelectAll);
+      }
+
+      document.addEventListener('change', function(e) {
+          if (e.target && (e.target.classList.contains('item-checkbox') || e.target.id === 'checkAll')) {
+              updateAsignarButtonVisibility();
+          }
+      });
+
+	  document.getElementById('btnAsignarMultiple').addEventListener('click', function() {
+	      const selectedItems = getSelectedItems();
+	      console.log('Elementos seleccionados:', selectedItems); // Para depuración
+	      if (selectedItems.length > 0) {
+	          showPrioridadModal(selectedItems);
+	      } else {
+	          console.log('No se seleccionaron elementos');
+	          // Opcionalmente, muestra un mensaje al usuario
+	          alert('Por favor, seleccione al menos un elemento.');
+	      }
+	  });	  			  
 })
 
 function addSortLinkListeners() {
@@ -134,22 +156,22 @@ async function obtenerOpCentroT(ct){
 		
 }
 
- function handleSelectAll() {
-	console.log("check clickeado")
-      const checkboxes = document.querySelectorAll('.item-checkbox');
-      const selectAllCheckbox = document.querySelector('#checkAll');
-      checkboxes.forEach(checkbox => {
-          checkbox.checked = selectAllCheckbox.checked;
-      });
-      updateAsignarButtonVisibility();
-  }
+function handleSelectAll() {
+    console.log("check clickeado");
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    const selectAllCheckbox = document.querySelector('#checkAll');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+    updateAsignarButtonVisibility();
+}
   
-  function updateAsignarButtonVisibility() {
-      const checkboxes = document.querySelectorAll('.item-checkbox');
-      const btnAsignarMultiple = document.querySelector('#btnAsignarMultiple');
-      const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-      btnAsignarMultiple.style.display = anyChecked ? 'block' : 'none';
-  }
+function updateAsignarButtonVisibility() {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    const btnAsignarMultiple = document.querySelector('#btnAsignarMultiple');
+    const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+    btnAsignarMultiple.style.display = anyChecked ? 'block' : 'none';
+}
   
  document.addEventListener('change', function(e) {
       if (e.target && e.target.classList.contains('item-checkbox')) {
@@ -179,6 +201,11 @@ function buscar() {
 	        const doc = parser.parseFromString(html, 'text/html');
 	        const newTable = doc.getElementById('resultsTable');
 	        document.getElementById('resultsTable').innerHTML = newTable.innerHTML;
+			
+			const checkAllElement = document.getElementById('checkAll');
+	        if (checkAllElement) {
+	        	checkAllElement.addEventListener('change', handleSelectAll);
+        	}
 	    })
 	    .catch(error => console.error('Error:', error));
 }
@@ -216,33 +243,36 @@ function editarItem(button) {
 
 }
 
-document.getElementById('btnAsignarMultiple').addEventListener('click', function() {
-    const selectedItems = getSelectedItems();
-    if (selectedItems.length > 0) {
-        showPrioridadModal(selectedItems);
-    }
-});
+
 
 function getSelectedItems() {
-    const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+    // Excluimos explícitamente el checkbox de "seleccionar todos"
+    const checkboxes = document.querySelectorAll('.item-checkbox:checked:not(#checkAll)');
     return Array.from(checkboxes).map(checkbox => {
         const row = checkbox.closest('tr');
+        if (!row) {
+            console.error('No se pudo encontrar la fila para el checkbox:', checkbox);
+            return null;
+        }
+        const cells = row.cells;
         return {
-            item_op_id: Number(row.querySelector('td:nth-child(2)').textContent),
-            proyecto: row.querySelector('td:nth-child(7)').textContent,
-            zona: row.querySelector('td:nth-child(8)').textContent,
-            descripcion: row.querySelector('td:nth-child(5)').textContent,
-			prioridad: row.querySelector('td:nth-child(9)').textContent
+            item_op_id: Number(cells[1].textContent), // Asumiendo que el ID está en la segunda celda
+            proyecto: cells[6].textContent,
+            zona: cells[7].textContent,
+            descripcion: cells[4].textContent,
+            prioridad: cells[8].textContent
         };
-    });
+    }).filter(item => item !== null);
 }
 
 function showPrioridadModal(items) {
+    console.log('Mostrando modal para:', items); // Para depuración
     document.getElementById('proyectoModal').value = items.map(item => item.proyecto).join(', ');
     document.getElementById('zonaModal').value = items.map(item => item.zona).join(', ');
     document.getElementById('descripcionModal').value = items.map(item => item.descripcion).join(', ');
     document.getElementById('prioridadModal').value = items[0].prioridad || '';
-	const ctSelected = centrosTrabajoPrioridad.find(ct => ct.id == centroTrabajoSelectedId);
+    
+    const ctSelected = centrosTrabajoPrioridad.find(ct => ct.id == centroTrabajoSelectedId);
     document.getElementById('centroTrabajoModal').value = ctSelected ? ctSelected.nombre : '';
     document.getElementById('centroTrabajoModal').dataset.centrotrabajoId = centroTrabajoSelectedId;
 

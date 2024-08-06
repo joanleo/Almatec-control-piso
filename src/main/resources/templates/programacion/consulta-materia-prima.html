@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Programacion :: Consulta Materia Prima')"></head>
+	<body>
+		
+		<nav th:replace="fragments/navbar :: nav-bar('Programacion')" aria-label="Site menu"></nav>
+		
+		<div class="container my-5" >
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+							
+			<div th:replace="fragments/alerts :: alerts"></div>	
+			
+			<div class="card-body" id="alerContainer" style="margin: auto; width: 90%;">
+				<div class="d-flex">
+					<div class="input-group my-3 size-m">
+			           <span class="input-group-text">OP </span>
+	                   <select class="form-control" id="id-op" required>
+						   <option value="" disabled selected hidden>Selecciona numero de OP</option>
+	                       <option th:each="num : ${numsOps}" th:value="${num.idOpIa}" th:text="${num.numOp}" th:data-op="${num.descripcion}"></option>
+	                   </select>	
+			    	</div>
+					
+					<div class="input-group my-3 mx-5 size-l" hidden id="descripcionDiv">
+			           <span class="input-group-text">Descripcion </span>
+	                   <input type="text" class="form-control" id="descripcion" name="descripcion" readonly style="text-align: right;" />	
+			    	</div>					
+				</div>
+				
+				<!--<form id="searchForm">
+		            <div class="d-flex align-items-center">
+		                <div class="me-3 size-l">
+		                    <input id="descripcion" type="text" class="form-control" name="descripcion" placeholder="Descripción...">
+		                </div>
+		                <div class="me-3 size-s">
+		                    <input id="codigo" type="number" class="form-control" name="codigo" placeholder="Codigo...">
+		                </div>
+		                <div class="me-3 size-m">
+		                    <input id="bodega" type="text" class="form-control" name="bodega" placeholder="Bodega...">
+		                </div>
+		                <button type="submit" class="btn btn-primary ms-auto">Buscar</button>
+		            </div>
+		        </form>-->
+				
+				<div class="d-flex justify-content-end mb-3">
+		            <button id="exportarExcel" class="btn btn-success">Exportar a Excel</button>
+		        </div>
+						
+				<div class="table-responsive text-nowrap my-5">
+					<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
+						<thead>
+							<tr>
+								<th>Codigo</th>
+								<th>Descripcion</th>
+								<th>Um</th>
+								<th>Cant Requerida</th>
+
+							</tr>
+						</thead>
+						<tbody id="body-lista-materiales"></tbody>
+					</table>
+				</div>
+				
+				<div id="pagination">
+		        </div>
+				
+			</div>
+			
+		</div>
+				
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/programacion/consulta-materia-prima.js"></script>
+		
+
+	</body>
+</html>
+			

@@ -1,12 +1,18 @@
 package com.almatec.controlpiso.programacion.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,17 +24,23 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
+import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
 import com.almatec.controlpiso.integrapps.dtos.ResponseDTO;
+import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.entities.Prioridad;
 import com.almatec.controlpiso.integrapps.entities.VistaItemsOpsProgramacion;
 import com.almatec.controlpiso.integrapps.entities.VistaOpItemsMaterialesRuta;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
+import com.almatec.controlpiso.integrapps.services.ItemOpService;
+import com.almatec.controlpiso.integrapps.services.ListaMService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 import com.almatec.controlpiso.integrapps.services.PrioridadSevice;
 import com.almatec.controlpiso.integrapps.services.VistaItemsOpsProgramacionService;
 import com.almatec.controlpiso.integrapps.services.VistaOpItemsMaterialesRutaService;
 import com.almatec.controlpiso.programacion.dtos.PrioridadFilterDTO;
 import com.almatec.controlpiso.programacion.dtos.PrioridadItemsDTO;
+import com.almatec.controlpiso.programacion.service.ExportExcelLm;
 
 @Controller
 @RequestMapping("/programacion")
@@ -45,6 +57,15 @@ public class ProgramacionController {
 	
 	@Autowired
 	private OrdenPvService ordenPvService;
+	
+	@Autowired
+	private ItemOpService itemOpService;
+	
+	@Autowired
+	private ListaMService listaMaterialService;
+	
+	@Autowired
+	private ExportExcelLm excelService;
 	
 	@GetMapping
 	public String getItemsPrioridad(Model modelo,
@@ -123,4 +144,31 @@ public class ProgramacionController {
 		return ResponseEntity.ok(ordenes);
 	}
 	
+	@GetMapping("/consulta-materia-prima")
+	public String visualizacionListaMaterialesOps(Model model) {
+		List<ConsultaOpId> numsOps = itemOpService.obtenerNumOps();
+		
+		model.addAttribute("numsOps", numsOps);
+		model.addAttribute("specItemLoteDTO", new SpecItemLoteDTO());
+        return "programacion/consulta-materia-prima";
+	}
+	
+	@GetMapping("/descargar-lista-materiales")
+	public ResponseEntity<Resource> descargarListaMateriales(@RequestParam Integer idOP,
+			@RequestParam String descripcion) throws IOException {
+	    // Obtener la lista de materiales
+	    List<ListaMDTO> listaMateriales = listaMaterialService.obtenerListaMDTOPorIdOp(idOP);
+	    
+	    // Generar el archivo Excel
+	    ByteArrayOutputStream excelOutputStream = excelService.generarExcelListaMateriales(listaMateriales);
+	    
+	    // Crear el recurso a partir del ByteArrayOutputStream
+	    ByteArrayResource resource = new ByteArrayResource(excelOutputStream.toByteArray());
+	    
+	    // Configurar la respuesta HTTP
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + descripcion + ".xlsx")
+	        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+	        .body(resource);
+	}
 }

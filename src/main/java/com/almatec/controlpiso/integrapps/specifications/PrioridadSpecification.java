@@ -28,8 +28,10 @@ public class PrioridadSpecification {
 			predicates.add(criteriaBuilder.notEqual(root.get("item_id"), 0));
 			
 			if(filtro.getCentroTrabajoId() != null) {
-				predicates.add(criteriaBuilder.equal(root.get("itemCentroTId"),filtro.getCentroTrabajoId()));
-			}
+                Predicate materialCentroTIdPredicate = criteriaBuilder.equal(root.get("materialCentroTId"), filtro.getCentroTrabajoId());
+                Predicate itemCentroTIdPredicate = criteriaBuilder.equal(root.get("itemCentroTId"), filtro.getCentroTrabajoId());
+                predicates.add(criteriaBuilder.or(materialCentroTIdPredicate, itemCentroTIdPredicate));
+            }
 			
 			if(filtro.getDescripcion() != null && !filtro.getDescripcion().isEmpty()) {
 				predicates.add(criteriaBuilder.like(root.get("itemDescripcion"), "%" + filtro.getDescripcion() + "%"));
