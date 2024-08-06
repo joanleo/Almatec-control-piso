@@ -62,6 +62,8 @@ public class SecurityConfig {
                 		.antMatchers("/login").permitAll()
                 		.antMatchers("/api/**").permitAll()
                 		.antMatchers("/produccion/operarios-registrados/**").permitAll()
+                		.antMatchers("/operarios/generar-codigos-barra/**").permitAll()
+                		.antMatchers("/centros-trabajo/generar-codigos-barra/**").permitAll()
                 		.antMatchers("/ingenieria/crear-op/**").permitAll()
                 		.antMatchers("/logout").permitAll()
                         .antMatchers("/**").authenticated()

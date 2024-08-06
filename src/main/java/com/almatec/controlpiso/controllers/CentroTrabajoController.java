@@ -54,6 +54,7 @@ import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaItemsRutasService;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasOperariosService;
 import com.almatec.controlpiso.security.entities.Usuario;
+import com.almatec.controlpiso.utils.CentrosTrabajoPDFService;
 import com.almatec.controlpiso.utils.ExportOpCentroTrabajoToPdf;
 import com.almatec.controlpiso.utils.ExportOptoPdf;
 import com.almatec.controlpiso.utils.UtilitiesApp;
@@ -93,6 +94,9 @@ public class CentroTrabajoController {
 	
 	@Autowired
 	private ListaMService listaMService;
+	
+	@Autowired
+	private CentrosTrabajoPDFService centrosTrabajoPDFService;
 
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -119,7 +123,6 @@ public class CentroTrabajoController {
 		return vistaPiezasOperariosService.obtenerPiezasCentroTrabajoProceso(idCT, idConfig);
 	}
 	
-	@ResponseBody
 	@PostMapping("/{idCT}/asignar-pieza")
 	public ResponseEntity<?> asignarActualizarPiezaOperario(@PathVariable Integer idCT,
 															@RequestBody List<PiezaOperarioDTO> piezas){
@@ -140,7 +143,7 @@ public class CentroTrabajoController {
 	
 	
 	@ResponseBody
-	@PostMapping("/{idCT}/agregar-retirar-operario")
+	@PostMapping("/agregar-retirar-operario")
 	public ResponseEntity<String> agregarRetirarOperario(@RequestBody OperarioDTO operarioDTO) {
 		return ResponseEntity.ok(centroTrabajoService.agregarRetirarOperario(operarioDTO));
 	}
@@ -153,8 +156,6 @@ public class CentroTrabajoController {
 	}
 	
 		
-	
-	@ResponseBody
 	@PostMapping("/{idCT}/paradas")
 	public ResponseEntity<?> registrarActualizarParada(@PathVariable Integer idCT, @RequestBody RegistroParadaDTO registroParada){
 		ErrorMensaje mensaje = registroParadaService.registrarActualizarParada(registroParada, idCT);
@@ -165,11 +166,10 @@ public class CentroTrabajoController {
         }
 	}
 	
-	@ResponseBody
-	@PostMapping("/{idCT}/piezas-operario-proceso")
-	public List<VistaPiezasOperarios> piezasCentroTrabajo(@RequestBody OperarioDTO operario){
+	@PostMapping("/piezas-operario-proceso")
+	public ResponseEntity<List<VistaPiezasOperarios>> piezasCentroTrabajo(@RequestBody OperarioDTO operario){
 		List<VistaPiezasOperarios> piezas = vistaPiezasOperariosService.obtenerPiezasOperarioProceso(operario);
-		return piezas;
+		return ResponseEntity.ok(piezas);
 	}
 	
 	
@@ -189,7 +189,7 @@ public class CentroTrabajoController {
 		return "produccion/formulario-reporte-piezas-ct";
 	}
 	
-	@PostMapping("/{idCT}/reporte")
+	@PostMapping("/reporte")
 	public String guardarReportePiezas(@ModelAttribute("reporte") ReporteDTO reporte,
 										RedirectAttributes flash) {
 
@@ -221,7 +221,7 @@ public class CentroTrabajoController {
 		return "produccion/formulario-novedades";
 	}
 	
-	@PostMapping("/{idCT}/novedades")
+	@PostMapping("/novedades")
 	public String guardarNovedades(@ModelAttribute("novedad") NovedadDTO novedad,
 										RedirectAttributes flash) {
 		ErrorMensaje mensaje = novedadCtService.guardarNovedad(novedad);
@@ -333,16 +333,21 @@ public class CentroTrabajoController {
 		Set<OpCentroTrabajoDTO> opsCt = centroTrabajoService.buscarOpCT(idCT);
 		
 		Rectangle letter = PageSize.LETTER;
-		float halfLetterHeight = letter.getHeight() / 2;
-		Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);
+		//float halfLetterHeight = letter.getHeight() / 2;
+		//Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);
 		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, letter);
 		documento.export(response);
 	}
 	
-	@GetMapping("/{idCT}/proceso/{idConfigProceso}/paradas")
+	@GetMapping("/proceso/{idConfigProceso}/paradas")
 	public ResponseEntity<List<InfoParadaDTO>> obtenerInfoParadasCT(@PathVariable Integer idConfigProceso){
 		List<InfoParadaDTO> paradas =  registroParadaService.obtenerInfoParadasCT(idConfigProceso);
 		return ResponseEntity.ok(paradas);
-	} 
+	}
+	
+	@GetMapping("/generar-codigos-barra")
+	public void generarBarCodeOperarios(HttpServletResponse response) throws DocumentException, IOException {
+		centrosTrabajoPDFService.generarBarCodeCentrosTrabajo(response);
+	}
 
 }

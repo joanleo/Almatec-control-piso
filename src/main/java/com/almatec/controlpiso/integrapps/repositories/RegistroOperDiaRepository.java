@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
+import com.almatec.controlpiso.integrapps.entities.ConfigProceso;
 import com.almatec.controlpiso.integrapps.entities.RegistroOperDia;
 import com.almatec.controlpiso.integrapps.interfaces.OperarioRegistrado;
 
@@ -85,6 +86,8 @@ public interface RegistroOperDiaRepository extends JpaRepository<RegistroOperDia
 			+ "LEFT OUTER JOIN pro_parada ON pro_regoperxdia.C_proparada_id = pro_parada.C_proparada_id "
 			+ "WHERE CONVERT(date, pro_regoperxdia.FC_registro) = CONVERT(date,:fecha) ", nativeQuery = true)
 	List<OperarioRegistrado> findByFechaCreacion(@Param("fecha") Date fecha);
+
+	List<RegistroOperDia> findByIdConfigProcesoAndIsActivoTrue(Integer configProceso);
 		
 
 }
