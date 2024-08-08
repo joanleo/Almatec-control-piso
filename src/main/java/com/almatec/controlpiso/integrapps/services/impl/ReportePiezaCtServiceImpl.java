@@ -1,15 +1,21 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
+import com.almatec.controlpiso.erp.services.conectores.AdministraConectores;
 import com.almatec.controlpiso.erp.webservices.XmlService;
+import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
@@ -21,11 +27,11 @@ import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 @Service
 public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	
-	private final ReportePiezaCtRepository reportePiezaCtRepository;
-	
-	private final ItemOpService itemOpService;
-	
-	private final XmlService xmlService;
+	private final ReportePiezaCtRepository reportePiezaCtRepository;	
+	private final ItemOpService itemOpService;	
+	private final XmlService xmlService;	
+	private final AdministraConectores adminConectores;
+	private final SolicitudMateriaPrimaService solicitudMateriaPrimaService;
 
 	/**
 	 *SE REALIZA EL LLAMADO AL WEBSERVICE PARA  REPORTAR TEP YREALIZAR CONSUMOS
@@ -37,9 +43,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		ReportePiezaCt reporte = generaReporte(reporteDTO);
 		ErrorMensaje response = new ErrorMensaje();
 		String message = "";
-		try {
-			//Guardo entidad reporte en integrapps 
-			
+		try {			
 			xmlService.asignarParametros();
 			//Obtengo el itemOp 
 			ItemOp item =  itemOpService.obtenerItemPorId(reporte.getItemId());
@@ -51,11 +55,20 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			
 			if(isConsume && (item.getCentroTConsumo() == null || item.getCentroTConsumo() == 0)) {
 					//Se realiza consumo y TEP
-					String responseService = xmlService.crearTEPYConsumos(item, reporteDTO);
-					if("Operacion realizada exitosamente".equals(responseService)) {
+					//String responseService = xmlService.crearTEPYConsumos(item, reporteDTO);
+					List<Conector> conectoresTepYConsumo = adminConectores.crearTEPYConsumos(item, reporteDTO);
+					String responseService = xmlService.postImportarXML(conectoresTepYConsumo);
+					if("Operacion realizada exitosamente".equals(responseService)) {//
 						reporte.setIsConsume(true);//REVISAR RESPUESTA
 						reporte.setIsTep(true);
 						item.setCentroTConsumo(reporte.getIdCentroT());
+						
+						List<Integer> centrosTep = item.getCentrosTep();
+						String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroT()).trim();
+						Integer idCTErp = Integer.valueOf(idCTErpString);
+						centrosTep.add(idCTErp);
+						item.setCentrosTep(centrosTep);
+						
 						itemOpService.guardarItemOp(item);
 					}
 					message += responseService;
@@ -67,6 +80,18 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 				 * realizar entrega de los item terminados
 				 */
 				//Se valida si no se ha reportado ninguna cantidad del itemOp
+				//Validar que haya reporte en todos los centros de trabajo
+				List<Integer> centrosTep = item.getCentrosTep();
+				centrosTep.add(14);
+				List<Integer> idsCentroTrabajoRuta = itemOpService.obtenerCentrosTrabajoPorIdOpIA(item.getIdOpIntegrapps());
+				
+				List<Integer> centrosFaltantes = validarYObtenerCentrosTepFaltantes(idsCentroTrabajoRuta, centrosTep);
+				if (!centrosFaltantes.isEmpty()) {
+				    // Realizar reporte en los centros de trabajo faltantes
+					reportarTepsFaltantes(centrosFaltantes, item, reporteDTO, centrosTep);
+					//String responseServiceTep = xmlService.crearTEP(item, reporteDTO);					
+				} 
+				//System.exit(0);
 				actualizarCantidadCumplida(reporteDTO, item);
 				itemOpService.guardarItemOp(item);
 				String responseEntrega = xmlService.crearEntrega(item, reporteDTO);
@@ -99,8 +124,36 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		return response;
 	}
 
+	private void reportarTepsFaltantes(List<Integer> centrosFaltantes, ItemOp item, ReporteDTO reporteDTO, List<Integer> centrosTep) {
+		centrosFaltantes.forEach(centro->{
+			try {
+				if(centro != 14) {
+					ReporteDTO auxiliar = new ReporteDTO.Builder()
+						    .from(reporteDTO)
+						    .setIdCentroTrabajo(centro)
+						    .build();
+					List<Conector> tep = adminConectores.crearTEP(item, auxiliar, true);
+					String response = xmlService.postImportarXML(tep);
+					System.out.println(response);
+					centrosTep.add(centro);
+					item.setCentrosTep(centrosFaltantes);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private List<Integer> validarYObtenerCentrosTepFaltantes(List<Integer> idsCentroTrabajoRuta,
+			List<Integer> centrosTep) {
+		List<Integer> centrosFaltantes = idsCentroTrabajoRuta.stream()
+		                .filter(centro -> !centrosTep.contains(centro))
+		                .collect(Collectors.toList());
+		return centrosFaltantes;
+	}
+
 	private void actualizarCantidadCumplida(ReporteDTO reporteDTO, ItemOp item) {
-		if(item.getCantCumplida() == null) {
+		if(item.getCantCumplida() == null || item.getCantCumplida() == 0) {
 			item.setCantCumplida(reporteDTO.getCantReportar().doubleValue());
 		}else {
 			item.setCantCumplida(item.getCantCumplida() + reporteDTO.getCantReportar().doubleValue());					
@@ -142,13 +195,17 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	public Integer buscarCantidadesFabricadasPerfil(Long idItem, Integer idPerfil, Integer idCT) {
 		return reportePiezaCtRepository.buscarCantidadesFabricadasPerfil(idItem, idPerfil, idCT);
 	}
+	
+	
 
 	public ReportePiezaCtServiceImpl(ReportePiezaCtRepository reportePiezaCtRepository, ItemOpService itemOpService,
-			XmlService xmlService) {
+			XmlService xmlService, AdministraConectores adminConectores, SolicitudMateriaPrimaService solicitudMateriaPrimaService) {
 		super();
 		this.reportePiezaCtRepository = reportePiezaCtRepository;
 		this.itemOpService = itemOpService;
 		this.xmlService = xmlService;
+		this.adminConectores = adminConectores;
+		this.solicitudMateriaPrimaService = solicitudMateriaPrimaService;
 	}
 
 }
