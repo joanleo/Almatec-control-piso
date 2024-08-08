@@ -170,7 +170,6 @@ public class AlmacenController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
-		System.out.println(filtro);
         Pageable pageable = PageRequest.of(page, size);
         Page<VistaItemLoteDisponible> resultados = vistaItemLoteDisponibleService.searchItems(filtro, false, pageable);
         

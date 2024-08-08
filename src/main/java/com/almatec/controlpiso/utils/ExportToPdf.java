@@ -16,7 +16,6 @@ public abstract class ExportToPdf extends PdfPageEventHelper {
 	protected Document document;
     protected PdfWriter writer;
     protected Rectangle pageSize;
-    protected PdfPageEventHandler pageEventHandler;
 
     public ExportToPdf(Rectangle pageSize) {
         this.pageSize = pageSize == null ? PageSize.LETTER : pageSize;

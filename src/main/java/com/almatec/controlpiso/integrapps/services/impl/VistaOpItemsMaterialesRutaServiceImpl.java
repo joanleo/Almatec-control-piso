@@ -86,9 +86,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
         mergedItem.setLongitud(itemDTOs.get(0).getLongitud());
         mergedItem.setCant_cumplida(itemDTOs.get(0).getCant_cumplida());
         mergedItem.setMarca(itemDTOs.get(0).getMarca());
-        
-        System.out.println(itemDTOs.get(0).getComponentes());
-        
+                
         List<ComponenteDTO> mergedComponentes = itemDTOs.stream()
                 .flatMap(item -> item.getComponentes().stream())
                 .distinct()
@@ -104,7 +102,6 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 		List<VistaOpItemsMaterialesRuta> listaRutas = vistaOpItemsMaterialesRutaRepo.buscarItemCt(idItem, idCT);
 		List<OpCentroTrabajoDTO> ordenesProduccion = EstructuraDatos.crearEstructura(listaRutas);
 		Set<OpCentroTrabajoDTO> filterOrdenesProduccion = new HashSet<>(ordenesProduccion);
-		filterOrdenesProduccion.forEach(op->op.getItems().forEach(System.out::println));
 		for(OpCentroTrabajoDTO op:filterOrdenesProduccion) {
 			Set<ItemOpCtDTO> setItems = new HashSet<>(op.getItems());
 			List<ItemOpCtDTO> conjuntoItems = new ArrayList<>(mergeItemsReporte(new ArrayList<>(setItems)));			
