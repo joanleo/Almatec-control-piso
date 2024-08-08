@@ -1,4 +1,4 @@
-package com.almatec.controlpiso.utils;
+package com.almatec.controlpiso.erp.dto;
 
 public class ItemReporteConsumoDTO {
 	

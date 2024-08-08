@@ -1,4 +1,4 @@
-package com.almatec.controlpiso.controllers;
+package com.almatec.controlpiso.produccion.controller;
 
 import java.util.HashMap;
 import java.util.List;

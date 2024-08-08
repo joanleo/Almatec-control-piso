@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
@@ -158,7 +157,6 @@ public class ProduccionController {
 		return "produccion/formulario-solicitud-materia-prima";
 	}
 	
-	@ResponseBody
 	@PostMapping("/materia-prima/solicitud")
 	public ResponseEntity<Map<String, String>> crearsolicitudMateriaPrima(@RequestBody SolicitudMariaPrimaDTO solicitudMP) {
 		try {
@@ -177,16 +175,14 @@ public class ProduccionController {
 	    }
 	}
 	
-	@ResponseBody
 	@GetMapping("/listas-materiales/ordenes-produccion/{idOP}")
-	public List<ListaMDTO> obtenerListaMaterialesPorIdOp(@PathVariable Integer idOP){
-		return listaMaterialService.obtenerListaMDTOPorIdOp(idOP);
+	public ResponseEntity<List<ListaMDTO>> obtenerListaMaterialesPorIdOp(@PathVariable Integer idOP){
+		return ResponseEntity.ok(listaMaterialService.obtenerListaMDTOPorIdOp(idOP));
 	}
 	
-	@ResponseBody
 	@PostMapping("/items/disponibilidad")
-	public List<VistaItemLoteDisponible> obtenerItemsDispon(@RequestBody SpecItemLoteDTO filtro){
-		return vistaItemLoteDisponibleService.searchItems(filtro);
+	public ResponseEntity<List<VistaItemLoteDisponible>> obtenerItemsDispon(@RequestBody SpecItemLoteDTO filtro){
+		return ResponseEntity.ok(vistaItemLoteDisponibleService.searchItems(filtro, true));
 	}
 	
 	@GetMapping("/operarios-registrados")
@@ -203,16 +199,14 @@ public class ProduccionController {
 		return "produccion/impresion-etiquetas";
 	}
 	
-	@ResponseBody
 	@PostMapping("/imprimir-etiquetas")
 	public void registrarDataItemImprimir(@RequestBody List<DataItemImprimirDTO> data) {
 		itemOpService.imprimirEtiquetas(data);
 	}
 
-	@ResponseBody
 	@GetMapping("/op/{idOp}/items")
-	public List<ItemOp> getItemsOpByIdOp(@PathVariable Integer idOp){
-		return  itemOpService.obtenerItemsOpProduccion(idOp);
+	public ResponseEntity<List<ItemOp>> getItemsOpByIdOp(@PathVariable Integer idOp){
+		return  ResponseEntity.ok(itemOpService.obtenerItemsOpProduccion(idOp));
 	}	
 
 }
