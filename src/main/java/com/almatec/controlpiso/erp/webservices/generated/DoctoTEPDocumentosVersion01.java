@@ -2,7 +2,7 @@ package com.almatec.controlpiso.erp.webservices.generated;
 
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 
-public class DoctoTEPDocumentosVersión01 implements Conector {
+public class DoctoTEPDocumentosVersion01 implements Conector {
 	private Integer F_NUMERO_REG;  //Numero consecutivo
 	private Integer F_TIPO_REG= 450;  //Valor fijo = 450
 	private Integer F_SUBTIPO_REG= 2;  //Valor fijo = 02
@@ -165,7 +165,7 @@ public class DoctoTEPDocumentosVersión01 implements Conector {
 	public void setF450_turno(Integer f450_turno) {
 		this.f450_turno = f450_turno;
 	}
-	public DoctoTEPDocumentosVersión01 () {
+	public DoctoTEPDocumentosVersion01 () {
 	// Constructor vacio para inicializar
 	}
 	@Override

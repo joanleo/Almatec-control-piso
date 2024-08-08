@@ -2,7 +2,7 @@ package com.almatec.controlpiso.erp.webservices.generated;
 
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 
-public class DoctoTEPMovimientosVersión01 implements Conector {
+public class DoctoTEPMovimientosVersion01 implements Conector {
 	private Integer F_NUMERO_REG;  //Numero consecutivo
 	private Integer F_TIPO_REG= 880;  //Valor fijo = 880
 	private Integer F_SUBTIPO_REG= 0;  //Valor fijo = 00
@@ -282,7 +282,7 @@ public class DoctoTEPMovimientosVersión01 implements Conector {
 	public void setF880_notas(String f880_notas) {
 		this.f880_notas = f880_notas;
 	}
-	public DoctoTEPMovimientosVersión01 () {
+	public DoctoTEPMovimientosVersion01 () {
 	// Constructor vacio para inicializar
 	}
 	@Override
@@ -311,7 +311,7 @@ public class DoctoTEPMovimientosVersión01 implements Conector {
 	}
 	@Override
 	public String toString() {
-		return "DoctoTEPMovimientosVersión01[F_NUMERO_REG=" + this.getF_numero_reg () +", F_TIPO_REG=" + this.getF_tipo_reg () +", F_SUBTIPO_REG=" + this.getF_subtipo_reg () +", F_VERSION_REG=" + this.getF_version_reg () +", F_CIA=" + this.getF_cia () +", f880_id_co =" + this.getF880_id_co  () +", f880_id_tipo_docto=" + this.getF880_id_tipo_docto () +", f880_consec_docto=" + this.getF880_consec_docto () +", f880_nro_registro=" + this.getF880_nro_registro () +", f880_id_tipo_docto=" + this.getF880_id_tipo_docto () +", f880_consec_docto=" + this.getF880_consec_docto () +", f880_id_item=" + this.getF880_id_item () +", f880_referencia_item=" + this.getF880_referencia_item () +", f880_codigo_barras=" + this.getF880_codigo_barras () +", f880_id_ext1_detalle=" + this.getF880_id_ext1_detalle () +", f880_id_ext2_detalle=" + this.getF880_id_ext2_detalle () +", f880_numero_operacion  =" + this.getF880_numero_operacion   () +", f880_rowid_ctrabajo  =" + this.getF880_rowid_ctrabajo   () +", f880_ind_tipo_hora  =" + this.getF880_ind_tipo_hora   () +", f880_id_labor  =" + this.getF880_id_labor   () +", f880_id_maquina  =" + this.getF880_id_maquina   () +", f880_ind_operacion_completa  =" + this.getF880_ind_operacion_completa   () +", f880_cant_completa_base  =" + this.getF880_cant_completa_base   () +", f880_cant_retrabajo_base  =" + this.getF880_cant_retrabajo_base   () +", f880_cant_rechazo_base  =" + this.getF880_cant_rechazo_base   () +", f880_id_motivo_tep_rechazos  =" + this.getF880_id_motivo_tep_rechazos   () +", f880_hora_inicial  =" + this.getF880_hora_inicial   () +", f880_hora_final  =" + this.getF880_hora_final   () +", f880_horas  =" + this.getF880_horas   () +", f880_id_motivo_tep_paro  =" + this.getF880_id_motivo_tep_paro   () +"]";
+		return "DoctoTEPMovimientosVersión01[F_NUMERO_REG=" + this.getF_numero_reg() +", F_TIPO_REG=" + this.getF_tipo_reg() +", F_SUBTIPO_REG=" + this.getF_subtipo_reg() +", F_VERSION_REG=" + this.getF_version_reg () +", F_CIA=" + this.getF_cia () +", f880_id_co =" + this.getF880_id_co() +", f880_id_tipo_docto=" + this.getF880_id_tipo_docto() +", f880_consec_docto=" + this.getF880_consec_docto() +", f880_nro_registro=" + this.getF880_nro_registro() +", f880_id_tipo_docto=" + this.getF880_id_tipo_docto() +", f880_consec_docto_op=" + this.getF880_consec_docto_op() +", f880_id_item=" + this.getF880_id_item () +", f880_referencia_item=" + this.getF880_referencia_item () +", f880_codigo_barras=" + this.getF880_codigo_barras () +", f880_id_ext1_detalle=" + this.getF880_id_ext1_detalle () +", f880_id_ext2_detalle=" + this.getF880_id_ext2_detalle () +", f880_numero_operacion  =" + this.getF880_numero_operacion   () +", f880_rowid_ctrabajo  =" + this.getF880_rowid_ctrabajo   () +", f880_ind_tipo_hora  =" + this.getF880_ind_tipo_hora   () +", f880_id_labor  =" + this.getF880_id_labor   () +", f880_id_maquina  =" + this.getF880_id_maquina   () +", f880_ind_operacion_completa  =" + this.getF880_ind_operacion_completa   () +", f880_cant_completa_base  =" + this.getF880_cant_completa_base   () +", f880_cant_retrabajo_base  =" + this.getF880_cant_retrabajo_base   () +", f880_cant_rechazo_base  =" + this.getF880_cant_rechazo_base   () +", f880_id_motivo_tep_rechazos  =" + this.getF880_id_motivo_tep_rechazos() +", f880_hora_inicial  =" + this.getF880_hora_inicial   () +", f880_hora_final  =" + this.getF880_hora_final() +", f880_horas  =" + this.getF880_horas() +", f880_id_motivo_tep_paro  =" + this.getF880_id_motivo_tep_paro() +"]";
 	}
 	@Override
 	public String getConector() {
