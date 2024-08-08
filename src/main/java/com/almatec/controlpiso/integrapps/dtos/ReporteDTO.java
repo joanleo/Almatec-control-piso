@@ -143,5 +143,105 @@ public class ReporteDTO {
 				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
 				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color + "]";
 	}
+	
+	public static class Builder {
+        private ReporteDTO reporteDTO;
+
+        public Builder() {
+            reporteDTO = new ReporteDTO();
+        }
+
+        public Builder from(ReporteDTO original) {
+            reporteDTO.proyecto = original.proyecto;
+            reporteDTO.numOp = original.numOp;
+            reporteDTO.ref = original.ref;
+            reporteDTO.cantSol = original.cantSol;
+            reporteDTO.cantFab = original.cantFab;
+            reporteDTO.centroTrabajo = original.centroTrabajo;
+            reporteDTO.operario = original.operario; // Nota: considera una copia profunda si Operario es mutable
+            reporteDTO.idCentroTrabajo = original.idCentroTrabajo;
+            reporteDTO.idItemFab = original.idItemFab;
+            reporteDTO.idParte = original.idParte;
+            reporteDTO.idItem = original.idItem;
+            reporteDTO.cantReportar = original.cantReportar;
+            reporteDTO.lote = original.lote;
+            reporteDTO.color = original.color;
+            return this;
+        }
+
+        public Builder setProyecto(String proyecto) {
+            reporteDTO.proyecto = proyecto;
+            return this;
+        }
+
+        public Builder setNumOp(Integer numOp) {
+            reporteDTO.numOp = numOp;
+            return this;
+        }
+
+        public Builder setRef(String ref) {
+            reporteDTO.ref = ref;
+            return this;
+        }
+
+        public Builder setCantSol(BigDecimal cantSol) {
+            reporteDTO.cantSol = cantSol;
+            return this;
+        }
+
+        public Builder setCantFab(Integer cantFab) {
+            reporteDTO.cantFab = cantFab;
+            return this;
+        }
+
+        public Builder setCentroTrabajo(String centroTrabajo) {
+            reporteDTO.centroTrabajo = centroTrabajo;
+            return this;
+        }
+
+        public Builder setOperario(Operario operario) {
+            reporteDTO.operario = operario;
+            return this;
+        }
+
+        public Builder setIdCentroTrabajo(Integer idCentroTrabajo) {
+            reporteDTO.idCentroTrabajo = idCentroTrabajo;
+            return this;
+        }
+
+        public Builder setIdItemFab(Integer idItemFab) {
+            reporteDTO.idItemFab = idItemFab;
+            return this;
+        }
+
+        public Builder setIdParte(Integer idParte) {
+            reporteDTO.idParte = idParte;
+            return this;
+        }
+
+        public Builder setIdItem(Long idItem) {
+            reporteDTO.idItem = idItem;
+            return this;
+        }
+
+        public Builder setCantReportar(Integer cantReportar) {
+            reporteDTO.cantReportar = cantReportar;
+            return this;
+        }
+
+        public Builder setLote(String lote) {
+            reporteDTO.lote = lote;
+            return this;
+        }
+
+        public Builder setColor(String color) {
+            reporteDTO.color = color;
+            return this;
+        }
+
+        public ReporteDTO build() {
+            return reporteDTO;
+        }
+    }
 
 }
