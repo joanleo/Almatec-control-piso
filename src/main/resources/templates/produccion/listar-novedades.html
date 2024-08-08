@@ -37,16 +37,16 @@
 					<thead class="table-light">
 						<tr>
 							<th></th>
-							<th>Proyecto</th>
+							<th>O.P.</th>
 							<th>Fecha</th>
-							<!--<th>Codigo</th>-->
-							<th>Descripcion</th>
+							<th>Descripcion Item</th>
 							<th>C. Trabajo</th>
 							<th>Cod M.P</th>
 							<th>Lote M.P</th>
-							<th>Sobrante (piezas)</th>
+							<th>Piezas adicionales (und)</th>
+							<th>Sobrante (kg)</th>
 							<th>No conforme (ml)</th>
-							<th >Desperdicio (ml)</th>
+							<th>Desperdicio (kg)</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -55,11 +55,11 @@
 							<td class="text-nowrap" th:text="${'N-' + novedad.idNovedad}"></td>
 							<td class="text-nowrap" th:text="${ novedad.op }"></td>
 							<td th:text="${#dates.format(novedad.fechaCreachion, 'dd/MM/yyyy')}"></td>
-							<!--<td th:text="${ novedad.idItemFab == 0 ? novedad.idPerfil: 	novedad.idItemFab }"></td>-->
 							<td th:text="${ novedad.descripcion}"></td>
 							<td th:text="${ novedad.centroTrabajo }"></td>
 							<td th:text="${ novedad.codigoErpMateriaPrima }"></td>
 							<td th:text="${ novedad.loteMateriaPrima }"></td>
+							<td th:text="${ novedad.piezasAdicionales }"></td>
 							<td th:text="${ novedad.sobrante }"></td>
 							<td th:text="${ novedad.noConforme }"></td>
 							<td th:text="${ novedad.desperdicio }"></td>

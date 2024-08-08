@@ -11,13 +11,14 @@ public class NovedadDTO {
 	private Operario operario;	
 	private Integer noConforme;	
 	private Integer desperdicio;	
-	private Integer sobrante;
+	private Double sobrante;
 	private String centroTrabajo;
 	private Integer numOp;
 	private String proyecto;
 	private String ref;
 	private String lote;
 	private Integer codErpMp;
+	private Integer piezasAdicionales;
 	
 	public NovedadDTO() {
 		super();
@@ -59,7 +60,7 @@ public class NovedadDTO {
 		return desperdicio;
 	}
 
-	public Integer getSobrante() {
+	public Double getSobrante() {
 		return sobrante;
 	}
 
@@ -103,7 +104,7 @@ public class NovedadDTO {
 		this.desperdicio = desperdicio;
 	}
 
-	public void setSobrante(Integer sobrante) {
+	public void setSobrante(Double sobrante) {
 		this.sobrante = sobrante;
 	}
 
@@ -145,6 +146,14 @@ public class NovedadDTO {
 
 	public void setCodErpMp(Integer codErpMp) {
 		this.codErpMp = codErpMp;
+	}
+
+	public Integer getPiezasAdicionales() {
+		return piezasAdicionales;
+	}
+
+	public void setPiezasAdicionales(Integer piezasAdicionales) {
+		this.piezasAdicionales = piezasAdicionales;
 	}
 	
 	

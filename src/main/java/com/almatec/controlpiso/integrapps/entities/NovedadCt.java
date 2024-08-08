@@ -36,9 +36,12 @@ public class NovedadCt {
 	
 	private Integer desperdicio;
 	
-	private Integer sobrante;
+	private Double sobrante;
 	
 	private String lote;
+	
+	@Column(name = "piezas_adicionales")
+	private String piezasAdicionales;
 	
 	@Column(name = "ind_registro_siesa")
 	private Boolean enviadoErp = false;
@@ -79,7 +82,7 @@ public class NovedadCt {
 		return desperdicio;
 	}
 
-	public Integer getSobrante() {
+	public Double getSobrante() {
 		return sobrante;
 	}
 
@@ -111,7 +114,7 @@ public class NovedadCt {
 		this.desperdicio = desperdicio;
 	}
 
-	public void setSobrante(Integer sobrante) {
+	public void setSobrante(Double sobrante) {
 		this.sobrante = sobrante;
 	}
 
@@ -147,11 +150,20 @@ public class NovedadCt {
 		this.enviadoErp = enviadoErp;
 	}
 
+	public String getPiezasAdicionales() {
+		return piezasAdicionales;
+	}
+
+	public void setPiezasAdicionales(String piezasAdicionales) {
+		this.piezasAdicionales = piezasAdicionales;
+	}
+
 	@Override
 	public String toString() {
 		return "NovedadCt [idNovedad=" + idNovedad + ", IdItem=" + IdItem + ", idItmFab=" + idItmFab + ", idParte="
 				+ idParte + ", idCentroTrabajo=" + idCentroTrabajo + ", idOperario=" + idOperario + ", noConforme="
 				+ noConforme + ", desperdicio=" + desperdicio + ", sobrante=" + sobrante + ", lote=" + lote
-				+ ", enviadoErp=" + enviadoErp + ", codErpMp=" + codErpMp + "]";
+				+ ", piezasAdicionales=" + piezasAdicionales + ", enviadoErp=" + enviadoErp + ", codErpMp=" + codErpMp
+				+ "]";
 	}
 }

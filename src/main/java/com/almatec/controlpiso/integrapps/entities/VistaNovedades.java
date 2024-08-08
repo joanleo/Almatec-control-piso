@@ -57,6 +57,9 @@ public class VistaNovedades {
 	@Column(name = "ind_registro_siesa")
 	private Boolean enviadoErp;
 	
+	@Column(name = "piezas_adicionales")
+	private String piezasAdicionales;
+	
 
 	public VistaNovedades() {
 		super();
@@ -124,6 +127,10 @@ public class VistaNovedades {
 
 	public Boolean getEnviadoErp() {
 		return enviadoErp;
+	}
+
+	public String getPiezasAdicionales() {
+		return piezasAdicionales;
 	}	
 
 }
