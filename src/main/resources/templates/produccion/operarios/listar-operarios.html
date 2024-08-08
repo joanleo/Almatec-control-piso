@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Configuracion :: Operarios')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>				 
+		<div class="container my-5" style="width:60%;">
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+							
+			<div th:replace="fragments/alerts :: alerts"></div>
+			<h1>Operarios</h1>
+			<a class="btn btn-primary mt-4" th:href="@{/operarios/nuevo}" role="button">Nuevo</a>
+			<div class="table-responsive rounded-3 shadow-sm text-nowrap my-5">
+				<table id="operariosTable" class="table table-striped align-middle table-hover" aria-describedby="table-description">
+					<thead class="table-light">
+						<tr>
+							<th>#</th>
+							<th>Nombres</th>
+                            <th>Apellidos</th>
+							<th>Num Doc</th>
+							<th>Estado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			
+			<nav aria-label="Page navigation">
+                <ul id="pagination" class="pagination justify-content-center">
+                    <!-- Paginación será poblada con JavaScript -->
+                </ul>
+            </nav>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		
+		<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true" id="modal">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="confirmModal">Advertencia</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <div class="modal-confirm-body px-5">
+	                </div>
+	                <div class="modal-footer ">
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+	                    <button type="button" class="btn btn-danger" onclick="eliminarOperario()" >Eliminar</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/produccion/operarios/listar-operarios.js"></script>
+		
+		<!--<script type="text/javascript">
+			let id_usuario_eliminar;
+			function confirmModal(button) {
+				console.log(button)
+				const operarioId = button.getAttribute("data-operario-id")
+				console.log(operarioId)
+				id_operario_eliminar = operarioId
+				const confirm_modal = new bootstrap.Modal('#modal', {
+					  keyboard: false
+					})
+				const confirm_modal_body = confirm_modal._element.querySelector(".modal-confirm-body")
+				confirm_modal_body.textContent = "Esta seguro que desea eliminar este operario"
+				confirm_modal.show()
+				
+			}
+			
+			function eliminarOperario(){
+				console.log(id_operario_eliminar)
+				const id = parseInt(id_operario_eliminar)
+				if (isNaN(id)) {
+			        console.error('El ID del operario no es un numero valido.');
+			        return;
+			    }
+				const urlEliminar = `http://localhost:8090/operarios/eliminar/${id}`
+				console.log(urlEliminar)
+				fetch(urlEliminar, {
+		            method: 'DELETE',
+		            headers: {
+				        'Content-Type': 'application/json'
+				    }
+		        })
+		        .then(response => {
+		        	console.log(response)
+		            if (response.ok) {
+		                window.location.href = '/operarios/';
+		            } else {
+		                console.error('Error al eliminar el usuario');
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error al eliminar el usuario:', error);
+		        });
+			}
+		</script>-->
+	</body>
+</html>

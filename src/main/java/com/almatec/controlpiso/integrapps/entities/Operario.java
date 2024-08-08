@@ -1,12 +1,21 @@
 package com.almatec.controlpiso.integrapps.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
@@ -19,17 +28,15 @@ public class Operario {
 	private Integer id;
 	
 	@Column(name = "C_ciaorg_id")
-	private Integer cia;
+	private Integer cia = 22;
 	
 	@Column(name = "A_co")
-	private String co;
+	private String co = "001";
 	
-	@Column(name = "Per_Id")
-	private Integer idPersona;
-	
-	@Column(name = "C_Usuario_id")
-	private Long idUsuario;
-	
+	@OneToOne
+	@JoinColumn(name = "Per_Id", referencedColumnName = "Per_Id", nullable = false)
+	private Persona persona;
+		
 	@Column(name = "A_Usuariocrea")
 	private String usuarioCrea;
 	
@@ -37,7 +44,7 @@ public class Operario {
 	private LocalDateTime fechaCreacion;
 	
 	@Column(name = "C_centrotrabajo_id")
-	private Long IdCentroT;
+	private Long idCentroT = 0L;
 	
 	@Column(name = "F_configuracion")
 	private LocalDateTime fechaConfig;
@@ -46,10 +53,10 @@ public class Operario {
 	private Long idTurno;
 	
 	@Column(name = "E_activo")
-	private Boolean isActivo;
+	private Boolean isActivo = true;
 	
 	@Column(name = "C_estadoproceso_id")
-	private Integer idEstadoProceso;
+	private Integer idEstadoProceso = 1;
 	
 	@Column(name = "A_Usuarioedita")
 	private String usuarioEdita;
@@ -59,6 +66,18 @@ public class Operario {
 	
 	@Column(name = "A_Operario_Nombre")
 	private String nombre;
+	
+	@Column(name = "id_frente")
+	private Integer idFrente = 100;
+	
+	@OneToMany(mappedBy = "operario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<PoliFuncion> poliFunciones = new HashSet<>();
+	
+	@PrePersist
+	protected void onCreate() {
+		LocalDateTime now = LocalDateTime.now();
+		this.fechaCreacion = now;
+	}
 
 	public Operario() {
 		super();
@@ -88,20 +107,12 @@ public class Operario {
 		this.co = co;
 	}
 
-	public Integer getIdPersona() {
-		return idPersona;
+	public Persona getPersona() {
+		return persona;
 	}
 
-	public void setIdPersona(Integer idPersona) {
-		this.idPersona = idPersona;
-	}
-
-	public Long getIdUsuario() {
-		return idUsuario;
-	}
-
-	public void setIdUsuario(Long idUsuario) {
-		this.idUsuario = idUsuario;
+	public void setPersona(Persona persona) {
+		this.persona = persona;
 	}
 
 	public String getUsuarioCrea() {
@@ -121,11 +132,11 @@ public class Operario {
 	}
 
 	public Long getIdCentroT() {
-		return IdCentroT;
+		return idCentroT;
 	}
 
 	public void setIdCentroT(Long idCentroT) {
-		IdCentroT = idCentroT;
+		this.idCentroT = idCentroT;
 	}
 
 	public LocalDateTime getFechaConfig() {
@@ -183,12 +194,39 @@ public class Operario {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
+	public Integer getIdFrente() {
+		return idFrente;
+	}
+
+	public void setIdFrente(Integer idFrente) {
+		this.idFrente = idFrente;
+	}
+
+	public Set<PoliFuncion> getPoliFunciones() {
+		return poliFunciones;
+	}
+
+	public void setPoliFunciones(Set<PoliFuncion> poliFunciones) {
+		this.poliFunciones = poliFunciones;
+	}
+
+	public void addCentroTrabajo(CentroTrabajo centroTrabajo) {
+        PoliFuncion poliFuncion = new PoliFuncion();
+        poliFuncion.setOperario(this);
+        poliFuncion.setCentroTrabajo(centroTrabajo);
+        this.poliFunciones.add(poliFuncion);
+    }
+
+    public void removeCentroTrabajo(CentroTrabajo centroTrabajo) {
+        this.poliFunciones.removeIf(pf -> pf.getCentroTrabajo().equals(centroTrabajo));
+    }
 
 	@Override
 	public String toString() {
-		return "Operario [id=" + id + ", cia=" + cia + ", co=" + co + ", idPersona=" + idPersona + ", idUsuario="
-				+ idUsuario + ", usuarioCrea=" + usuarioCrea + ", fechaCreacion=" + fechaCreacion + ", IdCentroT="
-				+ IdCentroT + ", fechaConfig=" + fechaConfig + ", idTurno=" + idTurno + ", isActivo=" + isActivo
+		return "Operario [id=" + id + ", cia=" + cia + ", co=" + co +  
+				", usuarioCrea=" + usuarioCrea + ", fechaCreacion=" + fechaCreacion + ", IdCentroT="
+				+ idCentroT + ", fechaConfig=" + fechaConfig + ", idTurno=" + idTurno + ", isActivo=" + isActivo
 				+ ", idEstadoProceso=" + idEstadoProceso + ", usuarioEdita=" + usuarioEdita + ", fechaEdicion="
 				+ fechaEdicion + ", nombre=" + nombre + "]";
 	}

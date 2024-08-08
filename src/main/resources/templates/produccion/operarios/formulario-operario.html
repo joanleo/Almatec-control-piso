@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Configuracion :: Formulario Operario')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div class="container my-5" style="width:60%;">
+			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+			  <span th:text="${message}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			  </button>
+			</div>
+			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			  <span th:text="${error}"></span>
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+			  </button>
+			 </div>
+			 <div class="card-body" >
+			 	<h2 class="mb-5">Formulario Operario</h2>
+	 		    <form th:object="${operario}" th:action="@{/operarios/guardar}" method="post">
+					
+			        <input type="hidden" th:field="*{id}" />
+			        <div class="form-group mb-3">
+			           <label for="nombres">Nombres: </label>
+			           	<input type="text" id="nombres" th:field="*{nombres}" class="form-control" required />					   
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label for="apellidos">Apellidos: </label>
+			           	<input type="text" id="apellidos" th:field="*{apellidos}" class="form-control" />						   
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label for="numDoc">Num Doc: </label>
+				           <input type="text" id="numDoc" th:field="*{numDoc}" class="form-control" required />					   
+			       	</div>
+			       	<div class="form-group mb-3">
+			           <label for="direccion">Direccion: </label>
+				           <input type="text" id="direccion" th:field="*{direccion}" class="form-control" required />					   
+			       	</div>
+					<div class="form-group mb-3">
+			           <label for="celular">Celular: </label>
+				           <input type="tel" id="celular" th:field="*{celular}" class="form-control" required />					   
+			       	</div>
+			       	<div class="form-group mb-5">
+			           <label for="email">Email: </label>
+				           <input type="email" id="email" th:field="*{email}" class="form-control" required autocomplete="on"/>				   
+			       	</div>
+					
+					<div class="form-group mb-5">
+					    <label for="sexo">Sexo: </label>
+					    <select id="sexo" th:field="*{sexo}" class="form-control" required>
+					        <option value="">Seleccione un sexo</option>
+					        <option th:each="opcion : ${opcionesSexo}" th:value="${opcion.key}" th:text="${opcion.value}"></option>
+					    </select>
+					</div>
+
+					<div class="form-group mb-3">
+					    <label for="centroTrabajoIds">Centros de Trabajo: </label>
+					    <select id="centroTrabajoIds" th:field="*{centroTrabajoIds}" class="form-control" multiple required>
+					        <option th:each="centro : ${centrosTrabajo}" 
+					                th:value="${centro.id}" 
+					                th:text="${centro.nombre}"></option>
+					    </select>
+					</div>
+
+					<div>
+			        	<a class="btn btn-secondary" th:href="@{/operarios/listar}" role="button">Volver al Listado</a>
+				       	<button type="submit" class="btn btn-primary">Guardar</button>						
+					</div>
+				 </form>
+			 </div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	</body>
+</html>
