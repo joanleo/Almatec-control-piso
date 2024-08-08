@@ -49,7 +49,7 @@ public class RegistroOperDiaServiceImpl implements RegistroOperDiaService {
 				&& Objects.equals(registroOperario.getIdConfigProceso(), operarioDTO.getIdConfigProceso())) {
 			Boolean estado = (registroOperario.getIsActivo());
 			registroOperRepo.actualizaEstadoOperario(operarioDTO, !estado);
-			return estado ? "retirado exitosamente" : "agregado exitosamente";
+			return Boolean.TRUE.equals(estado) ? "retirado exitosamente" : "agregado exitosamente";
 		}
 		throw new ResourceNotFoundException("No se encontro el Operario con id " + operarioDTO.getIdOperario() + " en el centro de trabajo " + operarioDTO.getIdCentroTrabajo() );
 	}
