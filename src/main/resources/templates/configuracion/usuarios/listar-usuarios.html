@@ -3,10 +3,10 @@
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head th:replace="fragments/head :: head('Configuracion :: Centros de trabajo')"></head>
 	<body>
-		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>				 
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>				 
 		<div class="container my-5" style="width:60%;">
 			<h1>Usuarios</h1>
-			<a class="btn btn-primary mt-4" th:href="@{/usuarios/nuevo}" role="button">Nuevo</a>
+			<button class="btn btn-primary mt-4" onclick="window.location.href='/usuarios/nuevo'" type="button">Nuevo</button>
 			<div class="table-responsive rounded-3 shadow-sm text-nowrap my-5">
 				<table class="table table-striped align-middle table-hover" aria-describedby="table-description">
 					<thead class="table-light">
