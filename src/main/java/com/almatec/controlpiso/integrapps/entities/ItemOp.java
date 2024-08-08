@@ -1,7 +1,11 @@
 package com.almatec.controlpiso.integrapps.entities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -89,6 +93,9 @@ public class ItemOp {
 	
 	@Column(name = "cant_despacha")
 	private Integer cantDespachada;
+	
+	@Column(name = "centros_tep")
+	private String centrosTep;
 
 	public ItemOp() {
 		super();
@@ -307,6 +314,22 @@ public class ItemOp {
 	public void setCantDespachada(Integer cantDespachada) {
 		this.cantDespachada = cantDespachada;
 	}
+	
+	public List<Integer> getCentrosTep() {
+        if (centrosTep == null || centrosTep.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(centrosTep.split(","))
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public void setCentrosTep(List<Integer> centrosTep) {
+        this.centrosTep = centrosTep.stream()
+                                    .map(String::valueOf)
+                                    .collect(Collectors.joining(","));
+    }
 
 	@Override
 	public String toString() {
