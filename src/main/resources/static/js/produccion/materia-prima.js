@@ -130,17 +130,13 @@ function fillTableDisponible(items) {
 		let cellCodigo = document.createElement('td')
         cellCodigo.textContent = item.idItem
         row.appendChild(cellCodigo)
-
-        /*let cellDescripcion = document.createElement('td')
-        cellDescripcion.textContent = item.descripcionItem
-        row.appendChild(cellDescripcion)*/
         
         let cellUm = document.createElement('td')
         cellUm.textContent = item.um
         row.appendChild(cellUm)
         
         let cellBodega = document.createElement('td')
-        cellBodega.textContent = item.bodega
+        cellBodega.textContent = item.idBodega
         row.appendChild(cellBodega)
         
         let cellLote = document.createElement('td')
@@ -180,7 +176,7 @@ function fillTableDisponible(items) {
                 <td>${codigo}</td>
                 <td>${descripcion}</td>
                 <td>${um}</td>
-                <td data-idBodega="${idBodega}">${bodega}</td>
+                <td data-idBodega="${idBodega}">${idBodega}</td>
                 <td>${lote}</td>
                 <td>${disponible}</td>
                 <td><input class="form-control" type='number' id='${uniqueId}' min="1" max="${disponible}" step="0.001"required value="${item.disponible}"  /></td>
