@@ -29,20 +29,6 @@ function toggleVisibility(element, button) {
   }
 }
 
-/*let porcentaje
-let progressBar = document.getElementById('progress-bar')
-let improductivoStr = document.querySelector("#improductivo").textContent
-let productivoStr = document.querySelector("#productivo").textContent
-
-let improductivo = parseFloat(improductivoStr)
-let productivo = parseFloat(productivoStr)
-
-if(improductivo + productivo !== 0){
-	porcentaje = Math.ceil((1- improductivo / (improductivo + productivo)) * 100)
-}
-progressBar.style.width = porcentaje + '%'
-progressBar.textContent = porcentaje + '%'*/
-
 async function actualizarTablasConTiemposOperarios() {
     const tiemposOperarios = await obtenerTiemposOperariosProceso();
     llenarTablaProductividadOperario(tiemposOperarios)
@@ -52,7 +38,6 @@ actualizarTablasConTiemposOperarios()
 
 async function llenarTablaProductividadOperario(tiemposOperarios){
 	if(centroTSelected != null){
-		//const tiemposOperarios = await obtenerTiemposOperariosProceso()
 		let tBodyProductividad = document.getElementById("body-table-productividad-operario")
 		tBodyProductividad.innerHTML = ""
 		tiemposOperarios.forEach(operario => {
@@ -79,9 +64,13 @@ async function llenarTablaProductividadOperario(tiemposOperarios){
 	        row.appendChild(cellImproductivo)
 	        const improductivo = parseFloat(operario.improductivo)
 	        
-	        let cellFinal = document.createElement('td')
-	        cellFinal.textContent = formatarFechaHora(operario.fechaInicioTurno)
-	        row.appendChild(cellFinal)
+			let cellFinal = document.createElement('td');
+			if (operario.fechaFinTurno && operario.fechaFinTurno !== '') {
+			    cellFinal.textContent = formatarFechaHora(operario.fechaFinTurno);
+			}else{
+				cellFinal.textContent = ''
+			}
+			row.appendChild(cellFinal);
 	        
 	        let porcentaje
 	        if(improductivo + productivo !== 0){
@@ -155,12 +144,7 @@ async function llenarTablaPiezasOperario(){
 	        cellOp.textContent = pieza.tipoOp + "-" + pieza.numOp
 			cellOp.classList.add('text-nowrap')
 	        row.appendChild(cellOp)
-	        
-	        /*const itemProceso = pieza.idItemFab?? pieza.idParte
-	        let cellNumItem = document.createElement('td')
-	        cellNumItem.textContent = pieza.idItem + "-" + itemProceso
-	        row.appendChild(cellNumItem)*/
-	        
+	       	        
 	        let cellcliente = document.createElement('td')
 	        cellcliente.textContent = pieza.cliente
 	        row.appendChild(cellcliente)
@@ -206,11 +190,7 @@ async function llenarTablaPiezasOperario(){
 	        
 	        tBodyProductividad.appendChild(row)
 	    })
-		/*if(ops.length == 0) {
-			console.log("No tiene piezas en el ct en proceso")
-			mostrarAlert("No tiene piezas en el ct en proceso", "warning")
-		}else{
-		}*/		
+	
 	}
 } 
 
@@ -360,10 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		loadFromLocalStorage()
 		await fillTurnosDropdown()
 		centrosTrabajo = await fetchCentrosT()
-	    /*const turnosElement = document.getElementById('turno')
-	    const turnoCalculated = await calculateTurno()
-	    turnosElement.value = turnoCalculated.descripcion
-	    turnoSelected = turnoCalculated*/
+		
 	    if(centroTSelected !== null){
 			
 			document.getElementById('title-nombre-ct').textContent = centroTSelected.nombre
@@ -374,6 +351,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	    //llenarTablaProductividadOperario()
 	    actualizarTablasConTiemposOperarios()
 	    llenarTablaPiezasOperario()
+		actualizarKilosTotales()
     })()
 })
 
@@ -492,7 +470,7 @@ async function registraUsuarioCT(codigo){
 			"idCentroTrabajo": centroTSelected.id,
 			"idConfigProceso": configProceso.id
 		}
-		const responseRegistroOperario = await fetch(`/centros-trabajo/${centroTSelected.id}/agregar-retirar-operario`,{
+		const responseRegistroOperario = await fetch(`/centros-trabajo/agregar-retirar-operario`,{
 												method: 'POST',
 												headers: {
 											      'Content-Type': 'application/json'
@@ -1060,7 +1038,7 @@ async function registrarActualizarPara(registroParadaDTO){
 
 async function obtenerPiezasOperarioCt(operarioDTO){
 	try{
-		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/piezas-operario-proceso`,
+		const response = await fetch(`/centros-trabajo/piezas-operario-proceso`,
 			{
 			method: 'POST',
 			headers: {
