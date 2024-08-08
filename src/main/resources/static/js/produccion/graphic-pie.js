@@ -36,7 +36,7 @@
   async function obtenerInfoParadas(){
 	  if(configProceso != null){
 		try{
-			const response = await fetch(`/centros-trabajo/${centroTSelected.id}/proceso/${configProceso.id}/paradas`)
+			const response = await fetch(`/centros-trabajo/proceso/${configProceso.id}/paradas`)
 			if(!response.ok){
 				const error = await response.json()
 				throw new Error(error)
