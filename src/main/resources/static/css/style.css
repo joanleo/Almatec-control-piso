@@ -388,6 +388,42 @@ footer {
       transform: rotate(360deg);
     }
   }
+  
+  .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 20px;
+  }
 
+  .chart-container, .card-container {
+      width: 30%;
+      min-width: 300px;
+      margin-bottom: 20px;
+      text-align: center;
+  }
+  
+  .card {
+      background-color: transparent;
+      border-radius: 8px;
+      padding: 20px;
+	  border-color: transparent;
+      
+  }
+  .card h2 {
+      margin-top: 0;
+      color: #333;
+  }
+  .card .value {
+      font-size: 4.5em;
+      font-weight: bold;
+      color: #081523;
+  }
+  
+  @media (max-width: 768px) {
+      .chart-container, .card-container {
+          width: 100%;
+      }
+  }
 
 
