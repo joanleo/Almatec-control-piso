@@ -50,4 +50,6 @@ public interface ItemOpService {
 	List<ItemOpDatable> obtenerItemsOpDataTable(Integer numOp);
 
 	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(Integer idCT);
+
+	List<Integer> obtenerCentrosTrabajoPorIdOpIA(Integer idOpIntegrapps);
 }

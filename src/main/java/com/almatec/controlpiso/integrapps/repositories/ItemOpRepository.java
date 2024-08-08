@@ -23,7 +23,7 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "items_op.activo, items_op.ruta_plano, items_op.fecha_crea, items_op.id_estado, items_op.pintura,"
 			+ "items_op.grp_pintura "
 			+ "FROM     items_op "
-			+ "JOIN items_fabrica "
+			+ "LEFT JOIN items_fabrica "
 			+ "ON items_op.Item_fab_Id = items_fabrica.Item_fab_Id "
 			+ "JOIN orden_pv "
 			+ "ON items_op.id_op_ia = orden_pv.id_op_ia "
@@ -43,14 +43,20 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "AND Estado = 0", nativeQuery = true)
 	String obtenerJsonPorId(@Param("id")Integer id);
 
-	@Query(value = "SELECT DISTINCT items_op.id_op_ia,orden_pv.Num_Op "
-			+ "FROM      items_op "
-			+ "INNER JOIN orden_pv ON items_op.id_op_ia = orden_pv.id_op_ia "
-			+ "AND orden_pv.Num_Op <> 0 "
+	@Query(value = "SELECT DISTINCT items_op.id_op_ia,orden_pv.Num_Op, t120_mc_items.f120_descripcion AS Descripcion "
+			+ "FROM  items_op "
+			+ "INNER JOIN orden_pv "
+			+ "ON items_op.id_op_ia = orden_pv.id_op_ia "
 			+ "LEFT JOIN UnoEE_Prueba.dbo.t850_mf_op_docto "
 			+ "ON orden_pv.Row850_id = UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid "
-			+ "WHERE   (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
-			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2)", nativeQuery = true)
+			+ "INNER JOIN UnoEE_Prueba.dbo.t851_mf_op_docto_item "
+			+ "ON UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid = UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_op_docto "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t121_mc_items_extensiones ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE_Prueba.dbo.t121_mc_items_extensiones.f121_rowid "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = UnoEE_Prueba.dbo.t120_mc_items.f120_rowid "
+			+ "WHERE  orden_pv.Tipo_OP = 'OP' "
+			+ "AND orden_pv.Num_Op <> 0 "
+			+ "AND ((UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
+			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2)) ", nativeQuery = true)
 	List<ConsultaOpIdInterface> obtenerNumsOps();
 
 	@Query(value = "SELECT Json "
@@ -100,7 +106,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 
 	@Query(value = "SELECT   io.item_id, io.id_op_ia, io.Item_fab_Id, io.grupo, io.marca, io.codigo_erp, io.descripcion, io.peso_unitario, "
 			+ "io.unidad, io.cant_req, io.cant_cumplida, io.cant_existencias, io.cant_despacha, io.pintura, io.grp_pintura, io.peso_pintura, "
-			+ "io.cod_pintura, io.activo, io.ruta_plano, io.id_estado, io.fecha_crea, io.especial, io.req_plano, io.cant_imp_eti, io.ct_comsumo "
+			+ "io.cod_pintura, io.activo, io.ruta_plano, io.id_estado, io.fecha_crea, io.especial, io.req_plano, io.cant_imp_eti, io.ct_comsumo,"
+			+ "io.centros_tep "
 			+ "FROM      items_op AS io "
 			+ "INNER JOIN view_orden_pv AS v "
 			+ "ON io.id_op_ia = v.id_op_ia "
@@ -123,6 +130,19 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 		       "LEFT JOIN Prioridad p ON p.idItem = io.id AND p.centroTrabajo = ct.id " +
 		       "WHERE ct.id = :idCT ")
 	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(@Param("idCT") Integer idCT);
+
+	@Query(value = "SELECT  CAST(UnoEE_Prueba.dbo.t806_mf_centros_trabajo.f806_id AS INT) " 
+			+ "FROM      UnoEE_Prueba.dbo.t808_mf_rutas "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t809_mf_rutas_operacion "
+			+ "ON UnoEE_Prueba.dbo.t808_mf_rutas.f808_rowid = UnoEE_Prueba.dbo.t809_mf_rutas_operacion.f809_rowid_rutas "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t806_mf_centros_trabajo "
+			+ "ON UnoEE_Prueba.dbo.t809_mf_rutas_operacion.f809_rowid_ctrabajo = UnoEE_Prueba.dbo.t806_mf_centros_trabajo.f806_rowid "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t851_mf_op_docto_item "
+			+ "ON UnoEE_Prueba.dbo.t808_mf_rutas.f808_rowid = UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_ruta "
+			+ "INNER JOIN orden_pv "
+			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid = orden_pv.Row851_id "
+			+ "WHERE   (orden_pv.id_op_ia = :idOpIntegrapps) ", nativeQuery = true)
+	List<Integer> buscarCentrosTrabajoPorIdOpIA(@Param("idOpIntegrapps")Integer idOpIntegrapps);
 
 
 }

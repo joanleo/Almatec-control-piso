@@ -225,7 +225,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 		List<ConsultaOpIdInterface> numOpInterface = itemOpRepo.obtenerNumsOps();
 		List<ConsultaOpId> numOps = new ArrayList<>();
 		numOpInterface.forEach(item->{
-			ConsultaOpId nuevo = new ConsultaOpId(item.getid_op_ia(), item.getNum_Op());
+			ConsultaOpId nuevo = new ConsultaOpId(item.getid_op_ia(), item.getNum_Op(), item.getDescripcion());
 			numOps.add(nuevo);
 		});
 		return numOps;
@@ -317,20 +317,6 @@ public class ItemOpServiceImpl implements ItemOpService {
 	    }
 	}
 
-	/*private ItemOpDTO crearItemsOpDTO(ItemOp itemOp) {
-	    ItemOpDTO itemOpDTO = new ItemOpDTO();
-	    itemOpDTO.setIdItemOp(itemOp.getId());
-	    itemOpDTO.setCant(itemOp.getCant());
-	    itemOpDTO.setCantCumplida(itemOp.getCantCumplida());
-	    itemOpDTO.setColor(itemOp.getColor());
-
-	    Item itemFabrica = itemService.buscarItemFabrica(itemOp.getIdItemFab());
-	    List<RutaItem> ruta = rutaItemService.buscarRutaItem(itemFabrica.getIdItem());
-	    itemOpDTO.setItemDTO(new ItemDTO(itemFabrica, ruta));
-
-	    return itemOpDTO;
-	}*/
-
 
 	@Override
 	public Double obtenerValorAplicarTepItemCentroTrabajo(Integer idItemFab, Integer idCentroTrabajo) {
@@ -383,6 +369,17 @@ public class ItemOpServiceImpl implements ItemOpService {
 	public List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(Integer idCT) {
 		List<ItemOpCTPrioridadDTO> opItems = itemOpRepo.findOpsItemsPorCentroTrabajo(idCT);
 		return opItems;
+	}
+
+	@Override
+	public List<Integer> obtenerCentrosTrabajoPorIdOpIA(Integer idOpIntegrapps) {
+		try {
+			List<Integer> ids = itemOpRepo.buscarCentrosTrabajoPorIdOpIA(idOpIntegrapps); 
+			return ids;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyList();
 	}
 
 	
