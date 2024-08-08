@@ -42,7 +42,7 @@ public class MemoController {
 		this.memoService = memoService;
 	}
 
-	@GetMapping("/memos/listar")
+	@GetMapping("/memos/sin-aprobar")
 	public String getMemos(Model modelo) {
 		List<MemoWithOP> memos = memoService.obtenerMemosSinAprobar();
 		modelo.addAttribute("memos", memos);
