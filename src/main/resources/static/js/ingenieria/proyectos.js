@@ -9,6 +9,7 @@ async function fethItemsOp(numOp){
 			throw new Error("Error al obtener el detalle de la Op")
 		}
 		const data = await response.json()
+		console.log(data)
 		return data
 	}catch(error){
 		console.error("Error al obtener el detalle de la Op: ", error)
@@ -22,9 +23,11 @@ let dataTableIsInicialized = false;
 async function llenarDetalleProyecto(event){
 	const rowOp = event.target.parentNode.parentNode
 	const data = rowOp.innerText.split("\t")
+	const proyecto = data[1]
+	console.log(data[1])
 	
 	const modalTitle = document.getElementById("detalleProyectoLabel")
-	modalTitle.innerText = "STATUS " + "  PROYECTO  " + data[2] + " " + data[1]
+	modalTitle.innerText = "ESTADO " + "PROYECTO " + proyecto
 	
 	numOp = rowOp.id.split("-")[1]
 	await initOptions()
@@ -66,6 +69,10 @@ const initDataTable = async () => {
 }
 
 async function initOptions(){
+	const labelModalName = document.getElementById("detalleProyectoLabel").textContent
+	const arrLabelModalName = labelModalName.split(' ')
+	const fileName = arrLabelModalName[2]
+	console.log(arrLabelModalName)
 	dataTableOptions = {
 	processing: true,
     serverSide: true,
@@ -75,6 +82,7 @@ async function initOptions(){
             "dataType": "json",
             "contentType": "application/json",
             "data": function (d) {
+				console.log(d)
                 return JSON.stringify(d)
             }
         },
@@ -82,11 +90,13 @@ async function initOptions(){
 	buttons: [
 		{
             extend:    'excelHtml5',
+			title:		fileName,
             titleAttr: 'Exportar a Excel',
             className: 'btn btn-primary',
         },
         {
 			extend: 'pdfHtml5',
+			title:		fileName,
 	        titleAttr: 'Exportar a PDF',
 	        className: 'btn btn-primary',
 	        orientation: 'landscape', // Orientación del PDF (portrait o landscape)
@@ -95,7 +105,7 @@ async function initOptions(){
 
 	],
     lengthMenu: [5,10,15,20,50,100],	
-	pageLength: 20,
+	pageLength: 50,
 	destroy: true,
 	language: {
     "processing": "Procesando...",
