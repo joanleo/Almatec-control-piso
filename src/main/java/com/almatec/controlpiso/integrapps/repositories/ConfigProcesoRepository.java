@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.integrapps.repositories;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -35,6 +36,8 @@ public interface ConfigProcesoRepository extends JpaRepository<ConfigProceso, In
 			+ "SET E_activo = :estado "
 			+ "WHERE C_proconfigproceso_id = :idConfigProceso ", nativeQuery = true)
 	void updateIsActivo(@Param("idConfigProceso") Integer idConfigProceso, @Param("estado") int estado);
+
+	List<ConfigProceso> findByIdTurno(Integer id);
 
 
 }
