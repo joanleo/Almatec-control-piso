@@ -13,7 +13,7 @@
 			
 		<div class="card-body" style="margin: auto; width: 60%;">
 			<h2 class="mb-5">Reporte  [[${reporte.centroTrabajo}]]</h2>
-			<form id="reporteForm" method="POST" th:action="@{/centros-trabajo/${reporte.idCentroTrabajo}/reporte}" th:object="${reporte}">
+			<form id="reporteForm" method="POST" th:action="@{/centros-trabajo/reporte}" th:object="${reporte}">
 			        <div class="form-group mb-3">
 			           <label for="nombre-operario">Operario: </label>
 			           	<input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly/>						   
