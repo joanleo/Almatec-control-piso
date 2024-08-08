@@ -86,7 +86,7 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 	
 	@Query(value = "SELECT TOP(1) t808_mf_rutas.f808_id, t808_mf_rutas.f808_id_instalacion, t808_mf_rutas.f808_descripcion, t808_mf_rutas.f808_ind_estado, "
 			+ "t809_mf_rutas_operacion.f809_numero_operacion, t809_mf_rutas_operacion.f809_descripcion, t809_mf_rutas_operacion.f809_cantidad_base, "
-			+ "t809_mf_rutas_operacion.f809_horas_maquina, t807_mf_maquinas.f807_id, t806_mf_centros_trabajo.f806_rowid "
+			+ "t809_mf_rutas_operacion.f809_horas_maquina, t807_mf_maquinas.f807_id, t806_mf_centros_trabajo.f806_id "
 			+ "FROM      t808_mf_rutas "
 			+ "INNER JOIN t809_mf_rutas_operacion ON t808_mf_rutas.f808_rowid = t809_mf_rutas_operacion.f809_rowid_rutas "
 			+ "INNER JOIN t806_mf_centros_trabajo ON t809_mf_rutas_operacion.f809_rowid_ctrabajo = t806_mf_centros_trabajo.f806_rowid "
