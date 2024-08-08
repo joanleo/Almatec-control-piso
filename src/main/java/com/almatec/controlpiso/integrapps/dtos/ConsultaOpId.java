@@ -4,10 +4,12 @@ public class ConsultaOpId {
 	
 	private Integer idOpIa;
     private Integer numOp;
-	public ConsultaOpId(Integer idOpIa, Integer numOp) {
+    private String descripcion;
+	public ConsultaOpId(Integer idOpIa, Integer numOp, String descriocion) {
 		super();
 		this.idOpIa = idOpIa;
 		this.numOp = numOp;
+		this.descripcion = descriocion;
 	}
 	public ConsultaOpId() {
 		super();
@@ -23,6 +25,12 @@ public class ConsultaOpId {
 	}
 	public void setNumOp(Integer numOp) {
 		this.numOp = numOp;
+	}
+	public String getDescripcion() {
+		return descripcion;
+	}
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}   
 
 }
