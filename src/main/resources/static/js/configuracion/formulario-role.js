@@ -16,24 +16,24 @@ document.addEventListener("DOMContentLoaded", function() {
             return modulo.nombre === moduleSelect;
         });
         
-        if (moduloSeleccionado && selectedPermissions.has(moduloSeleccionado.permission.idPermiso.toString())) {
+        if (moduloSeleccionado && moduloSeleccionado.permission && selectedPermissions.has(moduloSeleccionado.permission.idPermiso.toString())) {
             checkbox.checked = true;
             cargarOpcionesModulo(moduloSeleccionado, moduleSelect);
         }
         
         checkbox.addEventListener('change', function() {
             if (this.checked) {
-                if (moduloSeleccionado) {
+                if (moduloSeleccionado && moduloSeleccionado.permission) {
                     selectedPermissions.add(moduloSeleccionado.permission.idPermiso.toString());
                     cargarOpcionesModulo(moduloSeleccionado, moduleSelect);
                 }
-            } else {
-                if (moduloSeleccionado) {
-                    selectedPermissions.delete(moduloSeleccionado.permission.idPermiso.toString());
-                    let moduleDivWrapper = divDetalleModulos.querySelector(`div[data-module-name="${moduleSelect}"]`);
-                    if (moduleDivWrapper) {
-                        divDetalleModulos.removeChild(moduleDivWrapper);
-                    }
+            } else if (moduloSeleccionado && moduloSeleccionado.permission) {
+                console.log("se debe eliminar")
+                console.log(moduloSeleccionado.permission.idPermiso.toString())
+                selectedPermissions.delete(moduloSeleccionado.permission.idPermiso.toString());
+                let moduleDivWrapper = divDetalleModulos.querySelector(`div[data-module-name="${moduleSelect}"]`);
+                if (moduleDivWrapper) {
+                    divDetalleModulos.removeChild(moduleDivWrapper);
                 }
             }
             updatePermissionsField();
@@ -54,44 +54,52 @@ document.addEventListener("DOMContentLoaded", function() {
         moduloDivWrapper.appendChild(titulo);
         
         opcionesMudulo.forEach(function(opcion) {
-            let moduloDivGroup = document.createElement('div');
-            moduloDivGroup.classList.add('form-check', 'form-switch', 'mb-5', 'mx-4');
+            if (opcion && opcion.permission) {
+                let moduloDivGroup = document.createElement('div');
+                moduloDivGroup.classList.add('form-check', 'form-switch', 'mb-5', 'mx-4');
 
-            let opcionCheckbox = document.createElement('input');
-            opcionCheckbox.type = 'checkbox';
-            opcionCheckbox.classList.add('form-check-input');
-            opcionCheckbox.id = 'checkbox_' + opcion.idOpcion;
-            opcionCheckbox.role = 'switch';
-            opcionCheckbox.name = 'permissions';
-            opcionCheckbox.value = opcion.permission.idPermiso;
-            
-            if (selectedPermissions.has(opcion.permission.idPermiso.toString())) {
-                opcionCheckbox.checked = true;
-            }
-            
-            let opcionLabel = document.createElement('label');
-            opcionLabel.classList.add('form-check-label');
-            opcionLabel.textContent = opcion.descripcion;
-            opcionLabel.setAttribute('for', opcionCheckbox.id);
-            
-            moduloDivGroup.appendChild(opcionCheckbox);
-            moduloDivGroup.appendChild(opcionLabel);
-            moduloDiv.appendChild(moduloDivGroup);
-            
-            opcionCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    selectedPermissions.add(this.value);
-                } else {
-                    selectedPermissions.delete(this.value);
+                let opcionCheckbox = document.createElement('input');
+                opcionCheckbox.type = 'checkbox';
+                opcionCheckbox.classList.add('form-check-input');
+                opcionCheckbox.id = 'checkbox_' + opcion.idOpcion;
+                opcionCheckbox.role = 'switch';
+                opcionCheckbox.name = 'permissions';
+                opcionCheckbox.value = opcion.permission.idPermiso;
+                
+                if (selectedPermissions.has(opcion.permission.idPermiso.toString())) {
+                    opcionCheckbox.checked = true;
                 }
-                updatePermissionsField();
-            });
+                
+                let opcionLabel = document.createElement('label');
+                opcionLabel.classList.add('form-check-label');
+                opcionLabel.textContent = opcion.descripcion;
+                opcionLabel.setAttribute('for', opcionCheckbox.id);
+                
+                moduloDivGroup.appendChild(opcionCheckbox);
+                moduloDivGroup.appendChild(opcionLabel);
+                moduloDiv.appendChild(moduloDivGroup);
+                
+                opcionCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        selectedPermissions.add(this.value);
+                    } else {
+                        console.log("se debe eliminar")
+                        let permissionModule = this.value 
+                        console.log(permissionModule)
+                        selectedPermissions.delete(this.value);
+                        console.log(this.value)
+                    }
+                    updatePermissionsField();
+                });
+            }
         });
         moduloDivWrapper.appendChild(moduloDiv);
         divDetalleModulos.appendChild(moduloDivWrapper);
     }
     
     function updatePermissionsField() {
-        permissionsField.value = Array.from(selectedPermissions).join(',');
+        let data = Array.from(selectedPermissions).join(',');
+        permissionsField.value = data
+        console.log(data)
     }
 });
