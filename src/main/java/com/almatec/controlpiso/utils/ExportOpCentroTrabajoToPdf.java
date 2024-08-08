@@ -86,7 +86,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 			table.addCell(cell);		
 			
 			phrase = new Phrase(row.getZona(), font);
-			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setPhrase(phrase);
 			table.addCell(cell);
 			
