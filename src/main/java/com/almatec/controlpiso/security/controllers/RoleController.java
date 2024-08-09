@@ -57,6 +57,7 @@ public class RoleController {
 		modelo.addAttribute("role", role);
 		modelo.addAttribute("modulos", modulos);
 		modelo.addAttribute("modulosJson", modulosJson);
+		modelo.addAttribute("rolePermissionsJson", "[]");
 		return "configuracion/roles/formulario-role";
 	}
 	

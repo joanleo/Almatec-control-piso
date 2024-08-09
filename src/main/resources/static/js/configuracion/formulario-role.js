@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     cargarOpcionesModulo(moduloSeleccionado, moduleSelect);
                 }
             } else if (moduloSeleccionado && moduloSeleccionado.permission) {
-                console.log("se debe eliminar")
-                console.log(moduloSeleccionado.permission.idPermiso.toString())
                 selectedPermissions.delete(moduloSeleccionado.permission.idPermiso.toString());
                 let moduleDivWrapper = divDetalleModulos.querySelector(`div[data-module-name="${moduleSelect}"]`);
                 if (moduleDivWrapper) {
@@ -83,11 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (this.checked) {
                         selectedPermissions.add(this.value);
                     } else {
-                        console.log("se debe eliminar")
-                        let permissionModule = this.value 
-                        console.log(permissionModule)
                         selectedPermissions.delete(this.value);
-                        console.log(this.value)
                     }
                     updatePermissionsField();
                 });
@@ -100,6 +94,5 @@ document.addEventListener("DOMContentLoaded", function() {
     function updatePermissionsField() {
         let data = Array.from(selectedPermissions).join(',');
         permissionsField.value = data
-        console.log(data)
     }
 });
