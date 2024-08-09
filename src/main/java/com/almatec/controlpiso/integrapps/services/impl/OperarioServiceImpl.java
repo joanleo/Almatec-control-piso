@@ -93,14 +93,18 @@ public class OperarioServiceImpl  implements OperarioService{
 	}
 
 	@Override
-	public Page<OperarioGeneralDTO> obtenerOperariosGeneralPaginados(int page, int size, String sortBy, String sortDir) throws ServiceException {
+	public Page<OperarioGeneralDTO> obtenerOperariosGeneralPaginados(int page, int size, String sortBy, String sortDir, String search) throws ServiceException {
 		try {
             Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
                         Sort.by(sortBy).descending();
             
             Pageable pageable = PageRequest.of(page, size, sort);
             
-            return operarioRepo.buscarOperariosGeneralPaginados(pageable);
+            if (search != null && !search.trim().isEmpty()) {
+                return operarioRepo.buscarOperariosGeneralPaginadosConFiltro(search.trim(), pageable);
+            } else {
+                return operarioRepo.buscarOperariosGeneralPaginados(pageable);
+            }
         } catch (Exception e) {
             throw new ServiceException("Error al obtener operarios paginados", e);
         }
@@ -133,7 +137,6 @@ public class OperarioServiceImpl  implements OperarioService{
 		try {
             Persona persona;
             Operario operario;
-            System.out.println("guardando operario: " + operarioDTO);
             if (operarioDTO.getId() == null) {
                 // Crear nueva persona
             	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

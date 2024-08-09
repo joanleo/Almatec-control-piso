@@ -20,7 +20,7 @@ public interface OperarioService {
 
 	List<OperarioGeneralDTO> obtenerOperariosGeneral() throws ServiceException;
 
-	Page<OperarioGeneralDTO> obtenerOperariosGeneralPaginados(int page, int size, String sortBy, String sortDir) throws ServiceException;
+	Page<OperarioGeneralDTO> obtenerOperariosGeneralPaginados(int page, int size, String sortBy, String sortDir, String search) throws ServiceException;
 
 	OperarioGeneralDTO obtenerOperarioGeneralPorId(Integer id) throws ServiceException;
 

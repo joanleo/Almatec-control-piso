@@ -46,4 +46,13 @@ public interface OperarioRepository extends JpaRepository<Operario, Integer> {
            "WHERE o.id = :id")
 	OperarioGeneralDTO buscarOperarioGeneralPorId(@Param("id")Integer id);
 
+	@Query("SELECT new com.almatec.controlpiso.produccion.dtos.OperarioGeneralDTO(" +
+           "o.id, p.sexo, p.tipoDoc, p.numDoc, p.nombres, p.apellidos, " +
+           "p.direccion, p.celular, p.email, o.isActivo, o.idCentroT, p.id) " +
+           "FROM Operario o JOIN o.persona p " +
+           "WHERE LOWER(p.nombres) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(p.apellidos) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR p.numDoc LIKE CONCAT('%', :search, '%')")
+    Page<OperarioGeneralDTO> buscarOperariosGeneralPaginadosConFiltro(@Param("search") String search, Pageable pageable);
+
 }

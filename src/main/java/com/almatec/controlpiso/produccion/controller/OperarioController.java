@@ -59,9 +59,10 @@ public class OperarioController {
 	public ResponseEntity<?> obtenerOperarios(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nombre") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir){
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "") String search){
 		try {
-			Page<OperarioGeneralDTO> operariosPage = operarioService.obtenerOperariosGeneralPaginados(page, size, sortBy, sortDir);
+			Page<OperarioGeneralDTO> operariosPage = operarioService.obtenerOperariosGeneralPaginados(page, size, sortBy, sortDir, search);
             Map<String, Object> response = new HashMap<>();
             response.put("operarios", operariosPage.getContent());
             response.put("currentPage", operariosPage.getNumber());

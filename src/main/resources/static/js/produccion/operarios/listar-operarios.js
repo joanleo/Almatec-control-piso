@@ -3,14 +3,25 @@ let totalPages = 0;
 let sortBy = 'nombre';
 let sortDir = 'asc';
 let pageSize = 10;
+let searchTerm = '';
 
 document.addEventListener('DOMContentLoaded', function() {
     loadOperarios();
     setupSortingListeners();
-});
+	setupSearchListener();
+})
+
+function setupSearchListener() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        searchTerm = this.value;
+        currentPage = 0;
+        loadOperarios();
+    });
+}
 
 function loadOperarios() {
-    fetch(`/operarios?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`)
+    fetch(`/operarios?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}&search=${searchTerm}`)
         .then(response => response.json())
         .then(data => {
             displayOperarios(data.content, data.number * data.size);
