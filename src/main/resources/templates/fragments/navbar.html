@@ -25,7 +25,8 @@
           <ul class="dropdown-menu">
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTATUS_DE_PROYECTOS'')')}"><a class="dropdown-item" href="/ingenieria/status/proyectos">Status de proyectos</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/nuevo">Crear memo</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/listar">Ver memos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/sin-aprobar">Ver memos por aprobar</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/listar">Historial memos</a></li>
           </ul>
         </li>
         
@@ -35,7 +36,8 @@
           </button>
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion">Listar</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion/grafico-gantt">Grafico</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GRAFICO_GANTT'')')}"><a class="dropdown-item" href="/programacion/grafico-gantt">Grafico</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_PROGRAMACION'')')}"><a class="dropdown-item" href="/programacion/consulta-materia-prima">Reporte Materia Prima</a></li>
           </ul>
         </li>
         
@@ -65,14 +67,14 @@
           </ul>
         </li>
 		
-		<li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_ALMACEN'')')}">
-		          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
-		            Costos
-		          </button>
-		          <ul class="dropdown-menu">
-					<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
-		          </ul>
-		        </li>  
+		<li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_COSTOS'')')}">
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
+            Costos
+          </button>
+          <ul class="dropdown-menu">
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
+          </ul>
+        </li>  
 		
 		<li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_ALMACEN'')')}">
           <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-popper-config='{"strategy":"fixed"}'>
@@ -82,6 +84,7 @@
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Remision</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Remisiones</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_ALMACEN'')')}"><a class="dropdown-item" href="/almacen/consulta-materia-prima">Consulta Materia prima</a></li>
           </ul>
         </li>   
 		
@@ -101,6 +104,7 @@
           <ul class="dropdown-menu">
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_CENTROS_DE_TRABAJO'')')}"><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
             <li><hr class="dropdown-divider"></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_OPERARIOS'')')}"><a class="dropdown-item" href="/operarios/listar">Operarios</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PERFILES_O_ROLES'')')}"><a class="dropdown-item" href="/roles">Perfiles o Roles</a></li>
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_USUARIOS'')')}"><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PARAMETROS'')')}"><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
