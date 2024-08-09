@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,6 @@ import com.almatec.controlpiso.calidad.dtos.ReporteCalidadDTO;
 import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpCtDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
-import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.ReporteCalidad;
 import com.almatec.controlpiso.integrapps.repositories.ReporteCalidadRepository;
 import com.almatec.controlpiso.integrapps.services.ReporteCalidadService;
@@ -122,7 +120,7 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 	    Page<ReporteCalidad> reportesPage;
 	    
 	    if (search != null && !search.isEmpty()) {
-	        reportesPage = reporteCalidadRepo.findByProyectoContainingIgnoreCaseOrZonaContainingIgnoreCase(search, search, pageable);
+	        reportesPage = reporteCalidadRepo.findByProyectoContainingIgnoreCaseOrZonaContainingIgnoreCaseOrDescripcionItemContainingIgnoreCase(search, search, search, pageable);
 	    } else {
 	        reportesPage = reporteCalidadRepo.findAll(pageable);
 	    }

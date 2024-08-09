@@ -15,7 +15,7 @@
         
         <form th:action="@{/calidad/formularios}" method="get" class="mb-3">
             <div class="input-group">
-                <input type="text" class="form-control" name="search" th:value="${search}" placeholder="Buscar por proyecto o zona">
+                <input type="text" class="form-control" name="search" th:value="${search}" placeholder="Buscar por proyecto, item o zona">
                 <button class="btn btn-outline-secondary" type="submit">Buscar</button>
             </div>
         </form>
@@ -72,5 +72,6 @@
     <footer th:replace="fragments/footer :: footer"></footer>
     <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
 	<script src="/js/calidad/listar-formularios.js"></script>
+	<script src="/js/general.js"></script>
 </body>
 </html>

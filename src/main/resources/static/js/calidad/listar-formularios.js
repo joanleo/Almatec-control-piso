@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
   btnExportarExcel.addEventListener('click', function() {
         const ids = getSelectedIds();
         if (ids.length === 0) {
-            alert('Por favor, seleccione al menos un formulario.');
+            mostrarAlert('Por favor, seleccione al menos un formulario.', 'info');
             return;
         }
         exportarExcel('/calidad/exportar-excel', ids);
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btnExportarPdf.addEventListener('click', function() {
         const ids = getSelectedIds();
         if (ids.length === 0) {
-            alert('Por favor, seleccione al menos un formulario.');
+            mostrarAlert('Por favor, seleccione al menos un formulario.', 'info');
             return;
         }
         exportar('/calidad/exportar-pdf', ids);
