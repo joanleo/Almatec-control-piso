@@ -32,8 +32,6 @@ async function obtenerDatosKilosFabricados() {
     }
 }
 
-// Llamar a actualizarKilosTotales inmediatamente y luego cada 2 minutos
-actualizarKilosTotales();
 setInterval(actualizarKilosTotales, 2 * 60 * 1000);
 
 async function obtenerPiezasCtProceso(){
