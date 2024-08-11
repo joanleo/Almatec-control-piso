@@ -11,7 +11,7 @@
 			</div>
 							
 			<div th:replace="fragments/alerts :: alerts"></div>
-			 <div class="card-body" style="margin: auto; width: 60%;">
+			 <div class="card-body" >
 				 <div class="my-3" style="display: flex; justify-content: end;">
 					<div class="input-group size-m">
 					  <span class="input-group-text">Reporte Novedad No: </span>
@@ -19,7 +19,7 @@
 					</div>
 				</div>
 				 <h2 class="mb-5"> [[${novedad.centroTrabajo}]]</h2>
-	 		    <form method="POST" th:action="@{/centros-trabajo/novedades}" th:object="${novedad}" >
+	 		    <form method="POST" th:action="@{/centros-trabajo/novedades}" th:object="${novedad}" id="novedadesFrom">
 			        <div class="input-group my-3">
 			           <span class="input-group-text">Operario: </span>
 			           	<input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly style="text-align: right;"/>						   
@@ -66,7 +66,7 @@
 					
 					<div class="input-group my-3">
 			           <span class="input-group-text">Lote: </span>
-						   <select id="loteSelect" class="form-control" name="lote" onchange="mostrarCodigo()" th:field="*{lote}" required>
+						   <select id="loteSelect" class="form-control" name="lote" onchange="mostrarCodigo()" th:field="*{lote}" >
    		                   		<option value=""></option>
    		                        <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
    		                   </select>				   
@@ -74,7 +74,7 @@
 					
 					<div class="input-group my-3">
 			           <span class="input-group-text">Codigo materia prima: </span>
-				           <input type="number" id="codErpMatriaPrima" class="form-control" th:field="*{codErpMp}"  readonly  required style="text-align: right;"/>
+				           <input type="number" id="codErpMatriaPrima" class="form-control" th:field="*{codErpMp}"  readonly  style="text-align: right;"/>
 			       	</div>
 			       	
 			       	
@@ -84,7 +84,7 @@
 			       	<input type="hidden" id="idParte" th:field="*{idParte}" />
 			       	<input type="hidden" id="idItem" th:field="*{idItem}" />
 			       	<div class="d-grid">
-			       		<button type="submit" class="btn btn-primary my-5">Guardar</button>						
+			       		<button type="submit" id="btnGuardar" class="btn btn-primary btn-lg my-5">Guardar</button>						
 					</div>
 				 </form>
 			 </div>
@@ -98,6 +98,15 @@
 			/*<![CDATA[*/
 	        var lotesConCodigosString = /*[[${lotesJson}]]*/ [];
 	        /*]]>*/
+			document.addEventListener('DOMContentLoaded', function() {
+	            const form = document.getElementById('novedadesFrom');
+	            const btnGuardar = document.getElementById('btnGuardar');
+
+	            form.addEventListener('submit', function(event) {
+	                btnGuardar.disabled = true;
+	                btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+	            });
+	        });
 	    </script>
 			
 	</body>
