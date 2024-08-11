@@ -56,7 +56,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "WHERE  orden_pv.Tipo_OP = 'OP' "
 			+ "AND orden_pv.Num_Op <> 0 "
 			+ "AND ((UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
-			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2)) ", nativeQuery = true)
+			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2)) "
+			+ "ORDER BY orden_pv.Num_Op DESC", nativeQuery = true)
 	List<ConsultaOpIdInterface> obtenerNumsOps();
 
 	@Query(value = "SELECT Json "
