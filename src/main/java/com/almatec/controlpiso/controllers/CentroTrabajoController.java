@@ -178,6 +178,7 @@ public class CentroTrabajoController {
 	public String reportePiezasCT(@PathVariable Integer idCT,
 								  @RequestParam Long idItem,
 								  @RequestParam Integer idOperario,
+								  @RequestParam(required = false) Integer idConfigProceso,
 								  Model modelo) {
 		
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);

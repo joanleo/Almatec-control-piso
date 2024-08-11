@@ -3,7 +3,6 @@ package com.almatec.controlpiso.integrapps.services.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -171,19 +170,18 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	}
 
 	private ReportePiezaCt generaReporte(ReporteDTO reporteDTO) {
-		ReportePiezaCt reporte = new ReportePiezaCt();
-		reporte.setIdItemFab(reporteDTO.getIdItemFab());
-		if(reporteDTO.getIdParte() != null) {
-			reporte.setIdParte(reporteDTO.getIdParte());
-		}
-		reporte.setIdCentroT(reporteDTO.getIdCentroTrabajo());
-		reporte.setIdOperario(reporteDTO.getOperario().getId());
-		reporte.setCant(reporteDTO.getCantReportar());
-		LocalDateTime fecha = LocalDateTime.now();
-		reporte.setFechaCreacion(fecha);
-		reporte.setItemId(reporteDTO.getIdItem());
-		reporte.setLote(reporteDTO.getLote());
-		return reporte;
+		System.out.println(reporteDTO);
+	    return new ReportePiezaCt.Builder()
+	        .idItemFab(reporteDTO.getIdItemFab())
+	        .idParte(reporteDTO.getIdParte())
+	        .idCentroT(reporteDTO.getIdCentroTrabajo())
+	        .idOperario(reporteDTO.getOperario().getId())
+	        .cant(reporteDTO.getCantReportar())
+	        .fechaCreacion(LocalDateTime.now())
+	        .itemId(reporteDTO.getIdItem())
+	        .lote(reporteDTO.getLote())
+	        .idConfigProceso(reporteDTO.getIdConfigProceso())
+	        .build();
 	}
 
 	@Override

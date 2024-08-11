@@ -54,6 +54,9 @@ public class ReportePiezaCt {
 	@Column(name = "is_tep")
 	private Boolean isTep=false;
 	
+	@Column(name = "id_configproceso")
+	private Integer idConfigProceso;
+	
 
 	public Integer getId() {
 		return id;
@@ -167,6 +170,14 @@ public class ReportePiezaCt {
 		this.isTep = isTep;
 	}
 
+	public Integer getIdConfigProceso() {
+		return idConfigProceso;
+	}
+
+	public void setIdConfigProceso(Integer idConfigProceso) {
+		this.idConfigProceso = idConfigProceso;
+	}
+
 	public ReportePiezaCt() {
 		super();
 	}
@@ -176,6 +187,62 @@ public class ReportePiezaCt {
 		return "ReportePiezaCt [id=" + id + ", idItemFab=" + idItemFab + ", idParte=" + idParte + ", idCentroT="
 				+ idCentroT + ", idOperario=" + idOperario + ", cant=" + cant + ", docErp=" + docErp + ", fechaErp="
 				+ fechaErp + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", itemId=" + itemId
-				+ ", lote=" + lote + ", isConsume=" + isConsume + ", isTep=" + isTep + "]";
+				+ ", lote=" + lote + ", isConsume=" + isConsume + ", isTep=" + isTep + ", idConfigProceso="
+				+ idConfigProceso + "]";
 	}
+	
+	public static class Builder {
+        private ReportePiezaCt reporte = new ReportePiezaCt();
+
+        public Builder idItemFab(Integer idItemFab) {
+            reporte.setIdItemFab(idItemFab);
+            return this;
+        }
+
+        public Builder idParte(Integer idParte) {
+        	if (idParte != null) {
+                reporte.setIdParte(idParte);
+            }
+            return this;
+        }
+
+        public Builder idCentroT(Integer idCentroT) {
+            reporte.setIdCentroT(idCentroT);
+            return this;
+        }
+
+        public Builder idOperario(Integer idOperario) {
+            reporte.setIdOperario(idOperario);
+            return this;
+        }
+
+        public Builder cant(Integer cant) {
+            reporte.setCant(cant);
+            return this;
+        }
+
+        public Builder fechaCreacion(LocalDateTime fechaCreacion) {
+            reporte.setFechaCreacion(fechaCreacion);
+            return this;
+        }
+
+        public Builder itemId(Long itemId) {
+            reporte.setItemId(itemId);
+            return this;
+        }
+
+        public Builder lote(String lote) {
+            reporte.setLote(lote);
+            return this;
+        }
+
+        public Builder idConfigProceso(Integer idConfigProceso) {
+            reporte.setIdConfigProceso(idConfigProceso);
+            return this;
+        }
+
+        public ReportePiezaCt build() {
+            return reporte;
+        }
+    }
 }

@@ -19,6 +19,7 @@ public class ReporteDTO {
 	private Integer cantReportar;
 	private String lote;
 	private String color;
+	private Integer idConfigProceso;
 	
 	public String getProyecto() {
 		return proyecto;
@@ -136,14 +137,23 @@ public class ReporteDTO {
 		this.color = color;
 	}
 
+	public Integer getIdConfigProceso() {
+		return idConfigProceso;
+	}
+
+	public void setIdConfigProceso(Integer idConfigProceso) {
+		this.idConfigProceso = idConfigProceso;
+	}
+	
 	@Override
 	public String toString() {
 		return "ReporteDTO [proyecto=" + proyecto + ", numOp=" + numOp + ", ref=" + ref + ", cantSol=" + cantSol
 				+ ", cantFab=" + cantFab + ", centroTrabajo=" + centroTrabajo + ", operario=" + operario
 				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
-				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color + "]";
+				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color
+				+ ", idConfigProceso=" + idConfigProceso + "]";
 	}
-	
+
 	public static class Builder {
         private ReporteDTO reporteDTO;
 
@@ -166,6 +176,7 @@ public class ReporteDTO {
             reporteDTO.cantReportar = original.cantReportar;
             reporteDTO.lote = original.lote;
             reporteDTO.color = original.color;
+            reporteDTO.idConfigProceso = original.idConfigProceso;
             return this;
         }
 
@@ -236,6 +247,11 @@ public class ReporteDTO {
 
         public Builder setColor(String color) {
             reporteDTO.color = color;
+            return this;
+        }
+        
+        public Builder setIdConfigProceso(Integer idConfigProceso) {
+            reporteDTO.idConfigProceso = idConfigProceso;
             return this;
         }
 

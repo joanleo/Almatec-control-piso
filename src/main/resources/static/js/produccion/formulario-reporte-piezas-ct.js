@@ -16,4 +16,15 @@ document.addEventListener('DOMContentLoaded', function(){
 		if(this.value < 0) this.value = 0
 		if(this.value > max ) this.value = max
 	})
+	
+	updateIdConfigProceso()
 })
+
+function updateIdConfigProceso() {
+    const idConfigProcesoField = document.getElementById('idConfigProceso');
+    const configProceso = JSON.parse(localStorage.getItem('configProceso')) || null;
+    
+    if (configProceso) {
+        idConfigProcesoField.value = configProceso.id;
+    }
+}

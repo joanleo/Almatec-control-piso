@@ -1,79 +1,94 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-	<head th:replace="fragments/head :: head('Produccion :: Reporte piezas centro de trabajo')"></head>
-	<body>
-		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
-		
-		<div hidden id="spinner">
-			<div>Cargando ...</div>
-		</div>
-						
-		<div th:replace="fragments/alerts :: alerts"></div>
-			
-		<div class="card-body" style="margin: auto; width: 60%;">
-			<h2 class="mb-5">Reporte  [[${reporte.centroTrabajo}]]</h2>
-			<form id="reporteForm" method="POST" th:action="@{/centros-trabajo/reporte}" th:object="${reporte}">
-			        <div class="form-group mb-3">
-			           <label for="nombre-operario">Operario: </label>
-			           	<input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly/>						   
-					   
-			       	</div>
-			       	<div class="form-group mb-3">
-			           <label for="num-op">Numero Op: </label>
-			           	<input type="number" id="num-op"  class="form-control" th:field="*{numOp}"  readonly/>						   
-			       	</div>
-			       	
-			       	<div class="form-group mb-3">
-			           <label for="proyecto">Proyecto: </label>
-				           <input type="text" id="proyecto"  class="form-control" th:field="*{proyecto}" required readonly/>						   
-			       	</div>
-			       	
-			       	<div class="form-group mb-3">
-			           <label for="item">Item: </label>
-				           <input type="text" id="item" class="form-control" th:field="*{ref}"  required readonly/>					   
-			       	</div>
-					
-					<div class="form-group mb-3">
-			           <label for="color">Color: </label>
-				           <input type="text" id="color" class="form-control" th:field="*{color}"  required readonly/>					   
-			       	</div>
-			       	
-			       	<div class="form-group mb-3">
-			           <label for="cant-solic">Cant solicitada: </label>
-				           <input type="number" id="cant-solic" class="form-control" th:field="*{cantSol}"  required readonly/>						   
-			       	</div>
-			       	
-			       	<div class="form-group mb-3">
-			           <label for="cant-fabricadas">Cant Fabricada: </label>
-				           <input type="number" id="cant-fabricadas" class="form-control" th:field="*{cantFab}"  required readonly/>						   
-			       	</div>
-			       	
-			       	<div class="form-group mb-3">
-			           <label for="cant-reportar">Cant reportar: </label>
-				           <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}"  required />						   
-			       	</div>
-					
-					<div class="form-group mb-3" hidden id="divLotes">
-		               <label for="loteSelect" >Lote : </label>
-		                   <select id="loteSelect" class="form-control" name="lote" th:field="*{lote}" >
-		                   		<option value=""></option>
-		                        <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
-		                   </select>			   
-		           	 </div>
-			       	<input type="hidden" id="operario" th:field="*{operario}" aria-hidden="true" />
-			       	<input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" aria-hidden="true" />
-			       	<input type="hidden" id="idItemFab" th:field="*{idItemFab}"	aria-hidden="true"  />
-			       	<input type="hidden" id="idItem" th:field="*{idItem}" aria-hidden="true"/>
-					<input type="hidden" id="idParte" th:field="*{idParte}" aria-hidden="true"/>
-			       	
-			       	<button type="submit" class="btn btn-primary my-5">Guardar</button>
-				 </form>
-			 </div>
-		</div>
-		
-		<footer th:replace="fragments/footer :: footer"></footer>
-		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-		<script src="/js/produccion/formulario-reporte-piezas-ct.js"></script>
-	</body>
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments/head :: head('Produccion :: Reporte piezas centro de trabajo')"></head>
+<body>
+    <header>
+        <nav th:replace="fragments/navbar :: nav-bar('Produccion')"></nav>            
+    </header>
+    
+	<div hidden id="spinner">
+		<div>Cargando ...</div>
+	</div>
+                    
+    <div th:replace="fragments/alerts :: alerts"></div>
+        
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Reporte [[${reporte.centroTrabajo}]]</h2>
+                        <form id="reporteForm" method="POST" th:action="@{/centros-trabajo/reporte}" th:object="${reporte}">
+                            <div class="mb-3">
+                                <label for="nombre-operario" class="form-label">Operario:</label>
+                                <input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly/>                           
+                            </div>
+                            <div class="mb-3">
+                                <label for="num-op" class="form-label">Numero Op:</label>
+                                <input type="number" id="num-op" class="form-control" th:field="*{numOp}" readonly/>                           
+                            </div>
+                            <div class="mb-3">
+                                <label for="proyecto" class="form-label">Proyecto:</label>
+                                <input type="text" id="proyecto" class="form-control" th:field="*{proyecto}" required readonly/>                           
+                            </div>
+                            <div class="mb-3">
+                                <label for="item" class="form-label">Item:</label>
+                                <input type="text" id="item" class="form-control" th:field="*{ref}" required readonly/>                   
+                            </div>
+                            <div class="mb-3">
+                                <label for="color" class="form-label">Color:</label>
+                                <input type="text" id="color" class="form-control" th:field="*{color}" required readonly/>                   
+                            </div>
+                            <div class="mb-3">
+                                <label for="cant-solic" class="form-label">Cant solicitada:</label>
+                                <input type="number" id="cant-solic" class="form-control" th:field="*{cantSol}" required readonly/>                           
+                            </div>
+                            <div class="mb-3">
+                                <label for="cant-fabricadas" class="form-label">Cant Fabricada:</label>
+                                <input type="number" id="cant-fabricadas" class="form-control" th:field="*{cantFab}" required readonly/>                           
+                            </div>
+                            <div class="mb-3">
+                                <label for="cant-reportar" class="form-label">Cant reportar:</label>
+                                <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}" required />                           
+                            </div>
+                            <div class="mb-3" id="divLotes" hidden>
+                                <label for="loteSelect" class="form-label">Lote:</label>
+                                <select id="loteSelect" class="form-select" name="lote" th:field="*{lote}">
+                                    <option value=""></option>
+                                    <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
+                                </select>               
+                            </div>
+                            <input type="hidden" id="operario" th:field="*{operario}" />
+                            <input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" />
+                            <input type="hidden" id="idItemFab" th:field="*{idItemFab}" />
+                            <input type="hidden" id="idItem" th:field="*{idItem}" />
+                            <input type="hidden" id="idParte" th:field="*{idParte}" />
+                            <input type="hidden" id="idConfigProceso" th:field="*{idConfigProceso}" />
+                            
+                            <div class="d-grid text-center">
+                                <button type="submit" id="btnGuardar" class="btn btn-primary btn-lg">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer th:replace="fragments/footer :: footer"></footer>
+    <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="/js/produccion/formulario-reporte-piezas-ct.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('reporteForm');
+            const btnGuardar = document.getElementById('btnGuardar');
+
+            form.addEventListener('submit', function(event) {
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+            });
+        });
+    </script>
+</body>
 </html>

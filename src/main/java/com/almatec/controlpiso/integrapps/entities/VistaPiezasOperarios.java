@@ -27,7 +27,7 @@ public class VistaPiezasOperarios {
 	@Column(name = "id_operario")
 	private Integer idOperario;
 
-	@Column(name = "is_pieza_activa")
+	@Column(name = "is_operario_activo")
 	private Boolean isActivo;
 
 	private String cliente;
