@@ -1,3 +1,4 @@
+
 let turnos
 let turnoSelected
 let centrosTrabajo
@@ -157,28 +158,23 @@ async function llenarTablaPiezasOperario(){
 	        celldescripcion.textContent = pieza.descripcionItem
 	        row.appendChild(celldescripcion)
 	        
-	        let cellTiempo = document.createElement('td')
-	        //cellTiempo.textContent = formatearTiempo(parseFloat(pieza.tiempoTrancurrido))
-	        cellTiempo.textContent = pieza.cantReq - pieza.cantFabricada
-	        row.appendChild(cellTiempo)
+	        let cellCantPendiente = document.createElement('td')
+	        cellCantPendiente.textContent = pieza.cantReq - pieza.cantFabricada
+	        row.appendChild(cellCantPendiente)
 	        
 	        let cellOperario = document.createElement('td')
 	        cellOperario.textContent = pieza.nombreOperario
 	        row.appendChild(cellOperario)
-	        
-	        /*let cellStdr = document.createElement('td')
-	        cellStdr.textContent = pieza.tiempoStd
-	        row.appendChild(cellStdr)*/
 	        
 	        let cellEstado = document.createElement('td')
 	        cellEstado.textContent = pieza.isActivo ? "Activo": "Inactivo"
 	        row.appendChild(cellEstado)
 	        
 	        let cellPlano = document.createElement('td')
-	        if (pieza.plano) {
+	        if (pieza.plano ) {
 			    let linkPlano = document.createElement('a');
 			    linkPlano.textContent = "Ver plano";
-			    linkPlano.href = "#"; // Puedes establecer la URL adecuada si tienes una disponible
+			    linkPlano.href = "#";
 			    linkPlano.addEventListener("click", function() {
 			        verPdf(pieza.plano);
 			    });
@@ -334,24 +330,20 @@ document.addEventListener('DOMContentLoaded', function () {
 		const params = new URLSearchParams(window.location.search)
 		const tipoParam = params.get('alert')
         const mensajeParam = params.get('mensaje')
-		console.log(tipoParam)
-		console.log(mensajeParam)
 		mostrarAlert(mensajeParam, tipoParam)
 		loadFromLocalStorage()
 		await fillTurnosDropdown()
 		centrosTrabajo = await fetchCentrosT()
 		
-	    if(centroTSelected !== null){
-			
-			document.getElementById('title-nombre-ct').textContent = centroTSelected.nombre
-			
+	    if(centroTSelected !== null){			
+			document.getElementById('title-nombre-ct').textContent = centroTSelected.nombre			
 			document.getElementById('title-turno').textContent = "Turno actual " + turnoSelected.descripcion
+		    actualizarTablasConTiemposOperarios()
+		    llenarTablaPiezasOperario()
+			actualizarKilosTotales()
+			initializeChart('piechart');
 		}
 	    mostrarOperariosCT()
-	    //llenarTablaProductividadOperario()
-	    actualizarTablasConTiemposOperarios()
-	    llenarTablaPiezasOperario()
-		actualizarKilosTotales()
     })()
 })
 
@@ -433,6 +425,7 @@ async function configuraCentroTrabajo(codigo){
 				mostrarAlert(`Centro de trabajo ${centroTSelected.nombre} registrado exitosamente`, "success")
 				saveToLocalStorage()
 				llenarTablaPiezasOperario()
+				actualizarTablasConTiemposOperarios()
 				return	
 			}catch(error){
 				console.log("Error al tratar de configurar el proceso el en centro de trabajo ", error)
@@ -541,9 +534,6 @@ async function obtenerOpCentroT(ct){
 
 function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody, papa){
 	let row = document.createElement('tr')    
-    /*let cellNum = document.createElement('td')
-    cellNum.textContent = num
-    row.appendChild(cellNum)*/
     
     let idItemOP = isComponente? papa.item_op_id: item.item_op_id
 	
@@ -740,25 +730,6 @@ function crearSelectCT(opsCt){
     datalistElement.addEventListener("change", function() {
             cargarListadoItems();
         });
-	/*let selectElement = document.createElement("select")
-	selectElement.setAttribute("id", "op-selected")
-	selectElement.classList.add('form-control')
-	selectElement.addEventListener("change", function() {
-        cargarListadoItems()        
-    })
-	if (Array.isArray(opsCt)) {
-        opsCt.forEach(function (op) {
-	        const optionElement = document.createElement("option")
-	        selectElement.style.margin = "0 0 0 1rem"
-	        optionElement.value = op.idOp
-	        optionElement.text = op.op
-	        selectElement.appendChild(optionElement)
-        })
-		container.appendChild(selectElement)
-        opCtElement.appendChild(container)
-    } else {
-        console.error("La variable opsCt no es un array.")
-    }*/
 }
 
 function crearSelectOperariosCt(operariosCt){
@@ -823,18 +794,19 @@ function limpiarElementos() {
 }
 
 let opsCt
+let modalAsignarPieza
 async function asignaPiezaOperario(){
-	const modalAsignarPieza = new bootstrap.Modal('#asignarPieza')
+	modalAsignarPieza = new bootstrap.Modal('#asignarPieza')
 	opsCt = await obtenerOpCentroT(centroTSelected.id)
     let operariosCt = await obtenerOperariosCT()
 	document.getElementById('listado-items').innerHTML = ''
     crearSelectCT(opsCt)
     crearSelectOperariosCt(operariosCt)
-    //cargarListadoItems()
     modalAsignarPieza.show()
     modalAsignarPieza._element.addEventListener('hidden.bs.modal', function () {
     limpiarElementos()
     llenarTablaPiezasOperario()
+	actualizarTablasConTiemposOperarios()
 })
 }
 
@@ -895,6 +867,7 @@ async function agregarPiezaOperario(event){
 		}
 
         confirm_modal.hide();
+		modalAsignarPieza.hide();
 	}catch(error){
 		console.error(error)
 	}
@@ -1096,11 +1069,27 @@ async function isValid(event){
 	}	
 }
 
+document.getElementById('reporte-piezas').addEventListener('shown.bs.modal', function () {
+  document.getElementById('codigo-operario-reporte').focus();
+});
+
+document.getElementById('reporte-calidad').addEventListener('shown.bs.modal', function () {
+  document.getElementById('codigo-operario-calidad').focus();
+});
+
+document.getElementById('novedades').addEventListener('shown.bs.modal', function () {
+  document.getElementById('codigo-operario-novedad').focus();
+});
+
+
 async function handleKeyPressPiezasOperario(event) {
     if (event.key === 'Enter') {
 		const codigoOperElement = document.querySelector("#codigo-operario-reporte")
 		const codigoOper = codigoOperElement.value
         const operario = await obtenerOperario(codigoOper.substring(3))
+		
+		document.getElementById('nombre-operario-reporte').value = operario.nombre;
+		
         document.getElementById('codigo-operario-reporte').value = ''
         const operarioDTO = {
 			"idOperario": operario.id,
@@ -1127,6 +1116,8 @@ async function handleKeyPressCalidadOperario(event) {
 		const codigoOperElement = document.querySelector("#codigo-operario-calidad")
 		const codigoOper = codigoOperElement.value
         const operario = await obtenerOperario(codigoOper.substring(3))
+		
+		document.getElementById('nombre-operario-calidad').value = operario.nombre;
         document.getElementById('codigo-operario-calidad').value = ''
         const operarioDTO = {
 			"idOperario": operario.id,
@@ -1137,7 +1128,7 @@ async function handleKeyPressCalidadOperario(event) {
 		
 		let ops = await obtenerPiezasOperarioCt(operarioDTO)
 		console.log(ops)
-		ops = ops.filter(op => op.cantFabricada !== op.cantReq)
+		//ops = ops.filter(op => op.cantFabricada !== op.cantReq)
 		if(ops.length == 0) {
 			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
 			modalReportar.hide()
@@ -1153,6 +1144,8 @@ async function handleKeyPressNovedadesOperario(event){
 		const codigoOperElement = document.querySelector("#codigo-operario-novedad")
 		const codigoOper = codigoOperElement.value
         const operario = await obtenerOperario(codigoOper.substring(3))
+		
+		document.getElementById('nombre-operario-novedad').value = operario.nombre;
         document.getElementById('codigo-operario-novedad').value = ''
         const operarioDTO = {
 			"idOperario": operario.id,

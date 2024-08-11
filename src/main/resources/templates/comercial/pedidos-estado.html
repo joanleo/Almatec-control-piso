@@ -7,8 +7,9 @@
             <link rel="stylesheet" th:href="@{/css/comercial.css}">
     </th:block>
 	<body>
-		
-		<nav th:replace="fragments/navbar :: nav-bar('Comercial')"></nav>
+		<header>
+			<nav th:replace="fragments/navbar :: nav-bar('Comercial')"></nav>			
+		</header>
 				 
 		<div class="container my-5" style="width: 100%; margin-left: 10rem;">
 			<div th:replace="fragments/alerts :: alerts"></div>	

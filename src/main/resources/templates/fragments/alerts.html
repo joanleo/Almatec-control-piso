@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <div th:fragment="alerts">
+    <section id="alerts" aria-live="polite" th:fragment="alerts">
         <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${message}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -10,6 +10,6 @@
             <span th:text="${error}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    </div>
+    </section>
 </body>
 </html>
