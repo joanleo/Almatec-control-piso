@@ -3,7 +3,10 @@ package com.almatec.controlpiso.security.services.impl;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.almatec.controlpiso.security.dtos.RoleDTO;
 import com.almatec.controlpiso.security.entities.Permission;
@@ -44,16 +47,19 @@ public class RoleServiceImpl implements RoleService {
 		
 	}
 
-	@Override
 	public void eliminarRole(Long idRole) {
-		try {
-			Role roleElimina = rolRepo.findById(idRole)
-					.orElseThrow();
-			rolRepo.delete(roleElimina);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+	    try {
+	        Role roleElimina = rolRepo.findById(idRole)
+	                .orElseThrow();
+	        rolRepo.delete(roleElimina);
+	    } catch (DataIntegrityViolationException e) {
+	        // Manejo específico para violación de integridad de datos
+	        throw new ResponseStatusException(HttpStatus.CONFLICT, "No se puede eliminar el rol porque está en uso.");
+	    } catch (Exception e) {
+	        // Manejo genérico de excepciones
+	        e.printStackTrace();
+	        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al eliminar el rol.");
+	    }
 	}
  
 	@Override

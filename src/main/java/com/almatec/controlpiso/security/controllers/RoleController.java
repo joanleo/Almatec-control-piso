@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.almatec.controlpiso.security.dtos.RoleDTO;
@@ -117,10 +118,16 @@ public class RoleController {
 	}
 	
 	@PostMapping("/eliminar")
-    public String removeRole(@RequestParam Long idRole) {
-        roleService.eliminarRole(idRole);
-        return "redirect:/roles";
-    }
+	public String removeRole(@RequestParam Long idRole, RedirectAttributes redirectAttributes) {
+		System.out.println(("solicitud de eliminacionde role: " + idRole));
+	    try {
+	        roleService.eliminarRole(idRole);
+	        return "redirect:/roles";
+	    } catch (ResponseStatusException e) {
+	        redirectAttributes.addFlashAttribute("error", e.getReason());
+	        return "redirect:/roles";
+	    }
+	}
 	
 	private Set<Permission> convertStringToPermissionsSet(String permissionsString) {
 	    Set<Permission> permissionsSet = new HashSet<>();
