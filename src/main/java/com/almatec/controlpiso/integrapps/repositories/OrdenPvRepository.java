@@ -57,5 +57,7 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 
 	List<VistaOrdenPv> findByTipoOpAndIdEstadoDoc(String string, int i);
 
+	List<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String string, int i);
+
 
 }

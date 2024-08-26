@@ -5,11 +5,9 @@ async function fethItemsOp(numOp){
 	try{
 		const response = await fetch('/ingenieria/op/' + numOp + '/detalle')
 		if(!response.ok){
-			console.log(response.status)
 			throw new Error("Error al obtener el detalle de la Op")
 		}
 		const data = await response.json()
-		console.log(data)
 		return data
 	}catch(error){
 		console.error("Error al obtener el detalle de la Op: ", error)
@@ -23,20 +21,24 @@ let dataTableIsInicialized = false;
 async function llenarDetalleProyecto(event){
 	const rowOp = event.target.parentNode.parentNode
 	const data = rowOp.innerText.split("\t")
-	const proyecto = data[1]
-	console.log(data[1])
-	
+	//const cliente = data[0]
+	const op = data[1]
+	const proyecto = data[2]
+	const zona = data[3]
+	const fechaInstalacion = data[6]
+	const esquemPintura = data[8]
+		
 	const modalTitle = document.getElementById("detalleProyectoLabel")
-	modalTitle.innerText = "ESTADO " + "PROYECTO " + proyecto
+	modalTitle.innerText = "ESTADO " + op + " - " + proyecto
 	
 	numOp = rowOp.id.split("-")[1]
 	await initOptions()
 	await initDataTable()
 	
-	document.querySelector("#zona").value = data[2]
+	document.querySelector("#zona").value = zona
 	//document.querySelector("#sistema").value = data[3].split("-")[1]
-	document.querySelector("#esquema_pintura").value = data[7] 
-	document.querySelector("#fecha_instalacion").value = data[5]
+	document.querySelector("#esquema_pintura").value = esquemPintura 
+	document.querySelector("#fecha_instalacion").value = fechaInstalacion
 
 	document.querySelector("#color_bastidores").value = document.querySelector("#bastidores_"+numOp).value
 	document.querySelector("#color_vigas").value = document.querySelector("#vigas_"+numOp).value
@@ -72,7 +74,6 @@ async function initOptions(){
 	const labelModalName = document.getElementById("detalleProyectoLabel").textContent
 	const arrLabelModalName = labelModalName.split(' ')
 	const fileName = arrLabelModalName[2]
-	console.log(arrLabelModalName)
 	dataTableOptions = {
 	processing: true,
     serverSide: true,
@@ -82,7 +83,6 @@ async function initOptions(){
             "dataType": "json",
             "contentType": "application/json",
             "data": function (d) {
-				console.log(d)
                 return JSON.stringify(d)
             }
         },

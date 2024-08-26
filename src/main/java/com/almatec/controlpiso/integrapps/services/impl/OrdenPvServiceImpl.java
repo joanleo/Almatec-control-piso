@@ -23,7 +23,7 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 
 	@Override
 	public List<VistaOrdenPv> buscarProyectos() {
-		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
+		return ordenPvRepo.findByTipoOpAndIdEstadoDocOrderByNumOpDesc("OP", 1); 
 	}
 
 	@Override
