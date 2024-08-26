@@ -249,7 +249,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 	@Autowired 
 	private OrdenPvService ordenPvService;
 
-	@Override
+	/*@Override
 	public List<OpDTO> buscarItemsOpActivos() {
 		List<ItemOp> itemsOpActivos = itemOpRepo.findByIsActivoTrueAndIdItemFabIsNot(0);
 		
@@ -268,10 +268,6 @@ public class ItemOpServiceImpl implements ItemOpService {
 					opDTO.setProyecto(ordenPv.getIdProyecto());
 					opDTO.setFechaContraActual(ordenPv.getFechaContractual());
 					opDTO.setEsquemaPintura(ordenPv.getEsquemaPintura());
-					/*opDTO.setItemsOps(entry.getValue().stream()
-		                        .map(this::crearItemsOpDTO)
-		                        .collect(Collectors.toList()));
-		                return opDTO;*/
 					List<ItemOpDTO> filteredItemsDTO = itemsOpActivos.stream()
 		                    .filter(item -> Objects.equals(item.getIdOpIntegrapps(), entry.getKey()))
 		                    .map(item -> crearItemsOpDTO(item, itemsDTO))
@@ -315,7 +311,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 	        newItemOpDTO.setItemDTO(new ItemDTO(itemFabrica, ruta));
 	        return newItemOpDTO;
 	    }
-	}
+	}*/
 
 
 	@Override

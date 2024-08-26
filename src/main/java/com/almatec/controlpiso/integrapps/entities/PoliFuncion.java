@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "poli_funcion")
 public class PoliFuncion {
@@ -20,6 +22,7 @@ public class PoliFuncion {
 
     @ManyToOne
     @JoinColumn(name = "C_prooperario_id")
+    @JsonIgnore
     private Operario operario;
 
     @ManyToOne

@@ -37,7 +37,7 @@ public interface ItemOpService {
 
 	String obtenerStringPorIdOPIntegrappsYTipo(Integer idOPI, String ruta);
 
-	List<OpDTO> buscarItemsOpActivos();
+	//List<OpDTO> buscarItemsOpActivos();
 
 	Double obtenerValorAplicarTepItemCentroTrabajo(Integer idItemFab, Integer idCentroTrabajo);
 

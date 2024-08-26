@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
@@ -39,7 +40,7 @@ import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaOpItemsMaterialesRutaService;
 import com.almatec.controlpiso.integrapps.services.VistaTiemposOperariosService;
  
-
+@Transactional
 @Service
 public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	
@@ -83,6 +84,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
     }
 
 	@Override
+	@Cacheable
 	public List<CentroTrabajo> buscarCentrosTrabajo(Integer cia) {
 		return centroTrabajoRepo.findByIdCiaAndIsShowTrue(cia);
 	}
