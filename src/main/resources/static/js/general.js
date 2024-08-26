@@ -15,5 +15,5 @@ function mostrarAlert(mensaje, tipo) {
 
     document.body.appendChild(alertElement);
 
-    setTimeout(() => alertElement.remove(), 5000);
+    //setTimeout(() => alertElement.remove(), 5000);
 }

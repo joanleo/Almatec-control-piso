@@ -2,18 +2,21 @@ package com.almatec.controlpiso.security.controllers;
 
 import java.security.Principal;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.almatec.controlpiso.security.services.CustomUserDetailsService;
 
 
 @Controller
 public class AuthController {
 	
-	/*private final CustomUserDetailsService userDetailsService;
+	private final CustomUserDetailsService userDetailsService;
 	
 	public AuthController(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
-    }*/
+    }
 
 	@GetMapping("/login")
 	public String iniciarSecion() {
@@ -26,16 +29,16 @@ public class AuthController {
 	
 	@GetMapping("/")
 	public String home(Principal principal) {
-		/*String username = principal.getName();
-        UserDetails userDetails;
-        try {
-            userDetails = userDetailsService.loadUserByUsername(username);
+		/*if (principal != null) {
+            String username = principal.getName();
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             
-        } catch (UsernameNotFoundException e) {
-            // Manejar la excepción si el usuario no se encuentra
-            return "redirect:/login"; // O cualquier otra acción apropiada
+            System.out.println("Usuario logueado: " + username);
+            System.out.println("Roles del usuario:");
+            userDetails.getAuthorities().forEach(authority -> 
+                System.out.println("- " + authority.getAuthority())
+            );
         }*/
-
 		return "home";
 	}
 }

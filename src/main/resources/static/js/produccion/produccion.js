@@ -136,10 +136,7 @@ async function llenarTablaPiezasOperario(){
 		console.log("Piezas en el ct en proceso: ", piezasCT)
 		piezasCT.forEach((pieza, index) => {
 			let row = document.createElement('tr')
-	        
-	        let cellIndex = document.createElement('td')
-	        cellIndex.textContent = index + 1
-	        row.appendChild(cellIndex)
+			
 	        
 	        let cellOp = document.createElement('td')
 	        cellOp.textContent = pieza.tipoOp + "-" + pieza.numOp
@@ -154,6 +151,12 @@ async function llenarTablaPiezasOperario(){
 	        cellProyecto.textContent = pieza.co
 	        row.appendChild(cellProyecto)
 	        
+			let idItem = pieza.idParte != 0? pieza.idParte: pieza.idItemFab
+	        let cellRef = document.createElement('td')
+			cellRef.classList.add('text-nowrap')
+	        cellRef.textContent = pieza.idItem + "-" + idItem
+	        row.appendChild(cellRef)
+			
 	        let celldescripcion = document.createElement('td')
 	        celldescripcion.textContent = pieza.descripcionItem
 	        row.appendChild(celldescripcion)
@@ -211,7 +214,7 @@ function saveToLocalStorage() {
     localStorage.setItem('centrosTrabajo', JSON.stringify(centrosTrabajo))
     localStorage.setItem('centroTSelected', JSON.stringify(centroTSelected))
     localStorage.setItem('configProceso', JSON.stringify(configProceso))
-    localStorage.setItem('centrosTrabajoPrioridad', JSON.stringify([3,4,5,6,7,8,9]))
+    localStorage.setItem('centrosTrabajoPrioridad', JSON.stringify([3,4,5,6,7,8,9,17]))
 }
 
 function loadFromLocalStorage() {
@@ -867,7 +870,7 @@ async function agregarPiezaOperario(event){
 		}
 
         confirm_modal.hide();
-		modalAsignarPieza.hide();
+		//modalAsignarPieza.hide();
 	}catch(error){
 		console.error(error)
 	}
@@ -1079,6 +1082,10 @@ document.getElementById('reporte-calidad').addEventListener('shown.bs.modal', fu
 
 document.getElementById('novedades').addEventListener('shown.bs.modal', function () {
   document.getElementById('codigo-operario-novedad').focus();
+});
+
+document.getElementById('modal-parada').addEventListener('shown.bs.modal', function () {
+  document.getElementById('cod-operario-parada').focus();
 });
 
 

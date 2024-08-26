@@ -2,7 +2,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>C:/IntegrApps/almatec/logs/logs-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>90</maxHistory> <!-- Número máximo de archivos históricos a mantener -->
+            <maxHistory>90</maxHistory> 
         </rollingPolicy>
         <encoder>
             <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -11,7 +11,7 @@
 
     <logger name="com.almatec.controlpiso" level="DEBUG"/>
 
-    <root level="INFO"> <!-- Cambiado a DEBUG para asegurar que todos los mensajes se registren -->
+    <root level="INFO">
         <appender-ref ref="FILE"/>
     </root>
 </configuration>
