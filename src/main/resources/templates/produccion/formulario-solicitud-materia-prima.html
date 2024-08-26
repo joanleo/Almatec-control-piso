@@ -32,10 +32,15 @@
 					           <span class="input-group-text">OP </span>
 			                   <select class="form-control" id="id-op" required>
 								   <option value="" disabled selected hidden>Selecciona numero de OP</option>
-			                       <option th:each="num : ${numsOps}" th:value="${num.idOpIa}" th:text="${num.numOp}"></option>
+			                       <option th:each="num : ${numsOps}" th:value="${num.idOpIa}" th:text="${num.numOp}" th:data-op-descripcion="${num.descripcion}"></option>
 			                   </select>	
 					    	</div>
-					    	
+							
+							<div class="input-group my-3 mx-5 size-xl" hidden id="descripcionDiv">
+					           <span class="input-group-text">Proyecto </span>
+			                   <input type="text" class="form-control" id="descripcion" name="descripcion" readonly style="text-align: right;" />	
+					    	</div>
+							
 					    	<div class="input-group my-3 size-xxl">
 					           <span class="input-group-text">Solicitante </span>
 					           <input type="text" class="form-control" id="usuario" name="usuario" th:value="${usuario.nombres}" readonly style="text-align: right;" />

@@ -5,8 +5,13 @@ fechaDocInput.value = fechaActual
 
 document.getElementById('id-op').addEventListener('change', async function () {
 	if (this.value !== '') { 
-		const idOP = this.options[this.selectedIndex].value
-        console.log(idOP)
+		const data = this.options[this.selectedIndex]
+		const idOP = data.value
+		const proyecto = data.getAttribute('data-op-descripcion')
+		const divDescripcion = document.getElementById('descripcionDiv')
+		document.getElementById('descripcion').value = proyecto
+		divDescripcion.hidden = false
+        console.log(this.options[this.selectedIndex])
         const lista = await obtenerListaMateriales(idOP)
         fillTableListaMateriales(lista)
         console.log(lista)           
