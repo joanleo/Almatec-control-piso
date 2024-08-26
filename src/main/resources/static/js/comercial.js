@@ -85,23 +85,50 @@ const setupPagination = (totalPages, currentPage, size, sortField, sortDirection
     const pagination = document.getElementById('pagination');
     pagination.innerHTML = '';
 
-    for (let i = 0; i < totalPages; i++) {
+    const maxVisiblePages = 5;
+    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+
+    // Ajustar startPage si estamos cerca del final
+    startPage = Math.max(0, Math.min(startPage, totalPages - maxVisiblePages));
+
+    // Función para crear un elemento de página
+    const createPageItem = (pageNum, text, isActive = false, isDisabled = false) => {
         const pageItem = document.createElement('li');
-        pageItem.className = 'page-item' + (i === currentPage ? ' active' : '');
+        pageItem.className = `page-item${isActive ? ' active' : ''}${isDisabled ? ' disabled' : ''}`;
 
         const pageLink = document.createElement('a');
         pageLink.className = 'page-link';
         pageLink.href = '#';
-        pageLink.textContent = i + 1;
-        pageLink.onclick = (event) => {
-            event.preventDefault();
-            buscarPedidos(i, size, sortField, sortDirection);
-        };
+        pageLink.textContent = text;
+        if (!isDisabled) {
+            pageLink.onclick = (event) => {
+                event.preventDefault();
+                buscarPedidos(pageNum, size, sortField, sortDirection);
+            };
+        }
 
         pageItem.appendChild(pageLink);
-        pagination.appendChild(pageItem);
+        return pageItem;
+    };
+
+    // Botón "Primera página"
+    pagination.appendChild(createPageItem(0, '«', false, currentPage === 0));
+
+    // Botón "Anterior"
+    pagination.appendChild(createPageItem(Math.max(0, currentPage - 1), '‹', false, currentPage === 0));
+
+    // Páginas numeradas
+    for (let i = startPage; i <= endPage; i++) {
+        pagination.appendChild(createPageItem(i, i + 1, i === currentPage));
     }
-}
+
+    // Botón "Siguiente"
+    pagination.appendChild(createPageItem(Math.min(totalPages - 1, currentPage + 1), '›', false, currentPage === totalPages - 1));
+
+    // Botón "Última página"
+    pagination.appendChild(createPageItem(totalPages - 1, '»', false, currentPage === totalPages - 1));
+};
 
 document.querySelectorAll('th.sortable').forEach(header => {
     header.onclick = () => {
