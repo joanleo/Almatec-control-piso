@@ -3,6 +3,7 @@ package com.almatec.controlpiso.programacion.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -38,6 +39,8 @@ import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 import com.almatec.controlpiso.integrapps.services.PrioridadSevice;
 import com.almatec.controlpiso.integrapps.services.VistaItemsOpsProgramacionService;
 import com.almatec.controlpiso.integrapps.services.VistaOpItemsMaterialesRutaService;
+import com.almatec.controlpiso.integrapps.services.VistaPiezasReportadasService;
+import com.almatec.controlpiso.programacion.dtos.OrdenProduccionResumen;
 import com.almatec.controlpiso.programacion.dtos.PrioridadFilterDTO;
 import com.almatec.controlpiso.programacion.dtos.PrioridadItemsDTO;
 import com.almatec.controlpiso.programacion.service.ExportExcelLm;
@@ -67,15 +70,18 @@ public class ProgramacionController {
 	@Autowired
 	private ExportExcelLm excelService;
 	
+	@Autowired
+	private VistaPiezasReportadasService vistaPiezasReportadasService;
+	
 	@GetMapping
 	public String getItemsPrioridad(Model modelo,
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(name = "sortField", defaultValue = "idOpIntegrapps") String sortField,
-            @RequestParam(name = "sortDir", defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "idOpIntegrapps") String sortField,
+            @RequestParam(defaultValue = "desc") String sortDir,
             @RequestParam(required = false) Integer centroTrabajoId,
             PrioridadFilterDTO filtro,
-            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {		
 
 		if (filtro == null) {
             filtro = new PrioridadFilterDTO();
@@ -133,8 +139,7 @@ public class ProgramacionController {
 	}
 	
 	@GetMapping("/grafico-gantt")
-	public String mostrarGraficoGantt(Model modelo) {		
-		
+	public String mostrarGraficoGantt(Model modelo) {
 		return "programacion/grafico-gantt";
 	}
 	
@@ -170,5 +175,16 @@ public class ProgramacionController {
 	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + descripcion + ".xlsx")
 	        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 	        .body(resource);
+	}
+	
+	@GetMapping("/resumen-fabricado")
+	public String informeFabricadoPrioridad() {
+		
+		return "programacion/resumen-fabricado";
+	}
+	
+	@GetMapping("/centro-trabajo/{idCT}/resumen-ops")
+	public ResponseEntity<Set<OrdenProduccionResumen>> obtenerResumenOpsCT(@PathVariable Integer idCT){		
+		return ResponseEntity.ok(vistaPiezasReportadasService.buscarOps(idCT));
 	}
 }

@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', async function(){
 	          showPrioridadModal(selectedItems);
 	      } else {
 	          console.log('No se seleccionaron elementos');
-	          // Opcionalmente, muestra un mensaje al usuario
 	          alert('Por favor, seleccione al menos un elemento.');
 	      }
 	  });	  			  
@@ -327,7 +326,7 @@ document.getElementById('guardarPrioridad').addEventListener('click', function()
 	
 });
 
-function mostrarAlert(mensaje, tipo){
+/*function mostrarAlert(mensaje, tipo){
 	const alertElement = document.createElement('div')
     	alertElement.className = `alert alert-${tipo} alert-dismissible fade show`
     	alertElement.role = 'alert'
@@ -340,4 +339,4 @@ function mostrarAlert(mensaje, tipo){
         document.getElementById('alerContainer').insertBefore(alertElement, container)
         
         setTimeout(() => alertElement.remove(), 5000)
-}
+}*/
