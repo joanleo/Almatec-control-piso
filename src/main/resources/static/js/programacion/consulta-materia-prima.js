@@ -53,7 +53,7 @@ function fillTableListaMateriales(lista) {
         row.appendChild(cellUm)
 
         let cellCantReq = document.createElement('td')
-        cellCantReq.textContent = item.cantRequeridaActualizada
+        cellCantReq.textContent = item.cantRequeridaActualizada.toFixed(2)
         row.appendChild(cellCantReq)
 
         tbody.appendChild(row)
