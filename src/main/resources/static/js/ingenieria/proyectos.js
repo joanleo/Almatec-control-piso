@@ -49,7 +49,7 @@ async function llenarDetalleProyecto(event){
 const getStatusClass = (estado) => {
     switch(estado) {
         case "Cumplido": return "finished__badge";
-        case "Aprobada": return "approved__badge";
+        case "Aprobado": return "approved__badge";
         default: return "user__badge";
     }
 }

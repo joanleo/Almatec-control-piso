@@ -17,8 +17,10 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 
 	@Query(value = "SELECT * "
 			+"FROM view_orden_pv "
-			+"WHERE CONCAT(Und_Neg, f200_razon_social, f285_descripcion, Zona_Desc, estado_doc, Esq_Pintura) "
+			+"WHERE CONCAT(Und_Neg, f200_razon_social, f285_descripcion, Zona_Desc, estado_op, Esq_Pintura) "
 			+"LIKE %:keyword% "
+			+"AND Tipo_OP='OP' "
+			+"AND id_est_doc=1 "
 			+"ORDER BY id_op_ia DESC", nativeQuery = true)
 	List<VistaOrdenPv> buscarPorKeyword(String keyword);
 

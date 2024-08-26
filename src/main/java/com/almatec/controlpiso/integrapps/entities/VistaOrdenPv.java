@@ -106,12 +106,14 @@ public class VistaOrdenPv {
 	private Double kilosFabricar;
 	@Column(name = "f285_descripcion")
 	private String centroOperaciones;
-	@Column(name = "estado_op")
-	private Integer estadoOp;
+	@Column(name = "id_estado_op")
+	private Integer idEstadoOp;
 	@Column(name = "f285_id")
 	private String idCentroOperaciones;
 	@Column(name = "f120_id")
 	private Integer itemId;
+	@Column(name = "estado_op")
+	private String estadoOp;
 	
 	public VistaOrdenPv() {
 		super();
@@ -301,7 +303,7 @@ public class VistaOrdenPv {
 		return centroOperaciones;
 	}
 
-	public Integer getEstadoOp() {
+	public String getEstadoOp() {
 		return estadoOp;
 	}
 
@@ -311,6 +313,10 @@ public class VistaOrdenPv {
 
 	public Integer getItemId() {
 		return itemId;
+	}
+
+	public Integer getIdEstadoOp() {
+		return idEstadoOp;
 	}
 
 	@Override
@@ -324,13 +330,14 @@ public class VistaOrdenPv {
 				+ ", fechaDespacho=" + fechaDespacho + ", adjunto=" + adjunto + ", fechaCompletada=" + fechaCompletada
 				+ ", fAper=" + fAper + ", barCodeHumano=" + barCodeHumano + ", barCodeMaquina=" + barCodeMaquina
 				+ ", ordFechaPlaneada=" + ordFechaPlaneada + ", bodega=" + bodega + ", eptUnoEE=" + eptUnoEE
-				+ ", sciUnoEE=" + sciUnoEE + ", unidadNegocio=" + unidadNegocio + ", zonaSistema=" + zona
-				+ ", fechaEntrega=" + fechaEntrega + ", fechaAProduccion=" + fechaAProduccion + ", esquemaPintura="
-				+ esquemaPintura + ", colorBastidores=" + colorBastidores + ", colorVigas=" + colorVigas
-				+ ", colorProtectores=" + colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente
-				+ ", estadoDoc=" + estadoDoc + ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion
-				+ ", kilosFabricar=" + kilosFabricar + ", centroOperaciones=" + centroOperaciones + ", estadoOp="
-				+ estadoOp + ", idCentroOperaciones=" + idCentroOperaciones + ", itemId=" + itemId + "]";
+				+ ", sciUnoEE=" + sciUnoEE + ", unidadNegocio=" + unidadNegocio + ", zona=" + zona + ", fechaEntrega="
+				+ fechaEntrega + ", fechaAProduccion=" + fechaAProduccion + ", esquemaPintura=" + esquemaPintura
+				+ ", colorBastidores=" + colorBastidores + ", colorVigas=" + colorVigas + ", colorProtectores="
+				+ colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente + ", estadoDoc=" + estadoDoc
+				+ ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion + ", kilosFabricar=" + kilosFabricar
+				+ ", centroOperaciones=" + centroOperaciones + ", idEstadoOp=" + idEstadoOp + ", idCentroOperaciones="
+				+ idCentroOperaciones + ", itemId=" + itemId + ", estadoOp=" + estadoOp + "]";
 	}
+
 	
 }

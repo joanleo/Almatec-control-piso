@@ -28,7 +28,7 @@
 						<th>PESO TOTAL </th>
 						<th>PESO PEND</th>
 						<th>FECHA INSTALACION</th>
-						<th>ESTADO</th>
+						<th>ESTADO ERP</th>
 						<th>ESQUEMA DE PINTURA</th>
 						<th></th>
 					</tr>
@@ -43,7 +43,7 @@
 					<td th:text="${proyecto.kgTotal - proyecto.kgReal}">Peso Pend</td>
 					<td th:text="${#dates.format(proyecto.fechaEntrega, 'yyyy-MM-dd')}"></td>
 					<td>
-						<div th:data-estado="${proyecto.estadoDoc}" th:text="${proyecto.estadoDoc}"></div>
+						<div th:data-estado="${proyecto.estadoOp}" th:text="${proyecto.estadoOp}"></div>
 					</td>
 					<td th:text="${proyecto.esquemaPintura}"></td>
 					<td >
