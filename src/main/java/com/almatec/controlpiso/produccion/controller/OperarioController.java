@@ -32,6 +32,7 @@ import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
 import com.almatec.controlpiso.integrapps.services.OperarioService;
 import com.almatec.controlpiso.produccion.dtos.OperarioGeneralDTO;
 import com.almatec.controlpiso.utils.OperarioPDFService;
+import com.google.zxing.WriterException;
 import com.lowagie.text.DocumentException;
 
 @Controller
@@ -152,7 +153,7 @@ public class OperarioController {
 	}
 	
 	@GetMapping("/generar-codigos-barra")
-	public void generarBarCodeOperarios(HttpServletResponse response) throws DocumentException, IOException {
+	public void generarBarCodeOperarios(HttpServletResponse response) throws DocumentException, IOException, WriterException {
 		operarioPDFService.generarBarCodeOperarios(response);
 	}
 	
