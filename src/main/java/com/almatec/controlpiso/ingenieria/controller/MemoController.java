@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
-@RequestMapping("/ingenieria")
+@RequestMapping("/ingenieria/memos")
 public class MemoController {
 	
 	private final UsuarioService usuarioService;
@@ -41,15 +40,22 @@ public class MemoController {
 		this.itemOpService = itemOpService;
 		this.memoService = memoService;
 	}
-
-	@GetMapping("/memos/sin-aprobar")
-	public String getMemos(Model modelo) {
-		List<MemoWithOP> memos = memoService.obtenerMemosSinAprobar();
-		modelo.addAttribute("memos", memos);
+	
+	@GetMapping
+	public String getMemos(Model model) {
+		List<MemoWithOP> memos = memoService.obtenerMemos();
+		model.addAttribute("memos", memos);
 		return "ingenieria/listar-memos";
 	}
+
+	@GetMapping("/aprobar")
+	public String mostrarAprobarMemos(Model modelo) {
+		List<MemoWithOP> memos = memoService.obtenerMemosSinAprobar();
+		modelo.addAttribute("memos", memos);
+		return "ingenieria/aprobar-memos";
+	}
 	
-	@GetMapping("/memos/nuevo")
+	@GetMapping("/nuevo")
 	public String nuevoMemo(Model modelo) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuarioP = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
@@ -61,7 +67,7 @@ public class MemoController {
 		return "ingenieria/formulario-memo";
 	}
 	
-	@PostMapping("/memos")
+	@PostMapping
 	public ResponseEntity<?> guardarMemos(@RequestBody MemoDTO memoDTO) {
 		try {
 			MemoDTO memoSaved = memoService.guardarMemo(memoDTO);
@@ -71,18 +77,16 @@ public class MemoController {
 		}
 	}
 	
-	@ResponseBody
-	@GetMapping("/memos/{idMemo}/detalle-memo")
-	public List<MemoDetalle> obtenerDetalleMemo(@PathVariable Long idMemo){		
-		return memoService.obtenerDetalleMemo(idMemo);
+	@GetMapping("/{idMemo}/detalle-memo")
+	public ResponseEntity<List<MemoDetalle>> obtenerDetalleMemo(@PathVariable Long idMemo){		
+		return ResponseEntity.ok(memoService.obtenerDetalleMemo(idMemo));
 	}
 	
-	@ResponseBody
-	@PostMapping("/memos/{idMemo}/aprobar-memo")
-	public MemoDTO aprobarMemo(@PathVariable Long idMemo){
+	@PostMapping("/{idMemo}/aprobar-memo")
+	public ResponseEntity<MemoDTO> aprobarMemo(@PathVariable Long idMemo){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
-		return memoService.aprobarMemo(idMemo, usuario);
+		return ResponseEntity.ok(memoService.aprobarMemo(idMemo, usuario));
 	}
 	
 

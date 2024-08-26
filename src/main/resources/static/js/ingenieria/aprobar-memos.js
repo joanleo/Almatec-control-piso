@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', function(){
 		row.addEventListener('click', async function(){
 			idMemoSelected = parseInt(row.cells[0].textContent.split('-')[1])
 			document.getElementById('noMemo').value = 'M-'+idMemoSelected
-			document.getElementById('proyecto').value = row.cells[1].textContent
-			document.getElementById('opSel').value = row.cells[2].textContent
-			document.getElementById('cliente').value = row.cells[3].textContent
+			document.getElementById('proyecto').value = row.cells[2].textContent 
+			document.getElementById('opSel').value = row.cells[3].textContent
+			document.getElementById('cliente').value = row.cells[1].textContent 
 			
 			document.getElementById('memoSel').removeAttribute('hidden')
 			
@@ -28,7 +28,6 @@ async function obtenerDetalleMemo(idMemo){
 			throw new Error("Error al tratar de obtener el detalle del memo")
 		}
 		const response = await request.json()
-		console.log(response)
 		spinner.setAttribute('hidden', '')
 		return response
 	}catch (error){
@@ -115,7 +114,6 @@ function mostrarAlert(mensaje, tipo){
 
 function checkAndShowAlert() {
     const alertData = localStorage.getItem('alertMessage')
-    console.log(alertData)
     if (alertData) {
         const { message, type } = JSON.parse(alertData)
         mostrarAlert(message, type);

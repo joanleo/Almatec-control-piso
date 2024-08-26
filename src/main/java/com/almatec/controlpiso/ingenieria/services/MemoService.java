@@ -17,4 +17,6 @@ public interface MemoService {
 
 	MemoDTO aprobarMemo(Long idMemo, Usuario usuario);
 
+	List<MemoWithOP> obtenerMemos();
+
 }

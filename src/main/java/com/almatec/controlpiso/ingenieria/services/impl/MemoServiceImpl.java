@@ -22,6 +22,7 @@ import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
 
 @Service
+@Transactional
 public class MemoServiceImpl implements MemoService {
 	
 	@Autowired
@@ -116,6 +117,11 @@ public class MemoServiceImpl implements MemoService {
 		});
 
 		return mapper.map(memo, MemoDTO.class);
+	}
+
+	@Override
+	public List<MemoWithOP> obtenerMemos() {
+		return memoRepo.buscarTodos();
 	}
 
 }
