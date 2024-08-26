@@ -2,7 +2,11 @@ package com.almatec.controlpiso.security.services.impl;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,6 +42,8 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
+	@Transactional
+    @CacheEvict(value = {"roles", "permissions"}, allEntries = true)
 	public void guardarRole(Role role) {
 		try {
 			rolRepo.save(role);
@@ -53,16 +59,15 @@ public class RoleServiceImpl implements RoleService {
 	                .orElseThrow();
 	        rolRepo.delete(roleElimina);
 	    } catch (DataIntegrityViolationException e) {
-	        // Manejo específico para violación de integridad de datos
 	        throw new ResponseStatusException(HttpStatus.CONFLICT, "No se puede eliminar el rol porque está en uso.");
 	    } catch (Exception e) {
-	        // Manejo genérico de excepciones
 	        e.printStackTrace();
 	        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al eliminar el rol.");
 	    }
 	}
  
 	@Override
+	@Cacheable("roles")
 	public RoleDTO obtenerRoleDTO(Long idRole) {
 		try {
 			Role roleEdita = rolRepo.findById(idRole)
@@ -76,6 +81,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
+	@Cacheable("roles")
 	public Role obtenerRole(Long idRole) {
 		return rolRepo.findById(idRole).orElse(null);
 	}

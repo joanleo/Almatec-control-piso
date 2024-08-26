@@ -69,6 +69,7 @@ public class RoleController {
 		Role roleSave = new Role();
 		if(roleDTO.getIdRole() != null) {
 			roleSave = roleService.obtenerRole(roleDTO.getIdRole());
+			roleSave.setNombre(roleDTO.getNombre());
 			roleSave.setPermissions(permissionsSet);
 			roleService.guardarRole(roleSave);
 		}else {
