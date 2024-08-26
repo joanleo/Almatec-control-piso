@@ -45,7 +45,7 @@ public class ComercialController {
 	
 	@GetMapping
 	public String listarPedidosVentaErp(Model modelo,
-            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(required = false) String keyword,
             @PageableDefault(size = 10) Pageable pageable) {
 		
 		Page<VistaPedidosErp> page = (keyword == null || keyword.isEmpty())  ?

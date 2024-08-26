@@ -47,8 +47,8 @@ const fillTableOrders = (listOrders) => {
             <td>${order.descripcion}</td>
             <td>${order.cliente}</td>
             <td><div class="${getStatusClass(order.estado)}">${order.estado}</div></td>
-            <td>${order.kgTotal}</td>
-            <td>${(order.kgTotal - order.kgCumplidos).toFixed(3)}</td>
+            <td>${(order.kgTotal).toFixed(2)}</td>
+            <td>${(order.kgTotal - order.kgCumplidos).toFixed(2)}</td>
             <td>${((order.kgCumplidos / order.kgTotal) * 100).toFixed(2)}</td>
             <td>${order.fecha}</td>
             <td></td>
