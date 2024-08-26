@@ -23,10 +23,10 @@
             Ingenieria
           </button>
           <ul class="dropdown-menu">
-            <li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTATUS_DE_PROYECTOS'')')}"><a class="dropdown-item" href="/ingenieria/status/proyectos">Status de proyectos</a></li>
+            <li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTATUS_DE_PROYECTOS'')')}"><a class="dropdown-item" href="/ingenieria/status/proyectos">Estado proyectos</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/nuevo">Crear memo</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/sin-aprobar">Ver memos por aprobar</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/listar">Historial memos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos/aprobar">Aprobar memos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_HISTORIAL_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos">Historial memos</a></li>
           </ul>
         </li>
         
@@ -35,9 +35,10 @@
             Programacion
           </button>
           <ul class="dropdown-menu">
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion">Listar</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GRAFICO_GANTT'')')}"><a class="dropdown-item" href="/programacion/grafico-gantt">Grafico</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion">Asignar/Editar Prioridad</a></li>
+			<!--<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GRAFICO_GANTT'')')}"><a class="dropdown-item" href="/programacion/grafico-gantt">Grafico</a></li>-->
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_PROGRAMACION'')')}"><a class="dropdown-item" href="/programacion/consulta-materia-prima">Reporte Materia Prima</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_RESUMEN_FABRICADO'')')}"><a class="dropdown-item" href="/programacion/resumen-fabricado">Resumen fabricacion</a></li>
           </ul>
         </li>
         
