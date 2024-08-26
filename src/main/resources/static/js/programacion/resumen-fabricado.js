@@ -95,51 +95,92 @@ function updateTable() {
 
 function updateSummary(items) {
     const materiaPrimaSummary = items.reduce((acc, item) => {
-        const key = item.materiaPrimaId; // Usamos el ID como clave para evitar duplicados
+        const key = item.materiaPrimaId;
         if (!acc[key]) {
             acc[key] = {
-				id: key,
+                id: key,
                 descripcion: item.materiaPrimaDescripcion,
                 cantidadRequerida: 0,
+                cantidadReportada: 0,
                 cantidadPendiente: 0
             };
         }
         const cantidadItem = item.cantReq * item.materiaPrimaCant;
+        const cantidadReportada = item.cantReportada * item.materiaPrimaCant;
         acc[key].cantidadRequerida += cantidadItem;
-        acc[key].cantidadPendiente += Math.max(0, cantidadItem - (item.cantReportada * item.materiaPrimaCant));
+        acc[key].cantidadReportada += cantidadReportada;
+        acc[key].cantidadPendiente += Math.max(0, cantidadItem - cantidadReportada);
         return acc;
     }, {});
 
+    let totalRequerido = 0;
+    let totalReportado = 0;
+
     let summaryHTML = `
-        <div class="card bg-white w-75">
-            <h5 class="card-title">Resumen de Materia Prima</h5>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-							<th>Cod</th>
-                            <th>Descripción</th>
-                            <th>Cantidad Requerida</th>
-                            <th>Cantidad Pendiente</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card bg-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Resumen de Materia Prima</h5>
+						<div class="table-responsive rounded-3 shadows-sm my-4">
+	                        <table class="table table-striped table-hover table-sm">
+	                            <thead>
+	                                <tr>
+	                                    <th>Cod</th>
+	                                    <th>Descripción</th>
+	                                    <th>Cantidad Requerida</th>
+	                                    <th>Cantidad Reportada</th>
+	                                    <th>Cantidad Pendiente</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody>
     `;
 
     for (const [materiaPrimaId, data] of Object.entries(materiaPrimaSummary)) {
+        totalRequerido += data.cantidadRequerida;
+        totalReportado += data.cantidadReportada;
         summaryHTML += `
             <tr>
-				<td>${data.id}</td>
+                <td>${data.id}</td>
                 <td>${data.descripcion}</td>
                 <td>${data.cantidadRequerida.toFixed(2)} kg</td>
+                <td>${data.cantidadReportada.toFixed(2)} kg</td>
                 <td>${data.cantidadPendiente.toFixed(2)} kg</td>
             </tr>
         `;
     }
 
+    const porcentajeAvance = (totalReportado / totalRequerido * 100).toFixed(0);
+    const dashArray = 2 * Math.PI * 45; // 45 es el radio del círculo
+    const dashOffset = dashArray * (1 - porcentajeAvance / 100);
+
     summaryHTML += `
-                    </tbody>
-                </table>
+	                            </tbody>
+	                        </table>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-white">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Porcentaje de Avance</h5>
+                        <svg width="150" height="150" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#e6e6e6" stroke-width="10"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#007bff" stroke-width="10"
+                                    stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}"
+                                    transform="rotate(-90 50 50)"/>
+                            <text x="50" y="50" font-size="18" text-anchor="middle" alignment-baseline="middle">
+                                ${porcentajeAvance}%
+                            </text>
+                            <text x="50" y="70" font-size="12" text-anchor="middle" alignment-baseline="middle">
+                                AVANCE
+                            </text>
+                        </svg>
+                        <p class="mt-3">Total Requerido: ${totalRequerido.toFixed(2)} kg</p>
+                        <p>Total Reportado: ${totalReportado.toFixed(2)} kg</p>
+                    </div>
+                </div>
             </div>
         </div>
     `;
