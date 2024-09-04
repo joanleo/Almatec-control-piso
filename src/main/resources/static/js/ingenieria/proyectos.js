@@ -1,6 +1,22 @@
 let tabla_detalle_proyecto = document.querySelector("#tabla_detalle_proyecto")
 let numOp;
 let dataTableOptions;
+
+function clearFilter() {
+    document.getElementById('keyword').value = '';
+    window.location.href = '/ingenieria/status/proyectos';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const filterForm = document.querySelector('.filtro');
+    filterForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const keyword = document.getElementById('keyword').value;
+        window.location.href = `/ingenieria/status/proyectos?keyword=${encodeURIComponent(keyword)}`;
+    });
+});
+
+
 async function fethItemsOp(numOp){
 	try{
 		const response = await fetch('/ingenieria/op/' + numOp + '/detalle')

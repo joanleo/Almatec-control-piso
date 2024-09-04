@@ -47,5 +47,9 @@ public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp
 			+ "WHERE (p.tipo= :tipo AND p.idEstado <> :idEstado) " +
 		    "ORDER BY p.fecha DESC, p.pedidoNo DESC")
 	Page<VistaPedidosErp> findByTipoAndIdEstadoOrderByFechaDesc(String tipo, Integer idEstado, Pageable pageable);
+	
+	VistaPedidosErp findByNoPv(Integer noPedido);
+	
+	VistaPedidosErp findByNoPvAndTipo(Integer noPedido, String tipo);
 
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -60,6 +62,15 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 	List<VistaOrdenPv> findByTipoOpAndIdEstadoDoc(String string, int i);
 
 	List<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String string, int i);
+
+	Page<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String tipoOp, int idEstadoDoc, Pageable pageable);
+
+	@Query("SELECT o FROM VistaOrdenPv o WHERE " +
+	           "LOWER(o.cliente) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+	           "LOWER(o.centroOperaciones) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+	           "LOWER(o.estadoOp) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+	           "ORDER BY o.numOp DESC")
+	Page<VistaOrdenPv> buscarPorKeywordPaginado(String keyword, Pageable pageable);
 
 
 }

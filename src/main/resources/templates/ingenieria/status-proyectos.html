@@ -9,58 +9,70 @@
 			<h1>Entregas - O.P's</h1>
 			<div th:replace="fragments/alerts :: alerts"></div><div th:replace="fragments/alerts :: alerts"></div>
 			 
-			 <div  id="filtro">
-			     <form class="filtro my-5">
-			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'cliente', 'proyecto', 'status'..." />
-			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
-			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
-			     </form>
-			</div>
+			<div id="filtro">
+	             <form class="filtro my-5">
+	                 <input type="text" name="keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'cliente', 'proyecto', 'status'..." />
+	                 <input type="submit" value="Buscar" class="btn btn-primary mx-3" />
+	                 <input type="button" value="Limpiar" class="btn btn-secondary" onclick="clearFilter()" />
+	             </form>
+         	</div>
 		 
 			<div class="table-responsive my-5 rounded">
-			<table class="table table-striped align-middle table-hover" aria-describedby="table-status-proyectos">
-				<thead class="table-light">
-					<tr>
-						<th>CLIENTE</th>
-						<th>O.P.</th>
-						<th>PROYECTO</th>
-						<th>ZONA</th>
-						<th>PESO TOTAL </th>
-						<th>PESO PEND</th>
-						<th>FECHA INSTALACION</th>
-						<th>ESTADO ERP</th>
-						<th>ESQUEMA DE PINTURA</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="proyecto, stat : ${proyectos}" th:id="${proyecto.tipoOp} + '-' + ${proyecto.numOp}">
-					<td th:text="${proyecto.cliente}"></td>
-					<td class="text-nowrap" th:text="${'OP-' + proyecto.numOp}"></td>
-					<td class="text-nowrap" th:text="${proyecto.centroOperaciones}"></td>
-					<td th:text="${proyecto.zona}"></td>
-					<td th:text="${proyecto.kilosFabricar}"></td>
-					<td th:text="${proyecto.kgTotal - proyecto.kgReal}">Peso Pend</td>
-					<td th:text="${#dates.format(proyecto.fechaEntrega, 'yyyy-MM-dd')}"></td>
-					<td>
-						<div th:data-estado="${proyecto.estadoOp}" th:text="${proyecto.estadoOp}"></div>
-					</td>
-					<td th:text="${proyecto.esquemaPintura}"></td>
-					<td >
-						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalleProyecto" th:data-bs-whatever="${proyecto.idProyecto}" onclick="llenarDetalleProyecto(event)">
-						  Ver
-						</button>										
-					</td>
-					
-					<input type="hidden" th:value="${proyecto.colorBastidores}" th:id="'bastidores_' + ${proyecto.numOp}"	>
-					<input type="hidden" th:value="${proyecto.colorVigas}" th:id="'vigas_' + ${proyecto.numOp}"	>
-					<input type="hidden" th:value="${proyecto.colorProtectores}" th:id="'protectores_' + ${proyecto.numOp}"	>						
-					</tr>
-				</tbody>
-			</table>
+				<table class="table table-striped align-middle table-hover" aria-describedby="table-status-proyectos">
+					<thead class="table-light">
+						<tr>
+							<th>CLIENTE</th>
+							<th>O.P.</th>
+							<th>PROYECTO</th>
+							<th>ZONA</th>
+							<th>PESO TOTAL </th>
+							<th>PESO PEND</th>
+							<th>FECHA INSTALACION</th>
+							<th>ESTADO ERP</th>
+							<th>ESQUEMA DE PINTURA</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="proyecto, stat : ${proyectos}" th:id="${proyecto.tipoOp} + '-' + ${proyecto.numOp}">
+						<td th:text="${proyecto.cliente}"></td>
+						<td class="text-nowrap" th:text="${'OP-' + proyecto.numOp}"></td>
+						<td class="text-nowrap" th:text="${proyecto.centroOperaciones}"></td>
+						<td th:text="${proyecto.zona}"></td>
+						<td th:text="${proyecto.kilosFabricar}"></td>
+						<td th:text="${proyecto.kgTotal - proyecto.kgReal}">Peso Pend</td>
+						<td th:text="${#dates.format(proyecto.fechaEntrega, 'yyyy-MM-dd')}"></td>
+						<td>
+							<div th:data-estado="${proyecto.estadoOp}" th:text="${proyecto.estadoOp}"></div>
+						</td>
+						<td th:text="${proyecto.esquemaPintura}"></td>
+						<td >
+							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalleProyecto" th:data-bs-whatever="${proyecto.idProyecto}" onclick="llenarDetalleProyecto(event)">
+							  Ver
+							</button>										
+						</td>
+						
+						<input type="hidden" th:value="${proyecto.colorBastidores}" th:id="'bastidores_' + ${proyecto.numOp}"	>
+						<input type="hidden" th:value="${proyecto.colorVigas}" th:id="'vigas_' + ${proyecto.numOp}"	>
+						<input type="hidden" th:value="${proyecto.colorProtectores}" th:id="'protectores_' + ${proyecto.numOp}"	>						
+						</tr>
+					</tbody>
+				</table>			
+			</div>
 			
-			
-		</div>
+			<nav aria-label="Page navigation" th:if="${totalPages > 1}">
+	            <ul class="pagination justify-content-center">
+	                <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
+	                    <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage - 1}, keyword=${keyword})}" tabindex="-1">Previous</a>
+	                </li>
+	                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? active">
+	                    <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
+	                </li>
+	                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? disabled">
+	                    <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage + 1}, keyword=${keyword})}">Next</a>
+	                </li>
+	            </ul>
+	        </nav>
 		</div>
 		
 		<div class="modal fade" id="detalleProyecto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="detalleProyectoLabel" aria-hidden="true">
@@ -151,6 +163,7 @@
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
 		<script src="/js/ingenieria/proyectos.js"></script>
+		
 		<script src="/js/jquery-3.7.1.min.js"></script>
 		<script src="/js/datatable/jquery.dataTables.min.js"></script>
 		<script src="/assets/Buttons-2.4.2/js/dataTables.buttons.min.js"></script>

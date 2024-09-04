@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
@@ -98,10 +100,10 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	}
 
 	@Override
-	public void actualizarDatosOp(ConsultaOpCreadaDTO creado, VistaOrdenPv ordenIntegrapps) {
+	public VistaOrdenPv actualizarDatosOp(ConsultaOpCreadaDTO creado, VistaOrdenPv ordenIntegrapps) {
 		String opUnoEE = creado.getF850_id_tipo_docto()+"-"+creado.getF850_consec_docto();
 		ordenPvRepo.actualizarOp(creado, opUnoEE, ordenIntegrapps);
-		
+		return obtenerOrdenPorId(ordenIntegrapps.getId());
 	}
 
 	@Override
@@ -119,5 +121,15 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	public List<VistaOrdenPv> obtenerOrdenes() {
 		return ordenPvRepo.findAll();
 	}
+
+	@Override
+    public Page<VistaOrdenPv> buscarProyectosPaginados(Pageable pageable) {
+        return ordenPvRepo.findByTipoOpAndIdEstadoDocOrderByNumOpDesc("OP", 1, pageable);
+    }
+
+    @Override
+    public Page<VistaOrdenPv> buscarProyectosPaginados(String keyword, Pageable pageable) {
+        return ordenPvRepo.buscarPorKeywordPaginado(keyword, pageable);
+    }
 
 }

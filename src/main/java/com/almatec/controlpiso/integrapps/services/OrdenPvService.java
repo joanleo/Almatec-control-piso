@@ -2,6 +2,9 @@ package com.almatec.controlpiso.integrapps.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
@@ -24,7 +27,7 @@ public interface OrdenPvService {
 
 	void guardarOrden(VistaOrdenPv orden);
 
-	void actualizarDatosOp(ConsultaOpCreadaDTO creado, VistaOrdenPv ordenIntegrapps);
+	VistaOrdenPv actualizarDatosOp(ConsultaOpCreadaDTO creado, VistaOrdenPv ordenIntegrapps);
 
 	Integer obtenerNumOpPorIdOp(Integer idOpIntegrapps);
 
@@ -33,5 +36,9 @@ public interface OrdenPvService {
 	List<VistaOrdenPv> obtenerOpActivas();
 
 	List<VistaOrdenPv> obtenerOrdenes();
+
+	Page<VistaOrdenPv> buscarProyectosPaginados(Pageable pageable);
+
+	Page<VistaOrdenPv> buscarProyectosPaginados(String keyword, Pageable pageable);
 
 }

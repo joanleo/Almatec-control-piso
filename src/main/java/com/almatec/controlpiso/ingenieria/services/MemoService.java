@@ -2,6 +2,9 @@ package com.almatec.controlpiso.ingenieria.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
 import com.almatec.controlpiso.integrapps.entities.MemoDetalle;
@@ -18,5 +21,7 @@ public interface MemoService {
 	MemoDTO aprobarMemo(Long idMemo, Usuario usuario);
 
 	List<MemoWithOP> obtenerMemos();
+
+	Page<MemoWithOP> obtenerMemosPaginados(String keyword, Pageable pageable);
 
 }

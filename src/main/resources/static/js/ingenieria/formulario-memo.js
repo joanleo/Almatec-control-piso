@@ -6,7 +6,6 @@ document.getElementById('id-op').addEventListener('change', async function () {
 	if (this.value !== '') { 
 		const idOP = this.options[this.selectedIndex].value
         opSelected = idOP
-        console.log(idOP)
         document.getElementById("body-detalle-memo").innerHTML = ''
         const listaItems = await obtenerItemsOp(idOP)
         itemsOp = listaItems

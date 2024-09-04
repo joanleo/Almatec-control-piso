@@ -9,7 +9,9 @@
 	import javax.servlet.http.HttpServletResponse;
 	
 	import org.springframework.beans.factory.annotation.Autowired;
-	import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 	import org.springframework.http.ResponseEntity;
 	import org.springframework.stereotype.Controller;
 	import org.springframework.ui.Model;
@@ -18,8 +20,9 @@
 	import org.springframework.web.bind.annotation.PostMapping;
 	import org.springframework.web.bind.annotation.RequestBody;
 	import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-	import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
+import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 	import com.almatec.controlpiso.integrapps.entities.ItemOp;
 	import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 	import com.almatec.controlpiso.integrapps.paging.PageArray;
@@ -58,12 +61,20 @@
 		}
 		
 		@GetMapping("/status/proyectos")
-		public String estadoProyectos(Model modelo, @Param("keyword") String keyword) {
-			List<VistaOrdenPv> proyectos = keyword == null ?
-					ordenPvService.buscarProyectos():
-					ordenPvService.buscarProyectos(keyword);
+		public String estadoProyectos(Model modelo, 
+                @Param("keyword") String keyword,
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size) {
 			
-			modelo.addAttribute("proyectos", proyectos);
+			Page<VistaOrdenPv> proyectosPage = keyword == null ?
+			ordenPvService.buscarProyectosPaginados(PageRequest.of(page, size)) :
+			ordenPvService.buscarProyectosPaginados(keyword, PageRequest.of(page, size));
+			
+			modelo.addAttribute("proyectos", proyectosPage.getContent());
+			modelo.addAttribute("currentPage", page);
+			modelo.addAttribute("totalPages", proyectosPage.getTotalPages());
+			modelo.addAttribute("totalItems", proyectosPage.getTotalElements());
+			modelo.addAttribute("keyword", keyword);
 			return "ingenieria/status-proyectos.html";
 		}
 		

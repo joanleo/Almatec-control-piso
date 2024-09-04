@@ -8,6 +8,8 @@ import javax.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
@@ -123,5 +125,10 @@ public class MemoServiceImpl implements MemoService {
 	public List<MemoWithOP> obtenerMemos() {
 		return memoRepo.buscarTodos();
 	}
+
+	@Override
+	public Page<MemoWithOP> obtenerMemosPaginados(String keyword, Pageable pageable) {
+        return memoRepo.findAllWithSearch(keyword, pageable);
+    }
 
 }

@@ -27,13 +27,12 @@
 			  </button>
 			 </div>
 			 
-			<!--- <div  id="filtro">
-			     <form class="filtro my-5">
-			         <input type= "text" name= "keyword" id="keyword" class="form-control rounded size-l" th:value="${keyword}" placeholder="Filtar ej: 'nombre compania', 'nit'..." />
-			         <input type= "submit" value= "Buscar" class="btn btn-primary mx-3" />
-			         <input type= "button" value= "Limpiar" class="btn btn-secondary" onclick="javascript:keyword.value=''"/>
-			     </form>
-			</div> -->
+			 <form th:action="@{/ingenieria/memos}" method="get" class="my-4">
+	             <div class="input-group">
+	                 <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Buscar por cliente, proyecto o usuario...">
+	                 <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+	             </div>
+	         </form>
 		 
 			<div class="table-responsive text-nowrap my-5">
 				<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
