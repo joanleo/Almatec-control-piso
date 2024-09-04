@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	
 	spinner.setAttribute('hidden', '')
+	document.getElementById('tolerancias').addEventListener('click', handleToleranciaClick);
 })
 
 document.addEventListener('DOMContentLoaded',  function() {
@@ -40,7 +41,6 @@ document.addEventListener('DOMContentLoaded',  function() {
 		jsonData['idItem'] = Number(document.querySelector('.item').value)
 		jsonData['idOperario'] = Number(document.querySelector('.id-operario').value)
 		jsonData['nombreOperario'] = document.querySelector('.nombre-operario').value
-		console.log(jsonData)
         try{
 	        const response = await fetch('/calidad/formulario/guardar', {
 	            method: 'POST',
@@ -62,8 +62,6 @@ document.addEventListener('DOMContentLoaded',  function() {
             } catch (jsonError) {
                 throw new Error('Error parsing JSON response: ' + jsonError.message);
             }
-
-            console.log(data);
 	
 			
             if (document.querySelector('#formId').value != '') {
@@ -87,17 +85,16 @@ document.addEventListener('DOMContentLoaded', async function(){
 		nombre: centroTranajoName.value
 	}
 	
-	console.log(centroTrabajo)
 	const form = document.getElementById('formCalidad')
 	const titulo = document.createElement('h2')
 	titulo.textContent = 'REPORTE CALIDAD ' + centroTrabajo.nombre
 	
 	document.getElementById('mainContent').insertBefore(titulo, form)
-	
 	switch(centroTrabajo.id){
 		case 2:
 		case 3:
 			console.log("Punzonadora y omegas")
+			
 			mostrarPunzonadoraYOmegas()
 			break;
 		case 4:
@@ -130,6 +127,82 @@ document.addEventListener('DOMContentLoaded', async function(){
      fechaDocInput.value = formattedDate;
 	 console.log(formattedDate)
 })
+
+function handleToleranciaClick() {
+    const idCentroTrabajo = Number(document.querySelector('.id-centro-trabajo').value);
+    
+    if (idCentroTrabajo === 5 || idCentroTrabajo === 7) {
+        showFileOptions(idCentroTrabajo);
+    } else {
+        verPdf(getFileName(idCentroTrabajo));
+    }
+}
+
+function showFileOptions(idCentroTrabajo) {
+	const options = idCentroTrabajo === 5 
+	    ? [
+	        {name: 'ETPCAL-006_ESPECIFICACION TECNICA_DE_TOLERANCIA_PERFIL_C_DIAGONAL_TRAVESAÑO', displayName: 'TOLERANCIA_PERFIL_C_DIAGONAL_TRAVESAÑO'},
+	        {name: 'ETPCAL-012_ESPECIFICACION TECNICA_DE_TOLERANCIA_PERFIL_C_CORREAS', displayName: 'TOLERANCIA_PERFIL_C_CORREAS'}
+	      ]
+	    : [
+	        {name: 'ETPCAL-010_ESPECIFICACION TECNICA_DE_TOLERANCIA_PERFIL_Z', displayName: 'TOLERANCIA_PERFIL_Z'},
+	        {name: 'ETPCAL-012_ESPECIFICACION TECNICA_DE_TOLERANCIA_PERFIL_C_CORREAS', displayName: 'TOLERANCIA_PERFIL_C_CORREAS'}
+	      ];
+	
+	const optionsHtml = options.map(option => 
+	    `<button class="btn btn-info me-4 my-5" onclick="verPdf('${option.name}')" >${option.displayName}</button>`
+	).join('');
+	
+	const modal = document.createElement('div');
+    modal.id = 'fileOptionsModal';
+    modal.style.position = 'fixed';
+    modal.style.left = '0';
+    modal.style.top = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+
+    const content = document.createElement('div');
+    content.style.backgroundColor = 'white';
+    content.style.padding = '20px';
+    content.style.borderRadius = '5px';
+	content.innerHTML = `
+	        <h3>Seleccione el archivo a visualizar:</h3>
+	        ${optionsHtml}
+	        <button class="btn btn-secondary ms-4 my-5" onclick="closeModal()" >Cerrar</button>
+	    `;
+
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+}
+
+function closeModal() {
+    const modal = document.getElementById('fileOptionsModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function getFileName(idCentroTrabajo) {
+    switch(idCentroTrabajo) {
+        case 2:
+        case 3:
+            return 'ETPCAL-005_ESPECIFICACION TECNICA_DE_TOLERANCIA_OMEGAS';
+        case 4:
+            return 'ETPCAL-007_ESPECIFICACION TECNICA_DE_TOLERANCIA_VIGAS';
+        case 8:
+            return 'ETPCAL-011_ESPECIFICACION TECNICA_DE_TOLERANCIA_VIGAS_BOX';
+        default:
+            return 'ETPCAL-012_ESPECIFICACION TECNICA_DE_TOLERANCIA_PERFIL_C_CORREAS';
+    }
+}
+
+function verPdf(nombreDelArchivo) {
+    window.open(`http://10.75.98.3:8090/centros-trabajo/descargar-pdf/${nombreDelArchivo}.pdf`, '_blank');
+}
 
 function formateaFecha(fechaActual) {
     const year = fechaActual.getFullYear()

@@ -178,7 +178,10 @@ public class PdfExportService {
     }
 	
 	private String formatBoolean(Boolean value) {
-        return value != null ? (value ? "SI" : "NO") : "";
+		if(value != null) {
+			return "";  
+		}
+		return value ? "SI" : "NO";			
     }
 	
 	private void createFooter(PdfWriter writer, Document document) {
@@ -222,38 +225,4 @@ public class PdfExportService {
 		}
     }
 	
-	private void addBooleanRowIfNotNull(PdfPTable table, String label, Boolean value, Font labelFont, Font valueFont) {
-        if (value != null) {
-            PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
-            labelCell.setBorder(Rectangle.NO_BORDER);
-            table.addCell(labelCell);
-
-            String booleanValue = value ? "SI" : "NO";
-            PdfPCell valueCell = new PdfPCell(new Phrase(booleanValue, valueFont));
-            valueCell.setBorder(Rectangle.NO_BORDER);
-            table.addCell(valueCell);
-        }
-    }
-	
-	private void addTableRowIfNotNull(PdfPTable table, String label, Object value, Font labelFont, Font valueFont) {
-        if (value != null) {
-            PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
-            labelCell.setBorder(Rectangle.NO_BORDER);
-            table.addCell(labelCell);
-
-            PdfPCell valueCell = new PdfPCell(new Phrase(value.toString(), valueFont));
-            valueCell.setBorder(Rectangle.NO_BORDER);
-            table.addCell(valueCell);
-        }
-    }
-	
-	private void addTableRow(PdfPTable table, String label, String value, Font labelFont, Font valueFont) {
-        PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
-        labelCell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(labelCell);
-
-        PdfPCell valueCell = new PdfPCell(new Phrase(value, valueFont));
-        valueCell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(valueCell);
-    }
 }
