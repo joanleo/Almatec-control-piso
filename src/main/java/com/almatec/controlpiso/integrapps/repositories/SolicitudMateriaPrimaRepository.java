@@ -22,7 +22,8 @@ public interface SolicitudMateriaPrimaRepository extends JpaRepository<Solicitud
 			+ "FROM Mp_Sol "
 			+ "INNER JOIN "
 			+ "web_usuarios ON Mp_Sol.Id_Usu_Sol = web_usuarios.usu_id "
-			+ "WHERE Mp_Sol.Estado_Doc = :idEstado", nativeQuery = true)
+			+ "WHERE Mp_Sol.Estado_Doc = :idEstado "
+			+ "ORDER BY Mp_Sol.id_sol_mp DESC", nativeQuery = true)
 	List<SolicitudUsuarioInterface> findByIdEstado(@Param("idEstado") int i);
 
 	@Query(value = "SELECT   TOP (1) Cod_Erp "

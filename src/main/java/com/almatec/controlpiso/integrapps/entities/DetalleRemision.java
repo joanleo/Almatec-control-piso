@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "remision_detalle")
 public class DetalleRemision {
@@ -24,6 +27,8 @@ public class DetalleRemision {
 	
 	@ManyToOne
 	@JoinColumn(name = "id_remision")
+	@JsonBackReference
+	@JsonIgnore
 	private Remision remision;
 	
 	@ManyToOne(fetch = FetchType.EAGER)

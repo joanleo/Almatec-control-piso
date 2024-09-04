@@ -45,6 +45,7 @@ public class Remision {
 	
 	@OneToMany(mappedBy = "remision", cascade = CascadeType.ALL, 
 			fetch = FetchType.EAGER, orphanRemoval = true)
+	@JsonManagedReference
 	private List<DetalleRemision> detalles;
 	
 	@PrePersist
@@ -112,12 +113,12 @@ public class Remision {
 		this.usuarioCreaRemision = usuarioCreaRemision;
 	}
 
-	@Override
+	/*@Override
 	public String toString() {
 		return "Remision [idRemision=" + idRemision + ", idOpIa=" + idOpIa + ", observaciones=" + observaciones
 				+ ", notas=" + notas + ", usuarioCreaRemision=" + usuarioCreaRemision + ", fechaCreacion="
 				+ fechaCreacion + ", detalles=" + detalles + "]";
-	}
+	}*/
 	
 	
 	

@@ -56,4 +56,30 @@ public interface RemisionRepository extends JpaRepository<Remision, Long> {
 			+ "ON remision.id_usuario_crea = web_usuarios.usu_id ", nativeQuery = true)
 	Page<EncabezadoRemision> buscarTodasRemisiones(Pageable pageable);
 
+	@Query(value = "SELECT remision.id_remision AS IdRemision, remision.fechaCreacion AS FechaCreacion, " +
+	           "RTRIM(view_orden_pv.Tipo_OP) + '-' + RTRIM(view_orden_pv.Num_Op) AS Op, " +
+	           "view_orden_pv.f200_razon_social AS Cliente, " +
+	           "RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion) AS Proyecto, " +
+	           "web_usuarios.usu_nombre AS UsuarioCrea " +
+	           "FROM remision " +
+	           "INNER JOIN view_orden_pv ON remision.id_op_ia = view_orden_pv.id_op_ia " +
+	           "INNER JOIN web_usuarios ON remision.id_usuario_crea = web_usuarios.usu_id " +
+	           "WHERE LOWER(CAST(remision.id_remision AS VARCHAR)) LIKE LOWER(CONCAT('%', :termino, '%')) " +
+	           "OR LOWER(RTRIM(view_orden_pv.Tipo_OP) + '-' + RTRIM(view_orden_pv.Num_Op)) LIKE LOWER(CONCAT('%', :termino, '%')) " +
+	           "OR LOWER(view_orden_pv.f200_razon_social) LIKE LOWER(CONCAT('%', :termino, '%')) " +
+	           "OR LOWER(RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion)) LIKE LOWER(CONCAT('%', :termino, '%'))",
+	           nativeQuery = true,
+	           countQuery = "SELECT COUNT(*) " +
+	           "FROM remision " +
+	           "INNER JOIN view_orden_pv ON remision.id_op_ia = view_orden_pv.id_op_ia " +
+	           "INNER JOIN web_usuarios ON remision.id_usuario_crea = web_usuarios.usu_id " +
+	           "WHERE LOWER(CAST(remision.id_remision AS VARCHAR)) LIKE LOWER(CONCAT('%', :termino, '%')) " +
+	           "OR LOWER(RTRIM(view_orden_pv.Tipo_OP) + '-' + RTRIM(view_orden_pv.Num_Op)) LIKE LOWER(CONCAT('%', :termino, '%')) " +
+	           "OR LOWER(view_orden_pv.f200_razon_social) LIKE LOWER(CONCAT('%', :termino, '%')) " +
+	           "OR LOWER(RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion)) LIKE LOWER(CONCAT('%', :termino, '%'))")
+    Page<EncabezadoRemision> buscarRemisiones(@Param("termino") String termino, Pageable pageable);
+
+	@Query("SELECT r FROM Remision r LEFT JOIN FETCH r.detalles WHERE r.idRemision = :idRemision")
+	Remision findByIdWithDetails(@Param("idRemision") Long idRemision);
+
 }

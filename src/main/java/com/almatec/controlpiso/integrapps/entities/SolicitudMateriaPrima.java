@@ -36,7 +36,7 @@ public class SolicitudMateriaPrima {
 	@Column(name = "id_op_ia")
 	private Integer idOp = 0;
 	@Column(name = "Tipo_Op")
-	private String tipoOp = "OPP";
+	private String tipoOp = "OP";
 	@Column(name = "Num_Op")
 	private Integer numOp = 0;
 	@Column(name = "Id_Usu_Sol")

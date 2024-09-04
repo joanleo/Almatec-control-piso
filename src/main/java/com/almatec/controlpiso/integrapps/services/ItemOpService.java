@@ -6,7 +6,6 @@ import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
 import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpCTPrioridadDTO;
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
-import com.almatec.controlpiso.integrapps.dtos.OpDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
@@ -36,8 +35,6 @@ public interface ItemOpService {
 	List<ConsultaOpId> obtenerNumOps();
 
 	String obtenerStringPorIdOPIntegrappsYTipo(Integer idOPI, String ruta);
-
-	//List<OpDTO> buscarItemsOpActivos();
 
 	Double obtenerValorAplicarTepItemCentroTrabajo(Integer idItemFab, Integer idCentroTrabajo);
 
