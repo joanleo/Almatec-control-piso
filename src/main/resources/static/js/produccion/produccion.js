@@ -134,7 +134,7 @@ async function llenarTablaPiezasOperario(){
 		let tBodyProductividad = document.getElementById("body-table-piezas-proceso")
 		tBodyProductividad.innerHTML = ""
 		console.log("Piezas en el ct en proceso: ", piezasCT)
-		piezasCT.forEach((pieza, index) => {
+		piezasCT.forEach(async (pieza, index) => {
 			let row = document.createElement('tr')
 			
 	        
@@ -161,8 +161,9 @@ async function llenarTablaPiezasOperario(){
 	        celldescripcion.textContent = pieza.descripcionItem
 	        row.appendChild(celldescripcion)
 	        
+			const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, pieza.idItem)
 	        let cellCantPendiente = document.createElement('td')
-	        cellCantPendiente.textContent = pieza.cantReq - pieza.cantFabricada
+	        cellCantPendiente.textContent = pieza.cantReq - cantPiezaFabricada
 	        row.appendChild(cellCantPendiente)
 	        
 	        let cellOperario = document.createElement('td')
@@ -191,7 +192,22 @@ async function llenarTablaPiezasOperario(){
 	    })
 	
 	}
-} 
+}
+
+async function obtenerCantPiezasFabricadas(idCT, idItemOp){
+    try {
+        const response = await fetch(`/centros-trabajo/${idCT}/piezas-fabricadas/${idItemOp}`);
+        if(!response.ok){
+            throw new Error("Error al obtener cantidad de piezas fabricadas");
+        }
+        const data = await response.json();
+        return data;
+    } catch(error) {
+        console.error("Error al obtener cantidad de piezas fabricadas: ", error);
+		mostrarAlert(error, 'danger')
+        return 0;
+    }
+}
 
 function verPdf(nombreDelArchivo) {
     window.open(`http://10.75.98.3:8090/centros-trabajo/descargar-pdf/${nombreDelArchivo}.pdf`, '_blank');

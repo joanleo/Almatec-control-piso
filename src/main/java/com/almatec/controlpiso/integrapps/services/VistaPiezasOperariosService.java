@@ -10,4 +10,6 @@ public interface VistaPiezasOperariosService {
 
 	List<VistaPiezasOperarios> obtenerPiezasCentroTrabajoProceso(Integer idCT, Integer idConfig);
 
+	Integer obtenerCantPiezasFabricadas(Integer idCT, Integer idItemOp);
+
 }

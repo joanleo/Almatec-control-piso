@@ -1,7 +1,6 @@
 package com.almatec.controlpiso.produccion.dtos;
 
 import java.util.List;
-import java.util.Set;
 
 public class OperarioGeneralDTO {
 

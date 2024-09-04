@@ -23,14 +23,17 @@ public class VistaPiezasOperariosServiceImpl implements VistaPiezasOperariosServ
 		return lista;
 		
 	}
-
-
     
     @Override
     public List<VistaPiezasOperarios> obtenerPiezasCentroTrabajoProceso(Integer idCT, Integer idConfig) {
 		List<VistaPiezasOperarios> lista = vistaPiezasOperariosRepository.findPiezasOperariosProceso(idCT, idConfig);
 
 		return lista;
+    }
+
+    @Override
+    public Integer obtenerCantPiezasFabricadas(Integer idCT, Integer idItemOp) {
+        return vistaPiezasOperariosRepository.obtenerTotalPiezasFabricadas(idCT, idItemOp);
     }
 
 }

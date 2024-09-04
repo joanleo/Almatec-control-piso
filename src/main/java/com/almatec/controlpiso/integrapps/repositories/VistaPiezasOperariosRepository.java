@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.integrapps.dtos.OperarioDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasOperarios;
@@ -26,5 +27,11 @@ public interface VistaPiezasOperariosRepository extends JpaRepository<VistaPieza
 			+ "AND id_centro_trabajo = :idCT "
 			+ "AND is_pieza_activa = 1 ", nativeQuery = true)
 	List<VistaPiezasOperarios> findPiezasOperariosProceso(Integer idCT, Integer idConfig);
+
+	@Query(value = "SELECT COALESCE(SUM(cant_fabricada), 0) " +
+            "FROM view_piezas_operarios_proceso " +
+            "WHERE id_centro_trabajo = :idCT " +
+            "AND id_item_op = :idItemOp", nativeQuery = true)
+    Integer obtenerTotalPiezasFabricadas(@Param("idCT") Integer idCT, @Param("idItemOp") Integer idItemOp);
 
 }
