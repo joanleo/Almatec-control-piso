@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.integrapps.dtos.ConfigProcesoDTO;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.entities.ConfigProceso;
 import com.almatec.controlpiso.integrapps.services.ConfigProcesoService;
 
@@ -44,7 +44,7 @@ public class ConfigProcesoController {
 	@ResponseBody
 	@PostMapping("{idConfigProceso}/finalizar-turno")
 	public ResponseEntity<?> finalizarTurno(@PathVariable Integer idConfigProceso) {
-		ErrorMensaje mensaje = configProcesoService.finalizarTurno(idConfigProceso);
+		ResponseMessage mensaje = configProcesoService.finalizarTurno(idConfigProceso);
 		Map<String, Object> response = new HashMap<>();
 		if(Boolean.FALSE.equals(mensaje.getError())) {
 			response.put("status", "success");

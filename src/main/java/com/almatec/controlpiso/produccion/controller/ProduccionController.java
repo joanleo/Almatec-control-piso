@@ -163,7 +163,8 @@ public class ProduccionController {
 			SolicitudMateriaPrima solicitud = solicitudMateriaPrimaService.crearSolicitud(solicitudMP.getSolicitud());
 			List<DetalleSolicitudMateriaPrima> detalleSolicitud = detalleSolicitudMateriaPrimaService.crearDetalleSolicitud(solicitud.getId(), solicitudMP.getDetalles());
 	        Map<String, String> respuesta = new HashMap<>();
-	        mensajeService.enviarEmailSolicitudMateriaPrima(solicitud, detalleSolicitud);
+	        Usuario usuarioP = usuarioService.buscarUsuarioPorId(solicitud.getIdUsuarioSol());
+	        mensajeService.enviarEmailSolicitudMateriaPrima(solicitud, detalleSolicitud, usuarioP.getNombres());
 	        respuesta.put("mensaje", "Solicitud creada correctamente");
 	        respuesta.put("status", "ok");
 	        return ResponseEntity.ok(respuesta);

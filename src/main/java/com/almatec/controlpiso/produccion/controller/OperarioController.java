@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.exceptions.ServiceException;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
 import com.almatec.controlpiso.integrapps.services.OperarioService;
@@ -73,7 +73,7 @@ public class OperarioController {
         } catch (ServiceException e) {
         	logger.error("Error al obtener operarios generales", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorMensaje(true, "Error al obtener la lista de operarios"));
+                    .body(new ResponseMessage(true, "Error al obtener la lista de operarios"));
         }
 	}
 	
@@ -121,7 +121,7 @@ public class OperarioController {
 	public String guardarOperario(@ModelAttribute OperarioGeneralDTO operarioDTO,
 			RedirectAttributes  flash) {
 		try {
-			ErrorMensaje mensaje = operarioService.guardarOperario(operarioDTO);
+			ResponseMessage mensaje = operarioService.guardarOperario(operarioDTO);
 			flash.addFlashAttribute("message", mensaje.getMensaje());
             return "redirect:/operarios/listar";
 		} catch (ServiceException e) {
@@ -133,12 +133,12 @@ public class OperarioController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> toggleEstadoOperario(@PathVariable Integer id) {
 	    try {
-	        ErrorMensaje mensaje = operarioService.toggleEstadoOperario(id);
+	        ResponseMessage mensaje = operarioService.toggleEstadoOperario(id);
 	        return ResponseEntity.ok(mensaje);
 	    } catch (ServiceException e) {
 	        logger.error("Error al cambiar el estado del operario", e);
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	            .body(new ErrorMensaje(true, "Error al cambiar el estado del operario: " + e.getMessage()));
+	            .body(new ResponseMessage(true, "Error al cambiar el estado del operario: " + e.getMessage()));
 	    }
 	}
 	
@@ -147,7 +147,7 @@ public class OperarioController {
 		try {
 			return ResponseEntity.ok(operarioService.obtenerOperario(numCedula));			
 		}catch (ResourceNotFoundException error) {
-			ErrorMensaje errorMessage = new ErrorMensaje(true, error.getMessage());
+			ResponseMessage errorMessage = new ResponseMessage(true, error.getMessage());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 		}
 	}
