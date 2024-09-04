@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,9 +38,11 @@ import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaServi
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.impl.AlmacenService;
 import com.almatec.controlpiso.almacen.util.RemisionPdfService;
+import com.almatec.controlpiso.comunicador.services.MensajeServices;
 import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemision;
 import com.almatec.controlpiso.integrapps.services.VistaItemLoteDisponibleService;
@@ -54,21 +55,26 @@ import com.lowagie.text.DocumentException;
 @RequestMapping("/almacen")
 public class AlmacenController {
 	
-	@Autowired
-	private SolicitudMateriaPrimaService solicitudMateriaPrimaService;
+	private final SolicitudMateriaPrimaService solicitudMateriaPrimaService;	
+	private final DetalleSolicitudMateriaPrimaService detalleSolicitudMateriaPrimaService;
+	private final AlmacenService almacenService;
+	private final UsuarioService usuarioService;
+	private final VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
+	private final MensajeServices mensajeServices;
 	
-	@Autowired
-	private DetalleSolicitudMateriaPrimaService detalleSolicitudMateriaPrimaService;
-	
-	@Autowired
-	private AlmacenService almacenService;
-	
-	@Autowired
-	private UsuarioService usuarioService;
-	
-	@Autowired
-	private VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
-	
+	public AlmacenController(SolicitudMateriaPrimaService solicitudMateriaPrimaService,
+			DetalleSolicitudMateriaPrimaService detalleSolicitudMateriaPrimaService, AlmacenService almacenService,
+			UsuarioService usuarioService, VistaItemLoteDisponibleService vistaItemLoteDisponibleService,
+			MensajeServices mensajeServices) {
+		super();
+		this.solicitudMateriaPrimaService = solicitudMateriaPrimaService;
+		this.detalleSolicitudMateriaPrimaService = detalleSolicitudMateriaPrimaService;
+		this.almacenService = almacenService;
+		this.usuarioService = usuarioService;
+		this.vistaItemLoteDisponibleService = vistaItemLoteDisponibleService;
+		this.mensajeServices = mensajeServices;
+	}
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@GetMapping("/solicitudes")
@@ -93,6 +99,15 @@ public class AlmacenController {
 		return "almacen/listar-remisiones";
 	}
 	
+	@GetMapping("/remisiones/buscar")
+    public ResponseEntity<Page<EncabezadoRemision>> buscarRemisiones(
+            @RequestParam String termino,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<EncabezadoRemision> resultados = almacenService.buscarRemisiones(termino, page, size);
+        return ResponseEntity.ok(resultados);
+    }
+	
 	@GetMapping("/remisiones/nueva")
 	public String crearRemision(Model modelo) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -113,9 +128,10 @@ public class AlmacenController {
 	
 	@PostMapping("/remisiones")
 	public ResponseEntity<?> guardarRemision(@RequestBody RemisionDTO remisionDTO){
+		RemisionDTO remisionSaved;
 		try {
-            RemisionDTO remisionSaved = almacenService.guardarRemision(remisionDTO);
-            return ResponseEntity.ok(remisionSaved);
+            remisionSaved = almacenService.guardarRemision(remisionDTO);            
+            
         } catch (IllegalArgumentException e) {
             logger.error("Error al guardar la remisión: Argumento inválido", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Argumento inválido - " + e.getMessage());
@@ -126,6 +142,18 @@ public class AlmacenController {
             logger.error("Error inesperado al guardar la remisión", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado - " + e.getMessage());
         }
+		
+		try {
+	        // Intentar obtener la remisión completa y enviar el email
+			Remision remisionCompleta = almacenService.obtenerRemisionCompleta(remisionSaved.getIdRemision());
+            mensajeServices.enviarEmailGeneracionRemision(remisionCompleta);
+	    } catch (Exception e) {
+	        // Log del error al enviar el email, pero no afecta la respuesta HTTP
+	        logger.error("Error al enviar el email de notificación de remisión", e);
+	    }
+
+	    // Devolver la remisión guardada, incluso si hubo un error al enviar el email
+	    return ResponseEntity.ok(remisionSaved);
 	}
 	
 	@GetMapping("/remisiones/{idRemision}/detalle-remision")

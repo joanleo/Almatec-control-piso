@@ -5,7 +5,7 @@
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Almacen')"></nav>
 		
-		<div class="container my-5" style="width: 80%; margin-left: 10rem;">
+		<div class="container my-5">
 			
 			<div hidden id="spinner">
 				<div>Cargando ...</div>
@@ -126,5 +126,16 @@
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/almacen/solicitudes-materia-prima.js"></script>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script>
+	        document.addEventListener('DOMContentLoaded', function() {
+	            const form = document.getElementById('reporteForm');
+	            const btnGuardar = document.getElementById('btnGuardar');
+
+	            form.addEventListener('submit', function(event) {
+	                btnGuardar.disabled = true;
+	                btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+	            });
+	        });
+	    </script>
 	</body>
 </html>

@@ -2,6 +2,8 @@ package com.almatec.controlpiso.almacen.service.impl;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,6 +61,17 @@ public class RemisionServiceImpl implements RemisionService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public Page<EncabezadoRemision> buscarRemisiones(String termino, PageRequest pageable) {
+		return remisionRepo.buscarRemisiones(termino, pageable);
+	}
+
+	@Transactional
+	@Override
+	public Remision buscarRemisionPorId(Long idRemision) {
+		return remisionRepo.findByIdWithDetails(idRemision);
 	}
 
 }

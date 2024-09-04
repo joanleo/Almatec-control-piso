@@ -103,7 +103,16 @@ function crearTransferencia(event){
 }
 
 async function solicitarTransferencia(idSol){
-	spinner.removeAttribute('hidden')
+	spinner.removeAttribute('hidden') 
+	
+    const btnTransferir = document.getElementById('btn-tranferir');
+    btnTransferir.disabled = true;
+    btnTransferir.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+	
+	const btnRechazar = document.getElementById('btn-rechazar');
+	btnRechazar.disabled = true;
+    btnRechazar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+	
 	try{
 		const solicitud = await fetch(`/api/transferencia/${idSol}`, {
 	        method: 'POST',

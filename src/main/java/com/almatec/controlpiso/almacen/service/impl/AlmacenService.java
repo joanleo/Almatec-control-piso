@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.dto.DetalleRemisionDTO;
@@ -25,6 +26,7 @@ import com.almatec.controlpiso.integrapps.interfaces.OpConItemPendientePorRemisi
 import com.almatec.controlpiso.integrapps.repositories.ItemOpRepository;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
+
 import java.util.Collections;
 
 @Service
@@ -132,9 +134,17 @@ public class AlmacenService {
 	}
 
 	public Page<EncabezadoRemision> obtenerRemisionesPaginadas(int page, int size) {
-
 		return remisionService.obtenerRemisionesPaginadas(page, size);
 
+	}
+
+	public Page<EncabezadoRemision> buscarRemisiones(String termino, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return remisionService.buscarRemisiones(termino, pageable);
+    }
+
+	public Remision obtenerRemisionCompleta(Long idRemision) {
+		return remisionService.buscarRemisionPorId(idRemision);
 	}
 
 }

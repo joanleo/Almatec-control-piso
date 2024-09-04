@@ -1,9 +1,12 @@
 package com.almatec.controlpiso.almacen.dto;
 
+import com.almatec.controlpiso.integrapps.entities.ItemOp;
+
 public class DetalleRemisionDTO {
 
 	private Long itemOp;
 	private Integer cantidad;
+	private ItemOp item;
 	
 	public DetalleRemisionDTO() {
 		super();
@@ -23,6 +26,14 @@ public class DetalleRemisionDTO {
 
 	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
+	}
+
+	public ItemOp getItem() {
+		return item;
+	}
+
+	public void setItem(ItemOp item) {
+		this.item = item;
 	}
 
 	@Override
