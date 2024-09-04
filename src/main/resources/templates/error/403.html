@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Prohibido</title>
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .error-template {
+            padding: 40px 15px;
+            text-align: center;
+        }
+        .error-actions {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .error-actions .btn {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="error-template">
+                    <h1 class="display-1">
+                        <i class="fas fa-lock text-danger"></i> 403
+                    </h1>
+                    <h2>Acceso Prohibido</h2>
+                    <div class="error-details mb-3">
+                        Lo sentimos, no tienes permiso para acceder a esta página.
+                    </div>
+                    <div class="error-actions">
+                        <a href="/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home"></i> Volver al Inicio
+                        </a>
+                        <a href="/contact" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-envelope"></i> Contactar Soporte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome para los iconos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</body>
+</html>
