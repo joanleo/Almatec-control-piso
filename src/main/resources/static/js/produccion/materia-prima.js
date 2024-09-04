@@ -208,11 +208,28 @@ document.getElementById("submitForm").addEventListener('submit', function(event)
 event.preventDefault()})
 
 function enviarSolicitud() {
+	const detalleRows = document.querySelectorAll('#detalle-solicitud tr');
+    if (detalleRows.length === 0) {
+        mostrarAlert('Debe agregar al menos un item a la solicitud antes de enviarla.', 'warning');
+        return;
+    }
+
+    let hasValidQuantity = false;
+    for (const row of detalleRows) {
+        const cantSolInput = row.querySelector('input[type="number"]');
+        if (cantSolInput && parseFloat(cantSolInput.value) > 0) {
+            hasValidQuantity = true;
+            break;
+        }
+    }
+
+    if (!hasValidQuantity) {
+        mostrarAlert('Al menos un item debe tener una cantidad solicitada mayor a cero.', 'warning');
+        return;
+    }
     const idusuario = document.querySelector('#usuarioId').value
-    const fechaSol = document.querySelector('#fechaDoc').value
     let dto = {
 		solicitud:{
-	        //fechaDoc: fechaSol,
 	        consecutivo: document.querySelector('#noSol').value,
 	        idOp: document.querySelector('#id-op').value,
 	        idUsuarioSol: idusuario,
@@ -240,6 +257,11 @@ function enviarSolicitud() {
         dto.solicitud.bodegaErp = bodega
         dto.detalles.push(detalle)
     }
+	
+	if (dto.detalles.length === 0) {
+	        mostrarAlert('Debe tener al menos un item con cantidad mayor a cero para crear la solicitud.', 'warning');
+	        return;
+	    }
 
 	console.log(dto)
     fetch('/produccion/materia-prima/solicitud', {
@@ -252,9 +274,11 @@ function enviarSolicitud() {
     .then(response => response.json())
     .then(data => {
         console.log(data)
+		mostrarAlert(data.mensaje, 'success')
     })
     .catch(error => {
         console.error(error)
+		mostrarAlert(error.mensaje, 'danger')
     })
 }
 
