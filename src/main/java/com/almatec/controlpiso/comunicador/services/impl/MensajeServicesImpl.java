@@ -1,74 +1,153 @@
 package com.almatec.controlpiso.comunicador.services.impl;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.almatec.controlpiso.comunicador.entities.Mensaje;
 import com.almatec.controlpiso.comunicador.repositories.MensajeRepository;
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
+import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
+import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
+import com.almatec.controlpiso.integrapps.services.OrdenPvService;
+import com.almatec.controlpiso.security.entities.Usuario;
+import com.almatec.controlpiso.security.services.UsuarioService;
 
 
 @Service
 public class MensajeServicesImpl implements MensajeServices{
 		
-	@Autowired
-	private MensajeRepository mensajeRepo;
+	private final MensajeRepository mensajeRepo;
+	private final UsuarioService usuarioService;
+    private final SpringTemplateEngine templateEngine;
+    private final OrdenPvService ordenPvService;
+	
+
+    public MensajeServicesImpl(MensajeRepository mensajeRepo, UsuarioService usuarioService,
+			SpringTemplateEngine templateEngine, OrdenPvService ordenPvService) {
+		super();
+		this.mensajeRepo = mensajeRepo;
+		this.usuarioService = usuarioService;
+		this.templateEngine = templateEngine;
+		this.ordenPvService = ordenPvService;
+	}
+
+	@Override
+    public void enviarEmailGeneracionRemision(Remision remision) {
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    	String fechaStr = dateFormat.format(remision.getFechaCreacion());
+    	
+    	VistaOrdenPv orden = ordenPvService.obtenerOrdenPorId(remision.getIdOpIa());
+    	
+    	Context context = new Context();
+        context.setVariable("idRemision", "RM-" + remision.getIdRemision());
+        context.setVariable("idOpIa", orden.getTipoOp() + "-" + orden.getNumOp());
+        context.setVariable("cliente", orden.getCliente());
+        context.setVariable("proyecto", orden.getCentroOperaciones());
+        context.setVariable("fecha", fechaStr);
+        context.setVariable("usuarioCreaRemision", remision.getUsuarioCreaRemision().getNombres());
+        context.setVariable("detalles", remision.getDetalles());
+        context.setVariable("observaciones", remision.getObservaciones());
+
+        String content = templateEngine.process("remision-generada", context);
+        
+        crearEmail("CREACION_RM", "Remision Generada" , content);
+    }
 
 	@Override
 	public void enviarEmailSolicitudMateriaPrima(SolicitudMateriaPrima solicitud,
-			List<DetalleSolicitudMateriaPrima> detalleSolicitud) {
-		crearEmail("Sol_Trans_Mp", 
-				"Solicitud de Materia Prima MP-" + solicitud.getId(), 
-				"Se requiere su aprobación para la siguiente solicitud de transferencia de materia prima.");
+			List<DetalleSolicitudMateriaPrima> detalleSolicitud, String nombreSolicita) {
+		
+		VistaOrdenPv orden = ordenPvService.obtenerOrdenPorId(solicitud.getIdOp());
+		Context context = new Context();
+		context.setVariable("solicitud", "ST-" + solicitud.getId());
+    	context.setVariable("orden", solicitud.getTipoOp() + "-" + solicitud.getNumOp());
+    	context.setVariable("proyecto", orden.getCentroOperaciones());
+    	context.setVariable("solicitante", nombreSolicita);
+    	
+    	String contenido = templateEngine.process("solicitud-transferencia", context);
+		
+		crearEmail("SOLICITUD_TR", 
+				"Solicitud de Transferencia", 
+				contenido);
 	}
 	
 	@Override
-	public void enviarEmailAprobacionPedidoVenta(String pedidoVenta) {
-		String asunto = "Aprobación de Pedido de Venta " + pedidoVenta;
-		String mensaje = "Se ha aprobado el pedido de venta " + pedidoVenta;
-		crearEmail("Aprobacion_PV", asunto, mensaje);
+	public void crearEmailAprobacionTransferencia(DetalleTransferenciaInterface transferencia, SolicitudMateriaPrima solicitud,
+			Usuario usuarioAprueba) {
+		VistaOrdenPv orden = ordenPvService.obtenerOrdenPorId(solicitud.getIdOp());
+		Usuario usuarioSolicita = usuarioService.buscarUsuarioPorId(solicitud.getIdUsuarioSol());
+		Context context = new Context();
+		context.setVariable("transferencia", transferencia.getf350_id_tipo_docto() +"-" + transferencia.getf350_consec_docto());
+    	context.setVariable("orden", solicitud.getTipoOp() + "-" + solicitud.getNumOp());
+    	context.setVariable("proyecto", orden.getCentroOperaciones());
+    	context.setVariable("solicitud", "ST-" + solicitud.getId());
+    	context.setVariable("solicitante", usuarioSolicita.getNombres());
+    	context.setVariable("aprobador", usuarioAprueba.getNombres());
+    	
+    	String contenido = templateEngine.process("aprobacion-transferencia", context);
+		
+		crearEmail("APROBACION_TR", 
+				"Aprobacion de Solicitud de Transferencia", 
+				contenido);
 		
 	}
+	
 
-
-    @Override
-    public void enviarEmailCreacionOrdenProduccion(String orden) {
-        String asunto = "Creación de Orden de Producción " + orden;
-        String mensaje = "Se ha creado la siguiente orden de producción: " + orden;
-        crearEmail("Creacion_OP", asunto, mensaje);
+	@Override
+    public void enviarEmailCreacionOrdenProduccion(VistaOrdenPv orden) {
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String fechaEntregaStr = dateFormat.format(orden.getFechaEntrega());
+        
+    	Context context = new Context();
+    	context.setVariable("orden", orden.getTipoOp() + '-' + orden.getNumOp());
+    	context.setVariable("cliente", orden.getCliente());
+    	context.setVariable("proyecto", orden.getCentroOperaciones());
+    	context.setVariable("fechaEntrega", fechaEntregaStr);
+    	
+    	String fechaElaboracionStr = dateFormat.format(new Date());
+        context.setVariable("fechaElaboracion", fechaElaboracionStr);
+        
+        String contenido = templateEngine.process("orden-produccion-creada", context);        
+        
+        crearEmail("CREACION_OP", "Orden de Producción Generada", contenido);
     }
-    /*
-     * 
-
+    
     @Override
-    public void enviarEmailGeneracionRemision(Remision remision) {
-        String asunto = "Generación de Remisión RM-" + remision.getId();
-        String mensaje = "Se ha generado la siguiente remisión: " + remision.getDescripcion();
-        enviarEmail("Generacion_Remision", asunto, mensaje);
+    public void enviarEmailAprobacionPedidoVenta(Map<String, String> datos) {
+        Context context = new Context();
+        for (Map.Entry<String, String> entry : datos.entrySet()) {
+            context.setVariable(entry.getKey(), entry.getValue());
+        }
+        String contenido = templateEngine.process("pedido-aprobado-orden-produccion", context);
+
+        crearEmail("APROBACION_PV", "Pedido Aprobado y Orden de Producción Generada", contenido);
     }
-	 */
 	
 	private void crearEmail(String tipoMensaje, String asunto, String contenidoMensaje) {
 		Mensaje email = new Mensaje();
-        String contenido = "<html><body style='background-color: #F4F4F5;padding: 20px;border-radius: .375rem;width:90%'>"
-                + "<header style='max-height: 72px'; max-width: 196px></header>"
-                + "<div><p>" + contenidoMensaje + "</p></div>"
-                + "<footer style='background-color: #007B63;margin-top: 4rem;text-align: center;color: #FFFFFF;'>"
-                + "<p>Este es un mensaje automático generado por Guayacan <a href='https://www.integrapps.com' style='text-decoration: none;color: #ffff;'> Powered by INTEGRAPPS</a></p>"
-                + "</footer></body></html>";
+
         try {
-            String correos = mensajeRepo.obtenerDestinatarios(tipoMensaje);
-            String[] correosArr = correos.split(",");
-            String destinatarios = Arrays.toString(correosArr).replace("[", "").replace("]", "");
+        	String correos = mensajeRepo.obtenerDestinatarios(tipoMensaje);
+            List<String> destinatariosLimpios = limpiarYValidarCorreos(correos);
+            String destinatarios = String.join(", ", destinatariosLimpios);
+            
             email.setDestinatarios(destinatarios);
             email.setAsunto(asunto);
-            email.setCuerpo(contenido);
+            email.setCuerpo(contenidoMensaje);
             LocalDateTime fecha = LocalDateTime.now();
             email.setFechaCreacion(fecha);
             mensajeRepo.save(email);
@@ -76,6 +155,23 @@ public class MensajeServicesImpl implements MensajeServices{
             e.printStackTrace();
         }
     }
+	
+	private List<String> limpiarYValidarCorreos(String correosString) {
+        if (correosString == null || correosString.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        return Arrays.stream(correosString.split(","))
+            .map(String::trim)
+            .filter(this::esCorreoValido)
+            .distinct()
+            .collect(Collectors.toList());
+    }
 
+    private boolean esCorreoValido(String correo) {
+        String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(correo).matches();
+    }
 
 }
