@@ -4,45 +4,36 @@
 	<head th:replace="fragments/head :: head('Comercial')">
 	</head>
 	<th:block >
+		<link rel="stylesheet" href="/css/parametros.css">
     </th:block>
 	<body>
 		
 		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
 		
-		<div hidden id="spinner">
-			<div>Cargando ...</div>
-		</div>
-				 
-		<div class="container my-5" style="width: 100%; margin-left: 10rem;">
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-				<span th:text="${message}"></span>
-			  	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			    	<span aria-hidden="true">&times;</span>
-			  	</button>
-			</div>
-			
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-				<span th:text="${error}"></span>
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				 </button>
-			</div>
+		<div class="content-wrapper">
+		    <div id="spinner" hidden>
+		        <div>Cargando ...</div>
+		    </div>
 
-			<div class="container" style="display: flex; flex-direction: column;align-items: center;">
-				<h1>Parametros de configracion</h1>			
-				<div id="parametros-container" style="margin-top: 2rem; 
-													  display: flex; 
-													  flex-direction: row;
-													  align-items: 
-													  center;
-													  height: 100vh;
-													  flex-wrap: wrap;">
-			    </div>
-			</div>		
-			<div class="d-grid gap-2">
-				<button type="button" id="guardarCambios" class="btn btn-primary mt-5">Guardar cambios</button>									
-			</div>
+		    <div class="main-container">
+		        <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+		            <span th:text="${message}"></span>
+		            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		        </div>
 
+		        <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+		            <span th:text="${error}"></span>
+		            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		        </div>
+
+		        <h1 class="text-center mb-4">Parámetros de configuración</h1>
+
+		        <div id="parametros-container" class="parametros-container"></div>
+
+		        <div class="button-container">
+		            <button type="button" id="guardarCambios" class="btn btn-primary w-100">Guardar cambios</button>
+		        </div>
+		    </div>
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
