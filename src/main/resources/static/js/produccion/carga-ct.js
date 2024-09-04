@@ -42,15 +42,12 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
 	
 	document.getElementById('body-items').innerHTML = ''
 	document.getElementById('body-componentes').innerHTML = ''
-    /*while (table_items.rows.length > 1) {
-        table_items.deleteRow(1)
-    }
-    while (table_componentes.rows.length > 1) {
-        table_componentes.deleteRow(1)
-    }*/
 
     let foundItems = false
     let foundComponentes = false
+	
+	let allItems = []
+    let allComponentes = []
 
     document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked').forEach(function (checkbox) {
         let selectedIndex = parseInt(checkbox.value)
@@ -58,34 +55,61 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
 
         let itemsOps = selectedOp.items
         if (itemsOps && itemsOps.length > 0) {
-			itemsOps.sort((a, b) => a.prioridad - b.prioridad)
             for (const itemOp of itemsOps) {
                 if (itemOp.item_centro_t_id == selectedCentroId) {
-					let tbodyItems = document.getElementById("body-items")
-					console.log(itemOp)
-                    agregarFilaATabla(tbodyItems, [itemOp.item_desc, itemOp.cant_req, selectedOp.proyecto, selectedOp.op, itemOp.prioridad])
-                    foundItems = true
-                    table_items.removeAttribute('hidden')
+					allItems.push({
+                        item_desc: itemOp.item_desc,
+                        cant_req: itemOp.cant_req,
+                        proyecto: selectedOp.proyecto,
+                        op: selectedOp.op,
+                        prioridad: itemOp.prioridad
+                    })
+					foundItems = true
                 }
 				if(!foundItems){
 	                let componentes = itemOp.componentes
 	                for (const componente of componentes) {
 	                    if (componente.material_centro_t_id == selectedCentroId) {
-							let tbodyComponentes = document.getElementById("body-componentes")
-	                        agregarFilaATabla(tbodyComponentes, [componente.material_desc, componente.material_cant, selectedOp.proyecto, selectedOp.op])
-	                        foundComponentes = true
-	                        table_componentes.removeAttribute('hidden')
+							allComponentes.push({
+                                material_desc: componente.material_desc,
+                                material_cant: componente.material_cant,
+                                proyecto: selectedOp.proyecto,
+                                op: selectedOp.op,
+                                prioridad: itemOp.prioridad  // Using the item's priority for components
+                            })
+                            foundComponentes = true
 	                    }
 	                }					
 				}
             }
         }
     })
+	
+	// Sort items by priority
+    allItems.sort((a, b) => a.prioridad - b.prioridad)
+
+    // Sort components by priority
+    allComponentes.sort((a, b) => a.prioridad - b.prioridad)
+
+    // Add sorted items to the table
+    let tbodyItems = document.getElementById("body-items")
+    allItems.forEach(item => {
+        agregarFilaATabla(tbodyItems, [item.item_desc, item.cant_req, item.proyecto, item.op, item.prioridad])
+    })
+
+    // Add sorted components to the table
+    let tbodyComponentes = document.getElementById("body-componentes")
+    allComponentes.forEach(componente => {
+        agregarFilaATabla(tbodyComponentes, [componente.material_desc, componente.material_cant, componente.proyecto, componente.op])
+    })
 
     mostrarOcultarTabla('title-items', foundItems)
     mostrarOcultarTabla('wrapper-items', foundItems)
     mostrarOcultarTabla('title-componentes', foundComponentes)
     mostrarOcultarTabla('wrapper-componentes', foundComponentes)
+	
+	if (foundItems) table_items.removeAttribute('hidden')
+    if (foundComponentes) table_componentes.removeAttribute('hidden')
 }
 
 function crearCheckBoxList(opsCargaCt, selectedCentroId, table_items, table_componentes) {
@@ -115,6 +139,7 @@ async function obtenerOpCentroT(ct){
 		}
 
 		const data = await response.json()
+		console.log(data)
 
 		spinner.setAttribute('hidden', '')
 		return data
