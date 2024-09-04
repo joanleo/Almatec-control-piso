@@ -27,7 +27,6 @@ import com.almatec.controlpiso.integrapps.repositories.VistaOpItemsMaterialesRut
 import com.almatec.controlpiso.integrapps.services.VistaOpItemsMaterialesRutaService;
 import com.almatec.controlpiso.integrapps.specifications.PrioridadSpecification;
 import com.almatec.controlpiso.programacion.dtos.PrioridadFilterDTO;
-import com.almatec.controlpiso.utils.AgrupacionPrioridad;
 import com.almatec.controlpiso.utils.EstructuraDatos;
 
 @Service
@@ -130,11 +129,10 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 	    Pageable pageable = PageRequest.of(page, size, sort);
 		try {
 			Specification<VistaOpItemsMaterialesRuta> spec = prioridadSpecification.getItemsPrioridades(filtro);
-			logger.info("Filtro service: " + filtro);
+			logger.info("Filtro service: {}", filtro);
 
 	        // Obtener todos los elementos
 	        List<VistaOpItemsMaterialesRuta> allItems = vistaOpItemsMaterialesRutaRepo.findAll(spec);
-
 	        // Agrupar los elementos
 	        List<VistaOpItemsMaterialesRuta> contentAgrupado = agruparItems(allItems);
 	        
@@ -167,6 +165,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 	                return 0; // En caso de cualquier excepción, considerar los elementos iguales
 	            }
 	        });
+	        
 
 	        // Aplicar la paginación manualmente
 	        int start = (int) pageable.getOffset();
@@ -198,22 +197,35 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 
 	// Método auxiliar para comparar prioridades
 	private int comparePrioridades(Integer p1, Integer p2, String sortDir) {
-	    int prioridad1 = (p1 == null) ? 0 : p1;
-	    int prioridad2 = (p2 == null) ? 0 : p2;
-	    return sortDir.equalsIgnoreCase("asc") ? Integer.compare(prioridad1, prioridad2) : Integer.compare(prioridad2, prioridad1);
+	    if (p1 == null && p2 == null) return 0;
+	    if (p1 == null) return sortDir.equalsIgnoreCase("asc") ? 1 : -1;
+	    if (p2 == null) return sortDir.equalsIgnoreCase("asc") ? -1 : 1;
+	    return sortDir.equalsIgnoreCase("asc") ? p1.compareTo(p2) : p2.compareTo(p1);
 	}
 	
 	private List<VistaOpItemsMaterialesRuta> agruparItems(List<VistaOpItemsMaterialesRuta> items) {
-		Map<AgrupacionPrioridad, VistaOpItemsMaterialesRuta> groupedItems = new LinkedHashMap<>();
+	    Map<String, VistaOpItemsMaterialesRuta> groupedItems = new LinkedHashMap<>();
 
 	    for (VistaOpItemsMaterialesRuta item : items) {
-	        AgrupacionPrioridad key = new AgrupacionPrioridad(item.getOp(), item.getItem_id(), item.getCantReq());
+	        // Usar una clave que represente únicamente cada item
+	        String key = item.getOp() + "_" + item.getItem_id() + "_" + item.getCantReq();
+	        
 	        if (!groupedItems.containsKey(key)) {
 	            groupedItems.put(key, item);
+	        } else {
+	            VistaOpItemsMaterialesRuta existingItem = groupedItems.get(key);
+	            // Mantener el item con la prioridad más alta (o no nula)
+	            if (shouldReplaceExistingItem(existingItem, item)) {
+	                groupedItems.put(key, item);
+	            }
 	        }
 	    }
 
 	    return new ArrayList<>(groupedItems.values());
+	}
+	
+	private boolean shouldReplaceExistingItem(VistaOpItemsMaterialesRuta existing, VistaOpItemsMaterialesRuta newItem) {
+	    return (existing.getPrioridad() == null && newItem.getPrioridad() != null);
 	}
 
 }

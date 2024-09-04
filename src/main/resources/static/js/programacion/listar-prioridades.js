@@ -98,14 +98,26 @@ function handleSortClick(e) {
       );
   }
 
+  function showSpinner() {
+  	spinner.removeAttribute('hidden')
+  }
+
+  function hideSpinner() {
+  	spinner.setAttribute('hidden', '')
+  }
+  
 function cargarDatos(centroTrabajoId, page = 0, size = 10, sortField = 'idOpIntegrapps', sortDir = 'desc') {
+	showSpinner()
+	
 	const descripcion = document.getElementById('descripcion').value;
 	const cantidad = document.getElementById('cantidad').value;
 	const proyecto = document.getElementById('proyecto').value;
 	const zona = document.getElementById('zona').value;
 	const prioridad = document.getElementById('prioridad').value;
+	const op = document.getElementById('op').value;
+	const marca = document.getElementById('marca').value;
 
-	const url = `/programacion?page=${page}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&centroTrabajoId=${centroTrabajoId}&descripcion=${encodeURIComponent(descripcion)}&cantidad=${encodeURIComponent(cantidad)}&proyecto=${encodeURIComponent(proyecto)}&zona=${encodeURIComponent(zona)}&prioridad=${encodeURIComponent(prioridad)}`;
+	const url = `/programacion?page=${page}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&centroTrabajoId=${centroTrabajoId}&descripcion=${encodeURIComponent(descripcion)}&cantidad=${encodeURIComponent(cantidad)}&proyecto=${encodeURIComponent(proyecto)}&zona=${encodeURIComponent(zona)}&prioridad=${encodeURIComponent(prioridad)}&op=${encodeURIComponent(op)}&marca=${encodeURIComponent(marca)}`;
    
 		fetch(url, {
 	    	headers: {
@@ -123,7 +135,10 @@ function cargarDatos(centroTrabajoId, page = 0, size = 10, sortField = 'idOpInte
 	        if (checkAllElement) {
 	        	checkAllElement.addEventListener('change', handleSelectAll);
         	}
-        });
+        })
+		.finally(() => {
+			hideSpinner();
+		})
 }
 
 async function fetchCentrosT(){
@@ -140,7 +155,7 @@ async function fetchCentrosT(){
 }
 
 async function obtenerOpCentroT(ct){
-	spinner.removeAttribute('hidden')
+	showSpinner()
 	try{
 		const response = await fetch(`/programacion/centros-trabajo/${ct}/ordenes-produccion-prioridad`)
 		const data = await response.json()
@@ -150,7 +165,7 @@ async function obtenerOpCentroT(ct){
 	}catch(error){
 		console.log("Error al tratar de obtener OP en centro de trabajo", error)
 	}finally{
-		spinner.setAttribute('hidden', '')		
+		hideSpinner()		
 	}
 		
 }
@@ -167,8 +182,8 @@ function handleSelectAll() {
   
 function updateAsignarButtonVisibility() {
     const checkboxes = document.querySelectorAll('.item-checkbox');
-    const btnAsignarMultiple = document.querySelector('#btnAsignarMultiple');
     const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+    const btnAsignarMultiple = document.querySelector('#btnAsignarMultiple');
     btnAsignarMultiple.style.display = anyChecked ? 'block' : 'none';
 }
   
@@ -181,6 +196,7 @@ function updateAsignarButtonVisibility() {
 
 
 function buscar() {
+	showSpinner();
 	let centroTrabajoId = document.getElementById("centroTrabajoSelect").value
     let form = document.getElementById('filtroForm');
 	const formData = new FormData(form);
@@ -206,15 +222,22 @@ function buscar() {
 	        	checkAllElement.addEventListener('change', handleSelectAll);
         	}
 	    })
-	    .catch(error => console.error('Error:', error));
+	    .catch(error => console.error('Error:', error))
+		.finally(() => {
+			hideSpinner();
+		})
 }
 
+const opInput = document.getElementById('op');
+const marcaInput = document.getElementById('marca');
 const descripcionInput = document.getElementById('descripcion');
 const cantidadInput = document.getElementById('cantidad');
 const proyectoInput = document.getElementById('proyecto');
 const zonaInput = document.getElementById('zona');
 const prioridadInput = document.getElementById('prioridad');
 
+opInput.addEventListener('input', buscar);
+marcaInput.addEventListener('input', buscar);
 descripcionInput.addEventListener('input', buscar);
 cantidadInput.addEventListener('input', buscar);
 proyectoInput.addEventListener('input', buscar);
@@ -236,9 +259,6 @@ function editarItem(button) {
     };
 
     showPrioridadModal([item]);
-	/*modalPrioridad._element.addEventListener('hidden.bs.modal', function () {
-		console.log("Limpiar modal")
-	})*/
 
 }
 
@@ -282,9 +302,9 @@ function showPrioridadModal(items) {
 }
 
 document.getElementById('guardarPrioridad').addEventListener('click', function() {
+	showSpinner()
 	const modal = bootstrap.Modal.getInstance(document.getElementById('modal-prioridad'));
 	modal.hide()
-	spinner.removeAttribute('hidden')
     const prioridad = document.getElementById('prioridadModal').value;
     const centroTrabajo = document.getElementById('centroTrabajoModal').dataset.centrotrabajoId;
     const items = JSON.parse(document.getElementById('modal-prioridad').dataset.items);
@@ -311,32 +331,17 @@ document.getElementById('guardarPrioridad').addEventListener('click', function()
         
 		mostrarAlert(data.mensaje, 'success')
 		cargarDatos(centroTrabajoSelectedId)
-        //código para actualizar la interfaz de usuario
-        //updateTable();
     })
     .catch((error) => {
         console.error(error);
 		mostrarAlert(error, 'danger')
     })
 	.finally(() => {
-			spinner.setAttribute('hidden', '');
+		const btnAsignarMultiple = document.querySelector('#btnAsignarMultiple');
+	    btnAsignarMultiple.style.display = 'none';
+		hideSpinner()
 		}
 	)
 		
 	
 });
-
-/*function mostrarAlert(mensaje, tipo){
-	const alertElement = document.createElement('div')
-    	alertElement.className = `alert alert-${tipo} alert-dismissible fade show`
-    	alertElement.role = 'alert'
-    	alertElement.style.zIndex = '10000'
-        alertElement.innerHTML = `
-        <strong>${mensaje}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
-
-		const container = document.getElementById('flag')
-        document.getElementById('alerContainer').insertBefore(alertElement, container)
-        
-        setTimeout(() => alertElement.remove(), 5000)
-}*/

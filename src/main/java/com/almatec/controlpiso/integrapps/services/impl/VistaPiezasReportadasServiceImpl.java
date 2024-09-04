@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasReportadas;
 import com.almatec.controlpiso.integrapps.repositories.VistaPiezasReportadasRepository;

@@ -14,6 +14,8 @@ public class PrioridadFilterDTO implements Serializable{
     private String proyecto;
     private String zona;
     private Integer centroTrabajoId;
+    private String op;
+    private String marca;
     
 public PrioridadFilterDTO() {
 		super();
@@ -67,10 +69,27 @@ public PrioridadFilterDTO() {
 		this.centroTrabajoId = centroTrabajoId;
 	}
 
+	public String getOp() {
+		return op;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setOp(String op) {
+		this.op = op;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
 	@Override
 	public String toString() {
 		return "PrioridadFilterDTO [descripcion=" + descripcion + ", prioridad=" + prioridad + ", cantidad=" + cantidad
-				+ ", proyecto=" + proyecto + ", zona=" + zona + ", centroTrabajoId=" + centroTrabajoId + "]";
+				+ ", proyecto=" + proyecto + ", zona=" + zona + ", centroTrabajoId=" + centroTrabajoId + ", op=" + op
+				+ ", marca=" + marca + "]";
 	}
     
     

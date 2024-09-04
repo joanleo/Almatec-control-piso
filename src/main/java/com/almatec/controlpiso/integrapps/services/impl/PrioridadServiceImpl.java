@@ -54,11 +54,10 @@ public class PrioridadServiceImpl implements PrioridadSevice {
                 prioridad.setFechaEdita(LocalDateTime.now());
                 prioridad.setUsuarioEdita(usuarioActual);
             }
-            
-            prioridades.add(prioridadRepo.save(prioridad));
+            prioridades.add(prioridad);
         }
         
-		return prioridades;
+		return prioridadRepo.saveAllAndFlush(prioridades);
 		
 	}
 

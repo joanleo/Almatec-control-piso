@@ -93,7 +93,7 @@ public class ProgramacionController {
 		if (centroTrabajoId != null) {
             filtro.setCentroTrabajoId(centroTrabajoId);
             itemsPage = vistaOpItemsMaterialesRutaService.obtenerItemsOpsPaginados(page, size, sortDir, sortField, filtro);
-        }
+		}
         
 		modelo.addAttribute("itemsPage", itemsPage);
 		modelo.addAttribute("sortField", sortField);
@@ -108,9 +108,7 @@ public class ProgramacionController {
 	
 	@PostMapping("/guardar-prioridad-multiple")
 	public ResponseEntity<?> guardarActuallizarPrioridades(@Valid @RequestBody PrioridadItemsDTO itemsPrioridad){
-		
-		prioridadService.guardarActualizarPrioridades(itemsPrioridad);
-		
+				
 		try {
             List<Prioridad> prioridadesActualizadas = prioridadService.guardarActualizarPrioridades(itemsPrioridad);
             return ResponseEntity.ok(new ResponseDTO("Prioridades actualizadas con éxito", prioridadesActualizadas));
@@ -178,8 +176,7 @@ public class ProgramacionController {
 	}
 	
 	@GetMapping("/resumen-fabricado")
-	public String informeFabricadoPrioridad() {
-		
+	public String informeFabricadoPrioridad() {		
 		return "programacion/resumen-fabricado";
 	}
 	

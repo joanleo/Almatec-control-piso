@@ -118,5 +118,12 @@ public class Prioridad {
 	public void setFechaEdita(LocalDateTime fechaEdita) {
 		this.fechaEdita = fechaEdita;
 	}
+
+	@Override
+	public String toString() {
+		return "Prioridad [id=" + id + ", idItem=" + idItem + ", itemPrioridad=" + itemPrioridad + ", centroTrabajo="
+				+ centroTrabajo + ", fechaCrea=" + fechaCrea + ", fechaEdita=" + fechaEdita + ", usuarioCrea="
+				+ usuarioCrea + ", usuarioEdita=" + usuarioEdita + "]";
+	}
 	
 }

@@ -45,11 +45,17 @@ public class PrioridadSpecification {
 			if(filtro.getZona() != null && !filtro.getZona().isEmpty()) {
 				predicates.add(criteriaBuilder.like(root.get("zona"), "%" + filtro.getZona() + "%"));
 			}
+			if(filtro.getOp() != null && !filtro.getOp().isEmpty()) {
+				predicates.add(criteriaBuilder.like(root.get("op"), "%" + filtro.getOp() + "%"));
+			}
+			if(filtro.getMarca() != null && !filtro.getMarca().isEmpty()) {
+				predicates.add(criteriaBuilder.like(root.get("marca"), "%" + filtro.getMarca() + "%"));
+			}
 			if(filtro.getPrioridad() != null) {
 				predicates.add(criteriaBuilder.equal(root.get("prioridad"), filtro.getPrioridad()));
 			}
 			
-			logger.info("Predicates: " + predicates.toString());
+			logger.info("Predicates: {}", predicates.toString());
 			
 			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		};
