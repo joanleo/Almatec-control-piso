@@ -3,6 +3,7 @@ package com.almatec.controlpiso.utils;
 import java.awt.Color;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -122,7 +123,10 @@ public class ExportOptoPdf {
 				cell.setPhrase(phrase);
 				table.addCell(cell);
 				
-				phrase = new Phrase(String.valueOf(item.getCant_req()), font);
+				//cell = new PdfPCell(new Phrase(String.valueOf(item.getCant_req().setScale(0, RoundingMode.HALF_UP).intValue()), font));
+				Integer cant = item.getCant_req().setScale(0, RoundingMode.HALF_UP).intValue();
+				System.out.println("Cantidad: " + cant);
+				phrase = new Phrase(String.valueOf(cant), font);
 				cell.setPhrase(phrase);
 				table.addCell(cell);
 				
