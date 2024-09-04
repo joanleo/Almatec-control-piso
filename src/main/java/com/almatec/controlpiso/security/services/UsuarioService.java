@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.security.entities.Usuario;
 
 public interface UsuarioService {
@@ -13,7 +13,7 @@ public interface UsuarioService {
 
 	List<Usuario> buscarUsuarios();
 
-	ErrorMensaje guardarUsuario(Usuario usuario);
+	ResponseMessage guardarUsuario(Usuario usuario);
 
 	Usuario buscarUsuarioPorId(Integer id);
 

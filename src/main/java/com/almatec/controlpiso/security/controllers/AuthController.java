@@ -2,7 +2,8 @@ package com.almatec.controlpiso.security.controllers;
 
 import java.security.Principal;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -13,6 +14,8 @@ import com.almatec.controlpiso.security.services.CustomUserDetailsService;
 public class AuthController {
 	
 	private final CustomUserDetailsService userDetailsService;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public AuthController(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -29,16 +32,12 @@ public class AuthController {
 	
 	@GetMapping("/")
 	public String home(Principal principal) {
-		/*if (principal != null) {
+		if (principal != null) {
             String username = principal.getName();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            //UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             
-            System.out.println("Usuario logueado: " + username);
-            System.out.println("Roles del usuario:");
-            userDetails.getAuthorities().forEach(authority -> 
-                System.out.println("- " + authority.getAuthority())
-            );
-        }*/
+            logger.info("Usuario {} logueado.", username);
+		}
 		return "home";
 	}
 }

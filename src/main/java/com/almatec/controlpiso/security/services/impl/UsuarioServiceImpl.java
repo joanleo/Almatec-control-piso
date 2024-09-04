@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.repositories.UsuarioRepository;
 import com.almatec.controlpiso.security.services.UsuarioService;
@@ -38,7 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public ErrorMensaje guardarUsuario(Usuario usuario) {
+	public ResponseMessage guardarUsuario(Usuario usuario) {
 		Usuario usuarioNuevo = null;
 		if(usuario.getId() != null) {
 			usuarioNuevo = usuarioRepo.findById(usuario.getId())
@@ -46,7 +46,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		}else {
 			usuarioNuevo = new Usuario();
 			if(usuario.getContrasena() == null || "".equals(usuario.getContrasena())) {
-				return new ErrorMensaje(true, "Debe proporcionar una contraseña ");
+				return new ResponseMessage(true, "Debe proporcionar una contraseña ");
 			}
 		}
 		
@@ -63,10 +63,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 		
 		try {
 			usuarioRepo.save(usuarioNuevo);
-			return new ErrorMensaje(false, "");
+			return new ResponseMessage(false, "");
 		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
-			return new ErrorMensaje(true, "El nombre de usuario " + usuario.getNombreUsuario() + " ya existe.");
+			return new ResponseMessage(true, "El nombre de usuario " + usuario.getNombreUsuario() + " ya existe.");
 		}
 	}
 

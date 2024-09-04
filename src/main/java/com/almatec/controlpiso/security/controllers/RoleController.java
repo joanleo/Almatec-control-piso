@@ -120,7 +120,6 @@ public class RoleController {
 	
 	@PostMapping("/eliminar")
 	public String removeRole(@RequestParam Long idRole, RedirectAttributes redirectAttributes) {
-		System.out.println(("solicitud de eliminacionde role: " + idRole));
 	    try {
 	        roleService.eliminarRole(idRole);
 	        return "redirect:/roles";
