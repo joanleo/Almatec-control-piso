@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.almatec.controlpiso.integrapps.dtos.ParametroDTO;
 import com.almatec.controlpiso.integrapps.services.ParametroService;
 
@@ -30,13 +28,11 @@ public class ParametrosController {
 		return "parametros/listar-parametros";
 	}
 	
-	@ResponseBody
 	@GetMapping
-	public List<ParametroDTO> obtenerParametros(){
-		return parametroService.obtenerParametrosDTO();
+	public ResponseEntity<List<ParametroDTO>> obtenerParametros(){
+		return ResponseEntity.ok(parametroService.obtenerParametrosDTO());
 	}
 	
-	@ResponseBody
 	@PostMapping
 	public ResponseEntity<?> guardarParametros(@RequestBody List<ParametroDTO> parametrosDTO){
 		Map<String, Object> response = new HashMap<>();
