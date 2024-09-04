@@ -74,6 +74,9 @@ public class VistaPedidosErp {
 
 	@Column(name = "pv_kg_cumplidos")
 	private Double kgCumplidos;
+	
+	@Column(name = "pv_cliente_co_descripcion")
+	private String centroOperaciones; 
 
 	public VistaPedidosErp() {
 		super();
@@ -159,6 +162,10 @@ public class VistaPedidosErp {
 		return kgCumplidos;
 	}
 
+	public String getCentroOperaciones() {
+		return centroOperaciones;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
@@ -166,7 +173,8 @@ public class VistaPedidosErp {
 				+ ", fecha=" + fecha + ", vendedor=" + vendedor + ", idEstado=" + idEstado + ", estado=" + estado
 				+ ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + ", unidadMedidaInventario="
 				+ unidadMedidaInventario + ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", tipoOp=" + tipoOp
-				+ ", numOp=" + numOp + ", kgCumplidos=" + kgCumplidos + "]";
+				+ ", numOp=" + numOp + ", kgCumplidos=" + kgCumplidos + ", centroOperaciones=" + centroOperaciones
+				+ "]";
 	}
 
 }

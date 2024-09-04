@@ -10,9 +10,6 @@ public interface VistaItemPedidoErpRepository extends JpaRepository<VistaItemPed
 
 	List<VistaItemPedidoErp> findByTipoPedidoAndNoPedido(String tipoPedido, Integer idPedido);
 
-	
-	//List<VistaItemPedidoErp> findByTipoPedidoAndNoPedidoAndReferencia(OrdenPv orden, String referencia);
-
 
 	List<VistaItemPedidoErp> findByRowIdOpAndReferencia(Integer rowIdOp, String referencia);
 

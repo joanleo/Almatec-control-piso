@@ -56,6 +56,12 @@ public class VistaItemPedidoErp {
 
 	@Column(name = "f120_id_unidad_adicional")
 	private String unidadMedidaAdicional;
+	
+	@Column(name = "cliente")
+	private String cliente;
+	
+	@Column(name = "Codigo")
+	private Integer codigo;
 
 
 
@@ -123,12 +129,21 @@ public class VistaItemPedidoErp {
 		return tipoOp;
 	}
 
+	public String getCliente() {
+		return cliente;
+	}
+
+	public Integer getCodigo() {
+		return codigo;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaItemPedidoErp [id=" + id + ", rowIdOp=" + rowIdOp + ", tipoPedido=" + tipoPedido + ", noPedido="
 				+ noPedido + ", referencia=" + referencia + ", descripcion=" + descripcion + ", um=" + um + ", bodega="
 				+ bodega + ", cantidad=" + cantidad + ", peso=" + peso + ", tipoOp=" + tipoOp + ", numOp=" + numOp
 				+ ", fechaEntrega=" + fechaEntrega + ", unidadMedidaInventario=" + unidadMedidaInventario
-				+ ", unidadMedidaAdicional=" + unidadMedidaAdicional + "]";
+				+ ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", cliente=" + cliente + ", codigo=" + codigo
+				+ "]";
 	}
 }
