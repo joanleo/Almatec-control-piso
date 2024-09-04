@@ -53,4 +53,9 @@ public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 		return vistaPedidosErpRepo.findByKeyword(keyword, pageable);
 	}
 
+	@Override
+	public VistaPedidosErp obtenerPorNoPedido(Integer noPedido) {
+		return vistaPedidosErpRepo.findByNoPvAndTipo(noPedido, "PV");
+	}
+
 }

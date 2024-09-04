@@ -22,4 +22,6 @@ public interface VistaPedidosErpService {
 
 	Page<VistaPedidosErp> buscarPedidosErp(String keyword, Pageable pageable);
 
+	VistaPedidosErp obtenerPorNoPedido(Integer noPedido);
+
 }
