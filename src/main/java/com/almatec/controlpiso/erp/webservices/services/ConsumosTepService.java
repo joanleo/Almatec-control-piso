@@ -1,6 +1,5 @@
-package com.almatec.controlpiso.erp.services.conectores;
+package com.almatec.controlpiso.erp.webservices.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,26 +20,25 @@ import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 
 @Service
-public class AdministraConectores {
+public class ConsumosTepService {
 	
-	private final Consumo consumo;
 	private final ListaMaterialService listaMaterialService;
 	private final SolicitudMateriaPrimaService solicitudMateriaPrimaService;
 	private final ItemOpService itemOpService;
-	private final Tep tep;	
+	private final ConectorConsumoService conectorConsumoService;
+	private final ConectorTepService conectorTepService;
 	
-
-	public AdministraConectores(Consumo consumo, ListaMaterialService listaMaterialService, Tep tep,
-			SolicitudMateriaPrimaService solicitudMateriaPrimaService,ItemOpService itemOpService) {
+	
+	public ConsumosTepService(ListaMaterialService listaMaterialService,
+			SolicitudMateriaPrimaService solicitudMateriaPrimaService, ItemOpService itemOpService,
+			ConectorConsumoService conectorConsumoService, ConectorTepService conectorTepService) {
 		super();
-		this.consumo = consumo;
 		this.listaMaterialService = listaMaterialService;
 		this.solicitudMateriaPrimaService = solicitudMateriaPrimaService;
 		this.itemOpService = itemOpService;
-		this.tep = tep;
+		this.conectorConsumoService = conectorConsumoService;
+		this.conectorTepService = conectorTepService;
 	}
-
-
 
 	public List<Conector> crearTEPYConsumos(ItemOp item, ReporteDTO reporte) {
 		List<Conector> tepYConsumosXml = new ArrayList<>();
@@ -48,43 +46,42 @@ public class AdministraConectores {
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
 		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
-		System.out.println("Ruta: "+idRuta+" Centro trabajo: "+idCTErp);
+		System.out.println("Ruta: " +idRuta);
+		System.out.println("Id ct erp: " +idCTErp);
 		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
 
-		ConsumosdesdeCompromisosConsumos encabezadoConsumo = consumo.crearEncabezadoConsumo(data);		
+		ConsumosdesdeCompromisosConsumos encabezadoConsumo = conectorConsumoService.crearEncabezadoConsumo(data);		
 		tepYConsumosXml.add(encabezadoConsumo);
 		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
 		ItemInterface itemFab = itemOpService.obtenerItemFabricaPorId(idItem);
-		List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = consumo.crearDetalleConsumo(itemFab, data, reporte, null);		
+		
+		Integer codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());
+		List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = conectorConsumoService.crearDetalleConsumo(
+				itemFab, data, reporte, null, codErpMateriaPrima);		
 		tepYConsumosXml.addAll(movsConsumo);
 
-		DoctoTEPDocumentosVersion01 encabezadoTep = tep.crearEncabezadoTEP(item,reporte, idCTErp);
+		DoctoTEPDocumentosVersion01 encabezadoTep = conectorTepService.crearEncabezadoTEP(item,reporte, idCTErp);
 		tepYConsumosXml.add(encabezadoTep);
 		
-		List<DoctoTEPMovimientosVersion01> movsTep = tep.crearMovTiempos(reporte, data, dataTE, idCTErp, false);
+		List<DoctoTEPMovimientosVersion01> movsTep = conectorTepService.crearMovTiempos(reporte, data, dataTE, idCTErp, false);
 		tepYConsumosXml.addAll(movsTep);
 		return tepYConsumosXml;
 	}
 
-
-
-	public List<Conector> crearTEP(ItemOp item, ReporteDTO reporte, boolean tepFaltante) throws IOException {
+	public List<Conector> crearTEP(ItemOp item, ReporteDTO reporte, boolean tepFaltante) {
 		List<Conector> tepXml = new ArrayList<>();
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
 		String idCTErp = tepFaltante ? reporte.getIdCentroTrabajo().toString() : solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
-		System.out.println("Ruta: " + idRuta + " Centro trabajo: " + idCTErp);
 		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
-		System.out.println(dataTE.getf809_numero_operacion());
-		DoctoTEPDocumentosVersion01 encabezado = tep.crearEncabezadoTEP(item, reporte, idCTErp);
-
+		DoctoTEPDocumentosVersion01 encabezado = conectorTepService.crearEncabezadoTEP(item, reporte, idCTErp);
 		tepXml.add(encabezado);
 
-		List<DoctoTEPMovimientosVersion01> movs = tep.crearMovTiempos(reporte, data, dataTE, idCTErp, tepFaltante);
+		List<DoctoTEPMovimientosVersion01> movs = conectorTepService.crearMovTiempos(reporte, data, dataTE, idCTErp, tepFaltante);
 		tepXml.addAll(movs);
 		
 		return tepXml;
 
-	}
+	}	
 
 }

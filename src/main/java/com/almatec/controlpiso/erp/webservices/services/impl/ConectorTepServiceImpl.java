@@ -1,4 +1,4 @@
-package com.almatec.controlpiso.erp.services.conectores;
+package com.almatec.controlpiso.erp.webservices.services.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
 import com.almatec.controlpiso.erp.interfaces.DataTEP;
-import com.almatec.controlpiso.erp.webservices.XmlService;
+import com.almatec.controlpiso.erp.webservices.ConfigurationService;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPDocumentosVersion01;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPMovimientosVersion01;
+import com.almatec.controlpiso.erp.webservices.services.ConectorTepService;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
@@ -18,25 +19,26 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
 @Service
-public class Tep {
+public class ConectorTepServiceImpl implements ConectorTepService {
 	
-	private final XmlService xmlService;
+	private final ConfigurationService configService;
 	private final UtilitiesApp util;
 	private final ItemOpService itemOpService;
 	
-	public Tep(XmlService xmlService, UtilitiesApp util, ItemOpService itemOpService) {
+	public ConectorTepServiceImpl(ConfigurationService configService, UtilitiesApp util, ItemOpService itemOpService) {
 		super();
-		this.xmlService = xmlService;
+		this.configService = configService;
 		this.util = util;
 		this.itemOpService = itemOpService;
 	}
 
-	DoctoTEPDocumentosVersion01 crearEncabezadoTEP(ItemOp item, ReporteDTO reporte, String idCTErp) {
+	@Override
+	public DoctoTEPDocumentosVersion01 crearEncabezadoTEP(ItemOp item, ReporteDTO reporte, String idCTErp) {
 		DoctoTEPDocumentosVersion01 encabezado = new DoctoTEPDocumentosVersion01();
-		encabezado.setF_cia(xmlService.getCIA());
+		encabezado.setF_cia(configService.getCIA());
 		encabezado.setF_consec_auto_reg(1);
-		encabezado.setF350_id_co(xmlService.getC_O());
-		encabezado.setF350_id_tipo_docto(xmlService.getTIPO_DOC_TEP());
+		encabezado.setF350_id_co(configService.getC_O());
+		encabezado.setF350_id_tipo_docto(configService.getTIPO_DOC_TEP());
 		encabezado.setF350_consec_docto(0);
 		encabezado.setF350_fecha(util.obtenerFechaFormateada());
 		encabezado.setF350_ind_estado(1);
@@ -48,13 +50,12 @@ public class Tep {
 		encabezado.setF350_notas("Reporte de: " + item.getDescripcion() + " Cant: " + reporte.getCantReportar());
 		return encabezado;
 	}
-	
-	List<DoctoTEPMovimientosVersion01> crearMovTiempos(ReporteDTO reporte, DataConsumoInterface data,
+
+	@Override
+	public List<DoctoTEPMovimientosVersion01> crearMovTiempos(ReporteDTO reporte, DataConsumoInterface data,
 			DataTEP dataTE, String idCTErp, boolean tepFaltante) {
-		System.out.println("Creando mov tep ");
 		List<DoctoTEPMovimientosVersion01> movs = new ArrayList<>();
 		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
-		System.out.println("Consumo idItem: " + idItem);
 		ItemInterface item = itemOpService.obtenerItemFabricaPorId(idItem);
 		
 		if(!tepFaltante) {
@@ -63,15 +64,11 @@ public class Tep {
 					reporte.getIdCentroTrabajo());
 			
 			Integer cantPiezasReportar = reporte.getCantReportar();
-			System.out.println("piezas a reportar: " + cantPiezasReportar);
-			System.out.println("Valor aplicar: " + valorAplicar);
 	
 			BigDecimal cantReportarTotalHoras = BigDecimal.valueOf(valorAplicar * reporte.getCantReportar());
-			System.out.println(cantReportarTotalHoras);
 			List<BigDecimal> reportes = calcularReportes(cantReportarTotalHoras);
 	
 			Double kilosTotales = item.getitem_peso_b().multiply(new BigDecimal(cantPiezasReportar)).doubleValue();
-			System.out.println("Kilos totales: " + kilosTotales);
 	
 			for (int i = 0; i < reportes.size(); i++) {
 				BigDecimal cantReportarActual = reportes.get(i);
@@ -79,9 +76,7 @@ public class Tep {
 				crearMovimiento(data, dataTE, idCTErp, cantReportarActual, movs, kiloIteracion);
 			}
 		}else {
-			System.out.println("Ajuste");
 			BigDecimal horas = BigDecimal.valueOf(0.01);
-			System.out.println("horas: " + horas);
 			crearMovimiento(data, dataTE, idCTErp, horas, movs, 0.0001);
 		}
 		return movs;
@@ -106,20 +101,18 @@ public class Tep {
 	
 	private void crearMovimiento(DataConsumoInterface data, DataTEP dataTE, String idCTErp, BigDecimal cantidadReportar,
 			List<DoctoTEPMovimientosVersion01> movs, Double kilosReportar) {
-		System.out.println("Creando conector movs tep");
+		System.out.println(dataTE.getf809_numero_operacion());
 		try {
 			DoctoTEPMovimientosVersion01 mov = new DoctoTEPMovimientosVersion01();
-			mov.setF_cia(xmlService.getCIA());
-			mov.setF880_id_co(xmlService.getC_O());
-			mov.setF880_id_tipo_docto(xmlService.getTIPO_DOC_TEP());
+			mov.setF_cia(configService.getCIA());
+			mov.setF880_id_co(configService.getC_O());
+			mov.setF880_id_tipo_docto(configService.getTIPO_DOC_TEP());
 			mov.setF880_consec_docto(0);
 			mov.setF880_nro_registro(data.getf851_rowid());// Revisar rowid itemop 851
-			mov.setF880_id_tipo_docto_op(xmlService.getTIPO_DOC_OP_HIJO());
+			mov.setF880_id_tipo_docto_op(configService.getTIPO_DOC_OP_HIJO());
 			mov.setF880_consec_docto_op(data.getf850_consec_docto());// revisar 850 consecutivo
 			mov.setF880_id_item(data.getf120_id());// Revisar id 120
-			System.out.println(mov);
 			mov.setF880_numero_operacion(dataTE.getf809_numero_operacion());// Revisar
-			//System.out.println(cantidadReportar.doubleValue());
 			mov.setF880_rowid_ctrabajo(idCTErp);// id centro trabajo
 			mov.setF880_ind_tipo_hora(1);// Revisar
 			mov.setF880_id_maquina(dataTE.getf807_id());// Revisar
@@ -139,7 +132,6 @@ public class Tep {
 	private double precalcularHoras(double horas) {
 		int horasEnteras = (int) horas;
 		double minutos = (horas - horasEnteras);
-
 		// Ajustamos los minutos para contrarrestar el recálculo de la aplicación
 		double minutosAjustados = minutos * 60 / 100;
 

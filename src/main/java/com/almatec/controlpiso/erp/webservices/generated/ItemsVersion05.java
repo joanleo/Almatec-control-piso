@@ -2,7 +2,7 @@ package com.almatec.controlpiso.erp.webservices.generated;
 
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 
-public class ItemsVersión05 implements Conector {
+public class ItemsVersion05 implements Conector {
 	private Integer F_NUMERO_REG;  //Numero consecutivo
 	private Integer F_TIPO_REG= 120;  //Valor fijo = 120
 	private Integer F_SUBTIPO_REG= 0;  //Valor fijo = 00
@@ -444,7 +444,7 @@ public class ItemsVersión05 implements Conector {
 	public void setF120_ind_exento(Integer f120_ind_exento) {
 		this.f120_ind_exento = f120_ind_exento;
 	}
-	public ItemsVersión05 () {
+	public ItemsVersion05 () {
 	// Constructor vacio para inicializar
 	}
 	@Override

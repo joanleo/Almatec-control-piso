@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -28,12 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.almatec.controlpiso.config.AppConfig;
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.InfoParadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
 import com.almatec.controlpiso.integrapps.dtos.NovedadDTO;
@@ -51,12 +49,10 @@ import com.almatec.controlpiso.integrapps.services.ListaMService;
 import com.almatec.controlpiso.integrapps.services.NovedadCtService;
 import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
 import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
-import com.almatec.controlpiso.integrapps.services.VistaItemsRutasService;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasOperariosService;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.utils.CentrosTrabajoPDFService;
 import com.almatec.controlpiso.utils.ExportOpCentroTrabajoToPdf;
-import com.almatec.controlpiso.utils.ExportOptoPdf;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,59 +64,60 @@ import com.lowagie.text.Rectangle;
 @RequestMapping("/centros-trabajo")
 public class CentroTrabajoController {
 	
-	@Autowired
-	private CentroTrabajoService centroTrabajoService;
+	private final CentroTrabajoService centroTrabajoService;
+	private final UtilitiesApp util;
+	private final AppConfig appConfig;
+	private final VistaPiezasOperariosService vistaPiezasOperariosService;
+	private final ReportePiezaCtService reportePiezaCtService;
+	private final NovedadCtService novedadCtService;
+	private final RegistroParadaService registroParadaService;
+	private final ListaMService listaMService;
+	private final CentrosTrabajoPDFService centrosTrabajoPDFService;
 	
-	@Autowired
-	private UtilitiesApp util;
-	
-	@Autowired
-	private AppConfig appConfig;
-	
-	@Autowired
-	private VistaItemsRutasService vistaItemsRutasService;
-	
-	@Autowired
-	private VistaPiezasOperariosService vistaPiezasOperariosService;
-	
-	@Autowired
-	private ReportePiezaCtService reportePiezaCtService;
-	
-	@Autowired
-	private NovedadCtService novedadCtService;
-	
-	@Autowired
-	private RegistroParadaService registroParadaService;
-	
-	@Autowired
-	private ListaMService listaMService;
-	
-	@Autowired
-	private CentrosTrabajoPDFService centrosTrabajoPDFService;
 
 	
+	public CentroTrabajoController(
+			CentroTrabajoService centroTrabajoService, 
+			UtilitiesApp util, 
+			AppConfig appConfig,
+			VistaPiezasOperariosService vistaPiezasOperariosService,
+			ReportePiezaCtService reportePiezaCtService, 
+			NovedadCtService novedadCtService,
+			RegistroParadaService registroParadaService, 
+			ListaMService listaMService,
+			CentrosTrabajoPDFService centrosTrabajoPDFService) {
+		super();
+		this.centroTrabajoService = centroTrabajoService;
+		this.util = util;
+		this.appConfig = appConfig;
+
+		this.vistaPiezasOperariosService = vistaPiezasOperariosService;
+		this.reportePiezaCtService = reportePiezaCtService;
+		this.novedadCtService = novedadCtService;
+		this.registroParadaService = registroParadaService;
+		this.listaMService = listaMService;
+		this.centrosTrabajoPDFService = centrosTrabajoPDFService;
+	}
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	
 	@GetMapping("/listar")
-	@ResponseBody
-	public List<CentroTrabajo> listarCentrosTrabajo(Model modelo) {
+	public ResponseEntity<List<CentroTrabajo>> listarCentrosTrabajo(Model modelo) {
 		Usuario usuario = util.obtenerUsuarioAtenticado();
-		return centroTrabajoService.buscarCentrosTrabajo(usuario.getCia());
+		return ResponseEntity.ok(centroTrabajoService.buscarCentrosTrabajo(usuario.getCia()));
 	}
 	
 	@GetMapping("/{idCT}/ordenes-produccion")
-	@ResponseBody
-	public Set<OpCentroTrabajoDTO> obtenerOpCentroTrabajo(@PathVariable Integer idCT){
-		return centroTrabajoService.buscarOpCT(idCT);
+	public ResponseEntity<Set<OpCentroTrabajoDTO>> obtenerOpCentroTrabajo(@PathVariable Integer idCT){
+		return ResponseEntity.ok(centroTrabajoService.buscarOpCT(idCT));
 	}
 	
-	@ResponseBody
 	@GetMapping("/{idCT}/{idConfig}/piezas-operarios-ct-proceso")
-	public List<VistaPiezasOperarios> piezasOperariosCentroTrabajo(
+	public ResponseEntity<List<VistaPiezasOperarios>> piezasOperariosCentroTrabajo(
 			@PathVariable Integer idCT,
 			@PathVariable Integer idConfig){
-		return vistaPiezasOperariosService.obtenerPiezasCentroTrabajoProceso(idCT, idConfig);
+		return ResponseEntity.ok(vistaPiezasOperariosService.obtenerPiezasCentroTrabajoProceso(idCT, idConfig));
 	}
 	
 	@PostMapping("/{idCT}/asignar-pieza")
@@ -135,30 +132,26 @@ public class CentroTrabajoController {
 	    }
 	}
 	
-	@ResponseBody
 	@GetMapping("/{idProceso}/tiempos_operarios")
-	public List<TiemposOperariosDTO> obtenerTiempoOperarios(@PathVariable Integer idProceso){
-		return centroTrabajoService.obtenerTiemposOperarios(idProceso);
+	public ResponseEntity<List<TiemposOperariosDTO>> obtenerTiempoOperarios(@PathVariable Integer idProceso){
+		return ResponseEntity.ok(centroTrabajoService.obtenerTiemposOperarios(idProceso));
 	}
 	
 	
-	@ResponseBody
 	@PostMapping("/agregar-retirar-operario")
 	public ResponseEntity<String> agregarRetirarOperario(@RequestBody OperarioDTO operarioDTO) {
 		return ResponseEntity.ok(centroTrabajoService.agregarRetirarOperario(operarioDTO));
 	}
 	
 	@GetMapping("/{idCT}/{idConfigP}/operarios")
-	@ResponseBody
-	public List<Operario> obtenerOperariosCT(@PathVariable Integer idCT,
+	public ResponseEntity<List<Operario>> obtenerOperariosCT(@PathVariable Integer idCT,
 											   @PathVariable Integer idConfigP ){
-		return centroTrabajoService.buscarOperariosCtDia(idCT, idConfigP);
+		return ResponseEntity.ok(centroTrabajoService.buscarOperariosCtDia(idCT, idConfigP));
 	}
-	
 		
 	@PostMapping("/{idCT}/paradas")
 	public ResponseEntity<?> registrarActualizarParada(@PathVariable Integer idCT, @RequestBody RegistroParadaDTO registroParada){
-		ErrorMensaje mensaje = registroParadaService.registrarActualizarParada(registroParada, idCT);
+		ResponseMessage mensaje = registroParadaService.registrarActualizarParada(registroParada, idCT);
 		if(Boolean.TRUE.equals(mensaje.getError())) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
         } else {
@@ -191,10 +184,10 @@ public class CentroTrabajoController {
 	}
 	
 	@PostMapping("/reporte")
-	public String guardarReportePiezas(@ModelAttribute("reporte") ReporteDTO reporte,
+	public String guardarReportePiezas(@ModelAttribute ReporteDTO reporte,
 										RedirectAttributes flash) {
 
-		ErrorMensaje mensaje = reportePiezaCtService.guardarReporte(reporte);
+		ResponseMessage mensaje = reportePiezaCtService.guardarReporte(reporte);
 		if(Boolean.TRUE.equals(mensaje.getError())) {
 			flash.addFlashAttribute("error", mensaje.getMensaje());
 			return "redirect:/produccion/home";			
@@ -223,9 +216,9 @@ public class CentroTrabajoController {
 	}
 	
 	@PostMapping("/novedades")
-	public String guardarNovedades(@ModelAttribute("novedad") NovedadDTO novedad,
+	public String guardarNovedades(@ModelAttribute NovedadDTO novedad,
 										RedirectAttributes flash) {
-		ErrorMensaje mensaje = novedadCtService.guardarNovedad(novedad);
+		ResponseMessage mensaje = novedadCtService.guardarNovedad(novedad);
 		if(Boolean.TRUE.equals(mensaje.getError())) {
 			flash.addFlashAttribute("error", mensaje.getMensaje());
 			return "redirect:/produccion/home";			
@@ -267,7 +260,7 @@ public class CentroTrabajoController {
 		return "configuracion/centros-trabajo/formulario-centro-trabajo";
 	}
 	
-	public String guardar(@ModelAttribute("centroTrabajo") CentroTrabajo centroTrabajo) {
+	public String guardar(@ModelAttribute CentroTrabajo centroTrabajo) {
 		centroTrabajoService.guardar(centroTrabajo);
 		return "redirect:/centros-trabajo";
 	}
@@ -285,22 +278,6 @@ public class CentroTrabajoController {
                 .body(resource);
     }
 	
-	@GetMapping("/op/{idOp}/descarga")
-	public void exportToPdfOp(HttpServletResponse response,
-			@PathVariable Integer idOp) throws DocumentException, IOException{
-		response.setContentType("application/pdf");
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		String currentDateTime = dateFormatter.format(new Date());
-		String headerKey = "Content-Disposition";
-		String headerValue = "attachment; filename=Op_" + idOp + "_" + currentDateTime + ".pdf";
-		response.setHeader(headerKey, headerValue);
-		
-		List<OpCentroTrabajoDTO> itemsOp = vistaItemsRutasService.buscarOp(idOp);
-		
-		ExportOptoPdf exportar = new ExportOptoPdf(itemsOp);
-		logger.info("Se genera pdf con la informacion de la OP-{}",idOp);
-		exportar.export(response);
-	}
 	
 	@GetMapping("/reporte-piezas")
 	public String reportePieza(Model modelo) {
@@ -336,6 +313,7 @@ public class CentroTrabajoController {
 		Rectangle letter = PageSize.LETTER;
 		//float halfLetterHeight = letter.getHeight() / 2;
 		//Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);
+		System.out.println("Impresion carga");
 		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, letter);
 		documento.export(response);
 	}
@@ -349,6 +327,13 @@ public class CentroTrabajoController {
 	@GetMapping("/generar-codigos-barra")
 	public void generarBarCodeOperarios(HttpServletResponse response) throws DocumentException, IOException {
 		centrosTrabajoPDFService.generarBarCodeCentrosTrabajo(response);
+	}
+	
+	@GetMapping("/{idCT}/piezas-fabricadas/{idItemOp}")
+	public ResponseEntity<Integer> obtenerCantPiezasFabricadas(@PathVariable Integer idCT,
+	        @PathVariable Integer idItemOp) {
+	    Integer cantidadFabricada = vistaPiezasOperariosService.obtenerCantPiezasFabricadas(idCT, idItemOp);
+	    return ResponseEntity.ok(cantidadFabricada);
 	}
 
 }

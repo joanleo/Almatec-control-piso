@@ -23,9 +23,6 @@ public class ItemOpController {
 		return itemOpService.buscarItemsOp(idOpIa);
 	}
 	
-	
-	
-	
 	public ItemOpController(ItemOpService itemOpService) {
 		this.itemOpService = itemOpService;
 	}

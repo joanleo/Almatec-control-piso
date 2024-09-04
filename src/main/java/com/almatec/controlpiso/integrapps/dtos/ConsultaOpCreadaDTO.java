@@ -40,6 +40,7 @@ public class ConsultaOpCreadaDTO {
 	public void setF120_id(Integer f120_id) {
 		this.f120_id = f120_id;
 	}
+
 	public ConsultaOpCreadaDTO() {
 		super();
 	}
