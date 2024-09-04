@@ -5,7 +5,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.NovedadDTO;
 import com.almatec.controlpiso.integrapps.entities.NovedadCt;
 import com.almatec.controlpiso.integrapps.repositories.NovedadCtRepository;
@@ -25,9 +25,9 @@ public class NovedadCtServiceImpl implements NovedadCtService {
 	}
 
 	@Override
-	public ErrorMensaje guardarNovedad(NovedadDTO novedadDTO) {
+	public ResponseMessage guardarNovedad(NovedadDTO novedadDTO) {
 		NovedadCt novedad = generarNovedad(novedadDTO);
-		ErrorMensaje mensaje = new ErrorMensaje();
+		ResponseMessage mensaje = new ResponseMessage();
 		try {
 			novedadCtRepository.save(novedad);
 			mensaje.setMensaje("Novedad registrada exitosamente");

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.exceptions.ServiceException;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.Persona;
@@ -133,7 +133,7 @@ public class OperarioServiceImpl  implements OperarioService{
 
 	@Transactional
 	@Override
-	public ErrorMensaje guardarOperario(OperarioGeneralDTO operarioDTO) throws ServiceException {
+	public ResponseMessage guardarOperario(OperarioGeneralDTO operarioDTO) throws ServiceException {
 		try {
             Persona persona;
             Operario operario;
@@ -172,7 +172,7 @@ public class OperarioServiceImpl  implements OperarioService{
             operario = operarioRepo.save(operario);
 
             String mensaje = (operarioDTO.getId() == null) ? "Operario creado exitosamente" : "Operario actualizado exitosamente";
-            return new ErrorMensaje(false, mensaje);
+            return new ResponseMessage(false, mensaje);
         } catch (Exception e) {
             throw new ServiceException("Error al guardar el operario: " + e.getMessage());
         }
@@ -199,7 +199,7 @@ public class OperarioServiceImpl  implements OperarioService{
 
 	@Override
 	@Transactional
-    public ErrorMensaje desactivarOperario(Integer id) throws ServiceException {
+    public ResponseMessage desactivarOperario(Integer id) throws ServiceException {
         try {
             Operario operario = operarioRepo.findById(id)
                 .orElseThrow(() -> new ServiceException("Operario no encontrado"));
@@ -207,7 +207,7 @@ public class OperarioServiceImpl  implements OperarioService{
             operario.setIsActivo(false);
             operarioRepo.save(operario);
             
-            return new ErrorMensaje(false, "Operario desactivado exitosamente");
+            return new ResponseMessage(false, "Operario desactivado exitosamente");
         } catch (Exception e) {
             throw new ServiceException("Error al desactivar el operario: " + e.getMessage());
         }
@@ -215,7 +215,7 @@ public class OperarioServiceImpl  implements OperarioService{
 
 	@Override
 	@Transactional
-	public ErrorMensaje toggleEstadoOperario(Integer id) throws ServiceException {
+	public ResponseMessage toggleEstadoOperario(Integer id) throws ServiceException {
 	    try {
 	        Operario operario = operarioRepo.findById(id)
 	            .orElseThrow(() -> new ServiceException("Operario no encontrado"));
@@ -224,7 +224,7 @@ public class OperarioServiceImpl  implements OperarioService{
 	        operarioRepo.save(operario);
 	        
 	        String accion = operario.getIsActivo() ? "activado" : "desactivado";
-	        return new ErrorMensaje(false, "Operario " + accion + " exitosamente");
+	        return new ResponseMessage(false, "Operario " + accion + " exitosamente");
 	    } catch (Exception e) {
 	        throw new ServiceException("Error al cambiar el estado del operario: " + e.getMessage());
 	    }

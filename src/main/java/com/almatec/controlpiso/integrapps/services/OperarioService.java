@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.almatec.controlpiso.exceptions.ServiceException;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.produccion.dtos.OperarioGeneralDTO;
 import com.almatec.controlpiso.utils.dto.OperarioBarCodeDTO;
@@ -24,10 +24,10 @@ public interface OperarioService {
 
 	OperarioGeneralDTO obtenerOperarioGeneralPorId(Integer id) throws ServiceException;
 
-	ErrorMensaje guardarOperario(OperarioGeneralDTO operario) throws ServiceException;
+	ResponseMessage guardarOperario(OperarioGeneralDTO operario) throws ServiceException;
 
-	ErrorMensaje desactivarOperario(Integer id) throws ServiceException;
+	ResponseMessage desactivarOperario(Integer id) throws ServiceException;
 
-	ErrorMensaje toggleEstadoOperario(Integer id) throws ServiceException;
+	ResponseMessage toggleEstadoOperario(Integer id) throws ServiceException;
 
 }

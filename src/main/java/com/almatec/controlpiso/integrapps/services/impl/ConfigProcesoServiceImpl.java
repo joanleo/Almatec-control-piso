@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.ConfigProcesoDTO;
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.entities.ConfigProceso;
 import com.almatec.controlpiso.integrapps.repositories.ConfigProcesoRepository;
 import com.almatec.controlpiso.integrapps.services.ConfigProcesoService;
@@ -43,13 +43,13 @@ public class ConfigProcesoServiceImpl implements ConfigProcesoService {
 	}
 
 	@Override
-	public ErrorMensaje finalizarTurno(Integer idConfigProceso) {
+	public ResponseMessage finalizarTurno(Integer idConfigProceso) {
 
 		try {
 			configProcesoRepo.updateIsActivo(idConfigProceso, 0);
-			return new ErrorMensaje("Turno finalizado");
+			return new ResponseMessage("Turno finalizado");
 		}catch (Exception e) {
-			return new ErrorMensaje(true, "Ocurrio un error al tratar de finalizar el turno, " + e);
+			return new ResponseMessage(true, "Ocurrio un error al tratar de finalizar el turno, " + e);
 		}
 	}
 

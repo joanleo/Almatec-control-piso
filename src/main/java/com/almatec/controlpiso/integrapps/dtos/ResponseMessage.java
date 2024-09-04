@@ -1,21 +1,21 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
-public class ErrorMensaje {
+public class ResponseMessage {
 	
 	private Boolean error = false;	
 	private String mensaje;
 	
-	public ErrorMensaje() {
+	public ResponseMessage() {
 		super();
 	}
 		
-	public ErrorMensaje(Boolean error, String mensaje) {
+	public ResponseMessage(Boolean error, String mensaje) {
 		super();
 		this.error = error;
 		this.mensaje = mensaje;
 	}
 
-	public ErrorMensaje(String mensaje) {
+	public ResponseMessage(String mensaje) {
 		this.mensaje = mensaje;
 	}
 

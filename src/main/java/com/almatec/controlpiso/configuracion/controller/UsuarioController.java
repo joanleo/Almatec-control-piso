@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.security.entities.Role;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.RoleService;
@@ -49,7 +49,7 @@ public class UsuarioController {
 	
 	@PostMapping("/guardar")
 	public String guardar(@ModelAttribute Usuario usuario, RedirectAttributes flash) {
-		ErrorMensaje error = usuarioService.guardarUsuario(usuario);
+		ResponseMessage error = usuarioService.guardarUsuario(usuario);
 		
 		if(Boolean.TRUE.equals(error.getError())) {
     		flash.addFlashAttribute("error", error.getMensaje());

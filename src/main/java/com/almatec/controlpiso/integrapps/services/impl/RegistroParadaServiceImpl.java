@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.almatec.controlpiso.integrapps.dtos.ErrorMensaje;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.InfoParadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.RegistroParadaDTO;
 import com.almatec.controlpiso.integrapps.entities.RegistroOperDia;
@@ -30,7 +30,7 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 	private RegistroOperDiaRepository registroOperDiaRepo;
 
 	@Override
-	public ErrorMensaje registrarActualizarParada(RegistroParadaDTO registroParadaDTO, Integer idCT) {
+	public ResponseMessage registrarActualizarParada(RegistroParadaDTO registroParadaDTO, Integer idCT) {
 		RegistroParada registroParada = registroParadaRepository.findByIdConfigProcesoAndIdOperarioAndIdParada(
 				registroParadaDTO.getIdConfigProceso(), registroParadaDTO.getIdOperario(), registroParadaDTO.getIdParada());
 		LocalDateTime fecha = LocalDateTime.now();
@@ -47,10 +47,10 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 			try {
 				registroParadaRepository.save(registroParada);
 				registroOperDiaRepo.save(registroOperario);
-				return new ErrorMensaje("Parada registrada exitosamente");
+				return new ResponseMessage("Parada registrada exitosamente");
 			} catch (Exception e) {
 				e.printStackTrace();;
-				return new ErrorMensaje(true, "Ocurrio un error al tratar de registrar la parada");
+				return new ResponseMessage(true, "Ocurrio un error al tratar de registrar la parada");
 			}
 		}else if(registroParada != null && !registroParada.getIsActivo()) {
 			registroParada.setIsActivo(true);
@@ -59,10 +59,10 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 			try {
 				registroParadaRepository.save(registroParada);
 				registroOperDiaRepo.save(registroOperario);
-				return new ErrorMensaje("Parada registrada exitosamente");
+				return new ResponseMessage("Parada registrada exitosamente");
 			} catch (Exception e) {
 				e.printStackTrace();
-				return new ErrorMensaje(true, "Ocurrio un error al tratar de registrar la parada");
+				return new ResponseMessage(true, "Ocurrio un error al tratar de registrar la parada");
 			}
 		}
 		registroParada.setIsActivo(false);
@@ -71,9 +71,9 @@ public class RegistroParadaServiceImpl implements RegistroParadaService {
 		try {
 			registroParadaRepository.save(registroParada);
 			registroOperDiaRepo.save(registroOperario);
-			return new ErrorMensaje("Parada finalizada exitosamente");
+			return new ResponseMessage("Parada finalizada exitosamente");
 		} catch (Exception e) {
-			return new ErrorMensaje(true, "Ocurrio un error al tratar de finalizar la parada");
+			return new ResponseMessage(true, "Ocurrio un error al tratar de finalizar la parada");
 		}
 	}
 
