@@ -1,36 +1,61 @@
 let idOpSelected
+
+let ops = [];
+let filteredOps = [];
+let currentPage = 1;
+const itemsPerPage = 5;
+let selectedOp = null;
+let items = [];
+let remisionItems = [];
+
 document.addEventListener('DOMContentLoaded', async function() {
-	document.getElementById("id-op").addEventListener('change', async function(){
-		if (this.value !== '') {
-			const seleccion = this.options[this.selectedIndex]
-			const op = seleccion.getAttribute('data-op')
-	        document.getElementById("cliente").value = op.split(',')[0]
-	        document.getElementById("proyecto").value = op.split(',')[1]
-	        document.getElementById('solSel').removeAttribute('hidden')
-	        idOpSelected = seleccion.value
-	        console.log(idOpSelected)
-	        const items = await obtenerItems(idOpSelected)
-	        document.getElementById('tabs').removeAttribute('hidden')
-	        fillTableRemision(items, 'fabricado')
-	        
-	        document.getElementById('tab-fabricado').addEventListener('click', async function() {
-		        document.getElementById('tab-fabricado').classList.add('active');
-		        document.getElementById('tab-ferreteria').classList.remove('active');
-		        const items = await obtenerItems(idOpSelected);
-		        fillTableRemision(items, 'fabricado');
-		    });
-		
-		    document.getElementById('tab-ferreteria').addEventListener('click', async function() {
-		        document.getElementById('tab-fabricado').classList.remove('active');
-		        document.getElementById('tab-ferreteria').classList.add('active');
-		        const items = await obtenerItems(idOpSelected);
-		        fillTableRemision(items, 'ferreteria');
-		    });
-	                 
-	    }
-	})
+	fetchOps();
+	document.getElementById('tab-fabricado').addEventListener('click', async function() {
+        document.getElementById('tab-fabricado').classList.add('active');
+        document.getElementById('tab-ferreteria').classList.remove('active');
+        //const items = await obtenerItems(idOpSelected);
+        renderItemTable('fabricado');
+    });
+
+    document.getElementById('tab-ferreteria').addEventListener('click', async function() {
+        document.getElementById('tab-fabricado').classList.remove('active');
+        document.getElementById('tab-ferreteria').classList.add('active');
+        //const items = await obtenerItems(idOpSelected);
+        renderItemTable('ferreteria');
+    });
+
+	document.getElementById('searchOp').addEventListener('input', handleSearch);
+	
 	}
 )
+
+function handleSearch(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    filteredOps = ops.filter(op => {
+		const numOpMatch = op.numOp.toString().includes(searchTerm);
+        const clienteMatch = op.cliente.toLowerCase().includes(searchTerm);
+        const proyectoMatch = op.proyecto.toLowerCase().includes(searchTerm);
+        return numOpMatch || clienteMatch || proyectoMatch;agregarItemTableDetalleRemision}
+    );
+    currentPage = 1;
+    renderOpTable();
+}
+
+async function fetchOps() {
+    spinner.removeAttribute('hidden')
+    try {
+        const response = await fetch('/almacen/remisiones/ops');
+        ops = await response.json();
+        filteredOps = [...ops];
+		
+        renderOpTable();
+    } catch (error) {
+        console.error('Error fetching OPs:', error);
+        showAlert('Error al cargar las OPs', 'danger');
+    } finally {
+        spinner.setAttribute("hidden", '')
+    }
+}
 
 async function obtenerItems(idOpIa){
 	spinner.removeAttribute('hidden')
@@ -48,7 +73,73 @@ async function obtenerItems(idOpIa){
 	}
 }
 
-function fillTableRemision(items, type){
+function renderOpTable() {
+    const tbody = document.querySelector('#opTable tbody');
+    tbody.innerHTML = '';
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedOps = filteredOps.slice(startIndex, endIndex);
+    paginatedOps.forEach(op => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td>${op.numOp}</td>
+            <td>${op.cliente}</td>
+            <td>${op.proyecto}</td>
+            <td><button class="btn btn-primary btn-sm" onclick="selectOp(${op.idOpIa})">Seleccionar</button></td>
+        `;
+    });
+    
+    renderPagination();
+}
+
+function renderPagination() {
+    const pagination = document.getElementById('opPagination');
+    const pageCount = Math.ceil(filteredOps.length / itemsPerPage);
+    
+    let paginationHTML = '';
+    for (let i = 1; i <= pageCount; i++) {
+        paginationHTML += `
+            <li class="page-item ${currentPage === i ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+            </li>
+        `;
+    }
+    
+    pagination.innerHTML = paginationHTML;
+}
+
+function changePage(page) {
+    currentPage = page;
+    renderOpTable();
+}
+
+async function selectOp(idOpIa) {
+    spinner.removeAttribute('hidden')
+	document.getElementById('body-detalle-remision').innerHTML = ''
+    try {
+        const response = await fetch(`/almacen/remisiones/${idOpIa}`);
+        items = await response.json();
+        selectedOp = ops.find(op => op.idOpIa === idOpIa);
+		document.getElementById('title-op').textContent = 'Items de la OP-' + selectedOp.numOp
+		document.getElementById('tabs').removeAttribute('hidden')
+        renderItemTable('fabricado');
+    } catch (error) {
+        console.error('Error fetching items:', error);
+        showAlert('Error al cargar los items', 'danger');
+    } finally {
+		spinner.setAttribute("hidden", '') 
+    }
+}
+
+function renderItemTable(type){
+	if(type === 'fabricado'){
+		document.getElementById('tab-fabricado').classList.toggle('active', type === 'fabricado');
+		document.getElementById('tab-ferreteria').classList.toggle('active', type === 'ferreteria');		
+	}else{
+    	document.getElementById('tab-ferreteria').classList.toggle('active', type === 'ferreteria');
+		document.getElementById('tab-fabricado').classList.toggle('active', type === 'fabricado');		
+	}
 	let tbody = document.getElementById('body-items-op')
 	tbody.innerHTML = ''
 	items.filter(item => (type === 'fabricado' && item.idItemFab !== 0) || (type === 'ferreteria' && item.codigoErp !== '0'))
@@ -83,30 +174,13 @@ function fillTableRemision(items, type){
 		cellCantEntregada.textContent = item.cantDespachada
 		row.appendChild(cellCantEntregada)
 		
-		/*const cantMax = item.cantCumplida - item.cantDespachada
-		let cellCant = document.createElement('td')
-		let input = document.createElement('input');
-		input.type = 'number';
-		input.max = cantMax;
-		input.min = 1;
-		input.id = index;
-		input.addEventListener('input', function() {
-		  if (this.value < 0)  this.value = ''
-		  
-		  if(this.value > cantMax) this.value = cantMax
-		});
-		cellCant.appendChild(input);
-		row.appendChild(cellCant)*/
-		
 		let cellButton = document.createElement('td')
-		console.log(item)
 		if((item.idItemFab != 0 && item.cantDespachada < item.cant && item.cantDespachada < item.cantCumplida) || (item.idItemFab == 0 && item.cantDespachada < item.cant)){
 			let button = document.createElement('button')
 			button.innerHTML = 'Agregar'
 			button.classList.add('btn', 'btn-primary')
 			button.type = 'button'
 			button.addEventListener('click', function(){
-				console.log("mover item a tabla detalle remision")
 				agregarItemTableDetalleRemision(item)
 			})			
 			cellButton.appendChild(button)
@@ -131,7 +205,7 @@ function agregarItemTableDetalleRemision(item){
                 <td>${item.cant}</td>
                 <td>${item.cantCumplida}</td>
                 <td>${item.cantDespachada}</td>
-                <td><input class="form-control cant-remisionar" type="number" min="1" ${item.idItemFab !== 0 ? `max="${cantMax}"  id="itemFab"` : `max="${cantFerr}" id="itemFerr"`} required /></td>
+                <td><input class="form-control cant-remisionar" type="number" min="1" ${item.idItemFab !== 0 ? `max="${cantMax}"  id="${item.id + '-' + item.idItemFab}"` : `max="${cantFerr}" id="itemFerr"`} required /></td>
                 <td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
             `
     tbody.appendChild(newRow)
@@ -150,7 +224,6 @@ function eliminarFila(button){
 
 async function guardarRemision(){
 	spinner.removeAttribute('hidden')
-	console.log("guardando remision")
 	
 	const button = document.getElementById('submitForm');
     button.disabled = true;
@@ -176,13 +249,12 @@ async function guardarRemision(){
 		detalles.push(detalle) 
 	}
 	const remision = {
-		idOpIa: idOpSelected,
+		idOpIa: selectedOp.idOpIa,
 		idUsuario: idUsuario,
 		observaciones: observaciones,
 		detalles: detalles
 	}
 	
-	console.log(remision)
 	
 	try{
 		const request = await fetch(`/almacen/remisiones`,{
@@ -204,7 +276,6 @@ async function guardarRemision(){
 		console.log(error)
 	}finally{
 		spinner.setAttribute('hidden', '')
-		button.disabled = false
 		}
 }
 
@@ -225,7 +296,6 @@ function mostrarAlert(mensaje, tipo){
 
 function checkAndShowAlert() {
     const alertData = localStorage.getItem('alertMessage')
-    console.log(alertData)
     if (alertData) {
         const { message, type } = JSON.parse(alertData)
         mostrarAlert(message, type);

@@ -102,7 +102,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "FROM      items_op AS io "
 			+ "INNER JOIN view_orden_pv AS v ON io.id_op_ia = v.id_op_ia "
 			+ "WHERE   (v.id_est_doc = 1 AND io.cant_cumplida <= io.cant_req) "
-			+ "OR      (v.id_est_doc = 2 AND io.cant_cumplida <= io.cant_req)", nativeQuery = true)
+			+ "OR      (v.id_est_doc = 2 AND io.cant_cumplida <= io.cant_req) "
+			+ "ORDER BY v.Num_Op DESC", nativeQuery = true)
 	List<OpConItemPendientePorRemision> buscarOpActivasConItemsPendientesPorEntregar();
 
 	@Query(value = "SELECT   io.item_id, io.id_op_ia, io.Item_fab_Id, io.grupo, io.marca, io.codigo_erp, io.descripcion, io.peso_unitario, "

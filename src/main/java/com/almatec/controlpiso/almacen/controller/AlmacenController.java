@@ -133,7 +133,12 @@ public class AlmacenController {
 		modelo.addAttribute("ops", ops);
 		return "almacen/formulario-remision";
 	}
-
+	
+	@GetMapping("/remisiones/ops")
+    public ResponseEntity<List<OpConItemPendientePorRemision>> obtenerOps() {
+        List<OpConItemPendientePorRemision> ops = almacenService.obtenerOpActivasConItemsPendientesPorEntregar();
+        return ResponseEntity.ok(ops);
+    }
 	
 	@GetMapping("/remisiones/{idOpIa}")
 	public ResponseEntity<List<ItemOp>> obtenerItemsARemisionar(@PathVariable Integer idOpIa){		

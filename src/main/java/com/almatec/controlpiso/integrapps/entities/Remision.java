@@ -113,12 +113,12 @@ public class Remision {
 		this.usuarioCreaRemision = usuarioCreaRemision;
 	}
 
-	/*@Override
+	@Override
 	public String toString() {
 		return "Remision [idRemision=" + idRemision + ", idOpIa=" + idOpIa + ", observaciones=" + observaciones
 				+ ", notas=" + notas + ", usuarioCreaRemision=" + usuarioCreaRemision + ", fechaCreacion="
-				+ fechaCreacion + ", detalles=" + detalles + "]";
-	}*/
+				+ fechaCreacion +  "]";
+	}
 	
 	
 	
