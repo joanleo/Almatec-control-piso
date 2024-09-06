@@ -1,11 +1,9 @@
 package com.almatec.controlpiso.comunicador.services;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
-import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;

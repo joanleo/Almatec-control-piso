@@ -40,64 +40,80 @@ function fillTableDetalleMemo(detallesMemo){
 	let tbody = document.getElementById('body-detalle-memo')
 	tbody.innerHTML = ''
 	
-	detallesMemo.forEach(detalle=>{
-		let row = document.createElement('tr')
+	if (detallesMemo && detallesMemo.length > 0) {
+		detallesMemo.forEach(detalle=>{
+			let row = document.createElement('tr')
+			
+			let cellItem = document.createElement('td')
+			cellItem.textContent = detalle.itemOp.id
+			row.appendChild(cellItem)
+			
+			let cellDescripcion = document.createElement('td')
+			cellDescripcion.textContent = detalle.itemOp.descripcion
+			row.appendChild(cellDescripcion)
+			
+			let cellCant = document.createElement('td')
+			cellCant.textContent = detalle.cantidad
+			row.appendChild(cellCant)
+			
+			let cellAccion = document.createElement('td')
+			cellAccion.textContent = detalle.operacion
+			row.appendChild(cellAccion)
+			
+			tbody.appendChild(row)
+		})
 		
-		let cellItem = document.createElement('td')
-		cellItem.textContent = detalle.itemOp.id
-		row.appendChild(cellItem)
+		const observacion = document.getElementById('observaciones');
+        observacion.value = detallesMemo[0].observacion || '';
+        document.getElementById('obsContainer').removeAttribute('hidden');
 		
-		let cellDescripcion = document.createElement('td')
-		cellDescripcion.textContent = detalle.itemOp.descripcion
-		row.appendChild(cellDescripcion)
-		
-		let cellCant = document.createElement('td')
-		cellCant.textContent = detalle.cantidad
-		row.appendChild(cellCant)
-		
-		let cellAccion = document.createElement('td')
-		cellAccion.textContent = detalle.operacion
-		row.appendChild(cellAccion)
-		
-		tbody.appendChild(row)
-	})	
+	}else {
+        let row = document.createElement('tr');
+        let cell = document.createElement('td');
+        cell.colSpan = 4;
+        cell.textContent = 'No hay detalles disponibles para este memo.';
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        
+        document.getElementById('obsContainer').setAttribute('hidden', '');
+    }
+    
+    spinner.setAttribute('hidden', '');
 	
-	const observacion = document.getElementById('observaciones')
-	observacion.value = detallesMemo[0].observacion
-	document.getElementById('obsContainer').removeAttribute('hidden')
-	spinner.setAttribute('hidden', '')
 	
 }
 
 async function aprobarMemo(){
-	spinner.removeAttribute('hidden')
-	try{
-		console.log(idMemoSelected)
-		const response = await fetch(`/ingenieria/memos/${idMemoSelected}/aprobar-memo`,{
-			method: 'POST',
-			headers:{
-				'Content-Type': 'application/json'
-			}
-		})
-		
-	    if(!response.ok){
-			console.log(response)
-			mostrarAlert(response.message, 'danger')
-			throw new Error(response.message)
-		}
-		const memo = await response.json()
-		
-		localStorage.setItem('alertMessage', JSON.stringify({
+    setAprobarButtonState(true);
+    spinner.removeAttribute('hidden');
+    try {
+        console.log(idMemoSelected);
+        const response = await fetch(`/ingenieria/memos/${idMemoSelected}/aprobar-memo`, {
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if(!response.ok){
+            const errorData = await response.json();
+            mostrarAlert(errorData.message || 'Error al aprobar el memo', 'danger');
+            throw new Error(errorData.message || 'Error al aprobar el memo');
+        }
+        const memo = await response.json();
+        
+        localStorage.setItem('alertMessage', JSON.stringify({
             message: `Se aprobó con éxito el memorando M-${memo.id}`,
             type: 'success'
-        }))
+        }));
         
-        window.location.reload()
-	}catch (error){
-		console.error('Ocuriio un error al tratar de aprobar el memo:', error)
-	}finally{
-		spinner.setAttribute('hidden', '')
-	}
+        window.location.reload();
+    } catch (error) {
+        console.error('Ocurrió un error al tratar de aprobar el memo:', error);
+        setAprobarButtonState(false);  // Re-enable the button in case of error
+    } finally {
+        spinner.setAttribute('hidden', '');
+    }
 }
 
 function mostrarAlert(mensaje, tipo){
@@ -122,3 +138,11 @@ function checkAndShowAlert() {
 }
 
 document.addEventListener('DOMContentLoaded', checkAndShowAlert)
+
+function setAprobarButtonState(disabled) {
+    const aprobarButton = document.querySelector('button[onclick="aprobarMemo()"]');
+    if (aprobarButton) {
+        aprobarButton.disabled = disabled;
+        aprobarButton.textContent = disabled ? 'Aprobando...' : 'Aprobar Memo';
+    }
+}

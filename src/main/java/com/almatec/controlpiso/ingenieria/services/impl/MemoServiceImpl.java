@@ -3,11 +3,11 @@ package com.almatec.controlpiso.ingenieria.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,20 +27,27 @@ import com.almatec.controlpiso.security.services.UsuarioService;
 @Transactional
 public class MemoServiceImpl implements MemoService {
 	
-	@Autowired
-	private MemoRepository memoRepo;
+	private final MemoRepository memoRepo;
+	private final UsuarioService usuarioService;
+	private final ItemOpRepository itemOpRepo;
+
+	public MemoServiceImpl(MemoRepository memoRepo, 
+			UsuarioService usuarioService, 
+			ItemOpRepository itemOpRepo) {
+		super();
+		this.memoRepo = memoRepo;
+		this.usuarioService = usuarioService;
+		this.itemOpRepo = itemOpRepo;
+		
+	}
 	
-	@Autowired
-	private UsuarioService usuarioService;
-	
-	@Autowired
-	private ItemOpRepository itemOpRepo;
+
 
 	@Transactional
 	@Override
 	public MemoDTO guardarMemo(MemoDTO memoDTO) {
+		ModelMapper mapper = new ModelMapper();
 		try {
-			ModelMapper mapper = new ModelMapper();
 			Usuario usuario = usuarioService.buscarUsuarioPorId(memoDTO.getIdUsuario());
 			Memo memo = mapper.map(memoDTO, Memo.class);
 			List<MemoDetalle> detalles = memoDTO.getDetalles().stream()
@@ -94,31 +101,36 @@ public class MemoServiceImpl implements MemoService {
 	@Override
 	public MemoDTO aprobarMemo(Long idMemo, Usuario usuarioAprueba) {
 		ModelMapper mapper = new ModelMapper();
-		Memo memo = memoRepo.findById(idMemo).orElseThrow();
+		Memo memo = memoRepo.findById(idMemo).orElseThrow(() -> new EntityNotFoundException("Memo no encontrado con ID: " + idMemo));
 		memo.setIdEstado(1);
 		memo.setUsuarioAprueba(usuarioAprueba);
 		memo = memoRepo.saveAndFlush(memo);
-		PropertyMap<Memo, MemoDTO> memoMap = new PropertyMap<Memo, MemoDTO>() {				
-			@Override
-			protected void configure() {
-				map().setIdUsuario(source.getUsuarioCrea().getId());
-				map().setId(source.getId());
-			}
-		};
-		mapper.addMappings(memoMap);
-		
-		memo.getDetalles().forEach(detalle->{
-			ItemOp item = detalle.getItemOp();
-			if(detalle.getOperacion().equalsIgnoreCase("adicionar")) {
-				item.setCant(item.getCant() + detalle.getCantidad());					
-			}
-			if(detalle.getOperacion().equalsIgnoreCase("restar")) {
-				item.setCant(item.getCant() - detalle.getCantidad());					
-			}
-			itemOpRepo.save(item);
-		});
+		actualizarCantItemOp(memo);
 
-		return mapper.map(memo, MemoDTO.class);
+		PropertyMap<Memo, MemoDTO> memoMap = new PropertyMap<Memo, MemoDTO>() {
+            @Override
+            protected void configure() {
+                map().setIdUsuario(source.getUsuarioCrea().getId());
+                map().setId(source.getId());
+            }
+        };
+        mapper.addMappings(memoMap);
+        return mapper.map(memo, MemoDTO.class);
+	}
+
+	private void actualizarCantItemOp(Memo memo) {
+		for (MemoDetalle detalle : memo.getDetalles()) {
+            ItemOp item = detalle.getItemOp();
+            //Double cantidadOriginal = item.getCant();
+            
+            if ("adicionar".equalsIgnoreCase(detalle.getOperacion())) {
+                item.setCant(item.getCant() + detalle.getCantidad());
+            } else if ("restar".equalsIgnoreCase(detalle.getOperacion())) {
+                item.setCant(item.getCant() - detalle.getCantidad());
+            }
+            
+            itemOpRepo.save(item);
+        }
 	}
 
 	@Override

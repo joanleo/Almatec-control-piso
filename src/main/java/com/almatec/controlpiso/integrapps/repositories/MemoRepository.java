@@ -22,7 +22,8 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
 			+ "view_orden_pv ON memos.id_op_ia = view_orden_pv.id_op_ia "
 			+ "INNER JOIN web_usuarios "
 			+ "ON memos.id_usuario_crea = web_usuarios.usu_id "
-			+ "WHERE memos.id_estado = 0", nativeQuery = true)
+			+ "WHERE memos.id_estado = 0 "
+			+ "ORDER BY memos.id_memo DESC", nativeQuery = true)
 	List<MemoWithOP> findByIdEstadoSinAprobar();
 
 	@Query(value = "SELECT   memos.id_memo AS IdMemo, memos.fecha_creacion AS FechaCreacion, "

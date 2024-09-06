@@ -2,6 +2,7 @@ let itemsOp
 let opSelected
 const spinner = document.getElementById('spinner');
 
+
 document.getElementById('id-op').addEventListener('change', async function () {
 	if (this.value !== '') { 
 		const idOP = this.options[this.selectedIndex].value
@@ -41,14 +42,7 @@ function showSelect(listaItems){
 	spanElement.classList.add("input-group-text")
 	spanElement.textContent = "Items:"
 	divGroup.appendChild(spanElement)
-	
-	/*const selectElement = document.createElement('select')
-	selectElement.classList.add("form-control")
-	selectElement.setAttribute('id', 'idItem')
-	selectElement.setAttribute('name', 'itemOp')
-	selectElement.setAttribute('required', '')
-	selectElement.addEventListener('change',fillTableItems)*/
-	
+		
 	let inputElement = document.createElement("input");
     inputElement.setAttribute("type", "text");
     inputElement.setAttribute("id", "item-selected");
@@ -58,12 +52,6 @@ function showSelect(listaItems){
 	let dataListElement= document.createElement('datalist')
 	dataListElement.setAttribute('id', 'itemsOp')
 	
-	/*const option = document.createElement('option')
-	option.textContent = "Selecciona el item a agregar"
-	option.setAttribute("disabled", "")
-	option.setAttribute("selected", "")
-	option.setAttribute("hidden", "")
-	selectElement.appendChild(option)*/
 	listaItems.forEach(item => {
 	    const option = document.createElement('option')
 	    option.textContent = item.descripcion
@@ -91,21 +79,8 @@ function showSelect(listaItems){
         	
 	
 	divGroup.appendChild(inputElement)
-	//divGroup.appendChild(dataList)
-	
-	/*let divButton = document.createElement("div")
-	
-	let button = document.createElement("button")
-	button.classList.add("btn", "btn-primary")
-	button.setAttribute("type", "button")
-	button.onclick = agregarItem
-	button.textContent = "Nuevo Item"
-	divButton.appendChild(button)*/
-	
-	
 	
 	divContent.appendChild(divGroup)
-	//divContent.appendChild(divButton)
 }
 
 function agregarItem(){
@@ -174,52 +149,85 @@ function eliminarFila(event){
 }
 
 document.getElementById("memoForm").addEventListener('submit', function(event){
-	event.preventDefault()
-	crearMemo()
+	event.preventDefault();
+	if (validarItems()) {
+	    const submitButton = document.getElementById("submitMemo");
+	    submitButton.disabled = true;
+	    submitButton.textContent = "Creando memorando...";
+	    crearMemo();
+	} else {
+	    mostrarModal('Por favor, asegúrese de agregar al menos un item con cantidad y acción seleccionadas antes de crear el memorando.');
+	}
 })
 
+function validarItems() {
+    const tbody = document.getElementById("body-detalle-memo");
+    const rows = tbody.querySelectorAll('tr');
+    
+    if (rows.length === 0) {
+        return false;
+    }
+    
+    for (let row of rows) {
+        const cantidad = row.cells[3].querySelector('input').value;
+        const accion = row.cells[4].querySelector('select').value;
+        
+        if (cantidad === '' || accion === '') {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
 async function crearMemo(){
-	spinner.removeAttribute('hidden')
-	console.log("Creando memo")
-	const idUsuario = document.getElementById('usuarioId').value
-	let tbody = document.getElementById("body-detalle-memo")
-	const rows = tbody.querySelectorAll('tr')
-	let items = []
-	
-	rows.forEach(row=>{
-		const item = {
-			idItemOp: row.cells[0].textContent,
-			cantidad: row.cells[3].querySelector('input').value,
-			operacion: row.cells[4].querySelector('select').value
-		}
-		items.push(item)
-	})
-	const observacion = document.getElementById('observaciones').value
-	
-	const memo = {
-		idOpIntegrapps: opSelected,
-		idUsuario: idUsuario,
-		observacion: observacion,
-		detalles: items
-	}
-	fetch(`/ingenieria/memos`,{
-		method: 'POST',
-		headers: {
-			'Content-type': 'application/json'
-		},
-		body: JSON.stringify(memo)
-	})
-	.then(response=> response.json())
-	.then(data => {
-        console.log(data)
-        const mensaje = `El memorando con el número de documento M-${data.id} se ha creado correctamente.` 
-        mostrarModal(mensaje)
-        //window.location.reload()
-        })
-	.catch(error => {
-        console.error(error)
-    })
-    .finally(spinner.setAttribute('hidden', ''))
+    spinner.removeAttribute('hidden');
+    console.log("Creando memo");
+    const idUsuario = document.getElementById('usuarioId').value;
+    let tbody = document.getElementById("body-detalle-memo");
+    const rows = tbody.querySelectorAll('tr');
+    let items = [];
+    
+    rows.forEach(row=>{
+        const item = {
+            idItemOp: row.cells[0].textContent,
+            cantidad: row.cells[3].querySelector('input').value,
+            operacion: row.cells[4].querySelector('select').value
+        };
+        items.push(item);
+    });
+    const observacion = document.getElementById('observaciones').value;
+    
+    const memo = {
+        idOpIntegrapps: opSelected,
+        idUsuario: idUsuario,
+        observacion: observacion,
+        detalles: items
+    };
+    
+    try {
+        const response = await fetch(`/ingenieria/memos`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(memo)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        console.log(data);
+        const mensaje = `El memorando con el número de documento M-${data.id} se ha creado correctamente.`;
+        mostrarModal(mensaje);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarModal('Hubo un error al crear el memorando. Por favor, intente nuevamente.');
+    } finally {
+        spinner.setAttribute('hidden', '');
+    }
 }
 
 function mostrarModal(mensaje) {
@@ -228,8 +236,10 @@ function mostrarModal(mensaje) {
     const modal = new bootstrap.Modal(document.getElementById('respuestaModal'));
     modal.show();
     
-    document.getElementById('respuestaModal').addEventListener('hidden.bs.modal', function () {
-		spinner.removeAttribute('hidden')
+	if (mensaje.includes('se ha creado correctamente')) {
+        document.getElementById('respuestaModal').addEventListener('hidden.bs.modal', function () {
+            spinner.removeAttribute('hidden');
             window.location.reload();
-            })
+        });
+    }
 }

@@ -2,12 +2,12 @@ package com.almatec.controlpiso.ingenieria.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +17,12 @@ import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
 import com.almatec.controlpiso.ingenieria.services.MemoService;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
-import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.MemoDetalle;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
+import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 import com.almatec.controlpiso.security.entities.Usuario;
-import com.almatec.controlpiso.security.services.UsuarioService;
+import com.almatec.controlpiso.utils.UtilitiesApp;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,16 +34,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/ingenieria/memos")
 public class MemoController {
 	
-	private final UsuarioService usuarioService;
+	private final OrdenPvService ordenPvService;
 	private final ItemOpService itemOpService;
 	private final MemoService memoService;
+	private final UtilitiesApp util;
 	
-	public MemoController(UsuarioService usuarioService, ItemOpService itemOpService,
-			MemoService memoService) {
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	public MemoController(
+			OrdenPvService ordenPvService, 
+			ItemOpService itemOpService,
+			MemoService memoService,
+			UtilitiesApp util) {
 		super();
-		this.usuarioService = usuarioService;
+		this.ordenPvService = ordenPvService;
 		this.itemOpService = itemOpService;
 		this.memoService = memoService;
+		this.util = util;
 	}
 	
 	@GetMapping
@@ -69,9 +77,8 @@ public class MemoController {
 	
 	@GetMapping("/nuevo")
 	public String nuevoMemo(Model modelo) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuarioP = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
-		UsuarioDTO usuario = new UsuarioDTO(usuarioP);
+		
+		Usuario usuario = util.obtenerUsuarioAtenticado();
 		List<ConsultaOpId> numsOps = itemOpService.obtenerNumOps();
 		
 		modelo.addAttribute("usuario", usuario);
@@ -81,10 +88,15 @@ public class MemoController {
 	
 	@PostMapping
 	public ResponseEntity<?> guardarMemos(@RequestBody MemoDTO memoDTO) {
+		Usuario usuario = util.obtenerUsuarioAtenticado();
+		VistaOrdenPv orden = ordenPvService.obtenerOrdenPorId(memoDTO.getIdOpIntegrapps());
 		try {
+			logger.info("Creando memorando para la OP-{}. Usuario {}, rol:{}.", orden.getNumOp() ,usuario.getNombres(), usuario.getRole().getNombre());
 			MemoDTO memoSaved = memoService.guardarMemo(memoDTO);
+			logger.info("Memorando M-{} creado. Usuario {}, rol:{}.",memoSaved.getId(), usuario.getNombres(), usuario.getRole().getNombre());
 			return ResponseEntity.ok(memoSaved);
 		} catch (Exception e) {
+			logger.error("Error al tratar de crear el memorando para la OP-{}. Usuario {}, rol:{}.", orden.getNumOp() ,usuario.getNombres(), usuario.getRole().getNombre());
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
@@ -96,8 +108,7 @@ public class MemoController {
 	
 	@PostMapping("/{idMemo}/aprobar-memo")
 	public ResponseEntity<MemoDTO> aprobarMemo(@PathVariable Long idMemo){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuario = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
+		Usuario usuario = util.obtenerUsuarioAtenticado();
 		return ResponseEntity.ok(memoService.aprobarMemo(idMemo, usuario));
 	}
 	
