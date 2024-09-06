@@ -103,7 +103,7 @@ public class ComercialController {
 		
 		try {		
 			//Se realiza la aprobacion por parte de comercial
-			logger.info("Creando Orden de produccion Papa.");
+			logger.info("Creando orden de produccion IF para el PV-{}. Usuario: {}, Rol: {}.", noPedido, usuario.getNombres(), usuario.getRole().getNombre());
 			List<Conector> opPapa = ordenProduccionPapaService.crearConectoresOpPapa(items);
 			String consecutivo = "IF_PV-" + noPedido;
 			util.guardarRegistroXml(xmlService.crearPlanoXml(opPapa), consecutivo);
@@ -118,15 +118,18 @@ public class ComercialController {
 				datos.put("aprobador", usuario.getNombres());
 				datos.put("ordenProduccion", pedido.getTipoOp() + "-" + pedido.getNumOp());
 				datos.put("fechaAprobacion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+				logger.info("Orden de produccion {}-{} creada. Usuario: {}, Rol: {}.", pedido.getTipoOp(), pedido.getNumOp(), usuario.getNombres(), usuario.getRole().getNombre());
 				mensajeService.enviarEmailAprobacionPedidoVenta(datos);
 				flash.addFlashAttribute("message", "Orden creada exitosamente"); 
 			} else {
+				logger.error("Error al tratar de crear la orden de produccion IF para el PV-{}. Usuario: {}, Rol: {}.", noPedido, usuario.getNombres(), usuario.getRole().getNombre());
 				flash.addFlashAttribute("message", response);
 			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			flash.addAttribute("error", "Error en la generacion del archivo plano de la orden de produccion");
+			logger.error("Error en la generacion del archivo plano/xml para orden de produccion del PV-" + noPedido);
+			flash.addAttribute("error", "Error en la generacion del archivo plano/xml para orden de produccion del PV-" + noPedido);
 		}
 		return "redirect:/comercial";				
 	}
