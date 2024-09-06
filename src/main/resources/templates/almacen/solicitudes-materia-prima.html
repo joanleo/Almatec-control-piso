@@ -121,21 +121,28 @@
 			</div>
 		</div>
 		
+		<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">Confirmar Acción</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de que desea realizar esta acción?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="confirmModalYes">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/almacen/solicitudes-materia-prima.js"></script>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-		<script>
-	        document.addEventListener('DOMContentLoaded', function() {
-	            const form = document.getElementById('reporteForm');
-	            const btnGuardar = document.getElementById('btnGuardar');
 
-	            form.addEventListener('submit', function(event) {
-	                btnGuardar.disabled = true;
-	                btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
-	            });
-	        });
-	    </script>
 	</body>
 </html>

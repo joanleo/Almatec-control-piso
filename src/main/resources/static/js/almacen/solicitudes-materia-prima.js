@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', async function() {
-	console.log("Se cargo el html")
     const filas = document.querySelectorAll('#body-solicitudes-materia-prima tr');
     filas.forEach(function(row) {
 		row.addEventListener('mouseover', function() {
@@ -69,34 +68,90 @@ function llenarTablaDetalle(detalleSolic){
         let cellSolic = document.createElement('td')
         cellSolic.textContent = item.cantSol
         row.appendChild(cellSolic)
-        
-		/*const idSol = item.idSol
-        let cellTransfer = document.createElement('td')
-		let selectButton = document.createElement('button')
-	    selectButton.textContent = 'Tranferir'
-	    selectButton.classList.add('btn', 'btn-primary')
-	    selectButton.addEventListener('click', function(event) {
-			event.preventDefault()
-			console.log("Se hace la solicitud para crear la transferencia")
-			crearTransferencia(idSol)
-		})
-		cellTransfer.appendChild(selectButton)
-		row.appendChild(cellTransfer)*/
-        
+               
         tbody.appendChild(row)        
         
 	})
 }
 
-function rechazarTransferencia(event){
-	event.preventDefault()
-	console.log("Logica cuando se rechaza la transferencia")
+let confirmModalAction = null;
+
+function showConfirmModal(message, action) {
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    document.querySelector('#confirmModal .modal-body').textContent = message;
+    confirmModalAction = action;
+    modal.show();
+}
+
+document.getElementById('confirmModalYes').addEventListener('click', function() {
+    if (confirmModalAction) {
+        confirmModalAction();
+    }
+    bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+});
+
+function rechazarTransferencia(event) {
+    event.preventDefault();
+    const idSol = document.getElementById("noSolSel").value;
+    if (!idSol) {
+        mostrarAlert("Por favor, seleccione una solicitud antes de rechazar.", 'warning');
+        return;
+    }
+
+	showConfirmModal("¿Está seguro de que desea rechazar esta solicitud?", function() {
+        solicitarRechazo(idSol);
+    });
+}
+
+async function solicitarRechazo(idSol) {
+    const spinner = document.getElementById('spinner');
+    spinner.removeAttribute('hidden');
+    
+    const btnTransferir = document.getElementById('btn-tranferir');
+    const btnRechazar = document.getElementById('btn-rechazar');
+    btnTransferir.disabled = true;
+    btnRechazar.disabled = true;
+    btnRechazar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Rechazando...';
+    
+    try {
+        const response = await fetch(`/almacen/solicitudes/${idSol}/rechazar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al rechazar la solicitud');
+        }
+
+        mostrarAlert('Solicitud rechazada', 'success');
+        // Refresh the page or update the UI as needed
+        setTimeout(() => window.location.reload(), 2000);
+        
+    } catch (error) {
+        console.error('Ocurrió un error al rechazar la solicitud:', error);
+        mostrarAlert('Ocurrió un error al rechazar la solicitud. Por favor, intente nuevamente.', 'danger');
+    } finally {
+        spinner.setAttribute('hidden', '');
+
+    }
 }
 
 function crearTransferencia(event){
 	event.preventDefault()
 	const idSol = document.getElementById("noSolSel").value 
 	console.log(idSol)
+	if (!idSol) {
+        mostrarAlert("Por favor, seleccione una solicitud antes de transferir.", 'warning');
+        return;
+    }
+	const detalleBody = document.getElementById("body-detalle-materia-prima");
+    if (detalleBody.children.length === 0) {
+        mostrarAlert("La solicitud debe tener al menos un ítem para poder transferir.", 'warning');
+        return;
+    }
 	console.log("Se hace la solicitud para crear la transferencia")
 	solicitarTransferencia(idSol)
 	
@@ -133,6 +188,7 @@ async function solicitarTransferencia(idSol){
 		
 	}catch(error){
 		console.error('Ocuriio un error al tratar de crear la transferencia:', error)
+		mostrarAlert('Ocurrió un error al crear la transferencia. Por favor, intente nuevamente.', 'danger')
 		
 	}finally{
 		spinner.setAttribute('hidden', '')		
@@ -160,6 +216,6 @@ function mostrarAlert(mensaje, tipo){
 
         document.body.appendChild(alertElement)
         
-        //setTimeout(() => alertElement.remove(), 5000)
+        setTimeout(() => alertElement.remove(), 7000)
 }
 

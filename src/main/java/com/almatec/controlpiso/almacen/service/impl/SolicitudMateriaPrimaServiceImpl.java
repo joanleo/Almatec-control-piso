@@ -113,9 +113,17 @@ public class SolicitudMateriaPrimaServiceImpl implements SolicitudMateriaPrimaSe
 		try {
 			return solicitudMateriaPrimaRepo.obtenerIdctErp(idCentroTrabajo);
 		}catch (Exception e) {
-			System.err.println(e.toString());// TODO: handle exception
+			System.err.println(e.toString());
 		}
 		return null;
 	}
+
+	@Override
+	public void rechazarSolicitud(Integer idSol) {
+        SolicitudMateriaPrima solicitud = solicitudMateriaPrimaRepo.findById(idSol)
+            .orElseThrow(() -> new ResourceNotFoundException("No se encontró Solicitud con id: " + idSol));
+        solicitud.setIdEstado(2); 
+        solicitudMateriaPrimaRepo.save(solicitud);
+    }
 
 }

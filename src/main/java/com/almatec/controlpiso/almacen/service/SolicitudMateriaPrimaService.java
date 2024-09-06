@@ -21,4 +21,6 @@ public interface SolicitudMateriaPrimaService {
 
 	String obtenerIdctErp(Integer idCentroTrabajo);
 
+	void rechazarSolicitud(Integer idSol);
+
 }

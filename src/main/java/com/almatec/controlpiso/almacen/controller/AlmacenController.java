@@ -39,6 +39,7 @@ import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.impl.AlmacenService;
 import com.almatec.controlpiso.almacen.util.RemisionPdfService;
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
+import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
@@ -90,6 +91,19 @@ public class AlmacenController {
 		return ResponseEntity.ok(detalleSolicitud);
 	}
 	
+	@PostMapping("/solicitudes/{idSol}/rechazar")
+    public ResponseEntity<?> rechazarSolicitud(@PathVariable Integer idSol) {
+        try {
+            solicitudMateriaPrimaService.rechazarSolicitud(idSol);
+            return ResponseEntity.ok().body("Solicitud rechazada exitosamente");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error al rechazar la solicitud", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al rechazar la solicitud: " + e.getMessage());
+        }
+    }
+	
 	@GetMapping("/remisiones")
 	public String ListarRemisiones(Model modelo,
 			@RequestParam(defaultValue = "0") int page,
@@ -119,6 +133,7 @@ public class AlmacenController {
 		modelo.addAttribute("ops", ops);
 		return "almacen/formulario-remision";
 	}
+
 	
 	@GetMapping("/remisiones/{idOpIa}")
 	public ResponseEntity<List<ItemOp>> obtenerItemsARemisionar(@PathVariable Integer idOpIa){		
