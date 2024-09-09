@@ -58,12 +58,14 @@ const fillTableOrders = (listOrders) => {
 };
 
 const getStatusClass = (estado) => {
+	console.log(estado)
     switch(estado) {
         case "Cumplido": return "finished__badge";
         case "Aprobado": return "approved__badge";
-        default: return "user__badge";
+		case "Anulado": return "canceled__badge"
+        default: return "in_preparation__badge";
     }
-};
+}
 
 async function getOrders(filtro, page, size, sortField, sortDirection) {
     const response = await fetch(`/comercial/pedidos/filtrar?page=${page}&size=${size}&sort=${sortField}&order=${sortDirection}`, {

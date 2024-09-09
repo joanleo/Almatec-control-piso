@@ -173,12 +173,26 @@ footer {
   font-weight: 500;
 }
 
-.user__badge {
+.in_preparation__badge {
   width: max-content;
   background: #f8ffdc;
   border-radius: 6px;
   border: 1px solid #EAA90F;
   color: #EAA90F;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+.canceled__badge {
+  width: max-content;
+  background: #fee2e2;
+  border-radius: 6px;
+  border: 1px solid #b91c1c;
+  color: #b91c1c;
   padding: 4px 12px;
   display: flex;
   align-items: center;

@@ -66,7 +66,8 @@ const getStatusClass = (estado) => {
     switch(estado) {
         case "Cumplido": return "finished__badge";
         case "Aprobado": return "approved__badge";
-        default: return "user__badge";
+		case "Anulado": return "canceled__badge"
+        default: return "in_preparation__badge";
     }
 }
 
