@@ -5,5 +5,5 @@ import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 
 public interface ConectorItemService {
 
-	ItemsVersion05 crearConectorItemEntrega(VistaOrdenPv ordenIntegrapps);
+	ItemsVersion05 crearConectorItemEntrega(VistaOrdenPv ordenIntegrapps, VistaOrdenPv ordenPapa);
 }

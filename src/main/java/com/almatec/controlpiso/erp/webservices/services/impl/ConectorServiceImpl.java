@@ -50,7 +50,8 @@ public class ConectorServiceImpl implements ConectorService {
 	@Override
 	public ItemsVersion05 crearConectorItem(Integer idOPI) {
 		VistaOrdenPv ordenIntegrapps = ordenPvService.obtenerOrdenPorId(idOPI);
-		ItemsVersion05 item = conectorItemService.crearConectorItemEntrega(ordenIntegrapps);
+		VistaOrdenPv ordenPapa = ordenPvService.obtenerOrdenPorId(ordenIntegrapps.getIdPadre());
+		ItemsVersion05 item = conectorItemService.crearConectorItemEntrega(ordenIntegrapps, ordenPapa);
 		return item;
 	}
 

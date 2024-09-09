@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.ConfigurationService;
 import com.almatec.controlpiso.erp.webservices.generated.ItemsVersion05;
+import com.almatec.controlpiso.erp.webservices.interfaces.TipoServicioYGrupoImpositivo;
 import com.almatec.controlpiso.erp.webservices.services.ConectorItemService;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.utils.UtilitiesApp;
@@ -25,7 +26,7 @@ public class ConectorItemServiceImpl implements ConectorItemService {
 	}
 
 	@Override
-	public ItemsVersion05 crearConectorItemEntrega(VistaOrdenPv ordenIntegrapps) {
+	public ItemsVersion05 crearConectorItemEntrega(VistaOrdenPv ordenOPHijo, VistaOrdenPv ordenIFPapa) {
 		ItemsVersion05 item = new ItemsVersion05();
 		item.setF_cia(configService.getCIA());
 		item.setF_actualiza_reg(0);
@@ -34,12 +35,14 @@ public class ConectorItemServiceImpl implements ConectorItemService {
 		item.setF120_id(id);
 		String stringId = String.valueOf(id);
 		item.setF120_referencia("0" + stringId);
-		if (!ordenIntegrapps.getZona().isEmpty() && ordenIntegrapps.getZona().length() > 0) {
-			item.setF120_descripcion(ordenIntegrapps.getObservaciones());
-			item.setF120_descripcion_corta(ordenIntegrapps.getObservaciones());
+		if (!ordenOPHijo.getZona().isEmpty() && ordenOPHijo.getZona().length() > 0) {
+			item.setF120_descripcion(ordenOPHijo.getObservaciones());
+			item.setF120_descripcion_corta(ordenOPHijo.getObservaciones());
 		}
-		item.setF120_id_grupo_impositivo(configService.getGRUPO_IMPOSITIVO());
-		item.setF120_id_tipo_inv_serv(configService.getTIPO_SERVICIO());
+		Integer itemIFId =  listaMaterialService.obtenerItemOp(ordenIFPapa);
+		TipoServicioYGrupoImpositivo dataTipoYGrupo = listaMaterialService.obtenerTipoServicioYGrupoImpositivoItem(itemIFId);
+		item.setF120_id_grupo_impositivo(dataTipoYGrupo.getGrupoImpositivo());
+		item.setF120_id_tipo_inv_serv(dataTipoYGrupo.getTipoServicio());
 		item.setF120_ind_tipo_item(1);
 		item.setF120_ind_compra(0);
 		item.setF120_ind_venta(0);

@@ -34,9 +34,7 @@ public class ConfigurationService {
     private String MOTIVO_TRANSFERENCIA;
     private String MOTIVO_CONSUMO;
     private String MOTIVO_ENTREGA;
-    private String GRUPO_IMPOSITIVO;
     private String PLANIFICADOR;
-    private String TIPO_SERVICIO;
 
     public ConfigurationService(ParametroService parametroService) {
         this.parametroService = parametroService;
@@ -69,9 +67,7 @@ public class ConfigurationService {
         acciones.put("motivo transferencia", parametro -> this.MOTIVO_TRANSFERENCIA = parametro.getValor());
         acciones.put("motivo consumo", parametro -> this.MOTIVO_CONSUMO = parametro.getValor());
         acciones.put("motivo entrega", parametro -> this.MOTIVO_ENTREGA = parametro.getValor());
-        acciones.put("grupo impositivo", parametro -> this.GRUPO_IMPOSITIVO = parametro.getValor());
         acciones.put("planificador", parametro -> this.PLANIFICADOR = parametro.getValor());
-        acciones.put("tipo servicio", parametro -> this.TIPO_SERVICIO = parametro.getValor());
 
         List<Parametro> parametros = parametroService.obtenerParametros();
         parametros.forEach(parametro -> acciones.entrySet().stream()
@@ -156,15 +152,9 @@ public class ConfigurationService {
         return MOTIVO_ENTREGA;
     }
 
-    public String getGRUPO_IMPOSITIVO() {
-        return GRUPO_IMPOSITIVO;
-    }
 
     public String getPLANIFICADOR() {
         return PLANIFICADOR;
     }
 
-    public String getTIPO_SERVICIO() {
-        return TIPO_SERVICIO;
-    }
 }

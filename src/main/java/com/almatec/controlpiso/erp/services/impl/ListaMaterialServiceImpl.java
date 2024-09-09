@@ -15,6 +15,8 @@ import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.repositories.ListaMaterialRepository;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
+import com.almatec.controlpiso.erp.webservices.interfaces.TipoServicioYGrupoImpositivo;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 
 @Service
 public class ListaMaterialServiceImpl implements ListaMaterialService {
@@ -74,9 +76,9 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 	}
 
 	@Override
-	public Integer obtenerItemOp(Integer numOp) {
+	public Integer obtenerItemOp(VistaOrdenPv ordenIFPapa) {
 		
-		return listaMaterialRepo.obtenerItemOp(numOp);
+		return listaMaterialRepo.obtenerItemOp(ordenIFPapa);
 	}
 
 	@Override
@@ -89,5 +91,10 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 	public List<TarifaCostosSegmentoItem> obtenerCostosSegmentos(String ref) {
 		List<TarifaCostosSegmentoItem>  costos =listaMaterialRepo.encontrarCostosSegmentosItemPorRef(ref);
 		return costos;
+	}
+
+	@Override
+	public TipoServicioYGrupoImpositivo obtenerTipoServicioYGrupoImpositivoItem(Integer itemIFId) {
+		return listaMaterialRepo.encontrarTipoServicioYGrupoImpositivoItem(itemIFId);
 	}
 }

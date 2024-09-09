@@ -10,6 +10,8 @@ import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
 import com.almatec.controlpiso.erp.interfaces.RutaInterface;
 import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
+import com.almatec.controlpiso.erp.webservices.interfaces.TipoServicioYGrupoImpositivo;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 
 public interface ListaMaterialService {
 	
@@ -29,10 +31,12 @@ public interface ListaMaterialService {
 
 	DataTEP obtenerDataTEP(String idRuta, String idCentroTrabajo);
 
-	Integer obtenerItemOp(Integer numOp);
+	Integer obtenerItemOp(VistaOrdenPv ordenIFPapa);
 
 	DataCostoStandarInterface obtenerCostoStandar(Integer f820_id_hijo);
 
 	List<TarifaCostosSegmentoItem> obtenerCostosSegmentos(String ref);
+
+	TipoServicioYGrupoImpositivo obtenerTipoServicioYGrupoImpositivoItem(Integer itemIFId);
 
 }

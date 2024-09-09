@@ -14,6 +14,8 @@ import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
 import com.almatec.controlpiso.erp.interfaces.RutaInterface;
 import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
+import com.almatec.controlpiso.erp.webservices.interfaces.TipoServicioYGrupoImpositivo;
+import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 
 public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, Integer> {
 
@@ -103,8 +105,9 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 			+ "INNER JOIN t121_mc_items_extensiones "
 			+ "ON t851_mf_op_docto_item.f851_rowid_item_ext_padre = t121_mc_items_extensiones.f121_rowid "
 			+ "INNER JOIN t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = t120_mc_items.f120_rowid "
-			+ "WHERE   (t850_mf_op_docto.f850_consec_docto = :numOp)", nativeQuery = true)
-	Integer obtenerItemOp(@Param("numOp") Integer numOp);
+			+ "WHERE   (t850_mf_op_docto.f850_consec_docto = :#{#ordenIFPapa.numOp}) "
+			+ "AND t850_mf_op_docto.f850_id_tipo_docto = :#{#ordenIFPapa.tipoOp} ", nativeQuery = true)
+	Integer obtenerItemOp(@Param("ordenIFPapa") VistaOrdenPv ordenIFPapa);
 
 	@Query(value = "SELECT t.IdItem, SUM(t.CostoStandar) AS TotalCostoStandar, SUM(t.costo_previo) AS TotalCostoPrevio "
 			+ "FROM ("
@@ -146,6 +149,17 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 			+ "			t808_mf_rutas.f808_id, "
 			+ "			t804_mf_segmentos_costos.f804_id", nativeQuery = true)
 	List<TarifaCostosSegmentoItem> encontrarCostosSegmentosItemPorRef(@Param("ref")String ref);
+
+	@Query(value = "SELECT f120_id_tipo_inv_serv AS TipoServicio, f120_id_grupo_impositivo AS GrupoImpositivo "
+			+ "FROM      t850_mf_op_docto "
+			+ "INNER JOIN t851_mf_op_docto_item "
+			+ "ON t850_mf_op_docto.f850_rowid = t851_mf_op_docto_item.f851_rowid_op_docto "
+			+ "INNER JOIN t121_mc_items_extensiones "
+			+ "ON t851_mf_op_docto_item.f851_rowid_item_ext_padre = t121_mc_items_extensiones.f121_rowid "
+			+ "INNER JOIN t120_mc_items "
+			+ "ON t121_mc_items_extensiones.f121_rowid_item = t120_mc_items.f120_rowid "
+			+ "WHERE   (t850_mf_op_docto.f850_id_cia = 22) AND (t120_mc_items.f120_id = :itemIFId)", nativeQuery = true)
+	TipoServicioYGrupoImpositivo encontrarTipoServicioYGrupoImpositivoItem(@Param("itemIFId")Integer itemIFId);
 
 
 }
