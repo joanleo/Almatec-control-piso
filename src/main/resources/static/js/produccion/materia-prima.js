@@ -167,8 +167,7 @@ function fillTableDisponible(items) {
             let codigo = item.idItem
             let descripcion = item.descripcionItem
             let um = item.um
-            let bodega = item.bodega
-            let lote = item.lote
+           let lote = item.lote
             let disponible = item.disponible
             const idBodega = item.idBodega
 
@@ -215,12 +214,36 @@ function enviarSolicitud() {
     }
 
     let hasValidQuantity = false;
+	let loteTotals = {};
+    let loteAvailable = {};
     for (const row of detalleRows) {
         const cantSolInput = row.querySelector('input[type="number"]');
-        if (cantSolInput && parseFloat(cantSolInput.value) > 0) {
+		const lote = row.cells[4].textContent;
+        const cantSol = parseFloat(cantSolInput.value) || 0;
+        const disponible = parseFloat(row.cells[5].textContent);
+				
+        if (cantSolInput > 0) {
             hasValidQuantity = true;
-            break;
         }
+		
+		if (!loteTotals[lote]) {
+            loteTotals[lote] = 0;
+            loteAvailable[lote] = disponible;
+        }
+        loteTotals[lote] += cantSol;
+    }
+	
+	let hasExceededQuantity = false;
+    for (const lote in loteTotals) {
+        if (loteTotals[lote] > loteAvailable[lote]) {
+            hasExceededQuantity = true;
+            mostrarAlert(`La cantidad total solicitada (${loteTotals[lote]}) excede la disponible (${loteAvailable[lote]}) para el lote ${lote}`, 'warning');
+        }
+    }
+	
+	if (hasExceededQuantity) {
+        mostrarAlert('No se puede procesar la solicitud. Algunas cantidades exceden lo disponible.', 'warning');
+        return;
     }
 
     if (!hasValidQuantity) {
