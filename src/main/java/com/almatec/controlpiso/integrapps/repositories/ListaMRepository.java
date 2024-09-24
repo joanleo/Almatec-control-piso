@@ -23,7 +23,7 @@ public interface ListaMRepository extends JpaRepository<ListaM, Integer> {
 			+ "ON Lista_MP_Ops.id_op_ia = orden_pv.id_op_ia "
 			+ "INNER JOIN UnoEE_Prueba.dbo.t850_mf_op_docto "
 			+ "ON orden_pv.Row850_id = UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid "
-			+ "WHERE Lista_MP_Ops.id_op_ia = :idOP "
+			+ "WHERE (Lista_MP_Ops.id_op_ia = :idOP AND Lista_MP_Ops.Cod_Erp <> 0 AND Lista_MP_Ops.Cant_Req_Ini > 0) "
 			+ "AND ((UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
 			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2))", nativeQuery = true)
 	List<ListaMInterface> ObtenerListaInterdacePorIdOp(@Param("idOP") Integer idOP);
