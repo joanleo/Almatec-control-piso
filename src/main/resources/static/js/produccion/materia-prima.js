@@ -203,10 +203,11 @@ function eliminarFila(button){
 }
 
 
-document.getElementById("submitForm").addEventListener('submit', function(event){
-event.preventDefault()})
+//document.getElementById("submitForm").addEventListener('submit', function(event){
+//event.preventDefault()})
 
 function enviarSolicitud() {
+	event.preventDefault()
 	const detalleRows = document.querySelectorAll('#detalle-solicitud tr');
     if (detalleRows.length === 0) {
         mostrarAlert('Debe agregar al menos un item a la solicitud antes de enviarla.', 'warning');
@@ -221,8 +222,8 @@ function enviarSolicitud() {
 		const lote = row.cells[4].textContent;
         const cantSol = parseFloat(cantSolInput.value) || 0;
         const disponible = parseFloat(row.cells[5].textContent);
-				
-        if (cantSolInput > 0) {
+		console.log(cantSol)
+        if (cantSol > 0) {
             hasValidQuantity = true;
         }
 		
@@ -298,6 +299,9 @@ function enviarSolicitud() {
     .then(data => {
         console.log(data)
 		mostrarAlert(data.mensaje, 'success')
+		setTimeout(() => {
+		            window.location.reload();
+		        }, 2000);
     })
     .catch(error => {
         console.error(error)
