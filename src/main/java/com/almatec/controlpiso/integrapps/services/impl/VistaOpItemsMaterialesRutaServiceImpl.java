@@ -208,7 +208,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 
 	    for (VistaOpItemsMaterialesRuta item : items) {
 	        // Usar una clave que represente únicamente cada item
-	        String key = item.getOp() + "_" + item.getItem_id() + "_" + item.getCantReq();
+	        String key = item.getOp() + "_" + item.getItem_id() + "_" + item.getMarca() + "_"  + item.getCantReq();
 	        
 	        if (!groupedItems.containsKey(key)) {
 	            groupedItems.put(key, item);

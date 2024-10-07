@@ -194,7 +194,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
 		    ItemOpCtDTO item = op.getItems().get(0);
 		    String descripcion = null;
-		    BigDecimal cant = BigDecimal.ZERO;
+		    Integer cant = 0;
 		    String centroTrabajo = null;
 		    Integer idItemFab = 0;
 		    Integer idParte = 0;

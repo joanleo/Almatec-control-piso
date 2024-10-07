@@ -10,9 +10,9 @@ public class ItemOpDatable {
 	private Long itemId;
 	private String marca;
 	private String descripcion;
-	private Double cant;
+	private Integer cant;
 	private Double peso;
-	private Double cantPentiente;
+	private Integer cantPentiente;
 	private Double pesoPendiente;
 	private String color;
 	
@@ -25,9 +25,9 @@ public class ItemOpDatable {
 		itemId = itemInterface.getitem_id();
 		marca = itemInterface.getmarca();
 		descripcion = itemInterface.getdescripcion();
-		cant = itemInterface.getcant_req();
+		cant = itemInterface.getcant_req().intValue();
 		peso = itemInterface.getpeso_unitario().doubleValue();
-		cantPentiente = cant - itemInterface.getcant_cumplida();
+		cantPentiente = cant - itemInterface.getcant_cumplida().intValue();
 		BigDecimal pesoPendienteTemp = itemInterface.getpeso_unitario().multiply(BigDecimal.valueOf(cant))
 		        .subtract(itemInterface.getpeso_unitario().multiply(BigDecimal.valueOf(itemInterface.getcant_cumplida())));
 		pesoPendiente = pesoPendienteTemp.setScale(3, RoundingMode.HALF_UP).doubleValue();
@@ -50,13 +50,13 @@ public class ItemOpDatable {
 	public String getDescripcion() {
 		return descripcion;
 	}
-	public Double getCant() {
+	public Integer getCant() {
 		return cant;
 	}
 	public Double getPeso() {
 		return peso;
 	}
-	public Double getCantPentiente() {
+	public Integer getCantPentiente() {
 		return cantPentiente;
 	}
 	public Double getPesoPendiente() {
@@ -71,13 +71,13 @@ public class ItemOpDatable {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public void setCant(Double cant) {
+	public void setCant(Integer cant) {
 		this.cant = cant;
 	}
 	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
-	public void setCantPentiente(Double cantPentiente) {
+	public void setCantPentiente(Integer cantPentiente) {
 		this.cantPentiente = cantPentiente;
 	}
 	public void setPesoPendiente(Double pesoPendiente) {

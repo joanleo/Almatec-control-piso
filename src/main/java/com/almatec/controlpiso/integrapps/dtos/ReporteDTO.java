@@ -8,7 +8,7 @@ public class ReporteDTO {
 	private String proyecto;
 	private Integer numOp;
 	private String ref;
-	private BigDecimal cantSol;
+	private Integer cantSol;
 	private Integer cantFab;
 	private String centroTrabajo;
 	private Operario operario;
@@ -33,7 +33,7 @@ public class ReporteDTO {
 		return ref;
 	}
 
-	public BigDecimal getCantSol() {
+	public Integer getCantSol() {
 		return cantSol;
 	}
 
@@ -49,7 +49,7 @@ public class ReporteDTO {
 		this.ref = ref;
 	}
 
-	public void setCantSol(BigDecimal cant) {
+	public void setCantSol(Integer cant) {
 		this.cantSol = cant;
 	}
 
@@ -195,7 +195,7 @@ public class ReporteDTO {
             return this;
         }
 
-        public Builder setCantSol(BigDecimal cantSol) {
+        public Builder setCantSol(Integer cantSol) {
             reporteDTO.cantSol = cantSol;
             return this;
         }

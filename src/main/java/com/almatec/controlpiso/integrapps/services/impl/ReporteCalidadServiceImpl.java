@@ -77,7 +77,7 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
 		    ItemOpCtDTO item = op.getItems().get(0);
 		    String descripcion = null;
-		    BigDecimal cant = BigDecimal.ZERO;
+		    Integer cant = 0;
 		    String centroTrabajo = null;
 		    String marca = null;
 		    if(Objects.equals(item.getItem_centro_t_id(), idCT)) {

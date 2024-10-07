@@ -30,8 +30,8 @@ public class VistaOpItemsMaterialesRuta {
 	private Integer prioridad;
 	private String item_color;
 	@Column(name = "cant_req")
-	private BigDecimal cantReq;
-	private BigDecimal cant_cumplida;
+	private Integer cantReq;
+	private Integer cant_cumplida;
 	
 	@Column(name = "item_centro_t_id")
 	private Integer itemCentroTId;
@@ -40,7 +40,7 @@ public class VistaOpItemsMaterialesRuta {
 	private String material_desc;
 	private BigDecimal material_peso;
 	private BigDecimal material_long;
-	private BigDecimal material_cant;
+	private Integer material_cant;
 	
 	@Column(name = "material_centro_t_id")
 	private Integer materialCentroTId;
@@ -62,8 +62,8 @@ public class VistaOpItemsMaterialesRuta {
 	public VistaOpItemsMaterialesRuta(Integer idOpIntegrapps, Long item_op_id, Integer item_id, Integer itemCentroTId,
             String cliente, String un, String op, String esquema_pintura,
             String itemDescripcion, BigDecimal item_peso, BigDecimal item_long,
-            Integer prioridad, String item_color, BigDecimal cantReq,
-            BigDecimal cant_cumplida, String item_centro_t_nombre,
+            Integer prioridad, String item_color, Integer cantReq,
+            Integer cant_cumplida, String item_centro_t_nombre,
             String zona, String grupo, String marca) {
 		
 		this.idOpIntegrapps = idOpIntegrapps;
@@ -121,7 +121,7 @@ public class VistaOpItemsMaterialesRuta {
 	public String getItem_color() {
 		return item_color;
 	}
-	public BigDecimal getCant_cumplida() {
+	public Integer getCant_cumplida() {
 		return cant_cumplida;
 	}
 	public String getItem_centro_t_nombre() {
@@ -136,7 +136,7 @@ public class VistaOpItemsMaterialesRuta {
 	public BigDecimal getMaterial_peso() {
 		return material_peso;
 	}
-	public BigDecimal getMaterial_cant() {
+	public Integer getMaterial_cant() {
 		return material_cant;
 	}
 	public String getMaterial_centro_t_nombre() {
@@ -166,13 +166,13 @@ public class VistaOpItemsMaterialesRuta {
 	public String getZona() {
 		return zona;
 	}
-	public BigDecimal getCantReq() {
+	public Integer getCantReq() {
 		return cantReq;
 	}
-	public void setCantReq(BigDecimal cantReq) {
+	public void setCantReq(Integer cantReq) {
 		this.cantReq = cantReq;
 	}
-	public void setCant_cumplida(BigDecimal cant_cumplida) {
+	public void setCant_cumplida(Integer cant_cumplida) {
 		this.cant_cumplida = cant_cumplida;
 	}
 	public String getItemDescripcion() {

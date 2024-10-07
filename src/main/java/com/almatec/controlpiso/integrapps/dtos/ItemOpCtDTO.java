@@ -11,7 +11,7 @@ public class ItemOpCtDTO implements CommonDTO {
 	private Long item_op_id;
 	private Integer item_id;
 	private String item_desc;
-	private BigDecimal cant_req;
+	private Integer cant_req;
 	private Integer item_centro_t_id;
 	private String item_centro_t_nombre;
 	private BigDecimal item_peso;
@@ -38,7 +38,7 @@ public class ItemOpCtDTO implements CommonDTO {
 		return item_desc;
 	}
 
-	public BigDecimal getCant_req() {
+	public Integer getCant_req() {
 		return cant_req;
 	}
 
@@ -74,7 +74,7 @@ public class ItemOpCtDTO implements CommonDTO {
 		this.item_desc = item_desc;
 	}
 
-	public void setCant_req(BigDecimal cant_req) {
+	public void setCant_req(Integer cant_req) {
 		this.cant_req = cant_req;
 	}
 

@@ -19,7 +19,7 @@ public class ReporteCalidadDTO {
     private String proyecto;
     private String descripcionItem;
     private String marca;
-    private BigDecimal cantSol;
+    private Integer cantSol;
     private String lote;
     
     private Double ancho;
@@ -126,7 +126,7 @@ public class ReporteCalidadDTO {
 		return marca;
 	}
 
-	public BigDecimal getCantSol() {
+	public Integer getCantSol() {
 		return cantSol;
 	}
 
@@ -270,7 +270,7 @@ public class ReporteCalidadDTO {
 		this.marca = marca;
 	}
 
-	public void setCantSol(BigDecimal cantSol) {
+	public void setCantSol(Integer cantSol) {
 		this.cantSol = cantSol;
 	}
 

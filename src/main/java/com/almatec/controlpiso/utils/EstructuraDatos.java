@@ -64,7 +64,7 @@ public class EstructuraDatos {
     	ComponenteDTO componente = new ComponenteDTO();
         componente.setMaterial_id(vista.getMaterial_id());
         componente.setMaterial_desc(vista.getMaterial_desc());
-        componente.setMaterial_cant(vista.getMaterial_cant().multiply(vista.getCantReq()));
+        componente.setMaterial_cant(vista.getMaterial_cant()*(vista.getCantReq()));
         componente.setMaterial_centro_t_id(vista.getMaterialCentroTId());
         componente.setMaterial_centro_t_nombre(vista.getMaterial_centro_t_nombre());
         componente.setMaterial_peso(vista.getMaterial_peso());

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class RowItemPdf {
 	private String descripcion;
 	private BigDecimal longitud;
-	private BigDecimal cant;
+	private Integer cant;
 	private String op;
 	private String ref;
 	private BigDecimal peso;
@@ -26,10 +26,10 @@ public class RowItemPdf {
 	public void setLongitud(BigDecimal longitud) {
 		this.longitud = longitud;
 	}
-	public BigDecimal getCant() {
+	public Integer getCant() {
 		return cant;
 	}
-	public void setCant(BigDecimal cant) {
+	public void setCant(Integer cant) {
 		this.cant = cant;
 	}
 	public String getOp() {

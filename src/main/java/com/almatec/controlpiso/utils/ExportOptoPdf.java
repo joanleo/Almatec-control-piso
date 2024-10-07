@@ -124,14 +124,14 @@ public class ExportOptoPdf {
 				table.addCell(cell);
 				
 				//cell = new PdfPCell(new Phrase(String.valueOf(item.getCant_req().setScale(0, RoundingMode.HALF_UP).intValue()), font));
-				Integer cant = item.getCant_req().setScale(0, RoundingMode.HALF_UP).intValue();
+				Integer cant = item.getCant_req();
 				System.out.println("Cantidad: " + cant);
 				phrase = new Phrase(String.valueOf(cant), font);
 				cell.setPhrase(phrase);
 				table.addCell(cell);
 				
 				BigDecimal peso = (item.getItem_peso() == null) ? BigDecimal.ZERO : item.getItem_peso();
-				BigDecimal pesoTotalCell = peso.multiply(item.getCant_req());
+				BigDecimal pesoTotalCell = peso.multiply(BigDecimal.valueOf(item.getCant_req()));
 				pesoTotal = pesoTotal.add(pesoTotalCell);
 				phrase = new Phrase(pesoTotalCell.toString(), font);
 				cell.setPhrase(phrase);

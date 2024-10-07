@@ -9,7 +9,7 @@ public class ComponenteDTO implements CommonDTO {
 	
 	private Integer material_id;
 	private String material_desc;
-	private BigDecimal material_cant;
+	private Integer material_cant;
 	private Integer material_centro_t_id;
 	private String material_centro_t_nombre;
 	private BigDecimal longitud;
@@ -19,7 +19,7 @@ public class ComponenteDTO implements CommonDTO {
 		super();
 	}
 
-	public ComponenteDTO(Integer material_id, String material_desc, BigDecimal material_cant,
+	public ComponenteDTO(Integer material_id, String material_desc, Integer material_cant,
 			Integer material_centro_t_id, String material_centro_t_nombre) {
 		super();
 		this.material_id = material_id;
@@ -37,7 +37,7 @@ public class ComponenteDTO implements CommonDTO {
 		return material_desc;
 	}
 
-	public BigDecimal getMaterial_cant() {
+	public Integer getMaterial_cant() {
 		return material_cant;
 	}
 
@@ -61,7 +61,7 @@ public class ComponenteDTO implements CommonDTO {
 		this.material_desc = material_desc;
 	}
 
-	public void setMaterial_cant(BigDecimal material_cant) {
+	public void setMaterial_cant(Integer material_cant) {
 		this.material_cant = material_cant;
 	}
 

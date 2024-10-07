@@ -77,7 +77,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
             addCell(table, row.getProyecto(), Element.ALIGN_LEFT, font);
             addCell(table, row.getZona(), Element.ALIGN_CENTER, font);
             addCell(table, row.getDescripcion(), Element.ALIGN_LEFT, font);
-            addCell(table, row.getCant().stripTrailingZeros().toPlainString(), Element.ALIGN_CENTER, font);
+            addCell(table, row.getCant().toString(), Element.ALIGN_CENTER, font);
             
             String longitud = Optional.ofNullable(row.getLongitud())
                 .map(l -> l.stripTrailingZeros().toPlainString())
@@ -86,7 +86,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
             
             addCell(table, row.getPeso().setScale(2, RoundingMode.HALF_UP).toString(), Element.ALIGN_CENTER, font);
             
-            BigDecimal pesoTotal = row.getPeso().multiply(row.getCant());
+            BigDecimal pesoTotal = row.getPeso().multiply(BigDecimal.valueOf(row.getCant()));
             total = total.add(pesoTotal);
             addCell(table, pesoTotal.setScale(2, RoundingMode.HALF_UP).toString(), Element.ALIGN_CENTER, font);
             
@@ -135,7 +135,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
         return rows;
     }
     
-    private RowItemPdf crearRowItemPdf(OpCentroTrabajoDTO op, ItemOpCtDTO item, String descripcion, BigDecimal cantidad, BigDecimal peso, BigDecimal longitud, String ref) {
+    private RowItemPdf crearRowItemPdf(OpCentroTrabajoDTO op, ItemOpCtDTO item, String descripcion, Integer cantidad, BigDecimal peso, BigDecimal longitud, String ref) {
         RowItemPdf row = new RowItemPdf();
         row.setDescripcion(descripcion);
         row.setCant(cantidad);
