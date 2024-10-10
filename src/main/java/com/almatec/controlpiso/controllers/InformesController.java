@@ -32,7 +32,7 @@ public class InformesController {
         ByteArrayInputStream byteArrayInputStream = report.exportToExcel(vista);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=informe_general.xlsx");
 
         return ResponseEntity
                 .ok()
@@ -47,7 +47,7 @@ public class InformesController {
         ByteArrayInputStream byteArrayInputStream = report.exportToExcelReportMes(vista);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=consolidado_mensual.xlsx");
 
         return ResponseEntity
                 .ok()

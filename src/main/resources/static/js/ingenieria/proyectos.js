@@ -90,7 +90,7 @@ const initDataTable = async () => {
 async function initOptions(){
 	const labelModalName = document.getElementById("detalleProyectoLabel").textContent
 	const arrLabelModalName = labelModalName.split(' ')
-	const fileName = arrLabelModalName[2]
+	const fileName = arrLabelModalName.slice(1).join(' ');
 	dataTableOptions = {
 	processing: true,
     serverSide: true,
