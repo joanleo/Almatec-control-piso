@@ -83,7 +83,6 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 
 	@Override
 	public DataCostoStandarInterface obtenerCostoStandar(Integer idItem) {
-		System.out.println("id del item: "+ idItem);
 		return listaMaterialRepo.obtenerCostoStandar(idItem);
 	}
 

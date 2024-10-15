@@ -26,7 +26,7 @@ public class VistaItemLoteDisponibleSpecification {
 				predicates.add(criteriaBuilder.equal(root.get("idItem"), filtro.getCodigo()));
 			}
 			if(filtro.getBodega() != null) {
-				predicates.add(criteriaBuilder.like(root.get("bodega"), "%"  +filtro.getBodega() + "%" ));
+				predicates.add(criteriaBuilder.like(root.get("idBodega"), "%"  +filtro.getBodega() + "%" ));
 			}
 			if(filtro.getUm() != null) {
 				predicates.add(criteriaBuilder.like(root.get("um"), "%" + filtro.getUm() + "%"));

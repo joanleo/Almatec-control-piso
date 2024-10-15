@@ -123,9 +123,7 @@ public class ExportOptoPdf {
 				cell.setPhrase(phrase);
 				table.addCell(cell);
 				
-				//cell = new PdfPCell(new Phrase(String.valueOf(item.getCant_req().setScale(0, RoundingMode.HALF_UP).intValue()), font));
 				Integer cant = item.getCant_req();
-				System.out.println("Cantidad: " + cant);
 				phrase = new Phrase(String.valueOf(cant), font);
 				cell.setPhrase(phrase);
 				table.addCell(cell);
@@ -141,7 +139,7 @@ public class ExportOptoPdf {
 			}
 			
 		}
-		if(total) {
+		if(Boolean.TRUE.equals(total)) {
 			PdfPCell emptyCell = new PdfPCell();
 			emptyCell.setBorder(Rectangle.NO_BORDER);
 			table.addCell(emptyCell);
@@ -188,7 +186,6 @@ public class ExportOptoPdf {
 		
 		int count =  1;	
 		for(CommonDTO item: componentes) {
-			//System.out.println(item);
 			Phrase phrase = new Phrase(String.valueOf(count), font);
 			PdfPCell cell = new PdfPCell(phrase);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);

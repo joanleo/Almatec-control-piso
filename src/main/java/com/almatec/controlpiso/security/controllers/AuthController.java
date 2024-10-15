@@ -59,14 +59,3 @@ public class AuthController {
 		return ip;
 	}
 }
-
-
-
-/*
- * Codigo para encriptar contraseña:
- * String rawPassword = "1234";
- * BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
- * String encryptedPassword = passwordEncoder.encode(rawPassword);
- * System.out.println("Contraseña encriptada: " + encryptedPassword);
- * 
- * */

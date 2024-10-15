@@ -46,8 +46,7 @@ public class ConsumosTepService {
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
 		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
-		System.out.println("Ruta: " +idRuta);
-		System.out.println("Id ct erp: " +idCTErp);
+
 		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
 
 		ConsumosdesdeCompromisosConsumos encabezadoConsumo = conectorConsumoService.crearEncabezadoConsumo(data);		

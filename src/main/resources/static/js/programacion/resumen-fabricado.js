@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 		document.getElementById('filterInput').value = ''
 		filterText = ''
 		centroTrabajoSelectedId = this.value;
-        if (centroTrabajoSelectedId) {			
+        if (centroTrabajoSelectedId) {		
+			spinner.removeAttribute('hidden')	
             const ordenes = await obtenerOrdenes(centroTrabajoSelectedId);
 			ordenes.sort((a, b) => {
 			    return b.idOpIntegrapps - a.idOpIntegrapps;
@@ -48,7 +49,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 		   itemsGlobal = procesarOrdenes(ordenes)
            itemsOriginales = [...itemsGlobal]
            updateTable()
-		   //mostrarItems(ordenes)
+		   spinner.setAttribute('hidden', '')
+		   
         } else {
             document.getElementById('resultadosContainer').style.display = 'none';
         }

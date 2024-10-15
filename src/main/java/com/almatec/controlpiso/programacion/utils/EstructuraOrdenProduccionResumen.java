@@ -42,9 +42,7 @@ public class EstructuraOrdenProduccionResumen {
 	
 	private static ItemDTO crearItem(VistaPiezasReportadas registro) {
 		ItemDTO item = new ItemDTO();
-		//System.out.println(registro.getMaterialId());
 		if(registro.getMaterialId() != null) {
-			//System.out.println("Es un conjunto");
 			ComponenteDTO componente = crearComponente(registro);
 			item.addComponente(componente);
 		}else {
@@ -85,7 +83,6 @@ public class EstructuraOrdenProduccionResumen {
 		componente.setMateriaPrimaCant(registro.getMateriaPrimaCant());
 		componente.setCantReportadaMaterial(registro.getCantReportadaMaterial());
 		componente.setCantPendienteMaterial(registro.getCantPendienteMaterial());
-		//System.out.println(componente);
 		return componente;
 	}
 

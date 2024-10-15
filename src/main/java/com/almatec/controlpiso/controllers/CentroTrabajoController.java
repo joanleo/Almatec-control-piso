@@ -313,7 +313,6 @@ public class CentroTrabajoController {
 		Rectangle letter = PageSize.LETTER;
 		//float halfLetterHeight = letter.getHeight() / 2;
 		//Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);
-		System.out.println("Impresion carga");
 		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, letter);
 		documento.export(response);
 	}

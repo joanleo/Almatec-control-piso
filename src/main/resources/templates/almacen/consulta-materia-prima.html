@@ -6,14 +6,17 @@
 		
 		<nav th:replace="fragments/navbar :: nav-bar('Almacen')" aria-label="Site menu"></nav>
 		
-		<div class="container my-5" style="width:90%;">
+		<div class="container my-5">
 			<div hidden id="spinner">
 				<div>Cargando ...</div>
 			</div>
 							
 			<div th:replace="fragments/alerts :: alerts"></div>	
 			
+			
 			<div class="card-body" id="alerContainer" style="margin: auto; width: 90%;">
+				<h2 class="mb-5"> Consulta Materia Prima </h2>
+				
 				<form id="searchForm">
 		            <div class="d-flex align-items-center">
 		                <div class="me-3 size-l">
@@ -45,7 +48,7 @@
 					</table>
 				</div>
 				
-				<div id="pagination">
+				<div id="pagination" class="pagination justify-content-center">
 		            <!-- Los controles de paginación se agregarán aquí -->
 		        </div>
 				

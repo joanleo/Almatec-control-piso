@@ -562,7 +562,6 @@ public class RemisionPdfService extends PdfPageEventHelper{
 			Image image = Image.getInstance(getClass().getClassLoader().getResource(path));
 			float originalWidth = image.getWidth();
 			float originalHeight = image.getHeight();
-			//System.out.println("Dimensiones originales de la imagen: " + originalWidth + " x " + originalHeight + " puntos.");
 			float width = originalWidth - 56;
 			float height = originalHeight - 25;
 	        float xPosition = document.left() - 20;

@@ -2,22 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 	  <head th:replace="fragments/head :: head('Almacen :: Remisiones')"></head>
-	
-	  <style>
-		  #body-remisiones tr {
-		      cursor: pointer;
-		  }
-		  .grid-container {
-		      display: grid;
-		      grid-template-columns: repeat(2, 1fr);
-		      gap: 16px;
-		  }
-
-	  </style>
 	  <body>
-		<nav th:replace="fragments/navbar :: nav-bar('Almacen')"></nav>
+		<nav th:replace="fragments/navbar :: nav-bar('Almacen')" aria-label="Site menu"></nav>
 		
-		<div class="container my-5" style="width: 80%; margin-left: 10rem;">
+		<div class="container my-5">
 			
 			<div hidden id="spinner">
 				<div>Cargando ...</div>
