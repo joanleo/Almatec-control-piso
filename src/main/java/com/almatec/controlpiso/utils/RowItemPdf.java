@@ -13,6 +13,7 @@ public class RowItemPdf {
 	private String color;
 	private String proyecto;
 	private String zona;
+	private String marca;
 	
 	public String getDescripcion() {
 		return descripcion;
@@ -77,11 +78,17 @@ public class RowItemPdf {
 	public void setZona(String zona) {
 		this.zona = zona;
 	}
+	public String getMarca() {
+		return marca;
+	}
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
 	@Override
 	public String toString() {
 		return "RowItemPdf [descripcion=" + descripcion + ", longitud=" + longitud + ", cant=" + cant + ", op=" + op
 				+ ", ref=" + ref + ", peso=" + peso + ", prioridad=" + prioridad + ", color=" + color + ", proyecto="
-				+ proyecto + ", zona=" + zona + "]";
+				+ proyecto + ", zona=" + zona + ", marca=" + marca + "]";
 	}
 	
 }

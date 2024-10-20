@@ -46,8 +46,8 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
     let foundItems = false
     let foundComponentes = false
 	
-	let allItems = []
-    let allComponentes = []
+	let uniqueItems = new Map()
+    let uniqueComponentes = new Map()
 
     document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked').forEach(function (checkbox) {
         let selectedIndex = parseInt(checkbox.value)
@@ -57,27 +57,37 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
         if (itemsOps && itemsOps.length > 0) {
             for (const itemOp of itemsOps) {
                 if (itemOp.item_centro_t_id == selectedCentroId) {
-					allItems.push({
-                        item_desc: itemOp.item_desc,
-                        cant_req: itemOp.cant_req,
-                        proyecto: selectedOp.proyecto,
-                        op: selectedOp.op,
-                        prioridad: itemOp.prioridad
-                    })
-					foundItems = true
+					const itemKey = `${itemOp.marca}-${itemOp.item_desc}-${selectedOp.proyecto}-${selectedOp.op}-${itemOp.cant_req}`
+                    const existingItem = uniqueItems.get(itemKey)
+                    if (!existingItem || itemOp.prioridad < existingItem.prioridad) {
+                        uniqueItems.set(itemKey, {
+							marca: itemOp.marca,
+                            item_desc: itemOp.item_desc,
+                            cant_req: itemOp.cant_req,
+                            proyecto: selectedOp.proyecto,
+                            op: selectedOp.op,
+                            prioridad: itemOp.prioridad
+                        })
+                    }
+	                    foundItems = true
                 }
 				if(!foundItems){
 	                let componentes = itemOp.componentes
-	                for (const componente of componentes) {
+					for (const componente of componentes) {
 	                    if (componente.material_centro_t_id == selectedCentroId) {
-							allComponentes.push({
-                                material_desc: componente.material_desc,
-                                material_cant: componente.material_cant,
-                                proyecto: selectedOp.proyecto,
-                                op: selectedOp.op,
-                                prioridad: itemOp.prioridad  // Using the item's priority for components
-                            })
-                            foundComponentes = true
+	                        const componenteKey = `${itemOp.marca}-${componente.material_desc}-${selectedOp.proyecto}-${selectedOp.op}-${componente.material_cant}`
+	                        const existingComponente = uniqueComponentes.get(componenteKey)
+	                        if (!existingComponente || itemOp.prioridad < existingComponente.prioridad) {
+	                            uniqueComponentes.set(componenteKey, {
+									marca: itemOp.marca,
+	                                material_desc: componente.material_desc,
+	                                material_cant: componente.material_cant,
+	                                proyecto: selectedOp.proyecto,
+	                                op: selectedOp.op,
+	                                prioridad: itemOp.prioridad
+	                            })
+	                        }
+	                        foundComponentes = true
 	                    }
 	                }					
 				}
@@ -85,22 +95,20 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
         }
     })
 	
-	// Sort items by priority
-    allItems.sort((a, b) => a.prioridad - b.prioridad)
+	let allItems = Array.from(uniqueItems.values()).sort((a, b) => a.prioridad - b.prioridad)
+    let allComponentes = Array.from(uniqueComponentes.values()).sort((a, b) => a.prioridad - b.prioridad)
 
-    // Sort components by priority
-    allComponentes.sort((a, b) => a.prioridad - b.prioridad)
 
     // Add sorted items to the table
     let tbodyItems = document.getElementById("body-items")
     allItems.forEach(item => {
-        agregarFilaATabla(tbodyItems, [item.item_desc, item.cant_req, item.proyecto, item.op, item.prioridad])
+        agregarFilaATabla(tbodyItems, [item.marca, item.item_desc, item.cant_req, item.proyecto, item.op, item.prioridad])
     })
 
     // Add sorted components to the table
     let tbodyComponentes = document.getElementById("body-componentes")
     allComponentes.forEach(componente => {
-        agregarFilaATabla(tbodyComponentes, [componente.material_desc, componente.material_cant, componente.proyecto, componente.op])
+        agregarFilaATabla(tbodyComponentes, [componente.marca, componente.material_desc, componente.material_cant, componente.proyecto, componente.op])
     })
 
     mostrarOcultarTabla('title-items', foundItems)
@@ -108,8 +116,12 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
     mostrarOcultarTabla('title-componentes', foundComponentes)
     mostrarOcultarTabla('wrapper-componentes', foundComponentes)
 	
-	if (foundItems) table_items.removeAttribute('hidden')
-    if (foundComponentes) table_componentes.removeAttribute('hidden')
+	if (foundItems) {
+		table_items.removeAttribute('hidden')
+		}
+    if (foundComponentes){
+		table_componentes.removeAttribute('hidden')		
+	} 
 }
 
 function crearCheckBoxList(opsCargaCt, selectedCentroId, table_items, table_componentes) {
@@ -206,7 +218,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         document.getElementById('ops-ct').appendChild(wrapper_table)
 
         let table_items = crearTabla()
-        let encabezado_items = ['ITEM', 'CANT', 'PROYECTO', 'OP', 'PRIORIDAD']
+        let encabezado_items = ['MARCA', 'ITEM', 'CANT', 'PROYECTO', 'OP', 'PRIORIDAD']
         let header_items = crearHeaderTabla(encabezado_items)
         table_items.appendChild(header_items)
         table_items.setAttribute('hidden', 'none')
@@ -216,7 +228,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         document.getElementById('detalle-op').appendChild(wrapper_table_items)
 
         let table_componentes = crearTabla()
-        let encabezado_componentes = ['DESCRIPCION', 'CANT', 'PROYECTO', 'OP']
+        let encabezado_componentes = ['MARCA', 'DESCRIPCION', 'CANT', 'PROYECTO', 'OP']
         let header_componentes = crearHeaderTabla(encabezado_componentes)
         table_componentes.appendChild(header_componentes)
         table_componentes.setAttribute('hidden', 'none')
