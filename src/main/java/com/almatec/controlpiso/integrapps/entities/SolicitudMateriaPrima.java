@@ -44,7 +44,7 @@ public class SolicitudMateriaPrima {
 	@Column(name = "Id_Usu_Erp")
 	private Integer idUsuarioErp = 0;
 	@Column(name = "Tipo_doc_Erp")
-	private String tipoDocErp = "TRS";
+	private String tipoDocErp = "TRA";
 	@Column(name = "Num_Doc_Erp")
 	private Integer numDocErp = 0;
 	@Column(name = "Fecha_Doc_Erp")
