@@ -101,7 +101,6 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 	
 	private void crearMovimiento(DataConsumoInterface data, DataTEP dataTE, String idCTErp, BigDecimal cantidadReportar,
 			List<DoctoTEPMovimientosVersion01> movs, Double kilosReportar) {
-		System.out.println(dataTE.getf809_numero_operacion());
 		try {
 			DoctoTEPMovimientosVersion01 mov = new DoctoTEPMovimientosVersion01();
 			mov.setF_cia(configService.getCIA());

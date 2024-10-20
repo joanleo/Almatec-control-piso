@@ -67,7 +67,6 @@ public class ConectorConsumoServiceImpl implements ConectorConsumoService {
 		if(itemReporteDTO == null) {
 			//codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());
 			mov.setF470_id_item_comp(codErpMateriaPrima);//revisar id item lista materiales **************************			
-			System.out.println(itemFab);
 			BigDecimal cantConsumir = itemFab.getitem_peso_b().multiply(new BigDecimal(reporte.getCantReportar()));
 			mov.setF470_cant_base(cantConsumir.doubleValue());
 		}else {
