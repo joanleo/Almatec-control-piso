@@ -72,7 +72,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 
 	@Query(value = "SELECT  valor_aplicar "
 			+ "FROM   Items_rutas "
-			+ "WHERE   (Item_fab_Id = :idItemFab) "
+			+ "WHERE   (activo = 1)"
+			+ "AND (Item_fab_Id = :idItemFab) "
 			+ "AND (C_centrotrabajo_id = :idCentroTrabajo)", nativeQuery = true)
 	Double obtenerValorAplicarTepItemCentroTrabajo(@Param("idItemFab") Integer idItemFab, @Param("idCentroTrabajo") Integer idCentroTrabajo);
 
@@ -93,7 +94,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "INNER JOIN items_fabrica ON im.id_item = items_fabrica.Item_fab_Id "
 			+ "LEFT OUTER JOIN items_op ON items_fabrica.Item_fab_Id = items_op.Item_fab_Id "
 			+ "LEFT OUTER JOIN z_item_materia_prima AS im_1 ON im.id_materia_prima = im_1.id_item "
-			+ "WHERE items_op.item_id = :idItem "
+			+ "WHERE im.activo = 1 "
+			+ "AND items_op.item_id = :idItem "
 			+ "AND items_fabrica.Item_fab_Id = :idFab ", nativeQuery = true)
 	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(@Param("idItem") Integer idItem, @Param("idFab") Integer idFab);
 
