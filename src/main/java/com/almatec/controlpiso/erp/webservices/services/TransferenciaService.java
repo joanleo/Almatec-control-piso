@@ -59,8 +59,8 @@ public class TransferenciaService {
 		List<Conector> transferenciaXml = new ArrayList<>();
 		
 		List<DetalleSolicitudMateriaPrima> detalleSol = detalleSolicitudMateriaPrimaService.obtenerDetallePorIdSol(idSolIntegrapps);
-		String nota = listaMaterialService.obtenerConsecutivoNotasTransferencia(idSolIntegrapps.toString());
-		if (nota != null) {
+		String nota = "Creado por IntegrApps ** Solicitud transferencia: " + idSolIntegrapps;//listaMaterialService.obtenerConsecutivoNotasTransferencia(idSolIntegrapps.toString());
+		/*if (nota != null) {
 			if (nota.split("-").length > 1) {
 				Integer consec = Integer.valueOf(nota.split("-")[1]);
 				nota = idSolIntegrapps + "-" + (consec + 1);
@@ -69,7 +69,7 @@ public class TransferenciaService {
 			}
 		} else {
 			nota = idSolIntegrapps.toString();
-		}
+		}*/
 		DoctoinventariosDocumentosVersion02 encabezado = conectorTransferenciaService.crearEncabezadoTransferencia(nota);
 		transferenciaXml.add(encabezado);
 		List<DoctoinventariosMovimientosVersion06> movs = conectorTransferenciaService.crearMovimientosTransferencia(detalleSol);
