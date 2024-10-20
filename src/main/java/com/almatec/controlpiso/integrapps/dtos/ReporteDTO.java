@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
+
 import java.math.BigDecimal;
 
 import com.almatec.controlpiso.integrapps.entities.Operario;
@@ -20,6 +21,7 @@ public class ReporteDTO {
 	private String lote;
 	private String color;
 	private Integer idConfigProceso;
+	private BigDecimal peso = new BigDecimal(1);
 	
 	public String getProyecto() {
 		return proyecto;
@@ -145,13 +147,12 @@ public class ReporteDTO {
 		this.idConfigProceso = idConfigProceso;
 	}
 	
-	@Override
-	public String toString() {
-		return "ReporteDTO [proyecto=" + proyecto + ", numOp=" + numOp + ", ref=" + ref + ", cantSol=" + cantSol
-				+ ", cantFab=" + cantFab + ", centroTrabajo=" + centroTrabajo + ", operario=" + operario
-				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
-				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color
-				+ ", idConfigProceso=" + idConfigProceso + "]";
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
 	}
 
 	public static class Builder {
@@ -254,10 +255,24 @@ public class ReporteDTO {
             reporteDTO.idConfigProceso = idConfigProceso;
             return this;
         }
+        
+        public Builder setPeso(BigDecimal peso) {
+            reporteDTO.peso = peso;
+            return this;
+        }
 
         public ReporteDTO build() {
             return reporteDTO;
         }
     }
+
+	@Override
+	public String toString() {
+		return "ReporteDTO [proyecto=" + proyecto + ", numOp=" + numOp + ", ref=" + ref + ", cantSol=" + cantSol
+				+ ", cantFab=" + cantFab + ", centroTrabajo=" + centroTrabajo + ", operario=" + operario
+				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
+				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color
+				+ ", idConfigProceso=" + idConfigProceso + ", peso=" + peso + "]";
+	}
 
 }

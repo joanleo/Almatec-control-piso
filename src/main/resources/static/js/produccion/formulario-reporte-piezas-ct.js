@@ -11,11 +11,47 @@ document.addEventListener('DOMContentLoaded', function(){
 	}
 	
 	let inputCant = document.getElementById('cant-reportar')
+	let inputKg = document.getElementById('kg-reportar')
+	const loteSelect = document.getElementById('loteSelect');
+    const kgDisponibleInput = document.getElementById('kg-disponible');
+	const kgWarning = document.getElementById('kg-warning');
+	
+	inputCant.value = 0;
+    inputKg.value = 0;
+	kgDisponibleInput.value = 0;
+	
+	const pesoItem = parseFloat(inputKg.getAttribute('data-peso-item') || 0);
+	
+	function validateKg() {
+        const kgReportados = parseFloat(inputKg.value) || 0;
+        const kgDisponibles = parseFloat(kgDisponibleInput.value) || 0;
+        
+        if (kgReportados > kgDisponibles) {
+            kgWarning.style.display = 'block';
+            btnGuardar.disabled = true;
+        } else {
+            kgWarning.style.display = 'none';
+            btnGuardar.disabled = false;
+        }
+    }
+	
 	inputCant.addEventListener('input', function(event){
 		const max = parseInt(this.max)
 		if(this.value < 0) this.value = 0
 		if(this.value > max ) this.value = max
+		
+		inputKg.value = (pesoItem * this.value).toFixed(3)
+		
+		validateKg()
 	})
+	
+	loteSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const disponible = Number(selectedOption.getAttribute('data-disponible')).toFixed(3);
+        kgDisponibleInput.value = disponible || 0;
+		
+		validateKg()
+    });
 	
 	updateIdConfigProceso()
 })

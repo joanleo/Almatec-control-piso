@@ -1,9 +1,12 @@
 package com.almatec.controlpiso.integrapps.dtos;
 
+import java.math.BigDecimal;
+
 public class LoteConCodigoDTO {
 
 	private Integer codErp;
     private String loteErp;
+    private BigDecimal disponible;
     
 	public LoteConCodigoDTO() {
 		super();
@@ -29,5 +32,13 @@ public class LoteConCodigoDTO {
 
 	public void setLoteErp(String loteErp) {
 		this.loteErp = loteErp;
+	}
+
+	public BigDecimal getDisponible() {
+		return disponible;
+	}
+
+	public void setDisponible(BigDecimal disponible) {
+		this.disponible = disponible;
 	}
 }

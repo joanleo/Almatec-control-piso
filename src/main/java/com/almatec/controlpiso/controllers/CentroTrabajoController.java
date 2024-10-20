@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.controllers;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -44,7 +45,9 @@ import com.almatec.controlpiso.integrapps.dtos.TiemposOperariosDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasOperarios;
+import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
+import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
 import com.almatec.controlpiso.integrapps.services.NovedadCtService;
 import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
@@ -73,6 +76,7 @@ public class CentroTrabajoController {
 	private final RegistroParadaService registroParadaService;
 	private final ListaMService listaMService;
 	private final CentrosTrabajoPDFService centrosTrabajoPDFService;
+	private final ItemOpService itemService;
 	
 
 	
@@ -85,7 +89,8 @@ public class CentroTrabajoController {
 			NovedadCtService novedadCtService,
 			RegistroParadaService registroParadaService, 
 			ListaMService listaMService,
-			CentrosTrabajoPDFService centrosTrabajoPDFService) {
+			CentrosTrabajoPDFService centrosTrabajoPDFService,
+			ItemOpService itemService) {
 		super();
 		this.centroTrabajoService = centroTrabajoService;
 		this.util = util;
@@ -97,6 +102,7 @@ public class CentroTrabajoController {
 		this.registroParadaService = registroParadaService;
 		this.listaMService = listaMService;
 		this.centrosTrabajoPDFService = centrosTrabajoPDFService;
+		this.itemService = itemService;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -175,8 +181,10 @@ public class CentroTrabajoController {
 								  Model modelo) {
 		
 		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
+		Integer idItemFab = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+		ItemInterface itemFab = itemService.obtenerItemFabricaPorId(idItemFab);
+		reporte.setPeso(itemFab.getitem_peso_b());
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
-				
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
 		

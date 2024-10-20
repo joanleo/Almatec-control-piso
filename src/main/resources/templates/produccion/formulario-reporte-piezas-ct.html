@@ -13,7 +13,7 @@
                     
     <div th:replace="fragments/alerts :: alerts"></div>
         
-    <div class="container mt-5">
+    <div class="container mt-5 mb-3">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
@@ -48,17 +48,37 @@
                                 <label for="cant-fabricadas" class="form-label">Cant Fabricada:</label>
                                 <input type="number" id="cant-fabricadas" class="form-control" th:field="*{cantFab}" required readonly/>                           
                             </div>
-                            <div class="mb-3">
-                                <label for="cant-reportar" class="form-label">Cant reportar:</label>
-                                <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}" required />                           
-                            </div>
-                            <div class="mb-3" id="divLotes" hidden>
-                                <label for="loteSelect" class="form-label">Lote:</label>
-                                <select id="loteSelect" class="form-select" name="lote" th:field="*{lote}">
-                                    <option value=""></option>
-                                    <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
-                                </select>               
-                            </div>
+							<div class="row">
+	                            <div class="col-md-6 mb-3">
+	                                <label for="cant-reportar" class="form-label">Cant reportar:</label>
+	                                <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}" required />                           
+	                            </div>
+								
+								<div class="col-md-6 mb-3">
+								    <label for="kg-reportar" class="form-label">Kg reportar:</label>
+								    <input type="number"  id="kg-reportar" class="form-control" th:attr="data-peso-item=${reporte.peso}" readonly />                           
+								</div>								
+							</div>
+							<div id="kg-warning" class="alert alert-warning mt-3" style="display: none;">
+							    Los kilogramos reportados son mayores que los disponibles en el lote.
+							</div>
+							<div class="row mb-3">
+	                            <div class="col-md-6 mb-3" id="divLotes" hidden>
+	                                <label for="loteSelect" class="form-label">Lote:</label>
+	                                <select id="loteSelect" class="form-select" name="lote" th:field="*{lote}">
+	                                    <option value=""></option>
+	                                    <option th:each="lot : ${lotes}" 
+												th:value="${lot.loteErp}" 
+												th:text="${lot.loteErp}"
+												th:data-disponible="${lot.disponible}"></option>
+	                                </select>               
+	                            </div>
+								
+								<div class="col-md-6 mb-3">
+								    <label for="kg-disponible" class="form-label">Kg Diponibles :</label>
+								    <input type="number"  id="kg-disponible" class="form-control" readonly />                           
+								</div>	
+							</div>
                             <input type="hidden" id="operario" th:field="*{operario}" />
                             <input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" />
                             <input type="hidden" id="idItemFab" th:field="*{idItemFab}" />
@@ -66,7 +86,7 @@
                             <input type="hidden" id="idParte" th:field="*{idParte}" />
                             <input type="hidden" id="idConfigProceso" th:field="*{idConfigProceso}" />
                             
-                            <div class="d-grid text-center">
+                            <div class="d-grid text-center my-5">
                                 <button type="submit" id="btnGuardar" class="btn btn-primary btn-lg">Guardar</button>
                             </div>
                         </form>
@@ -74,6 +94,9 @@
                 </div>
             </div>
         </div>
+		<div id="kg-warning" class="alert alert-warning mt-3" style="display: none;">
+		    Los kilogramos reportados son mayores que los disponibles en el lote.
+		</div>
     </div>
     
     <footer th:replace="fragments/footer :: footer"></footer>

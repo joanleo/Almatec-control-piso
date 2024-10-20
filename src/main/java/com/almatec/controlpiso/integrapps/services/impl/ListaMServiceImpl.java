@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
 import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
+import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.ListaM;
+import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 import com.almatec.controlpiso.integrapps.interfaces.ListaMInterface;
 import com.almatec.controlpiso.integrapps.repositories.ListaMRepository;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
+import com.almatec.controlpiso.integrapps.services.VistaItemLoteDisponibleService;
 
 @Service
 public class ListaMServiceImpl implements ListaMService {
@@ -23,6 +26,9 @@ public class ListaMServiceImpl implements ListaMService {
 	
 	@Autowired 
 	private ItemOpService itemOpService;
+	
+	@Autowired
+	private VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
 
 	@Override
 	public List<ListaMDTO> obtenerListaMDTOPorIdOp(Integer idOP) {
@@ -49,7 +55,16 @@ public class ListaMServiceImpl implements ListaMService {
 	@Override
 	public List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem) {
 		ItemOp item = itemOpService.obtenerItemPorId(idItem);
-		return listaMaterialRepo.obtenerLotesOpPorItem(item.getIdOpIntegrapps());
+		List<LoteConCodigoDTO> lotes = listaMaterialRepo.obtenerLotesOpPorItem(item.getIdOpIntegrapps());
+		lotes.forEach(lote-> {
+			SpecItemLoteDTO filtro = new SpecItemLoteDTO();
+			filtro.setBodega("00102");
+			filtro.setLote(lote.getLoteErp());
+			VistaItemLoteDisponible disponible = vistaItemLoteDisponibleService.searchItems(filtro, false).get(0);
+			lote.setDisponible(disponible.getDisponible());
+		});
+		
+		return lotes;
 	}
 
 
