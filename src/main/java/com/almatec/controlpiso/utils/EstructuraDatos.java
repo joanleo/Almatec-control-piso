@@ -55,7 +55,7 @@ public class EstructuraDatos {
         itemProduccion.setItem_color(vista.getItem_color());
         itemProduccion.setPrioridad(vista.getPrioridad());
         itemProduccion.setLongitud(vista.getItem_long());
-        itemProduccion.setCant_cumplida(vista.getCant_cumplida().intValue());
+        itemProduccion.setCant_cumplida(vista.getCant_cumplida());
         itemProduccion.setMarca(vista.getMarca());
         return itemProduccion;
     }
