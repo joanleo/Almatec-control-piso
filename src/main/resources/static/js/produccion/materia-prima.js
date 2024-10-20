@@ -206,13 +206,13 @@ function eliminarFila(button){
 //document.getElementById("submitForm").addEventListener('submit', function(event){
 //event.preventDefault()})
 
-function enviarSolicitud() {
+function enviarSolicitud(event) {
 	event.preventDefault()
 	const detalleRows = document.querySelectorAll('#detalle-solicitud tr');
     if (detalleRows.length === 0) {
         mostrarAlert('Debe agregar al menos un item a la solicitud antes de enviarla.', 'warning');
         return;
-    }
+    }	
 
     let hasValidQuantity = false;
 	let loteTotals = {};
@@ -271,7 +271,7 @@ function enviarSolicitud() {
             codigoErp: element.cells[0].textContent,
             descripcion: element.cells[1].textContent,
             undErp: element.cells[2].textContent,
-            bodegaEntrega: element.cells[3].dataset.idbodega,
+            bodegaEntrega: '00102', //element.cells[3].dataset.idbodega,
             loteErp: element.cells[4].textContent,
             disponible: parseInt(element.cells[5].textContent),
             cantSol: parseFloat(element.cells[6].querySelector('input').value),
