@@ -2,6 +2,7 @@ package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,17 +55,30 @@ public class ListaMServiceImpl implements ListaMService {
 
 	@Override
 	public List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem) {
-		ItemOp item = itemOpService.obtenerItemPorId(idItem);
-		List<LoteConCodigoDTO> lotes = listaMaterialRepo.obtenerLotesOpPorItem(item.getIdOpIntegrapps());
-		lotes.forEach(lote-> {
-			SpecItemLoteDTO filtro = new SpecItemLoteDTO();
-			filtro.setBodega("00102");
-			filtro.setLote(lote.getLoteErp());
-			VistaItemLoteDisponible disponible = vistaItemLoteDisponibleService.searchItems(filtro, false).get(0);
-			lote.setDisponible(disponible.getDisponible());
-		});
-		
-		return lotes;
+	    ItemOp item = itemOpService.obtenerItemPorId(idItem);
+	    List<LoteConCodigoDTO> lotes = listaMaterialRepo.obtenerLotesOpPorItem(item.getIdOpIntegrapps());
+	    
+	    if (lotes == null || lotes.isEmpty()) {
+	        return new ArrayList<>(); // Return an empty list if no lotes are found
+	    }
+	    
+	    lotes.forEach(lote -> {
+	        SpecItemLoteDTO filtro = new SpecItemLoteDTO();
+	        filtro.setBodega("00102");
+	        filtro.setLote(lote.getLoteErp());
+	        System.out.println(lote);
+	        
+	        List<VistaItemLoteDisponible> disponibles = vistaItemLoteDisponibleService.searchItems(filtro, false);
+	        
+	        if (disponibles.isEmpty()) {
+	            lote.setDisponible(BigDecimal.ZERO);
+	        } else {
+	            VistaItemLoteDisponible disponible = disponibles.get(0);
+	            lote.setDisponible(disponible != null ? disponible.getDisponible() : BigDecimal.ZERO);
+	        }
+	    });
+
+	    return lotes;
 	}
 
 

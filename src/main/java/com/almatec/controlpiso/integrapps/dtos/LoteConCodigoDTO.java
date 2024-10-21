@@ -41,4 +41,9 @@ public class LoteConCodigoDTO {
 	public void setDisponible(BigDecimal disponible) {
 		this.disponible = disponible;
 	}
+
+	@Override
+	public String toString() {
+		return "LoteConCodigoDTO [codErp=" + codErp + ", loteErp=" + loteErp + ", disponible=" + disponible + "]";
+	}
 }
