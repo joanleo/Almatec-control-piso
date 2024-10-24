@@ -97,6 +97,7 @@ public class ComercialController {
 	@PostMapping("/crear-op/{noPedido}/{ref}")
 	public String crearOrdenProduccion(@PathVariable Integer noPedido,
 				@PathVariable String ref, RedirectAttributes flash) {
+		
 		List<VistaItemPedidoErp> items = vistaItemPedidosErp.findByNoPedidopAndReferencia(noPedido, ref);
 		
 		Usuario usuario = util.obtenerUsuarioAtenticado();

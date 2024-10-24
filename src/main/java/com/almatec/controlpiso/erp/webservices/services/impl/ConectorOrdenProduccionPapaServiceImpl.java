@@ -42,7 +42,12 @@ public class ConectorOrdenProduccionPapaServiceImpl implements ConectorOrdenProd
 		encabezado.setF850_id_co_pv(configService.getC_O());
 		encabezado.setF850_id_tipo_docto_pv("PV");
 		encabezado.setF850_consec_docto_pv(noPedido);
-		encabezado.setF850_referencia_1(ordenPv.getCliente());
+		String referencia1 = ordenPv.getCliente();
+		if (referencia1.length() > 30) {
+			referencia1 = referencia1.substring(0, 30);
+		}
+		encabezado.setF850_referencia_1(referencia1);
+		
 		String referencia2 = ordenPv.getCoDescripcion();
 		if (referencia2.length() > 30) {
 			referencia2 = referencia2.substring(0, 30);
