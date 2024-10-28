@@ -40,7 +40,7 @@ public class ConectorItemServiceImpl implements ConectorItemService {
 			item.setF120_descripcion_corta(ordenOPHijo.getObservaciones());
 		}
 		Integer itemIFId =  listaMaterialService.obtenerItemOp(ordenIFPapa);
-		TipoServicioYGrupoImpositivo dataTipoYGrupo = listaMaterialService.obtenerTipoServicioYGrupoImpositivoItem(itemIFId);
+		TipoServicioYGrupoImpositivo dataTipoYGrupo = listaMaterialService.obtenerTipoServicioYGrupoImpositivoItem(itemIFId, ordenIFPapa.getTipoOp(), ordenIFPapa.getNumOp());
 		item.setF120_id_grupo_impositivo(dataTipoYGrupo.getGrupoImpositivo());
 		item.setF120_id_tipo_inv_serv(dataTipoYGrupo.getTipoServicio());
 		item.setF120_ind_tipo_item(1);

@@ -158,8 +158,13 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 			+ "ON t851_mf_op_docto_item.f851_rowid_item_ext_padre = t121_mc_items_extensiones.f121_rowid "
 			+ "INNER JOIN t120_mc_items "
 			+ "ON t121_mc_items_extensiones.f121_rowid_item = t120_mc_items.f120_rowid "
-			+ "WHERE   (t850_mf_op_docto.f850_id_cia = 22) AND (t120_mc_items.f120_id = :itemIFId)", nativeQuery = true)
-	TipoServicioYGrupoImpositivo encontrarTipoServicioYGrupoImpositivoItem(@Param("itemIFId")Integer itemIFId);
+			+ "WHERE   (t850_mf_op_docto.f850_id_cia = 22) "
+			+ "AND (t120_mc_items.f120_id = :itemIFId) "
+			+ "AND (f850_id_clase_op = :tipoOp) "
+			+ "AND (f850_consec_docto = :numOp) ", nativeQuery = true)
+	TipoServicioYGrupoImpositivo encontrarTipoServicioYGrupoImpositivoItem(@Param("itemIFId")Integer itemIFId, 
+			@Param("tipoOp") String tipoOp, 
+			@Param("numOp")Integer numOp);
 
 
 }

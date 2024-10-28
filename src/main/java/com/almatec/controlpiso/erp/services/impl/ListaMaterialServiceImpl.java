@@ -93,7 +93,8 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 	}
 
 	@Override
-	public TipoServicioYGrupoImpositivo obtenerTipoServicioYGrupoImpositivoItem(Integer itemIFId) {
-		return listaMaterialRepo.encontrarTipoServicioYGrupoImpositivoItem(itemIFId);
+	public TipoServicioYGrupoImpositivo obtenerTipoServicioYGrupoImpositivoItem(Integer itemIFId, String tipoOp, Integer numOp) {
+		TipoServicioYGrupoImpositivo grupo = listaMaterialRepo.encontrarTipoServicioYGrupoImpositivoItem(itemIFId, tipoOp, numOp);
+		return grupo; 
 	}
 }

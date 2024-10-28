@@ -37,6 +37,6 @@ public interface ListaMaterialService {
 
 	List<TarifaCostosSegmentoItem> obtenerCostosSegmentos(String ref);
 
-	TipoServicioYGrupoImpositivo obtenerTipoServicioYGrupoImpositivoItem(Integer itemIFId);
+	TipoServicioYGrupoImpositivo obtenerTipoServicioYGrupoImpositivoItem(Integer itemIFId, String tipoOp, Integer numOp);
 
 }
