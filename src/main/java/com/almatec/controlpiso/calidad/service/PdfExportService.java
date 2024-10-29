@@ -178,8 +178,8 @@ public class PdfExportService {
     }
 	
 	private String formatBoolean(Boolean value) {
-		if(value != null) {
-			return "";  
+		if(value == null) {
+			return "N/A";  
 		}
 		return value ? "SI" : "NO";			
     }
