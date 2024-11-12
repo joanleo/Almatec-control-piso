@@ -36,7 +36,6 @@
           </button>
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion">Asignar/Editar Prioridad</a></li>
-			<!--<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GRAFICO_GANTT'')')}"><a class="dropdown-item" href="/programacion/grafico-gantt">Grafico</a></li>-->
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_PROGRAMACION'')')}"><a class="dropdown-item" href="/programacion/consulta-materia-prima">Reporte Materia Prima</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_RESUMEN_FABRICADO'')')}"><a class="dropdown-item" href="/programacion/resumen-fabricado">Resumen fabricacion</a></li>
           </ul>
@@ -47,6 +46,7 @@
 			  Produccion
 		  </button>
 		  <ul class="dropdown-menu">
+			<!--<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/dashboard">Dashboard</a></li>-->
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/home">Planta</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CAGA_X_CT'')')}"><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
 			
@@ -83,6 +83,7 @@
           </button>
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes/historial">Historial Solicitudes materia prima</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Remision</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Remisiones</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_ALMACEN'')')}"><a class="dropdown-item" href="/almacen/consulta-materia-prima">Consulta Materia prima</a></li>

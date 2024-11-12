@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.integrapps.dtos.ConfigProcesoDTO;
 import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
@@ -27,21 +26,19 @@ public class ConfigProcesoController {
 	@Autowired
 	private ConfigProcesoService configProcesoService;
 	
-	public String listar(Model modelo) {
-		List<ConfigProceso> procesosConfig = configProcesoService.buscarProcesosConfig();
-		modelo.addAttribute("procesosConfig", procesosConfig);
-		return "produccion/config-procesos/listar.html";
+	@GetMapping("/hoy")
+	public ResponseEntity<List<ConfigProceso>> listar() {
+		System.out.println("solicitud para obtener configs");
+		return ResponseEntity.ok(configProcesoService.obtenerConfigProcesosDia());
 	}
 	
-	@ResponseBody
 	@GetMapping("/centro-trabajo/{idCentroTrabajo}/turno/{idTurno}")
-	public ConfigProcesoDTO configNuevoProceso(Model modelo, 
+	public ResponseEntity<ConfigProcesoDTO> configNuevoProceso(Model modelo, 
 									@PathVariable Integer idCentroTrabajo, 
 									@PathVariable Long idTurno) throws Exception {
-		return configProcesoService.configProceso(idCentroTrabajo, idTurno);
+		return ResponseEntity.ok(configProcesoService.configProceso(idCentroTrabajo, idTurno));
 	}
 	
-	@ResponseBody
 	@PostMapping("{idConfigProceso}/finalizar-turno")
 	public ResponseEntity<?> finalizarTurno(@PathVariable Integer idConfigProceso) {
 		ResponseMessage mensaje = configProcesoService.finalizarTurno(idConfigProceso);

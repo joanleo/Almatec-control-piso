@@ -9,4 +9,7 @@ public interface RegistroPiezaRepository extends JpaRepository<RegistroPieza, In
 	RegistroPieza findByIdCTAndIdConfigAndIdOperarioAndIdItem(Integer idCT, Integer idProceso, Integer idOperario,
 			Integer idPieza);
 
+	RegistroPieza findByIdCTAndIdConfigAndIdOperarioAndIdItemAndIdItemParte(Integer idCT, Integer idProceso,
+			Integer idOperario, Integer idItemOp, Integer idItem);
+
 }

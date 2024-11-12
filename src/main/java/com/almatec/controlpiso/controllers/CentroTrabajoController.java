@@ -175,16 +175,18 @@ public class CentroTrabajoController {
 	
 	@GetMapping("/{idCT}/reporte")
 	public String reportePiezasCT(@PathVariable Integer idCT,
-								  @RequestParam Long idItem,
+								  @RequestParam Long idItemOp,
 								  @RequestParam Integer idOperario,
+								  @RequestParam Integer idItem,
+								  @RequestParam String tipo,
 								  @RequestParam(required = false) Integer idConfigProceso,
 								  Model modelo) {
 		
-		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
+		ReporteDTO reporte = centroTrabajoService.buscarItemCtReporte(idItemOp, idCT, idOperario, idItem, tipo);
 		Integer idItemFab = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
 		ItemInterface itemFab = itemService.obtenerItemFabricaPorId(idItemFab);
 		reporte.setPeso(itemFab.getitem_peso_b());
-		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
+		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
 		
@@ -336,10 +338,23 @@ public class CentroTrabajoController {
 		centrosTrabajoPDFService.generarBarCodeCentrosTrabajo(response);
 	}
 	
-	@GetMapping("/{idCT}/piezas-fabricadas/{idItemOp}")
+	@GetMapping("/{idCT}/piezas-fabricadas/{idItemOp}/tipo/{tipo}/{idItemFab}")
 	public ResponseEntity<Integer> obtenerCantPiezasFabricadas(@PathVariable Integer idCT,
-	        @PathVariable Integer idItemOp) {
-	    Integer cantidadFabricada = vistaPiezasOperariosService.obtenerCantPiezasFabricadas(idCT, idItemOp);
+	        @PathVariable Long idItemOp,
+	        @PathVariable String tipo,
+	        @PathVariable Integer idItemFab) {
+		Integer cantidadFabricada;
+	    if(tipo.equals("parte")) {
+	        cantidadFabricada = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItemOp, idItemFab, idCT);
+	    } else {
+	        cantidadFabricada = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItemOp, idItemFab, idCT);
+	    }
+	    
+	    // Manejo de null
+	    if(cantidadFabricada == null) {
+	        cantidadFabricada = 0;
+	    }
+	    //Integer cantidadFabricada = vistaPiezasOperariosService.obtenerCantPiezasFabricadas(idCT, idItemOp);
 	    return ResponseEntity.ok(cantidadFabricada);
 	}
 

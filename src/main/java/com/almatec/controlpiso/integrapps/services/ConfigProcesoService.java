@@ -14,4 +14,6 @@ public interface ConfigProcesoService {
 
 	ResponseMessage finalizarTurno(Integer idConfigProceso);
 
+	List<ConfigProceso> obtenerConfigProcesosDia();
+
 }

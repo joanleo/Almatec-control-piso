@@ -108,6 +108,19 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 		}
 		return filterOrdenesProduccion;
 	}
+	
+	@Override
+	public Set<OpCentroTrabajoDTO> buscarItemParteCt(Long idItemOp, Integer idCT, Integer idItem, String tipo) {
+		List<VistaOpItemsMaterialesRuta> listaRutas = vistaOpItemsMaterialesRutaRepo.buscarItemParteCt(idItemOp, idItem, idCT, tipo);
+		List<OpCentroTrabajoDTO> ordenesProduccion = EstructuraDatos.crearEstructura(listaRutas);
+		Set<OpCentroTrabajoDTO> filterOrdenesProduccion = new HashSet<>(ordenesProduccion);
+		for(OpCentroTrabajoDTO op:filterOrdenesProduccion) {
+			Set<ItemOpCtDTO> setItems = new HashSet<>(op.getItems());
+			List<ItemOpCtDTO> conjuntoItems = new ArrayList<>(mergeItemsReporte(new ArrayList<>(setItems)));			
+			op.setItems(conjuntoItems);
+		}
+		return filterOrdenesProduccion;
+	}
 
 	private Set<ItemOpCtDTO> mergeItemsReporte(List<ItemOpCtDTO> items) {
 		Map<String, List<ItemOpCtDTO>> groupedItems = items.stream()
@@ -227,5 +240,7 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 	private boolean shouldReplaceExistingItem(VistaOpItemsMaterialesRuta existing, VistaOpItemsMaterialesRuta newItem) {
 	    return (existing.getPrioridad() == null && newItem.getPrioridad() != null);
 	}
+
+	
 
 }

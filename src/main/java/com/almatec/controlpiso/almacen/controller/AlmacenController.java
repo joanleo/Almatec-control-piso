@@ -79,8 +79,12 @@ public class AlmacenController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@GetMapping("/solicitudes")
-	public String listarSolicitudesM(Model modelo) {
-		List<SolicitudDTO> solicitudes = solicitudMateriaPrimaService.obtenerSolicitudes();		
+	public String listarSolicitudesM(Model modelo,
+			@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+		Page<SolicitudDTO> solicitudes = solicitudMateriaPrimaService.obtenerSolicitudesPendientesPaginadas(page, size);
+	    modelo.addAttribute("currentPage", page);
+	    modelo.addAttribute("totalPages", solicitudes.getTotalPages());
 		modelo.addAttribute("solicitudes", solicitudes);
 		return "almacen/solicitudes-materia-prima.html";
 	}
@@ -103,6 +107,17 @@ public class AlmacenController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al rechazar la solicitud: " + e.getMessage());
         }
     }
+	
+	@GetMapping("/solicitudes/historial")
+	public String listarHistorialSolicitudesM(Model modelo,
+			@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+		Page<SolicitudDTO> solicitudes = solicitudMateriaPrimaService.obtenerTodasSolicitudesPaginadas(page, size);
+	    modelo.addAttribute("currentPage", page);
+	    modelo.addAttribute("totalPages", solicitudes.getTotalPages());
+		modelo.addAttribute("solicitudes", solicitudes);
+		return "almacen/historial-solicitudes-mp.html";
+	}
 	
 	@GetMapping("/remisiones")
 	public String ListarRemisiones(Model modelo,

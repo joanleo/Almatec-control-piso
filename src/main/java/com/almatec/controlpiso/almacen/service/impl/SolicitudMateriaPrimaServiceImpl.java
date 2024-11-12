@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.dto.SolicitudDTO;
@@ -72,22 +75,33 @@ public class SolicitudMateriaPrimaServiceImpl implements SolicitudMateriaPrimaSe
 		detalleSol = detalleSolService.actualizarDetalleSol(detalleSol);
 		List<ListaM> listaMateriales = listaMService.obtenerListaMPorIdOp(solicitud.getIdOp());
 		
-		detalleSol.forEach(detalleItem -> {
+		detalleSol.forEach(detalleItem -> 
 	        listaMateriales.stream()
 	                .filter(listaItem -> listaItem.getCodigoErp().equals(detalleItem.getCodigoErp()))
 	                .findFirst()
-	                .ifPresent(listaItem -> {
-	                	listaItem.setCantEntregada(listaItem.getCantEntregada().add(new BigDecimal(detalleItem.getCantEntrega())));
-	                });
-	    });
+	                .ifPresent(listaItem -> 
+	                	listaItem.setCantEntregada(listaItem.getCantEntregada().add(BigDecimal.valueOf(detalleItem.getCantEntrega()))))
+	                );
 
 	    listaMService.actualizarListaM(listaMateriales);
 		
 	}
 
 	@Override
-	public List<SolicitudDTO> obtenerSolicitudes() {
+	public List<SolicitudDTO> obtenerSolicitudesPendientes() {
 		List<SolicitudUsuarioInterface> solcEncabezado = solicitudMateriaPrimaRepo.findByIdEstado(0);
+		List<SolicitudDTO> solicitudesDTO = new ArrayList<>();
+		solcEncabezado.forEach(sol->{
+			SolicitudMateriaPrima solicitud = new SolicitudMateriaPrima(sol);
+			SolicitudDTO solDTO = new SolicitudDTO(solicitud, sol.getusu_nombre());
+			solicitudesDTO.add(solDTO);
+		});
+		return solicitudesDTO;
+	}
+	
+	@Override
+	public List<SolicitudDTO> obtenerSolicitudes() {
+		List<SolicitudUsuarioInterface> solcEncabezado = solicitudMateriaPrimaRepo.findByAllEstados();
 		List<SolicitudDTO> solicitudesDTO = new ArrayList<>();
 		solcEncabezado.forEach(sol->{
 			SolicitudMateriaPrima solicitud = new SolicitudMateriaPrima(sol);
@@ -125,5 +139,29 @@ public class SolicitudMateriaPrimaServiceImpl implements SolicitudMateriaPrimaSe
         solicitud.setIdEstado(2); 
         solicitudMateriaPrimaRepo.save(solicitud);
     }
+
+	@Override
+	public Page<SolicitudDTO> obtenerSolicitudesPendientesPaginadas(int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+	    Page<SolicitudUsuarioInterface> solicitudesPage = solicitudMateriaPrimaRepo.findByIdEstadoPaginado(0, pageable);
+	    
+	    return solicitudesPage.map(sol -> {
+	        SolicitudMateriaPrima solicitud = new SolicitudMateriaPrima(sol);
+	        return new SolicitudDTO(solicitud, sol.getusu_nombre());
+	    });
+	}
+
+	@Override
+	public Page<SolicitudDTO> obtenerTodasSolicitudesPaginadas(int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+	    Page<SolicitudUsuarioInterface> solicitudesPage = solicitudMateriaPrimaRepo.findByAllEstadosPaginado(pageable);
+	    
+	    return solicitudesPage.map(sol -> {
+	        SolicitudMateriaPrima solicitud = new SolicitudMateriaPrima(sol);
+	        return new SolicitudDTO(solicitud, sol.getusu_nombre());
+	    });
+	}
+
+	
 
 }

@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.calidad.dtos;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -40,8 +39,14 @@ public class ReporteCalidadDTO {
     private Boolean punzonado;
     private Boolean granallado;
     private Boolean pasaPrueba;
-    
-    private Double media1;
+    private Boolean rebaba;
+    private Boolean anguloDoblez;
+    private Boolean numDoblez;
+    private Boolean pasaPruebaVisual;
+    private Boolean diametro;
+    private Boolean pasaPruebaAdherencia;
+   
+	private Double media1;
     private Double media2;
     private Double media3;
     private Double media4;
@@ -62,48 +67,36 @@ public class ReporteCalidadDTO {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public String getPrefijo() {
+		return prefijo;
+	}
+
+	public Integer getIdOperario() {
+		return idOperario;
+	}
+
+	public String getNombreOperario() {
+		return nombreOperario;
 	}
 
 	public Integer getNumOp() {
 		return numOp;
-	}
-	
-	public void setNumOp(Integer numOp) {
-		this.numOp = numOp;
 	}
 
 	public String getZona() {
 		return zona;
 	}
 
-	public void setZona(String zona) {
-		this.zona = zona;
-	}
-
 	public Long getIdItem() {
 		return idItem;
-	}
-
-	public void setIdItem(Long idItem) {
-		this.idItem = idItem;
 	}
 
 	public String getColor() {
 		return color;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
-	}
-
 	public Integer getIdCentroTrabajo() {
 		return idCentroTrabajo;
-	}
-
-	public void setIdCentroTrabajo(Integer idCentroTrabajo) {
-		this.idCentroTrabajo = idCentroTrabajo;
 	}
 
 	public String getCentroTrabajo() {
@@ -202,6 +195,26 @@ public class ReporteCalidadDTO {
 		return pasaPrueba;
 	}
 
+	public Boolean getRebaba() {
+		return rebaba;
+	}
+
+	public Boolean getAnguloDoblez() {
+		return anguloDoblez;
+	}
+
+	public Boolean getNumDoblez() {
+		return numDoblez;
+	}
+
+	public Boolean getPasaPruebaVisual() {
+		return pasaPruebaVisual;
+	}
+
+	public Boolean getDiametro() {
+		return diametro;
+	}
+
 	public Double getMedia1() {
 		return media1;
 	}
@@ -250,6 +263,42 @@ public class ReporteCalidadDTO {
 		return media12;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setPrefijo(String prefijo) {
+		this.prefijo = prefijo;
+	}
+
+	public void setIdOperario(Integer idOperario) {
+		this.idOperario = idOperario;
+	}
+
+	public void setNombreOperario(String nombreOperario) {
+		this.nombreOperario = nombreOperario;
+	}
+
+	public void setNumOp(Integer numOp) {
+		this.numOp = numOp;
+	}
+
+	public void setZona(String zona) {
+		this.zona = zona;
+	}
+
+	public void setIdItem(Long idItem) {
+		this.idItem = idItem;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public void setIdCentroTrabajo(Integer idCentroTrabajo) {
+		this.idCentroTrabajo = idCentroTrabajo;
+	}
+
 	public void setCentroTrabajo(String centroTrabajo) {
 		this.centroTrabajo = centroTrabajo;
 	}
@@ -262,8 +311,8 @@ public class ReporteCalidadDTO {
 		this.proyecto = proyecto;
 	}
 
-	public void setDescripcionItem(String ref) {
-		this.descripcionItem = ref;
+	public void setDescripcionItem(String descripcionItem) {
+		this.descripcionItem = descripcionItem;
 	}
 
 	public void setMarca(String marca) {
@@ -346,6 +395,26 @@ public class ReporteCalidadDTO {
 		this.pasaPrueba = pasaPrueba;
 	}
 
+	public void setRebaba(Boolean rebaba) {
+		this.rebaba = rebaba;
+	}
+
+	public void setAnguloDoblez(Boolean anguloDoblez) {
+		this.anguloDoblez = anguloDoblez;
+	}
+
+	public void setNumDoblez(Boolean numDoblez) {
+		this.numDoblez = numDoblez;
+	}
+
+	public void setPasaPruebaVisual(Boolean pasaPruebaVisual) {
+		this.pasaPruebaVisual = pasaPruebaVisual;
+	}
+
+	public void setDiametro(Boolean diametro) {
+		this.diametro = diametro;
+	}
+
 	public void setMedia1(Double media1) {
 		this.media1 = media1;
 	}
@@ -394,44 +463,12 @@ public class ReporteCalidadDTO {
 		this.media12 = media12;
 	}
 
-	public Integer getIdOperario() {
-		return idOperario;
+	public Boolean getPasaPruebaAdherencia() {
+		return pasaPruebaAdherencia;
 	}
 
-	public String getNombreOperario() {
-		return nombreOperario;
+	public void setPasaPruebaAdherencia(Boolean pasaPruebaAdherencia) {
+		this.pasaPruebaAdherencia = pasaPruebaAdherencia;
 	}
-
-	public void setIdOperario(Integer idOperario) {
-		this.idOperario = idOperario;
-	}
-
-	public void setNombreOperario(String nombreOperario) {
-		this.nombreOperario = nombreOperario;
-	}
-
-	public String getPrefijo() {
-		return prefijo;
-	}
-
-	public void setPrefijo(String prefijo) {
-		this.prefijo = prefijo;
-	}
-
-	@Override
-	public String toString() {
-		return "ReporteCalidadDTO [id=" + id + ", prefijo=" + prefijo + ", idOperario=" + idOperario
-				+ ", nombreOperario=" + nombreOperario + ", numOp=" + numOp + ", zona=" + zona + ", idItem=" + idItem
-				+ ", color=" + color + ", idCentroTrabajo=" + idCentroTrabajo + ", centroTrabajo=" + centroTrabajo
-				+ ", fechaDoc=" + fechaDoc + ", proyecto=" + proyecto + ", descripcionItem="
-				+ descripcionItem + ", marca=" + marca + ", cantSol=" + cantSol + ", lote=" + lote + ", ancho=" + ancho
-				+ ", altura=" + altura + ", longitud=" + longitud + ", ral=" + ral + ", pestana=" + pestana + ", aleta="
-				+ aleta + ", perfBorde=" + perfBorde + ", perforaciones=" + perforaciones + ", troquelado=" + troquelado
-				+ ", cuadratura=" + cuadratura + ", corona=" + corona + ", flechaH=" + flechaH + ", flechaV=" + flechaV
-				+ ", corte=" + corte + ", punzonado=" + punzonado + ", granallado=" + granallado + ", pasaPrueba="
-				+ pasaPrueba + ", media1=" + media1 + ", media2=" + media2 + ", media3=" + media3 + ", media4=" + media4
-				+ ", media5=" + media5 + ", media6=" + media6 + ", media7=" + media7 + ", media8=" + media8
-				+ ", media9=" + media9 + ", media10=" + media10 + ", media11=" + media11 + ", media12=" + media12 + "]";
-	}
-    
+	
 }

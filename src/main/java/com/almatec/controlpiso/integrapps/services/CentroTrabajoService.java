@@ -36,13 +36,15 @@ public interface CentroTrabajoService {
 
 	void asignarActualizarPiezaOperario(Integer idCT, List<PiezaOperarioDTO> piezas);
 
-	ReporteDTO buscarItemCt(Long idItem, Integer idCT, Integer idOperario);
+	ReporteDTO buscarItemCt(Long idItemOp, Integer idCT, Integer idOperario);
 
 	DatosOpItem obtenerDatosOpItem(Long idItem);
 
 	Integer obtenerIdctErp(Integer idCentroTrabajo);
 
 	CentroTrabajo buscarCentroTrabajoPorIdCtErp(Integer idCT);
+
+	ReporteDTO buscarItemCtReporte(Long idItem, Integer idCT, Integer idOperario, Integer idItem2, String tipo);
 
 
 }

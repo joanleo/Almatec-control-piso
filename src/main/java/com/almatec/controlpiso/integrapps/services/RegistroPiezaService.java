@@ -9,4 +9,7 @@ public interface RegistroPiezaService {
 
 	void actualizarRegistro(RegistroPieza registro);
 
+	RegistroPieza consultaRegistroPieza(Integer idCT, Integer idProceso, Integer idOperario, Integer idItemOp,
+			Integer idItem);
+
 }

@@ -161,7 +161,7 @@ async function llenarTablaPiezasOperario(){
 	        celldescripcion.textContent = pieza.descripcionItem
 	        row.appendChild(celldescripcion)
 	        
-			const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, pieza.idItem)
+			const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, pieza)
 	        let cellCantPendiente = document.createElement('td')
 	        cellCantPendiente.textContent = pieza.cantReq - cantPiezaFabricada
 	        row.appendChild(cellCantPendiente)
@@ -194,17 +194,32 @@ async function llenarTablaPiezasOperario(){
 	}
 }
 
-async function obtenerCantPiezasFabricadas(idCT, idItemOp){
+async function obtenerCantPiezasFabricadas(idCT, item){
+	let ref = item.idParte != 0? item.idParte: item.idItemFab
+	const tipo = ref != 0 ? 'parte' : 'conjunto';
+	
+	console.log(`tipo: ${tipo} ref:${ref}`)
+    
     try {
-        const response = await fetch(`/centros-trabajo/${idCT}/piezas-fabricadas/${idItemOp}`);
-        if(!response.ok){
-            throw new Error("Error al obtener cantidad de piezas fabricadas");
+        const response = await fetch(`/centros-trabajo/${idCT}/piezas-fabricadas/${item.idItem}/tipo/${tipo}/${ref}`);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
         }
-        const data = await response.json();
+        
+        // Verifica si hay contenido antes de hacer el parse
+        const text = await response.text();
+        if (!text) {
+            throw new Error('Respuesta vacía del servidor');
+        }
+        
+        const data = JSON.parse(text);
         return data;
-    } catch(error) {
+        
+    } catch (error) {
         console.error("Error al obtener cantidad de piezas fabricadas: ", error);
-		mostrarAlert(error, 'danger')
+        mostrarAlert(`Error: ${error.message}`, 'danger');
         return 0;
     }
 }
@@ -363,6 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			initializeChart('piechart');
 		}
 	    mostrarOperariosCT()
+		setupTableSync()
     })()
 })
 
@@ -656,6 +672,7 @@ function cargarListadoItems(){
         thead.removeChild(prioridadCell);
     }
 	
+	document.getElementById("title-op-selected").textContent = 'Items ' + opSelected
 	const ops = opsCt.filter(item => item.op === opSelected)
     esquema.value = ops[0].esquemaPintura ?? ''
 	const centrosPrioridad = localStorage.getItem('centrosTrabajoPrioridad')
@@ -670,6 +687,7 @@ function cargarListadoItems(){
     if (ops) {
         ops.forEach(function(op) {
 			let num = 1
+			const componentesMostrados = new Set();
 			for(const item of op.items){	
             	const componentes = item.componentes;
             
@@ -677,10 +695,15 @@ function cargarListadoItems(){
 	                agregarFilaListadoItems(num, op, item, false, listadoItemsTbody);
 	                num++
 	            }
-				if(componentes.length > 0){
+				if(item.componentes && componentes.length > 0){
 		            for(const componente of componentes){
-						if (componente.material_centro_t_id === Number(centroTSelected.id)) {
-                        	agregarFilaListadoItems(num, op, componente, true, listadoItemsTbody, item);
+						//console.log(componente)
+						
+						const componenteKey = `${componente.material_id}-${item.item_op_id}`;
+						console.log(componenteKey)				
+						if (componente.material_centro_t_id === Number(centroTSelected.id) && !componentesMostrados.has(componenteKey)) {
+							componentesMostrados.add(componenteKey);
+							agregarFilaListadoItems(num, op, componente, true, listadoItemsTbody, item);
                     		num++
                     	}
 					}					
@@ -810,6 +833,10 @@ function limpiarElementos() {
     if (operariosCtElement) {
         operariosCtElement.innerHTML = ''
     }
+	const tableSection = document.querySelector('#asignarPieza .table-process-section');
+    if (tableSection) {
+        tableSection.remove();
+    }
 }
 
 let opsCt
@@ -821,12 +848,20 @@ async function asignaPiezaOperario(){
 	document.getElementById('listado-items').innerHTML = ''
     crearSelectCT(opsCt)
     crearSelectOperariosCt(operariosCt)
-    modalAsignarPieza.show()
+    
+	actualizarTablaModal();
+	
+	modalAsignarPieza.show()
     modalAsignarPieza._element.addEventListener('hidden.bs.modal', function () {
-    limpiarElementos()
-    llenarTablaPiezasOperario()
-	actualizarTablasConTiemposOperarios()
-})
+	    limpiarElementos()
+	    llenarTablaPiezasOperario()
+		actualizarTablasConTiemposOperarios()
+		// Limpiar la sección de la tabla al cerrar el modal
+        const tableSection = document.querySelector('#asignarPieza .table-process-section');
+        if (tableSection) {
+            tableSection.remove();
+        }
+	})
 }
 
 let itemAgregar
@@ -872,6 +907,7 @@ async function agregarPiezaOperario(event){
 	const btnAceptar = event.target;
     const itemToAdd = JSON.parse(btnAceptar.getAttribute("data-item"))    
     piezasOperario.push(itemToAdd)
+	console.log('pieza a asignar', piezasOperario)
     try{
 		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/asignar-pieza`, {
             method: 'POST',
@@ -884,9 +920,13 @@ async function agregarPiezaOperario(event){
 		if(!response){
 			throw new Error("Error en la asignacion de pieza")
 		}
-
+		await  llenarTablaPiezasOperario()
         confirm_modal.hide();
-		//modalAsignarPieza.hide();
+		
+		const modalAbierto = document.querySelector('#asignarPieza.show');
+        if (modalAbierto) {
+            actualizarTablaModal();
+        }
 	}catch(error){
 		console.error(error)
 	}
@@ -1187,12 +1227,13 @@ async function handleKeyPressNovedadesOperario(event){
 	}
 }
 
-function mostrarPiezasOperario(items, operario, idTbody){
+async function mostrarPiezasOperario(items, operario, idTbody){
 	let listadoItemsTbody = document.getElementById(idTbody)
     listadoItemsTbody.innerHTML = ''
-	items.forEach((item, index) => {
+	items.forEach(async (item, index) => {
 		if(item != null){
-	    const row = crearFilaMostrarPiezas(index, item, idTbody, operario)						
+	    const row = await crearFilaMostrarPiezas(index, item, idTbody, operario)	
+		console.log(row)					
 	    listadoItemsTbody.appendChild(row)		                
 			
 		}
@@ -1206,7 +1247,7 @@ document.getElementById('codigo-operario-reporte').addEventListener('change', fu
 })
 
 
-function crearFilaMostrarPiezas(index, item, idTbody, operario) {
+async function crearFilaMostrarPiezas(index, item, idTbody, operario) {
     let row = document.createElement('tr')
 
     let cellNum = document.createElement('td')
@@ -1215,26 +1256,21 @@ function crearFilaMostrarPiezas(index, item, idTbody, operario) {
 
     let cellName = document.createElement('td')
 
-    let idPieza
-	if(item.idItem == null){
-		idPieza = 0
-	}else{
-    idPieza = item.idItem
-		
-	}
+    let idPieza = item.idItem ?? 0
 
-    const ref = item.idItemFab ?? item.idParte
+    const ref = item.idParte != 0 ? item.idParte : item.idItemFab 
+	
     let cellRef = document.createElement('td')
-    cellRef.textContent = idPieza
+    cellRef.textContent = idPieza + '-' + ref //
+	cellRef.classList.add("text-nowrap")
     row.appendChild(cellRef)
 
-    //descripcion = descripcion ?? item.descripcionItem
     cellName.textContent = item.descripcionItem
     row.appendChild(cellName)
 
     let cellLongitud = document.createElement('td')
-    cellLongitud.textContent = item.longitud // isComponente ? longitud : ''
-    row.append(cellLongitud)
+    cellLongitud.textContent = item.longitud 
+    row.appendChild(cellLongitud)
 
     let cellCliente = document.createElement('td')
     cellCliente.textContent = item.cliente
@@ -1248,14 +1284,16 @@ function crearFilaMostrarPiezas(index, item, idTbody, operario) {
     cellCantSol.textContent = item.cantReq
     row.appendChild(cellCantSol)
 
+	const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, item)
+	console.log(item)
     let pesoUnitario = document.createElement('td')
-    pesoUnitario.textContent = item.peso
+    pesoUnitario.textContent = cantPiezaFabricada //item.peso
     row.appendChild(pesoUnitario)
 
-    let pesoTotal = document.createElement('td')
+    /*let pesoTotal = document.createElement('td')
     let resultadoPeso = item.cantReq * item.peso
     pesoTotal.textContent = resultadoPeso.toFixed(2)
-    row.appendChild(pesoTotal)
+    row.appendChild(pesoTotal)*/
 
     row.addEventListener('mouseover', function() {
         row.style.cursor = 'pointer'
@@ -1265,20 +1303,82 @@ function crearFilaMostrarPiezas(index, item, idTbody, operario) {
         row.style.cursor = 'default'
     })
 
-    row.addEventListener('click', function() {
-        if (idTbody == 'listado-piezas-operario') {
-
-            window.location.href = `/centros-trabajo/${centroTSelected.id}/reporte?idItem=` + idPieza +
-                '&idOperario=' + operario.id
-        }
-        if (idTbody == 'listado-piezas-operario-novedades') {
-            window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=` + idPieza +
-                '&idOperario=' + operario.id
-        }
-		if (idTbody == 'listado-piezas-operario-calidad') {
-            window.location.href = `/calidad/formulario/centro-trabajo/${centroTSelected.id}?idItem=` + idPieza +
-                '&idOperario=' + operario.id
-        }
-    })
+	row.addEventListener('click', function() {
+		document.getElementById('spinner').removeAttribute('hidden')
+		let tipo = item.idParte? 'parte': 'conjunto'
+	       if (idTbody == 'listado-piezas-operario') {
+	           window.location.href = `/centros-trabajo/${centroTSelected.id}/reporte?idItemOp=${idPieza}&idOperario=${operario.id}&idItem=${ref}&tipo=${tipo}`
+	       }
+	       if (idTbody == 'listado-piezas-operario-novedades') {
+	           window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=${idPieza}&idOperario=${operario.id}`
+	       }
+	       if (idTbody == 'listado-piezas-operario-calidad') {
+	           window.location.href = `/calidad/formulario/centro-trabajo/${centroTSelected.id}?idItem=${idPieza}&idOperario=${operario.id}`
+	       }
+	   })
+	
     return row
 }
+
+function actualizarTablaModal() {
+    // Obtener la tabla original
+    const tablaOriginal = document.getElementById('table-process');
+    
+    // Crear un contenedor para la tabla en el modal si no existe
+    let modalTableSection = document.querySelector('#asignarPieza .table-process-section');
+	if (modalTableSection) {
+	        modalTableSection.innerHTML = '';
+    } else {
+		modalTableSection = document.createElement('div');
+        modalTableSection.className = 'table-process-section mt-4';
+    }
+		
+		// Crear y añadir el título
+        const titleContainer = document.createElement('div');
+        titleContainer.className = 'mb-3';
+        const title = document.createElement('h4');
+        title.className = 'text-center';
+        title.textContent = 'Piezas Asignadas';
+        titleContainer.appendChild(title);
+        modalTableSection.appendChild(titleContainer);
+
+		// Añadir separador visual
+	    const separator = document.createElement('hr');
+	    separator.className = 'my-4';
+	    modalTableSection.appendChild(separator);
+		
+		// Crear contenedor para la tabla
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'table-responsive rounded-3 shadow-sm';
+	    const tablaClonada = tablaOriginal.cloneNode(true);
+	    tablaClonada.id = 'table-process-modal';
+	    tableContainer.appendChild(tablaClonada);
+
+		modalTableSection.appendChild(tableContainer);
+				
+		// Insertar después de items-op
+		if (!document.querySelector('#asignarPieza .table-process-section')) {
+	        const modalBody = document.querySelector('#asignarPieza .container');
+	        modalBody.appendChild(modalTableSection);
+	    }		
+}
+
+function setupTableSync() {
+    const observerConfig = { childList: true, subtree: true };
+    const callback = function(mutationsList, observer) {
+        const modalTable = document.getElementById('table-process-modal');
+        if (modalTable && document.querySelector('#asignarPieza.show')) {
+            actualizarTablaModal();
+        }
+    };
+
+    const observer = new MutationObserver(callback);
+    const targetNode = document.getElementById('body-table-piezas-proceso');
+    if (targetNode) {
+        observer.observe(targetNode, observerConfig);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setupTableSync();
+});

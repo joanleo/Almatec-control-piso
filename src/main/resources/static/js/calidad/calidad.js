@@ -17,7 +17,23 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	
 	spinner.setAttribute('hidden', '')
-	document.getElementById('tolerancias').addEventListener('click', handleToleranciaClick);
+	const idCentroTrabajo = Number(document.querySelector('.id-centro-trabajo').value);
+    const toleranciasButton = document.getElementById('tolerancias');
+    
+    // Lista de centros de trabajo que deben mostrar el botón de tolerancias
+    const centrosConTolerancia = [2, 3, 4, 8, 13];
+    
+    // Mostrar u ocultar el botón según corresponda
+    if (centrosConTolerancia.includes(idCentroTrabajo)) {
+        toleranciasButton.style.display = 'block';
+        if (idCentroTrabajo === 13) {
+            toleranciasButton.textContent = "Ver PDF";
+        }
+    } else {
+        toleranciasButton.style.display = 'none';
+    }
+    
+    toleranciasButton.addEventListener('click', handleToleranciaClick);
 })
 
 document.addEventListener('DOMContentLoaded',  function() {
@@ -92,10 +108,12 @@ document.addEventListener('DOMContentLoaded', async function(){
 	document.getElementById('mainContent').insertBefore(titulo, form)
 	switch(centroTrabajo.id){
 		case 2:
+			mostrarPunzonadora()
+			break;
 		case 3:
 			console.log("Punzonadora y omegas")
 			
-			mostrarPunzonadoraYOmegas()
+			mostrarOmegas()
 			break;
 		case 4:
 			console.log("Formadora 1a Vigas")
@@ -113,10 +131,20 @@ document.addEventListener('DOMContentLoaded', async function(){
 			mostrarBox()
 			console.log("Cerradora 1 box")
 			break;
+		case 11:
+			mostarTroqueladora()
+			break;
+		case 12:
+			mostarDobladora()
+			break;
+		case 13:
+			mostarSoldadura()
+			break;
 		case 16:
+			mostrarGranallado()
+			break;
 		case 17:
-			mostrarGranalladoPintura()
-			console.log("Granallado y pintura")
+			mostrarPintura()
 			break;
 		default:
 			break;
@@ -130,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
 function handleToleranciaClick() {
     const idCentroTrabajo = Number(document.querySelector('.id-centro-trabajo').value);
-    
+	
     if (idCentroTrabajo === 5 || idCentroTrabajo === 7) {
         showFileOptions(idCentroTrabajo);
     } else {
@@ -196,8 +224,8 @@ function getFileName(idCentroTrabajo) {
         case 8:
             return 'ETPCAL-011_ESPECIFICACION TECNICA_DE_TOLERANCIA_VIGAS_BOX';
         default:
-            return 'ETPCAL-012_ESPECIFICACION TECNICA_DE_TOLERANCIA_PERFIL_C_CORREAS';
-    }
+			break;
+		    }
 }
 
 function verPdf(nombreDelArchivo) {
@@ -228,8 +256,36 @@ async function fetchCentrosT(){
 	}
 }
 
-function mostrarPunzonadoraYOmegas(){
+function mostrarPunzonadora(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	
+	document.getElementById('pestanaContainer').setAttribute('hidden','')
+	document.getElementById('aletaContainer').setAttribute('hidden','')
+	document.getElementById('cuadraturaContainer').setAttribute('hidden','')
+	document.getElementById('coronaContainer').setAttribute('hidden','')
+	document.getElementById('flechaHContainer').setAttribute('hidden','')
+	document.getElementById('flechaVContainer').setAttribute('hidden','')
+	document.getElementById('corteContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('perforacionesContainer').setAttribute('hidden','')
+	document.getElementById('troqueladoContainer').setAttribute('hidden','')
+	document.getElementById('granalladoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
+	document.getElementById('anguloDoblezContainer').setAttribute('hidden','')
+	document.getElementById('numDoblezContainer').setAttribute('hidden','')
+	document.getElementById('diametroContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaAdherenciaContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaVisualContainer').setAttribute('hidden','')
+	
+	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('medidas').removeAttribute('hidden')
+	document.getElementById('rebabaContainer').removeAttribute('hidden')
+}
+
+function mostrarOmegas(){
+	document.getElementById('ralContainer').setAttribute('hidden','')
+	
 	document.getElementById('perfBordeContainer').setAttribute('hidden','')
 	document.getElementById('perforacionesContainer').setAttribute('hidden','')
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
@@ -237,11 +293,13 @@ function mostrarPunzonadoraYOmegas(){
 	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
 	
 	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('medidas').removeAttribute('hidden')
 }
 
 function mostrarVigas(){
 	
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	
 	document.getElementById('perfBordeContainer').setAttribute('hidden','')
 	document.getElementById('perforacionesContainer').setAttribute('hidden','')
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
@@ -252,13 +310,12 @@ function mostrarVigas(){
 	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
 	
 	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('medidas').removeAttribute('hidden')
 }
 
 function mostrarRefuerzos(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
-	//document.getElementById('pestanaContainer').setAttribute('hidden','')
-	//document.getElementById('aletaContainer').setAttribute('hidden','')
-	//document.getElementById('perfBordeContainer').setAttribute('hidden','')
+
 	document.getElementById('perforacionesContainer').setAttribute('hidden','')
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
 	document.getElementById('cuadraturaContainer').setAttribute('hidden','')
@@ -268,10 +325,12 @@ function mostrarRefuerzos(){
 	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')	
 	
 	document.getElementById('parametros').removeAttribute('hidden')	
+	document.getElementById('medidas').removeAttribute('hidden')
 }
 
 function mostraCZ(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
 	document.getElementById('corteContainer').setAttribute('hidden','')
 	document.getElementById('punzonadoContainer').setAttribute('hidden','')
@@ -280,10 +339,12 @@ function mostraCZ(){
 	
 	
 	document.getElementById('parametros').removeAttribute('hidden')	
+	document.getElementById('medidas').removeAttribute('hidden')
 }
 
 function mostrarBox(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	
 	document.getElementById('perfBordeContainer').setAttribute('hidden','')
 	document.getElementById('punzonadoContainer').setAttribute('hidden','')
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
@@ -291,6 +352,80 @@ function mostrarBox(){
 	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
 	
 	document.getElementById('parametros').removeAttribute('hidden')	
+	document.getElementById('medidas').removeAttribute('hidden')
+}
+
+function mostarTroqueladora(){
+	document.getElementById('ralContainer').setAttribute('hidden','')
+	
+	document.getElementById('pestanaContainer').setAttribute('hidden','')
+	document.getElementById('aletaContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('troqueladoContainer').setAttribute('hidden','')
+	document.getElementById('cuadraturaContainer').setAttribute('hidden','')
+	document.getElementById('coronaContainer').setAttribute('hidden','')
+	document.getElementById('flechaHContainer').setAttribute('hidden','')
+	document.getElementById('flechaVContainer').setAttribute('hidden','')
+	document.getElementById('corteContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
+	document.getElementById('granalladoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaVisualContainer').setAttribute('hidden','')
+	document.getElementById('numDoblezContainer').setAttribute('hidden', '')
+	
+	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('medidas').removeAttribute('hidden')
+	document.getElementById('rebabaContainer').removeAttribute('hidden') 
+	document.getElementById('anguloDoblezContainer').removeAttribute('hidden')
+}
+function mostarDobladora(){
+	document.getElementById('ralContainer').setAttribute('hidden','')
+	
+	document.getElementById('pestanaContainer').setAttribute('hidden','')
+	document.getElementById('aletaContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('troqueladoContainer').setAttribute('hidden','')
+	document.getElementById('cuadraturaContainer').setAttribute('hidden','')
+	document.getElementById('coronaContainer').setAttribute('hidden','')
+	document.getElementById('flechaHContainer').setAttribute('hidden','')
+	document.getElementById('flechaVContainer').setAttribute('hidden','')
+	document.getElementById('corteContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
+	document.getElementById('granalladoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaVisualContainer').setAttribute('hidden','')
+	
+	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('medidas').removeAttribute('hidden')
+	document.getElementById('rebabaContainer').removeAttribute('hidden') 
+	document.getElementById('anguloDoblezContainer').removeAttribute('hidden')
+	document.getElementById('numDoblezContainer').removeAttribute('hidden')
+	
+}
+
+function mostarSoldadura(){
+	document.getElementById('ralContainer').setAttribute('hidden','')
+	
+	document.getElementById('pestanaContainer').setAttribute('hidden','')
+	document.getElementById('aletaContainer').setAttribute('hidden','')
+	document.getElementById('cuadraturaContainer').setAttribute('hidden','')
+	document.getElementById('coronaContainer').setAttribute('hidden','')
+	document.getElementById('flechaHContainer').setAttribute('hidden','')
+	document.getElementById('flechaVContainer').setAttribute('hidden','')
+	document.getElementById('corteContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('perforacionesContainer').setAttribute('hidden','')
+	document.getElementById('troqueladoContainer').setAttribute('hidden','')
+	document.getElementById('granalladoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	
+	
+	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('medidas').removeAttribute('hidden')
 }
 
 function mostrarCodigo() {
@@ -305,14 +440,16 @@ function mostrarCodigo() {
     codigo.value = loteConCodigo ? loteConCodigo.codErp : ''
 }
 
-function mostrarGranalladoPintura(){
+function mostrarGranallado(){
 	let loteLabel = document.getElementById('loteLabel')
 	if (loteLabel) {
         loteLabel.textContent = 'LOTE PINTURA: '
     }
+	document.getElementById('ralContainer').setAttribute('hidden','')
 	document.getElementById('anchoContainer').setAttribute('hidden','')
 	document.getElementById('alturaContainer').setAttribute('hidden','')
 	document.getElementById('longitudContainer').setAttribute('hidden','')
+	
 	document.getElementById('pestanaContainer').setAttribute('hidden','')
 	document.getElementById('aletaContainer').setAttribute('hidden','')
 	document.getElementById('perfBordeContainer').setAttribute('hidden','')
@@ -325,7 +462,42 @@ function mostrarGranalladoPintura(){
 	document.getElementById('flechaVContainer').setAttribute('hidden','')
 	document.getElementById('corteContainer').setAttribute('hidden','')
 	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
 	
-	document.getElementById('espesores').removeAttribute('hidden')	
 	document.getElementById('parametros').removeAttribute('hidden')	
+}
+
+function mostrarPintura(){
+	let loteLabel = document.getElementById('loteLabel')
+	if (loteLabel) {
+        loteLabel.textContent = 'LOTE PINTURA: '
+    }
+	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('anchoContainer').setAttribute('hidden','')
+	document.getElementById('alturaContainer').setAttribute('hidden','')
+	document.getElementById('longitudContainer').setAttribute('hidden','')
+	
+	document.getElementById('pestanaContainer').setAttribute('hidden','')
+	document.getElementById('aletaContainer').setAttribute('hidden','')
+	document.getElementById('perfBordeContainer').setAttribute('hidden','')
+	document.getElementById('perforacionesContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('troqueladoContainer').setAttribute('hidden','')
+	document.getElementById('cuadraturaContainer').setAttribute('hidden','')
+	document.getElementById('coronaContainer').setAttribute('hidden','')
+	document.getElementById('flechaHContainer').setAttribute('hidden','')
+	document.getElementById('flechaVContainer').setAttribute('hidden','')
+	document.getElementById('corteContainer').setAttribute('hidden','')
+	document.getElementById('punzonadoContainer').setAttribute('hidden','')
+	document.getElementById('pasaPruebaContainer').setAttribute('hidden','')
+	document.getElementById('granalladoContainer').setAttribute('hidden','')
+	document.getElementById('rebabaContainer').setAttribute('hidden','')
+	document.getElementById('anguloDoblezContainer').setAttribute('hidden','')
+	document.getElementById('diametroContainer').setAttribute('hidden','')
+	document.getElementById('numDoblezContainer').setAttribute('hidden','')
+	
+	document.getElementById('parametros').removeAttribute('hidden')
+	document.getElementById('espesores').removeAttribute('hidden')		
+	document.getElementById('pasaPruebaVisualContainer').removeAttribute('hidden')
+	document.getElementById('pasaPruebaAdherenciaContainer').removeAttribute('hidden')
 }

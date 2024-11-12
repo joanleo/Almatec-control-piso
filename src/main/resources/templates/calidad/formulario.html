@@ -4,6 +4,9 @@
 	<head th:replace="fragments/head :: head('Calidad :: Almatec')">
 		
 	</head>
+	<th:block >
+            <link rel="stylesheet" th:href="@{/css/calidad.css}">
+    </th:block>
 	<style>
         .form-grid {
             display: grid;
@@ -41,7 +44,7 @@
 						  <input type="text" th:field="*{numOp}" aria-label="orden de produccion" class="form-control" readonly style="text-align: right;"/>
 						</div>
 					</div>
-					<div class="form-grid my-5">
+					<div class="form-grid my-5 parameters-section">
 		                <div class="input-group size-xl" >
 		                    <span class="input-group-text">PROYECTO:</span>
 		                    <input type="text" th:field="*{proyecto}" id="proyecto" name="proyecto" class="form-control"/>
@@ -78,161 +81,317 @@
 					</div>
 					
 					<div id="parametros" hidden>
-			            <h3>PARÁMETROS</h3>
+						<div id="medidas" hidden>
+				            <h3>PARÁMETROS (Toma de medidas)</h3>
+							<div class="parameters-section">
+					            <div class="parameters-grid">
+					                <div id="anchoContainer" class="parameter-container">
+					                    <div class="input-group size-m">
+					                        <span class="input-group-text">ANCHO [mm]:</span>
+					                        <input type="number" id="ancho" name="ancho" class="form-control" min="1" step="0.01"/>
+					                    </div>
+					                </div>
+	
+					                <div id="alturaContainer" class="parameter-container">
+					                    <div class="input-group size-m">
+					                        <span class="input-group-text">ALTURA [mm]:</span>
+					                        <input type="number" id="altura" name="altura" class="form-control" min="1" step="0.01"/>
+					                    </div>
+					                </div>
+	
+					                <div id="longitudContainer" class="parameter-container">
+					                    <div class="input-group size-m">
+					                        <span class="input-group-text">LONGITUD [mm]:</span>
+					                        <input type="number" id="longitud" name="longitud" class="form-control" min="1" step="0.01"/>
+					                    </div>
+					                </div>
+	
+					                <div id="ralContainer" class="parameter-container">
+					                    <div class="input-group size-m">
+					                        <span class="input-group-text">RAL:</span>
+					                        <input type="text" id="ral" name="ral" class="form-control"/>
+					                    </div>
+					                </div>
+					            </div>
+					        </div>							
+						</div>
 			            
-						<div class="form-grid my-4" style="width: 90%; margin: auto;">
-							<div class="input-group size-m" id="anchoContainer">
-							    <span class="input-group-text">ANCHO [mm]:</span>
-							    <input type="number" th:field="*{ancho}" min="1" step="0.01" id="ancho" name="ancho" class="form-control"/>
-							</div>
-							<div class="input-group size-m" id="alturaContainer">
-							    <span class="input-group-text">ALTURA [mm]:</span>
-							    <input type="number" th:field="*{altura}" min="1" step="0.01" id="altura" name="altura" class="form-control"/>
-							</div>
-							<div class="input-group size-m" id="longitudContainer">
-							    <span class="input-group-text">LONGITUD [mm]:</span>
-							    <input type="number" th:field="*{longitud}" min="1" step="0.01" id="longitud" name="longitud" class="form-control"/>
-							</div>
-							<div class="input-group size-m" id="ralContainer">
-							    <span class="input-group-text">RAL:</span>
-							    <input type="text" th:field="*{ral}" id="ral" name="ral" class="form-control"/>
+						<div id="radio-buton-section">
+							<h3>CUMPLE CON LOS PARAMETROS</h3>									                
+							<div class="parameters-section">
+					            <div class="parameters-grid">
+									
+					                <div class="input-group checkbox-group size-m" id="pestanaContainer">
+					                    <span class="parameter-label">PESTAÑA:</span>
+										<div class="radio-options">
+						                    <label for="pestanaSi" class="mx-3">SI
+							                    <input type="radio" id="pestanaSi" th:field="*{pestana}" name="pestana" value="true"/>											
+											</label>
+						                    <label for="pestanaNo">NO
+							                    <input type="radio" id="pestanaNo" th:field="*{pestana}" name="pestana" value="false"/>											
+											</label>
+										</div>
+					                </div>
+									
+									<div id="aletaContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m">
+											<span class="parameter-label">ALETA:</span>
+											<div class="radio-group">					                    
+							                    <label for="aletaSi" class="mx-3">SI
+								                    <input type="radio" id="aletaSi" th:field="*{aleta}" name="aleta" value="true"/>											
+												</label>
+							                    <label for="aletaNo">NO
+								                    <input type="radio" id="aletaNo" th:field="*{aleta}" name="aleta" value="false"/>											
+												</label>
+											</div>
+						                </div>
+									</div>
+								
+									<div id="perfBordeContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m">					                    
+											<span class="parameter-label">PERF. BORDE:</span>
+											<div class="radio-group">
+							                    <label for="perfBordeSi" class="mx-3">SI
+								                    <input type="radio" id="perfBordeSi" th:field="*{perfBorde}" name="perfBorde" value="true"/>											
+												</label>
+							                    <label for="perfBordeNo">NO
+								                    <input type="radio" id="perfBordeNo" th:field="*{perfBorde}" name="perfBorde" value="false"/>											
+												</label>
+											</div>
+						                </div>
+									</div>
+								
+									<div id="perforacionesContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m">					                    
+											<span class="parameter-label">N° DE PERFORACIONES:</span>
+											<div class="radio-group">
+							                    <label for="perforacionesSi" class="mx-3">SI
+								                    <input type="radio" id="perforacionesSi" th:field="*{perforaciones}" name="perforaciones" value="true"/>											
+												</label>
+							                    <label for="perforacionesNo">NO
+								                    <input type="radio" id="perforacionesNo" th:field="*{perforaciones}" name="perforaciones" value="false"/>											
+												</label>
+											</div>
+						                </div>
+									</div>
+								
+									<div id="troqueladoContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m">									    
+											<span class="parameter-label">TROQUELADO:</span>
+											<div class="radio-group">
+											    <label for="troqueladoSi" class="mx-3">SI
+											        <input type="radio" id="troqueladoSi" th:field="*{troquelado}" name="troquelado" value="true"/>											
+												</label>
+											    <label for="troqueladoNo">NO
+											        <input type="radio" id="troqueladoNo" th:field="*{troquelado}" name="troquelado" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>
+		
+									<div id="cuadraturaContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m">									    
+											<span class="parameter-label">CUADRATURA:</span>
+											<div class="radio-group">
+											    <label for="cuadraturaSi" class="mx-3">SI
+											        <input type="radio" id="cuadraturaSi" th:field="*{cuadratura}" name="cuadratura" value="true"/>											
+												</label>
+											    <label for="cuadraturaNo">NO
+											        <input type="radio" id="cuadraturaNo" th:field="*{cuadratura}" name="cuadratura" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>	
+		
+									<div id="coronaContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m"  >									    
+											<span class="parameter-label">CORONA:</span>
+											<div class="radio-group">
+											    <label for="coronaSi" class="mx-3">SI
+											        <input type="radio" id="coronaSi" th:field="*{corona}" name="corona" value="true"/>											
+												</label>
+											    <label for="coronaNo">NO
+											        <input type="radio" id="coronaNo" th:field="*{corona}" name="corona" value="false"/>											
+												</label>
+											</div>
+										</div>	
+									</div>
+								
+									<div id="flechaHContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m" >
+											<span class="parameter-label">FLECHA H:</span>
+											<div class="radio-group">							    
+											    <label for="flechaHSi" class="mx-3">SI
+											        <input type="radio" id="flechaHSi" th:field="*{flechaH}" name="flechaH" value="true"/>											
+												</label>
+											    <label for="flechaHNo">NO
+											        <input type="radio" id="flechaHNo" th:field="*{flechaH}" name="flechaH" value="false"/>											
+												</label>
+											</div>	
+										</div>
+									</div>
+								
+									<div id="flechaVContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m" >
+											<span class="parameter-label">FLECHA V:</span>
+											<div class="radio-group">									    
+											    <label for="flechaVSi" class="mx-3">SI
+											        <input type="radio" id="flechaVSi" th:field="*{flechaV}" name="flechaV" value="true"/>											
+												</label>
+											    <label for="flechaVNo">NO
+											        <input type="radio" id="flechaVNo" th:field="*{flechaV}" name="flechaV" value="false"/>											
+												</label>
+											</div>
+										</div>	
+									</div>
+								
+									<div id="corteContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m" >
+											<span class="parameter-label">CORTE:</span>
+											<div class="radio-group">									    
+											    <label for="corteSi" class="mx-3">SI
+											        <input type="radio" id="corteSi" th:field="*{corte}" name="corte" value="true"/>											
+												</label>
+											    <label for="corteNo">NO
+											        <input type="radio" id="corteNo" th:field="*{corte}" name="corte" value="false"/>											
+												</label>
+											</div>
+										</div>	
+									</div>
+								
+									<div id="punzonadoContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m" >									    
+											<span class="parameter-label">PUNZONADO:</span>
+											<div class="radio-group">
+										        <label for="punzonadoSi" class="mx-3">SI
+										        	<input type="radio" id="punzonadoSi" th:field="*{punzonado}" name="punzonado" value="true"/>											
+												</label>
+											    <label for="punzonadoNo">NO
+											        <input type="radio" id="punzonadoNo" th:field="*{punzonado}" name="punzonado" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>
+								
+									<div id="granalladoContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-m" >									    
+											<span class="parameter-label">GRANALLADO:</span>
+											<div class="radio-group">
+											    <label for="granalladoSi" class="mx-3">SI
+											        <input type="radio" id="granalladoSi" th:field="*{granallado}" name="granallado" value="true"/>											
+												</label>
+											    <label for="granalladoNo">NO
+											        <input type="radio" id="granalladoNo" th:field="*{granallado}" name="granallado" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>
+								
+									<div id="pasaPruebaContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-l">
+										    <span class="parameter-label">PASA PRUEBA CUADRICULA:</span>
+											<div class="radio-group">
+											    <label for="pasaPruebaSi" class="mx-3">SI
+											        <input type="radio" id="pasaPruebaSi" th:field="*{pasaPrueba}" name="pasaPrueba" value="true"/>											
+												</label>
+											    <label for="pasaPruebaNo">NO
+											        <input type="radio" id="pasaPruebaNo" th:field="*{pasaPrueba}" name="pasaPrueba" value="false"/>											
+												</label>
+											</div>
+										</div>	
+									</div>		
+								
+									<div id="rebabaContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-l">									    
+											<span class="parameter-label">REBABA:</span>
+											<div class="radio-group">								    
+											    <label for="rebabaSi" class="mx-3">SI
+											        <input type="radio" id="rebabaSi" th:field="*{rebaba}" name="rebaba" value="true"/>											
+												</label>
+											    <label for="rebabaNo">NO
+											        <input type="radio" id="rebabaNo" th:field="*{rebaba}" name="rebaba" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>											
+								
+									<div id="diametroContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-l" >
+											<span class="parameter-label">DIAMETRO PERFORACIONES:</span>
+											<div class="radio-group">								    
+											    <label for="diametroSi" class="mx-3">SI
+											        <input type="radio" id="diametroSi" th:field="*{diametro}" name="diametro" value="true"/>											
+												</label>
+											    <label for="diametroNo">NO
+											        <input type="radio" id="diametroNo" th:field="*{diametro}" name="diametro" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>								
+									
+									<div id="anguloDoblezContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-l">									    
+											<span class="parameter-label">ANGULO DOBLEZ:</span>		
+											<div class="radio-group">
+											    <label for="anguloDoblezSi" class="mx-3">SI
+											        <input type="radio" id="anguloDoblezSi" th:field="*{anguloDoblez}" name="anguloDoblez" value="true"/>											
+												</label>
+											    <label for="anguloDoblezNo">NO
+											        <input type="radio" id="anguloDoblezNo" th:field="*{anguloDoblez}" name="anguloDoblez" value="false"/>											
+												</label>
+											</div>
+										</div>
+									</div>
+									
+									<div id="numDoblezContainer" class="parameter-container">
+										<div class="input-group checkbox-group size-l" >
+											<span class="parameter-label">N° DE DOBLEZ:</span>		
+											<div class="radio-group">							    
+											    <label for="numDoblezSi" class="mx-3">SI
+											        <input type="radio" id="numDoblezSi" th:field="*{numDoblez}" name="numDoblez" value="true"/>											
+												</label>
+											    <label for="numDoblezNo">NO
+											        <input type="radio" id="numDoblezNo" th:field="*{numDoblez}" name="numDoblez" value="false"/>											
+												</label>
+											</div>
+										</div>	
+									</div>
+									
+									<div id="pasaPruebaAdherenciaContainer" class="parameter-container">
+					                    <div class="input-group checkbox-group size-l">
+					                        <span class="parameter-label">PASA PRUEBA DE ADHERENCIA:</span>
+					                        <div class="radio-group">
+					                                <label for="pasaPruebaAdherenciaSi" class="mx-3">SI
+						                                <input type="radio" id="pasaPruebaAdherenciaSi" name="pasaPruebaAdherencia" value="true"/>
+													</label>
+					                                <label for="pasaPruebaAdherenciaNo">NO
+						                                <input type="radio" id="pasaPruebaAdherenciaNo" name="pasaPruebaAdherencia" value="false"/>													
+													</label>
+					                        </div>
+					                    </div>
+					                </div>	
+									
+									<div id="pasaPruebaVisualContainer" class="parameter-container">
+					                    <div class="input-group checkbox-group size-l">
+					                        <span class="parameter-label">PASA PRUEBA INSPECCION VISUAL ACABADO:</span>
+					                        <div class="radio-group">
+					                                <label for="pasaPruebaVisualSi" class="mx-3">SI
+						                                <input type="radio" id="pasaPruebaVisualSi" name="pasaPruebaVisual" value="true"/>
+													</label>
+					                                <label for="pasaPruebaVisualNo">NO
+						                                <input type="radio" id="pasaPruebaVisualNo" name="pasaPruebaVisual" value="false"/>													
+													</label>
+					                        </div>
+					                    </div>
+					                </div>						
+								</div>						
 							</div>
 						</div>
-						
-						<div class="form-grid my-4" style="width: 90%; margin: auto;">									                
-			                <div class="input-group checkbox-group size-m" id="pestanaContainer">
-			                    PESTAÑA:
-			                    <label for="pestanaSi" class="mx-3">SI
-				                    <input type="radio" id="pestanaSi" th:field="*{pestana}" name="pestana" value="true"/>											
-								</label>
-			                    <label for="pestanaNo">NO
-				                    <input type="radio" id="pestanaNo" th:field="*{pestana}" name="pestana" value="false"/>											
-								</label>
-			                </div>
-							<div class="input-group checkbox-group size-m" id="aletaContainer">
-			                    ALETA:
-			                    <label for="aletaSi" class="mx-3">SI
-				                    <input type="radio" id="aletaSi" th:field="*{aleta}" name="aleta" value="true"/>											
-								</label>
-			                    <label for="aletaNo">NO
-				                    <input type="radio" id="aletaNo" th:field="*{aleta}" name="aleta" value="false"/>											
-								</label>
-			                </div>
 							
-							<div class="input-group checkbox-group size-m" id="perfBordeContainer">
-			                    PERF. BORDE:
-			                    <label for="perfBordeSi" class="mx-3">SI
-				                    <input type="radio" id="perfBordeSi" th:field="*{perfBorde}" name="perfBorde" value="true"/>											
-								</label>
-			                    <label for="perfBordeNo">NO
-				                    <input type="radio" id="perfBordeNo" th:field="*{perfBorde}" name="perfBorde" value="false"/>											
-								</label>
-			                </div>
-							
-							<div class="input-group checkbox-group size-m" id="perforacionesContainer">
-			                    PERFORACIONES:
-			                    <label for="perforacionesSi" class="mx-3">SI
-				                    <input type="radio" id="perforacionesSi" th:field="*{perforaciones}" name="perforaciones" value="true"/>											
-								</label>
-			                    <label for="perforacionesNo">NO
-				                    <input type="radio" id="perforacionesNo" th:field="*{perforaciones}" name="perforaciones" value="false"/>											
-								</label>
-			                </div>
-							
-							<div class="input-group checkbox-group size-m" id="troqueladoContainer">
-							    TROQUELADO:
-							    <label for="troqueladoSi" class="mx-3">SI
-							        <input type="radio" id="troqueladoSi" th:field="*{troquelado}" name="troquelado" value="true"/>											
-								</label>
-							    <label for="troqueladoNo">NO
-							        <input type="radio" id="troqueladoNo" th:field="*{troquelado}" name="troquelado" value="false"/>											
-								</label>
-							</div>
-	
-							<div class="input-group checkbox-group size-m" id="cuadraturaContainer">
-							    CUADRATURA:
-							    <label for="cuadraturaSi" class="mx-3">SI
-							        <input type="radio" id="cuadraturaSi" th:field="*{cuadratura}" name="cuadratura" value="true"/>											
-								</label>
-							    <label for="cuadraturaNo">NO
-							        <input type="radio" id="cuadraturaNo" th:field="*{cuadratura}" name="cuadratura" value="false"/>											
-								</label>
-							</div>	
-	
-							<div class="input-group checkbox-group size-m"  id="coronaContainer">
-							    CORONA:
-							    <label for="coronaSi" class="mx-3">SI
-							        <input type="radio" id="coronaSi" th:field="*{corona}" name="corona" value="true"/>											
-								</label>
-							    <label for="coronaNo">NO
-							        <input type="radio" id="coronaNo" th:field="*{corona}" name="corona" value="false"/>											
-								</label>
-							</div>	
-							
-							<div class="input-group checkbox-group size-m" id="flechaHContainer">
-							    FLECHA H:
-							    <label for="flechaHSi" class="mx-3">SI
-							        <input type="radio" id="flechaHSi" th:field="*{flechaH}" name="flechaH" value="true"/>											
-								</label>
-							    <label for="flechaHNo">NO
-							        <input type="radio" id="flechaHNo" th:field="*{flechaH}" name="flechaH" value="false"/>											
-								</label>
-							</div>	
-							
-							<div class="input-group checkbox-group size-m" id="flechaVContainer">
-							    FLECHA V:
-							    <label for="flechaVSi" class="mx-3">SI
-							        <input type="radio" id="flechaVSi" th:field="*{flechaV}" name="flechaV" value="true"/>											
-								</label>
-							    <label for="flechaVNo">NO
-							        <input type="radio" id="flechaVNo" th:field="*{flechaV}" name="flechaV" value="false"/>											
-								</label>
-							</div>	
-							
-							<div class="input-group checkbox-group size-m" id="corteContainer">
-							    CORTE:
-							    <label for="corteSi" class="mx-3">SI
-							        <input type="radio" id="corteSi" th:field="*{corte}" name="corte" value="true"/>											
-								</label>
-							    <label for="corteNo">NO
-							        <input type="radio" id="corteNo" th:field="*{corte}" name="corte" value="false"/>											
-								</label>
-							</div>	
-							
-							<div class="input-group checkbox-group size-m" id="punzonadoContainer">
-							    PUNZONADO:
-							    <label for="punzonadoSi" class="mx-3">SI
-							        <input type="radio" id="punzonadoSi" th:field="*{punzonado}" name="punzonado" value="true"/>											
-								</label>
-							    <label for="punzonadoNo">NO
-							        <input type="radio" id="punzonadoNo" th:field="*{punzonado}" name="punzonado" value="false"/>											
-								</label>
-							</div>
-							
-							<div class="input-group checkbox-group size-m" id="granalladoContainer">
-							    GRANALLADO:
-							    <label for="granalladoSi" class="mx-3">SI
-							        <input type="radio" id="granalladoSi" th:field="*{granallado}" name="granallado" value="true"/>											
-								</label>
-							    <label for="granalladoNo">NO
-							        <input type="radio" id="granalladoNo" th:field="*{granallado}" name="granallado" value="false"/>											
-								</label>
-							</div>
-							
-							<div class="input-group checkbox-group size-l" id="pasaPruebaContainer">
-							    PASA PRUEBA CUADRICULA:
-							    <label for="pasaPruebaSi" class="mx-3">SI
-							        <input type="radio" id="pasaPruebaSi" th:field="*{pasaPrueba}" name="pasaPrueba" value="true"/>											
-								</label>
-							    <label for="pasaPruebaNo">NO
-							        <input type="radio" id="pasaPruebaNo" th:field="*{pasaPrueba}" name="pasaPrueba" value="false"/>											
-								</label>
-							</div>														
-						</div>
 					</div>
 					<div id="espesores" hidden>
 						<h3>REGISTRO ESPESORES:</h3>
-						<div class="form-grid my-5" style="width: 90%; margin: auto;">
+						<div class="form-grid my-5 parameters-section" >
 			                <div class="input-group size-m" >
 			                    <span class="input-group-text">1 Media [μm]:</span>
 			                    <input type="number" id="media1" th:field="*{media1}" name="media1" class="form-control"/>

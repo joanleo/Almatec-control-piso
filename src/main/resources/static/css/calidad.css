@@ -1,0 +1,83 @@
+.parameters-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .parameters-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .parameter-container {
+        background-color: white;
+        border-radius: 6px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .parameter-container:hover {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .input-group.checkbox-group {
+        display: flex;
+		flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+
+    .input-group.checkbox-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+
+    .input-group.checkbox-group input[type="radio"] {
+        cursor: pointer;
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+
+    /* Mantener los tamaños específicos que ya tenías */
+    .size-m { min-width: 200px; }
+    .size-l { min-width: 250px; }
+    .size-xl { min-width: 300px; }
+
+	.radio-group {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+	.radio-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .radio-option input[type="radio"] {
+        width: 1.2rem;
+        height: 1.2rem;
+        cursor: pointer;
+    }
+
+    .radio-option label {
+        margin: 0;
+        cursor: pointer;
+        user-select: none;
+    }
+    @media (max-width: 768px) {
+        .parameters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .input-group.checkbox-group {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+    }

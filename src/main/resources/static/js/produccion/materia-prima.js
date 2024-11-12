@@ -41,7 +41,8 @@ function fillTableListaMateriales(lista) {
         row.appendChild(cellUm)
 
         let cellCantReq = document.createElement('td')
-        cellCantReq.textContent = item.cantRequeridaActualizada
+		console.log(item.cantRequeridaActualizada)
+        cellCantReq.textContent = (item.cantRequeridaActualizada).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         row.appendChild(cellCantReq)
 		
 		const cantPendiente = (item.cantRequeridaActualizada - item.cantEntregada - item.cantExistencia).toFixed(2)
@@ -149,7 +150,7 @@ function fillTableDisponible(items) {
         row.appendChild(cellLote)
         
         let cellDisponible = document.createElement('td')
-        cellDisponible.textContent = item.disponible
+        cellDisponible.textContent = (item.disponible).toFixed(2)
         row.appendChild(cellDisponible)
         
         let cellCheck = document.createElement('td')

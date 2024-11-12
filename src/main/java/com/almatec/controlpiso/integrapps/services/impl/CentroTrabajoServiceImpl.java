@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +148,12 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 				Integer idOperario = pieza.getIdOperario();
 				Integer idItemOp = pieza.getIdItemOp();
 				Integer idItem = pieza.getIdItem();
-				RegistroPieza registro = registroPiezaService.consultaRegistroPieza(idCT, idProceso, idOperario, idItemOp);
+				RegistroPieza registro;
+				if(pieza.getIsComponente()) {
+					registro = registroPiezaService.consultaRegistroPieza(idCT, idProceso, idOperario, idItemOp, idItem);
+				}else {
+					registro = registroPiezaService.consultaRegistroPieza(idCT, idProceso, idOperario, idItemOp);
+				}
 				
 				LocalDateTime fecha = LocalDateTime.now();
 				if(registro != null) {
@@ -185,11 +189,10 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	    }
 		
 	}
-
-	@Override
-	public ReporteDTO buscarItemCt(Long idItem, Integer idCT, Integer idOperario) {
+	
+	public ReporteDTO buscarItemCt(Long idItemOp, Integer idCT, Integer idOperario) {
 		Operario operario = operarioService.buscarOperarioPorId(idOperario);
-		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemCt(idItem, idCT);
+		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemCt(idItemOp, idCT);
 		if (ops != null && !ops.isEmpty()) {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
 		    ItemOpCtDTO item = op.getItems().get(0);
@@ -204,7 +207,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    	cant = item.getCant_req();
 		    	centroTrabajo = item.getItem_centro_t_nombre();
 		    	idItemFab = item.getItem_id();
-		    	Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItem, idItemFab, idCT);
+		    	Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItemOp, idItemFab, idCT);
 		    	cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
 		    }
 		    if(descripcion == null) {
@@ -214,7 +217,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    			cant = componente.getMaterial_cant();
 		    			centroTrabajo = componente.getMaterial_centro_t_nombre();
 		    			idParte = componente.getMaterial_id();
-		    			Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItem, idParte, idCT);
+		    			Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItemOp, idParte, idCT);
 		    			cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
 		    		}
 		    	}
@@ -230,7 +233,62 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setIdCentroTrabajo(idCT);
 		    reporte.setIdItemFab(idItemFab);
 		    reporte.setIdParte(idParte);
-		    reporte.setIdItem(idItem);
+		    reporte.setIdItem(idItemOp);
+		    reporte.setCantFab(cantFabricada);
+		    reporte.setColor(item.getItem_color());
+		    		    
+		    return reporte;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public ReporteDTO buscarItemCtReporte(Long idItemOp, Integer idCT, Integer idOperario, Integer idItem, String tipo) {
+		Operario operario = operarioService.buscarOperarioPorId(idOperario);
+		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemParteCt(idItemOp, idCT, idItem, tipo);
+		if (ops != null && !ops.isEmpty()) {
+			System.out.println(ops);
+		    OpCentroTrabajoDTO op = ops.iterator().next();
+		    ItemOpCtDTO item = op.getItems().get(0);
+		    String descripcion = null;
+		    Integer cant = 0;
+		    String centroTrabajo = null;
+		    Integer idItemFab = 0;
+		    Integer idParte = 0;
+		    Integer cantFabricada = 0;
+		    if(Objects.equals(item.getItem_centro_t_id(), idCT)) {
+		    	descripcion = item.getItem_desc();
+		    	cant = item.getCant_req();
+		    	centroTrabajo = item.getItem_centro_t_nombre();
+		    	idItemFab = item.getItem_id();
+		    	Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItemOp, idItemFab, idCT);
+		    	cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
+		    }
+		    if(descripcion == null) {
+		    	for(ComponenteDTO componente: item.getComponentes()) {
+		    		if(Objects.equals(componente.getMaterial_centro_t_id(), idCT)) {
+		    			descripcion = componente.getMaterial_desc();
+		    			cant = componente.getMaterial_cant();
+		    			centroTrabajo = componente.getMaterial_centro_t_nombre();
+		    			idParte = componente.getMaterial_id();
+		    			Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItemOp, idParte, idCT);
+		    			cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
+		    		}
+		    	}
+		    }
+		    
+		    ReporteDTO reporte = new ReporteDTO();
+		    reporte.setProyecto(op.getProyecto());
+		    reporte.setNumOp(Integer.valueOf(op.getOp().split("-")[1]));
+		    reporte.setRef(descripcion);
+		    reporte.setCantSol(cant);
+		    reporte.setCentroTrabajo(centroTrabajo);
+		    reporte.setOperario(operario);
+		    reporte.setIdCentroTrabajo(idCT);
+		    reporte.setIdItemFab(idItemFab);
+		    reporte.setIdParte(idParte);
+		    reporte.setIdItem(idItemOp);
 		    reporte.setCantFab(cantFabricada);
 		    reporte.setColor(item.getItem_color());
 		    		    
@@ -260,5 +318,6 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		return centroTrabajoRepo.findById(idCT)
 				.orElseThrow();
 	}
+
 
 }

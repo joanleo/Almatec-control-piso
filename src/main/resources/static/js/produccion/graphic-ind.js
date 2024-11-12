@@ -10,7 +10,7 @@
 	data_1.addRows(1);
 	data_1.setCell(0, 0, productividad);
 
-    let options = {
+    let options = { 
       width: 600, height: 200,
       redFrom: 0, redTo: 50,
       yellowFrom:50, yellowTo: 75,

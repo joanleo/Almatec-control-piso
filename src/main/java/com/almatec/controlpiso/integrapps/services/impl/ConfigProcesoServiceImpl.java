@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -51,6 +52,15 @@ public class ConfigProcesoServiceImpl implements ConfigProcesoService {
 		}catch (Exception e) {
 			return new ResponseMessage(true, "Ocurrio un error al tratar de finalizar el turno, " + e);
 		}
+	}
+
+	@Override
+	public List<ConfigProceso> obtenerConfigProcesosDia() {
+		LocalDate fecha = LocalDate.now();
+		List<ConfigProceso> configs = configProcesoRepo.findByFechaConfiguracion(fecha);
+		
+		configs.forEach(System.out::println);
+		return configs;
 	}
 
 }

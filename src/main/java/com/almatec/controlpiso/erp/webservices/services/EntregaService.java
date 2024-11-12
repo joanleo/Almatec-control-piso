@@ -1,6 +1,8 @@
 package com.almatec.controlpiso.erp.webservices.services;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,8 +115,13 @@ public class EntregaService {
 
 		List<DoctoTEPMovimientosVersion01> movsTep = conectorTepService.crearMovTiempos(reporte, data, dataTE, idCTErp, false);
 		consumoYTep.addAll(movsTep);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+		LocalDateTime now = LocalDateTime.now();			        
+		String dateTime = now.format(formatter);
 		String responseConsumoYTep = xmlService.postImportarXML(consumoYTep);
 		System.out.println(responseConsumoYTep);
+		util.guardarRegistroXml(xmlService.crearPlanoXml(consumoYTep), "SCP_TEP-OP_" + reporte.getNumOp() + "_" + dateTime);
+		util.crearArchivoPlano(consumoYTep, "SCP_TEP-OP_" + reporte.getNumOp() + "_" + dateTime , configService.getCIA());
 
 		List<Conector> entregaXml = new ArrayList<>();
 		DoctoentregasDocumentosVersión02 encabezado = conectorEntregaService.crearEncabezadoEntrega();
@@ -124,8 +131,10 @@ public class EntregaService {
 		DoctoentregasMovimientosVersión01 mov = conectorEntregaService.crearMovsEntrega(data, item, reporte);
 
 		entregaXml.add(mov);
+		now = LocalDateTime.now();			        
 		String responseEntrega = xmlService.postImportarXML(entregaXml);
-		util.crearArchivoPlano(entregaXml, "EP" + reporte.getNumOp(), configService.getCIA());
+		util.crearArchivoPlano(entregaXml, "EP" + reporte.getNumOp() + "_" + dateTime, configService.getCIA());
+		util.guardarRegistroXml(xmlService.crearPlanoXml(entregaXml), "EP-OP_" + reporte.getNumOp() + "_" + dateTime);
 		if (!responseEntrega.equals(RESPUESTA_OK)) {
 			return responseEntrega;
 		}

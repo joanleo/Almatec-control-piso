@@ -35,4 +35,21 @@ public interface VistaOpItemsMaterialesRutaRepository extends JpaRepository<Vist
 
 	List<VistaOpItemsMaterialesRuta> findAll(Specification<VistaOpItemsMaterialesRuta> spec);
 
+	@Query(value = "SELECT * FROM view_op_items_ruta "
+		    + "WHERE "
+		    + "  (:tipo = 'parte' AND ( "
+		    + "      ((item_op_id = :idItemOp) AND (item_centro_t_id = :idCT) AND (estado_op = 1) AND (material_id = :idItem)) "
+		    + "      OR ((item_op_id = :idItemOp) AND (item_centro_t_id = :idCT) AND (estado_op = 2) AND (material_id = :idItem)) "
+		    + "      OR ((item_op_id = :idItemOp) AND (material_centro_t_id = :idCT) AND (estado_op = 1) AND (material_id = :idItem)) "
+		    + "      OR ((item_op_id = :idItemOp) AND (material_centro_t_id = :idCT) AND (estado_op = 2) AND (material_id = :idItem)) "
+		    + "  )) "
+		    + "  OR "
+		    + "  (:tipo <> 'parte'  AND( "
+		    + "     ((item_op_id = :idItemOp) AND (item_centro_t_id = :idCT) AND (estado_op = 1)) "
+		    + "     OR ((item_op_id = :idItemOp) AND (item_centro_t_id = :idCT) AND (estado_op = 2))  "
+		    + "     OR ((item_op_id = :idItemOp) AND (material_centro_t_id = :idCT) AND (estado_op = 1)) "
+		    + "     OR ((item_op_id = :idItemOp) AND (material_centro_t_id = :idCT) AND (estado_op = 2)) "
+		    + "  ))", nativeQuery = true)
+		List<VistaOpItemsMaterialesRuta> buscarItemParteCt(Long idItemOp, Integer idItem, Integer idCT, String tipo);
+
 }

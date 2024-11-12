@@ -3,6 +3,7 @@ package com.almatec.controlpiso.integrapps.services.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		ReportePiezaCt reporte = generaReporte(reporteDTO);
 		ResponseMessage response = new ResponseMessage();
 		String message = "";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 		try {			
 			//Obtengo el itemOp 
 			ItemOp item =  itemOpService.obtenerItemPorId(reporte.getItemId());
@@ -58,8 +60,12 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 
 			if(isConsume && (item.getCentroTConsumo() == null || item.getCentroTConsumo() == 0)) {
 					//Se realiza consumo y TEP
+					LocalDateTime now = LocalDateTime.now();			        
+					String dateTime = now.format(formatter);
 					List<Conector> conectoresTepYConsumo = consumosTepService.crearTEPYConsumos(item, reporteDTO);
 					String responseService = xmlService.postImportarXML(conectoresTepYConsumo);
+					util.guardarRegistroXml(xmlService.crearPlanoXml(conectoresTepYConsumo), "SCP_TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
+					util.crearArchivoPlano(conectoresTepYConsumo, "SCP_TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
 					if("Operacion realizada exitosamente".equals(responseService)) {//
 						reporte.setIsConsume(true);//REVISAR RESPUESTA
 						reporte.setIsTep(true);
@@ -100,8 +106,12 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 				if("Entrega creada Exitosamente".equals(responseEntrega)) reporte.setIsTep(true);
 				message += responseEntrega;
 			} else{
+				LocalDateTime now = LocalDateTime.now();			        
+				String dateTime = now.format(formatter);
 				List<Conector> xmlTep = consumosTepService.crearTEP(item, reporteDTO, false);
 				String responseServiceTep = xmlService.postImportarXML(xmlTep);
+				util.guardarRegistroXml(xmlService.crearPlanoXml(xmlTep), "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
+				util.crearArchivoPlano(xmlTep, "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
 				if("TEP creado Exitosamente".equals(responseServiceTep)) reporte.setIsTep(true);
 				message += responseServiceTep;
 			}
@@ -136,8 +146,12 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 						    .setIdCentroTrabajo(centro)
 						    .build();
 					List<Conector> tep = consumosTepService.crearTEP(item, auxiliar, true);
-					util.crearArchivoPlano(tep, "TEP_CT" + centro, configService.getCIA());
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+					LocalDateTime now = LocalDateTime.now();			        
+			        String dateTime = now.format(formatter);
+					util.crearArchivoPlano(tep, "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
 					String response = xmlService.postImportarXML(tep);
+					util.guardarRegistroXml(xmlService.crearPlanoXml(tep), "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
 					System.out.println(response);
 					centrosTep.add(centro);
 					item.setCentrosTep(centrosFaltantes);

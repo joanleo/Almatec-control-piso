@@ -66,7 +66,6 @@ public class ListaMServiceImpl implements ListaMService {
 	        SpecItemLoteDTO filtro = new SpecItemLoteDTO();
 	        filtro.setBodega("00102");
 	        filtro.setLote(lote.getLoteErp());
-	        System.out.println(lote);
 	        
 	        List<VistaItemLoteDisponible> disponibles = vistaItemLoteDisponibleService.searchItems(filtro, false);
 	        

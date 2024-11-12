@@ -55,7 +55,7 @@ public class RegistroPieza {
 	private Integer idOperario;
 	
 	@Column(name = "item_parte_id")
-	private Integer IdItemParte =0;
+	private Integer idItemParte =0;
 	
 	@Column(name = "Item_fab_Id")
 	private Integer idItemFab=0;
@@ -173,7 +173,7 @@ public class RegistroPieza {
 	}
 
 	public Integer getIdItemParte() {
-		return IdItemParte;
+		return idItemParte;
 	}
 
 	public void setIdItemFab(Integer idItemFab) {
@@ -181,7 +181,7 @@ public class RegistroPieza {
 	}
 
 	public void setIdItemParte(Integer idItemParte) {
-		IdItemParte = idItemParte;
+		this.idItemParte = idItemParte;
 	}
 
 	@Override
@@ -190,7 +190,7 @@ public class RegistroPieza {
 				+ ", transcurrido=" + transcurrido + ", reproceso=" + reproceso + ", cantidad=" + cantidad
 				+ ", isActivo=" + isActivo + ", fechaCreacion=" + fechaCreacion + ", fechaEdicion=" + fechaEdicion
 				+ ", isAjustado=" + isAjustado + ", idConfig=" + idConfig + ", idOperario=" + idOperario
-				+ ", idItemFab=" + idItemFab + ", IdItemParte=" + IdItemParte + "]";
+				+ ", idItemFab=" + idItemFab + ", IdItemParte=" + idItemParte + "]";
 	}
 
 

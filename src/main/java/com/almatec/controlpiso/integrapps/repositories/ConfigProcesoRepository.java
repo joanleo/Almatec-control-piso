@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.integrapps.repositories;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -38,6 +39,11 @@ public interface ConfigProcesoRepository extends JpaRepository<ConfigProceso, In
 	void updateIsActivo(@Param("idConfigProceso") Integer idConfigProceso, @Param("estado") int estado);
 
 	List<ConfigProceso> findByIdTurno(Integer id);
+
+	@Query(value = "SELECT * "
+			+ "FROM pro_configproceso "
+			+ "WHERE CONVERT(date, F_configuracion) = :fecha", nativeQuery = true)
+	List<ConfigProceso> findByFechaConfiguracion(LocalDate fecha);
 
 
 }

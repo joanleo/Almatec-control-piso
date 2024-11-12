@@ -1,6 +1,8 @@
 package com.almatec.controlpiso.erp.webservices.services;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,13 +72,18 @@ public class OrdenProduccionHijoService {
 	}
 
 	public String crearOrdenProduccion(Integer idOPI) throws IOException {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 		List<Conector> itemRutaXml = new ArrayList<>();
 		ItemsVersion05 item = conectorService.crearConectorItem(idOPI);
 		itemRutaXml.add(item);
 		RutasRutasV01 ruta = conectorService.crearConectorRuta(item);
 		itemRutaXml.add(ruta);
 		
+		LocalDateTime now = LocalDateTime.now();			        
+		String dateTime = now.format(formatter);
 		String responseItemRutaXml =xmlService.postImportarXML(itemRutaXml);
+		util.guardarRegistroXml(xmlService.crearPlanoXml(itemRutaXml), "ITEM_RUTA-OP_IA_" + idOPI + "_" + dateTime);
+		util.crearArchivoPlano(itemRutaXml, "SCP_TEP-OP_" + "ITEM_RUTA-OP_IA_" + idOPI  + dateTime , configService.getCIA());
 		if (!responseItemRutaXml.equals(RESPUESTA_OK)) {
 			return responseItemRutaXml;
 		}

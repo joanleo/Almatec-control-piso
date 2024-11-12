@@ -17,4 +17,6 @@ public interface VistaOpItemsMaterialesRutaService {
 	Page<VistaOpItemsMaterialesRuta> obtenerItemsOpsPaginados(int page, int size, String sortDir, String sortField,
 			PrioridadFilterDTO filtro);
 
+	Set<OpCentroTrabajoDTO> buscarItemParteCt(Long idItemOp, Integer idCT, Integer idItem, String tipo);
+
 }

@@ -25,4 +25,10 @@ public class RegistroPiezaServiceImpl implements RegistroPiezaService{
 
 	}
 
+	@Override
+	public RegistroPieza consultaRegistroPieza(Integer idCT, Integer idProceso, Integer idOperario, Integer idItemOp,
+			Integer idItem) {
+		return registroPiezaRepo.findByIdCTAndIdConfigAndIdOperarioAndIdItemAndIdItemParte(idCT, idProceso, idOperario, idItemOp, idItem);
+	}
+
 }

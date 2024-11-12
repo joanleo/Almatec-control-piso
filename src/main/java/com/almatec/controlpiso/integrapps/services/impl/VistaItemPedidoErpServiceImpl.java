@@ -31,7 +31,9 @@ public class VistaItemPedidoErpServiceImpl implements VistaItemPedidoErpService 
 
 	@Override
 	public List<VistaItemPedidoErp> findByNoPedidopAndReferencia(Integer noPedido, String ref) {
-		return vistaItemPedidoRepo.findByNoPedidoAndReferencia(noPedido, ref);
+		List<VistaItemPedidoErp> items = vistaItemPedidoRepo.findByNoPedidoAndReferencia(noPedido, ref);
+		
+		return items;
 	}
 
 	@Override

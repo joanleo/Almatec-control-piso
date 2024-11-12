@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<th:block >
+    	<script src="/js/loader.js"></script>
+    </th:block>
+	<body>
+		<style>
+			.dashboard {
+			  display: flex;
+			  flex-wrap: wrap;
+			  justify-content: space-around;
+			  padding: 5px;
+			}
+
+			.centro-trabajo {
+			  width: 100%;
+			  max-width: 600px;
+			  margin: 20px;
+			  padding: 20px;
+			  border: 1px solid #ddd;
+			  border-radius: 8px;
+			  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			  display: flex;
+			  flex-direction: column;
+			}
+			
+			.chart-container, .card-container {
+			    width: 50%;
+			    min-width:100px;
+			    margin-bottom: 20px;
+			    text-align: center;
+				display: flex;
+			    flex-direction: column;
+			    align-items: center;
+				
+			}
+
+			.card {
+			  display: flex;
+			  justify-content: center;
+			  align-items: center;
+			  background-color: #f8f9fa;
+			  border-radius: 8px;
+			}
+
+			.value {
+			  font-size: 24px;
+			  font-weight: bold;
+			}
+			
+			.main-charts-container{
+				display: flex;
+				flex-wrap: wrap;
+			}
+			
+			.centro-trabajo h2 {
+			    text-align: center;
+			    margin-bottom: 20px;
+			    font-size: 1.5em;
+			    color: #333;
+			}
+			
+		</style>
+		<header>
+			<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>			
+		</header>
+		
+		<main class="container" id="principal">
+			
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+							
+			<section id="alerts" aria-live="polite" th:replace="fragments/alerts :: alerts"></section>
+			 
+			<section class="dashboard" id="dashboard-container">
+	            <!-- Los gráficos se insertarán aquí dinámicamente -->
+	        </section>	
+			
+			
+			
+		</main>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		
+	    <script src="/js/bootstrap/bootstrap.bundle.min.js" defer></script>		
+		<script src="/js/produccion/dashboard.js"></script>
+
+	</body>
+</html>

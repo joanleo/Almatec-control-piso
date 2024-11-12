@@ -85,6 +85,11 @@ public class ProduccionController {
 	@Autowired
 	private MensajeServices mensajeService;
 	
+	@GetMapping("/dashboard")
+	public String dashboard(Model model) {
+		return "produccion/dashboard";
+	}
+	
 	
 	@GetMapping("/home")
 	public String homeProduction(@RequestParam(required = false) String alert,
@@ -92,7 +97,7 @@ public class ProduccionController {
 			Model model) {
 		model.addAttribute("alert", alert);
 		model.addAttribute("mensaje", mensaje);
-		return "produccion/dashboard";
+		return "produccion/planta";
 	}
 	
 	@GetMapping("/proyectos")

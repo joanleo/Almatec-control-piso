@@ -27,7 +27,7 @@ public class VistaPiezasOperariosServiceImpl implements VistaPiezasOperariosServ
     @Override
     public List<VistaPiezasOperarios> obtenerPiezasCentroTrabajoProceso(Integer idCT, Integer idConfig) {
 		List<VistaPiezasOperarios> lista = vistaPiezasOperariosRepository.findPiezasOperariosProceso(idCT, idConfig);
-
+		lista.forEach(System.out::println);
 		return lista;
     }
 
