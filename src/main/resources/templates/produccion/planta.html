@@ -126,77 +126,94 @@
 		<footer th:replace="fragments/footer :: footer"></footer>
 		
 		<div class="modal fade" id="asignarPieza" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="asignarPiezaLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-xl">
-		    <div class="modal-content">
-		      <div class="modal-header" style="background-color: #F8F9FA;">
-		        <h1 class="modal-title fs-5" id="asignarPiezaLabel" >Asignacion Pieza</h1>
-		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		      </div>
-		      <div class="modal-body">
-			  		<div class="container">
-						  <div class="row" style="justify-content: space-around;">
-							  <div id="ops-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
+			 <div class="modal-dialog modal-xl">
+			    <div class="modal-content">
+			      <div class="modal-header" style="background-color: #F8F9FA;">
+			        <h1 class="modal-title fs-5" id="asignarPiezaLabel" >Asignacion Pieza</h1>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body">
+				  		<div class="container">
+							  <div class="row" style="justify-content: space-around;">
+								  <div id="ops-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
+								  </div>
+								  
+								  <div id="operarios-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
+								  </div>							  
 							  </div>
 							  
-							  <div id="operarios-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
-							  </div>							  
-						  </div>
-						  
-						  <div class="input-group my-3 ps-3 size-m">
-							  <span class="input-group-text">Esquema: </span>
-							  <input type="text" aria-label="esquema" id="esquema" class="form-control" readonly style="text-align: right;"/>
-						  </div>
-						  
-						  <div class="row1" id="items-op" style="margin-top: 1rem; margin-bottom: 2rem;">
-							  <div class="container">
-								  <h4 id="title-op-selected" class="text-center"></h4>
-								  <div class="table-responsive rounded-3 shadow-sm" style="max-height: 15rem;">
-									  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-items-description">
-									  		<thead>
-									            <tr id="encabezado-listado-items">
-													<th>REF</th>
-													<th>MARCA</th>
-									                <th>DESCRIPCION</th>
-									                <th>LONG [ml] </th>
-									                <th>CO</th>
-													<th>ZONA</th>
-									                <th>PINTURA</th>
-									                <th>CANT SOL</th>
-									                <th>PESO UN [kg]</th>
-									                <th>PESO TOTAL [kg]</th>
-									            </tr>
-									        </thead>
-									        <tbody id="listado-items">
-									        </tbody>
-									 </table>
-								    <div id="tabla-items-description" class="visually-hidden">
-									  Esta tabla muestra items.
-								    </div>
-								 </div>
+							  <div class="input-group my-3 ps-3 size-m">
+								  <span class="input-group-text">Esquema: </span>
+								  <input type="text" aria-label="esquema" id="esquema" class="form-control" readonly style="text-align: right;"/>
 							  </div>
-						  </div>
-		      		</div>
-		      </div>
-		      
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-		      </div>
-		      
-		    </div>
-		  </div>
+							  
+							  <div class="row1" id="items-op" style="margin-top: 1rem; margin-bottom: 2rem;">
+								  <div class="container">
+									  <h4 id="title-op-selected" class="text-center"></h4>
+									  
+									  <div class="action-bar p-2  my-3">
+						              	<button type="button" class="btn btn-secondary btn-sm" id="btn-select-all" onclick="toggleSelectAll()">
+						                  Seleccionar Todo
+						                </button>
+						                <button type="button" class="btn btn-primary btn-sm" id="btn-asignar-multiple" onclick="asignarPiezasMultiples()" disabled>
+						                  Asignar Seleccionadas
+						                </button>
+						                <span class="badge bg-primary ms-2" id="contador-seleccion">0 seleccionados</span>
+						              </div>
+												  
+									  <div class="table-responsive rounded-3 shadow-sm" style="max-height: 20rem;">
+										  <table class="table table-striped" id="tabla-items" aria-describedby="tabla-items-description">
+										  		<thead>
+										            <tr id="encabezado-listado-items">
+														<th class="text-center" style="width: 50px;">
+									                        <div class="form-check">
+									                          <input type="checkbox" class="form-check-input" id="selectAll" aria-label="Seleccionar todos">
+									                        </div>
+								                        </th>
+														<th>REF</th>
+														<th>MARCA</th>
+										                <th>DESCRIPCION</th>
+										                <th>LONG [ml] </th>
+										                <th>CO</th>
+														<th>ZONA</th>
+										                <th>PINTURA</th>
+										                <th>CANT PEND</th>
+										                <th>PESO UN [kg]</th>
+										                <th>PESO TOTAL [kg]</th>
+										            </tr>
+										        </thead>
+										        <tbody id="listado-items">
+										        </tbody>
+										 </table>
+									    <div id="tabla-items-description" class="visually-hidden">
+										  Esta tabla muestra items disponibles para asignación.
+									    </div>
+									 </div>
+
+								  </div>
+							  </div>
+			      		</div>
+			      </div>
+			      
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+			      </div>
+			      
+			    </div>
+			 </div>
 		</div>
 				
-		<div class="modal fade" id="modal-confirma-pieza" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true" >
+		<div class="modal fade" id="modal-confirma-pieza" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true" >
 	        <div class="modal-dialog modal-l">
 	            <div class="modal-content">
 	                <div class="modal-header">
-	                    <h5 class="modal-title" id="confirmModal">Advertencia</h5>
+	                    <h5 class="modal-title" id="confirmModal">Confirmar Asignación</h5>
 	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	                </div>
-	                <div class="modal-confirm-body px-3 py-5">
+	                <div class="modal-confirm-body px-4 py-4">
 	                </div>
 	                <div class="modal-footer ">
-	                    <button type="button" class="btn btn-primary" onclick="agregarPiezaOperario(event)" >Aceptar</button>
+	                    <button type="button" class="btn btn-primary" >Confirmar</button>
 	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                </div>
 	            </div>

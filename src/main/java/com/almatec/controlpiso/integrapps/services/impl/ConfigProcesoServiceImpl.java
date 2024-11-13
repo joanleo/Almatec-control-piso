@@ -58,8 +58,6 @@ public class ConfigProcesoServiceImpl implements ConfigProcesoService {
 	public List<ConfigProceso> obtenerConfigProcesosDia() {
 		LocalDate fecha = LocalDate.now();
 		List<ConfigProceso> configs = configProcesoRepo.findByFechaConfiguracion(fecha);
-		
-		configs.forEach(System.out::println);
 		return configs;
 	}
 

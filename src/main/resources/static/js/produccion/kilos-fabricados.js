@@ -24,7 +24,6 @@ function calcularKilosTotales(datos) {
 async function obtenerDatosKilosFabricados() {
     try {
         const piezasCT = await obtenerPiezasCtProceso();
-        console.log('Piezas CT:', piezasCT);
         return piezasCT;
     } catch (error) {
         console.error('Error al obtener datos de kilos fabricados:', error);

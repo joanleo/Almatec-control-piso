@@ -197,9 +197,7 @@ async function llenarTablaPiezasOperario(){
 async function obtenerCantPiezasFabricadas(idCT, item){
 	let ref = item.idParte != 0? item.idParte: item.idItemFab
 	const tipo = ref != 0 ? 'parte' : 'conjunto';
-	
-	console.log(`tipo: ${tipo} ref:${ref}`)
-    
+	    
     try {
         const response = await fetch(`/centros-trabajo/${idCT}/piezas-fabricadas/${item.idItem}/tipo/${tipo}/${ref}`);
         
@@ -567,12 +565,62 @@ async function obtenerOpCentroT(ct){
 		
 }
 
-function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody, papa){
+function verificarAsignacionPieza(item, isComponente) {
+    const tablaPiezasAsignadas = document.getElementById('table-process-modal');
+    if (!tablaPiezasAsignadas) return false;
+
+    const filas = tablaPiezasAsignadas.querySelectorAll('tbody tr');
+    const idPieza = isComponente ? item.material_id : item.item_id;
+    const idItemOP = isComponente ? item.item_op_id : item.item_op_id;
+    const refBuscar = `${idItemOP}-${idPieza}`;
+
+    // Buscar en las filas de piezas asignadas
+    for (const fila of filas) {
+        const celdaRef = fila.cells[3]; // Índice de la columna REF
+        if (celdaRef && celdaRef.textContent.trim() === refBuscar) {
+            return true;
+        }
+    }
+    return false;
+}
+
+async function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody, papa){
 	let row = document.createElement('tr')    
-    
-    let idItemOP = isComponente? papa.item_op_id: item.item_op_id
 	
-	const ref = isComponente?item.material_id: item.item_id
+	// Agregar checkbox para selección múltiple
+    let cellCheckbox = document.createElement('td')
+    let checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.className = 'form-check-input pieza-checkbox'
+	
+	const estaAsignada = verificarAsignacionPieza(item, isComponente)
+	const idItemOP = isComponente ? papa.item_op_id : item.item_op_id;
+    const ref = isComponente ? item.material_id : item.item_id;
+
+    checkbox.setAttribute('data-pieza', JSON.stringify({
+        idItemOP: idItemOP,
+        descripcion: isComponente ? item.material_desc : item.item_desc,
+        isComponente: isComponente,
+        idItem: ref,
+        estaAsignada: estaAsignada
+    }))
+
+	if (estaAsignada) {
+        checkbox.setAttribute('data-asignada', 'true')
+        row.classList.add('pieza-asignada')
+    }
+	
+	// Prevenir la propagación del evento click del checkbox
+    checkbox.addEventListener('click', function(e) {
+        e.stopPropagation()  // Esto evita que el click se propague a la fila
+        actualizarBotonAsignacion()
+    })
+    
+	
+    cellCheckbox.appendChild(checkbox)
+    row.appendChild(cellCheckbox)
+    
+
 	let cellRef = document.createElement('td')
 	cellRef.textContent = idItemOP+'-'+ref
 	cellRef.classList.add('text-nowrap')
@@ -607,11 +655,23 @@ function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody,
     cellPintura.textContent = item.item_color
     row.appendChild(cellPintura)
 
+	const consulta = {
+		idParte: isComponente ? item.material_id : 0,
+        idItem: isComponente ? papa.item_op_id : item.item_op_id,
+        idItemFab: !isComponente ? item.item_id : 0
+	}
+	console.log(consulta)
+	const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, consulta)
+    let cellCantPendiente = document.createElement('td')
 	const cant = isComponente ? item.material_cant : item.cant_req
+    cellCantPendiente.textContent = cant - cantPiezaFabricada
+    row.appendChild(cellCantPendiente)
+	
+	/*const cant = isComponente ? item.material_cant : item.cant_req
     let cellCantSol = document.createElement('td')
     cellCantSol.textContent = cant
     row.appendChild(cellCantSol)
-    
+    */
     let peso = isComponente ? item.material_peso: item.item_peso 
     let pesoUnitario = document.createElement('td')
 	pesoUnitario.textContent = peso.toFixed(2)
@@ -636,7 +696,13 @@ function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody,
         row.style.cursor = 'default';
     });
 	
-    row.addEventListener('click', function(){
+	row.addEventListener('click', function(e) {
+        if (e.target !== checkbox) {
+            checkbox.checked = !checkbox.checked
+            actualizarBotonAsignacion()
+        }
+    })
+    /*row.addEventListener('click', function(){
 		const operarioSelected = document.getElementById("operario-selected")
 		const datalist = document.getElementById("operarios")
 		const opcionSeleccionada = Array.from(datalist.options).find(opcion => opcion.value === operarioSelected.value)
@@ -653,9 +719,83 @@ function agregarFilaListadoItems(num, op, item, isComponente, listadoItemsTbody,
 		confirmModal(pieza)
 		
 		}
-	})
+	})*/
 	
 	listadoItemsTbody.appendChild(row)
+}
+
+// Función para actualizar estado del botón de asignación
+function actualizarBotonAsignacion() {
+    const checkboxes = document.querySelectorAll('.pieza-checkbox:checked')
+    const btnAsignar = document.getElementById('btn-asignar-multiple')
+    btnAsignar.disabled = checkboxes.length === 0
+    
+    // Actualizar contador de selección
+    const contador = document.getElementById('contador-seleccion')
+    if (contador) {
+        contador.textContent = `${checkboxes.length} pieza(s) seleccionada(s)`
+    }
+}
+
+
+
+// Función para seleccionar/deseleccionar todas las piezas
+function toggleSelectAll() {
+    const checkboxes = document.querySelectorAll('.pieza-checkbox')
+    const someUnchecked = Array.from(checkboxes).some(cb => !cb.checked)
+    checkboxes.forEach(cb => cb.checked = someUnchecked)
+    actualizarBotonAsignacion()
+}
+
+// Función para confirmar asignación múltiple
+async function asignarPiezasMultiples() {
+    const operarioSelected = document.getElementById("operario-selected")
+    const datalist = document.getElementById("operarios")
+    const opcionSeleccionada = Array.from(datalist.options).find(opcion => opcion.value === operarioSelected.value)
+    
+    if (!opcionSeleccionada) {
+        mostrarAlert("No existe operario o no se ha seleccionado.", "danger")
+        return
+    }
+
+    const operarioData = JSON.parse(opcionSeleccionada.getAttribute('data-operario'))
+    const checkboxes = document.querySelectorAll('.pieza-checkbox:checked')
+	const piezasSeleccionadas = Array.from(checkboxes).map(cb => {
+        const pieza = JSON.parse(cb.getAttribute('data-pieza'))
+        // Añadir estado actual de la pieza
+        pieza.estaAsignada = cb.hasAttribute('data-asignada')
+        return pieza
+    })
+
+    // Mostrar modal de confirmación
+    const confirm_modal = new bootstrap.Modal('#modal-confirma-pieza')
+    const confirm_modal_body = confirm_modal._element.querySelector(".modal-confirm-body")
+    
+    confirm_modal_body.innerHTML = `
+        <p>¿Está seguro que desea asignar/retirar las siguientes piezas al operario ${operarioData.nombre}?</p>
+        <ul>
+            ${piezasSeleccionadas.map(pieza => `<li>${pieza.descripcion}</li>`).join('')}
+        </ul>
+    `
+
+    const piezasOperario = piezasSeleccionadas.map(pieza => ({
+        idProceso: configProceso.id,
+        idOperario: operarioData.id,
+        idItemOp: pieza.idItemOP,
+        idItem: pieza.idItem,
+        isComponente: pieza.isComponente,
+        estaActivo: true
+    }))
+
+    // Actualizar el botón de aceptar con los datos
+    const btnAceptar = confirm_modal._element.querySelector(".btn-primary")
+    btnAceptar.setAttribute("data-items", JSON.stringify(piezasOperario))
+    btnAceptar.onclick = async (event) => {
+        await realizarAsignacionMultiple(event)
+        confirm_modal.hide()
+    }
+
+    confirm_modal.show()
 }
 
 function cargarListadoItems(){
@@ -673,8 +813,11 @@ function cargarListadoItems(){
     }
 	
 	document.getElementById("title-op-selected").textContent = 'Items ' + opSelected
+	
 	const ops = opsCt.filter(item => item.op === opSelected)
+	
     esquema.value = ops[0].esquemaPintura ?? ''
+	
 	const centrosPrioridad = localStorage.getItem('centrosTrabajoPrioridad')
     mostrarPrioridad = centrosPrioridad.includes(centroTSelected.id)
     if(mostrarPrioridad){
@@ -684,24 +827,30 @@ function cargarListadoItems(){
 		prioridadCell.setAttribute('data-prioridad', 'true')
 		thead.appendChild(prioridadCell)
 	}
+	
+	const itemsMostrados = new Set();
+    const componentesMostrados = new Set();
+		
     if (ops) {
         ops.forEach(function(op) {
 			let num = 1
-			const componentesMostrados = new Set();
-			for(const item of op.items){	
+			for(const item of op.items){
+				const itemKey = `${item.item_id}-${item.item_op_id}`;
+				
             	const componentes = item.componentes;
-            
-	            if (item.item_centro_t_id === Number(centroTSelected.id)) {
-	                agregarFilaListadoItems(num, op, item, false, listadoItemsTbody);
+	            if (item.item_centro_t_id === Number(centroTSelected.id) && !itemsMostrados.has(itemKey)) {
+					itemsMostrados.add(itemKey);
+					agregarFilaListadoItems(num, op, item, false, listadoItemsTbody);
 	                num++
 	            }
+				
 				if(item.componentes && componentes.length > 0){
 		            for(const componente of componentes){
-						//console.log(componente)
-						
+						//console.log(componente)						
 						const componenteKey = `${componente.material_id}-${item.item_op_id}`;
-						console.log(componenteKey)				
-						if (componente.material_centro_t_id === Number(centroTSelected.id) && !componentesMostrados.has(componenteKey)) {
+						
+						if (componente.material_centro_t_id === Number(centroTSelected.id) 
+							&& !componentesMostrados.has(componenteKey)) {
 							componentesMostrados.add(componenteKey);
 							agregarFilaListadoItems(num, op, componente, true, listadoItemsTbody, item);
                     		num++
@@ -824,18 +973,47 @@ function crearSelectOperariosCt(operariosCt){
 	operariosCtElement.appendChild(container)*/
 }
 
+// Función para limpiar elementos
 function limpiarElementos() {
+    // Limpiar selectores existentes
     let selectElement = document.getElementById('ops-ct')
     if (selectElement) {
         selectElement.innerHTML = ''
     }
+    
     let operariosCtElement = document.getElementById('operarios-ct')
     if (operariosCtElement) {
         operariosCtElement.innerHTML = ''
     }
-	const tableSection = document.querySelector('#asignarPieza .table-process-section');
+    
+    // Limpiar tabla y títulos
+    const listadoItems = document.getElementById('listado-items')
+    if (listadoItems) {
+        listadoItems.innerHTML = ''
+    }
+    
+    // Limpiar título de OP
+    const titleOpSelected = document.getElementById('title-op-selected')
+    if (titleOpSelected) {
+        titleOpSelected.textContent = ''
+    }
+    
+    // Limpiar esquema
+    const esquema = document.getElementById('esquema')
+    if (esquema) {
+        esquema.value = ''
+    }
+    
+    // Limpiar contador de selección si existe
+    const contadorSeleccion = document.getElementById('contador-seleccion')
+    if (contadorSeleccion) {
+        contadorSeleccion.textContent = '0 pieza(s) seleccionada(s)'
+    }
+    
+    // Limpiar sección de tabla de proceso
+    const tableSection = document.querySelector('#asignarPieza .table-process-section')
     if (tableSection) {
-        tableSection.remove();
+        tableSection.remove()
     }
 }
 
@@ -845,6 +1023,9 @@ async function asignaPiezaOperario(){
 	modalAsignarPieza = new bootstrap.Modal('#asignarPieza')
 	opsCt = await obtenerOpCentroT(centroTSelected.id)
     let operariosCt = await obtenerOperariosCT()
+	
+	limpiarElementos()
+	
 	document.getElementById('listado-items').innerHTML = ''
     crearSelectCT(opsCt)
     crearSelectOperariosCt(operariosCt)
@@ -864,6 +1045,7 @@ async function asignaPiezaOperario(){
 	})
 }
 
+/*
 let itemAgregar
 let confirm_modal
 function confirmModal(item) {
@@ -932,6 +1114,7 @@ async function agregarPiezaOperario(event){
 	}
 }
 
+
 function clearTable(table) {
     while (table.rows.length > 1) {
         table.deleteRow(1)
@@ -956,6 +1139,42 @@ function addRowToTable(table, operario, index) {
         let cell = newRow.insertCell(cellIndex)
         cell.textContent = cellContent
     })
+}
+*/
+
+async function realizarAsignacionMultiple(event) {
+    const btnAceptar = event.target
+    const piezasOperario = JSON.parse(btnAceptar.getAttribute("data-items"))
+    
+    try {
+        const response = await fetch(`/centros-trabajo/${centroTSelected.id}/asignar-pieza`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(piezasOperario),
+        })
+
+        if (!response.ok) {
+            throw new Error("Error en la asignación de piezas")
+        }
+
+        await llenarTablaPiezasOperario()
+        mostrarAlert("Piezas asignadas exitosamente", "success")
+
+        const modalAbierto = document.querySelector('#asignarPieza.show')
+        if (modalAbierto) {
+            actualizarTablaModal()
+        }
+
+        // Limpiar selecciones
+        document.querySelectorAll('.pieza-checkbox').forEach(cb => cb.checked = false)
+        actualizarBotonAsignacion()
+
+    } catch (error) {
+        console.error("Error al asignar piezas:", error)
+        mostrarAlert("Error al asignar piezas", "danger")
+    }
 }
 
 async function obtenerTiemposOperariosProceso(){
@@ -1162,8 +1381,11 @@ async function handleKeyPressPiezasOperario(event) {
 			
 		
 		let ops = await obtenerPiezasOperarioCt(operarioDTO)
-		console.log(ops)
-		ops = ops.filter(op => op.cantFabricada !== op.cantReq)
+		ops = ops.filter(op => {			
+			if(op.cantFabricada !== op.cantReq){
+				console.log(op)				
+			}
+		})
 		if(ops.length == 0) {
 			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
 			modalReportar.hide()
@@ -1350,6 +1572,8 @@ function actualizarTablaModal() {
 		// Crear contenedor para la tabla
         const tableContainer = document.createElement('div');
         tableContainer.className = 'table-responsive rounded-3 shadow-sm';
+		tableContainer.style.maxHeight = '20rem'; // o el valor que necesites
+		tableContainer.style.overflowY = 'auto';  // para asegurar el scroll vertical
 	    const tablaClonada = tablaOriginal.cloneNode(true);
 	    tablaClonada.id = 'table-process-modal';
 	    tableContainer.appendChild(tablaClonada);

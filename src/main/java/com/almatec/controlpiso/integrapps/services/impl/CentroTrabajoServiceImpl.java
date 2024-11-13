@@ -248,7 +248,6 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		Operario operario = operarioService.buscarOperarioPorId(idOperario);
 		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemParteCt(idItemOp, idCT, idItem, tipo);
 		if (ops != null && !ops.isEmpty()) {
-			System.out.println(ops);
 		    OpCentroTrabajoDTO op = ops.iterator().next();
 		    ItemOpCtDTO item = op.getItems().get(0);
 		    String descripcion = null;

@@ -28,7 +28,6 @@ public class ConfigProcesoController {
 	
 	@GetMapping("/hoy")
 	public ResponseEntity<List<ConfigProceso>> listar() {
-		System.out.println("solicitud para obtener configs");
 		return ResponseEntity.ok(configProcesoService.obtenerConfigProcesosDia());
 	}
 	
