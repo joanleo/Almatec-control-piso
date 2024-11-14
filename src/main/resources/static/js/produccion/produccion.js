@@ -660,7 +660,6 @@ async function agregarFilaListadoItems(num, op, item, isComponente, listadoItems
         idItem: isComponente ? papa.item_op_id : item.item_op_id,
         idItemFab: !isComponente ? item.item_id : 0
 	}
-	console.log(consulta)
 	const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, consulta)
     let cellCantPendiente = document.createElement('td')
 	const cant = isComponente ? item.material_cant : item.cant_req
@@ -1380,18 +1379,28 @@ async function handleKeyPressPiezasOperario(event) {
 		}
 			
 		
-		let ops = await obtenerPiezasOperarioCt(operarioDTO)
-		ops = ops.filter(op => {			
-			if(op.cantFabricada !== op.cantReq){
-				console.log(op)				
-			}
-		})
-		if(ops.length == 0) {
+		let piezas = await obtenerPiezasOperarioCt(operarioDTO)
+		const piezasConCantidades = await Promise.all(
+            piezas.map(async (pieza) => {
+                const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, pieza);
+                return {
+                    ...pieza,
+                    cantFabricada: cantPiezaFabricada
+                };
+            })
+        );
+		
+		const piezasPendientes = piezasConCantidades.filter(pieza => 
+            pieza.cantReq > pieza.cantFabricada
+        )
+					
+					
+		if(piezas.length == 0) {
 			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
 			modalReportar.hide()
 		}else{
-		console.log("Piezas asignadas al operario: ", ops)
-		mostrarPiezasOperario(ops, operario, 'listado-piezas-operario')			
+		console.log("Piezas asignadas al operario con cantidades pendientes: ", piezasPendientes)
+		mostrarPiezasOperario(piezasPendientes, operario, 'listado-piezas-operario')			
 		}
     }
 }
@@ -1412,8 +1421,7 @@ async function handleKeyPressCalidadOperario(event) {
 			
 		
 		let ops = await obtenerPiezasOperarioCt(operarioDTO)
-		console.log(ops)
-		//ops = ops.filter(op => op.cantFabricada !== op.cantReq)
+
 		if(ops.length == 0) {
 			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
 			modalReportar.hide()
@@ -1455,11 +1463,10 @@ async function mostrarPiezasOperario(items, operario, idTbody){
 	items.forEach(async (item, index) => {
 		if(item != null){
 	    const row = await crearFilaMostrarPiezas(index, item, idTbody, operario)	
-		console.log(row)					
 	    listadoItemsTbody.appendChild(row)		                
 			
 		}
-		})
+	})
 }
 
 document.getElementById('codigo-operario-reporte').addEventListener('change', function (event) {
@@ -1507,15 +1514,9 @@ async function crearFilaMostrarPiezas(index, item, idTbody, operario) {
     row.appendChild(cellCantSol)
 
 	const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, item)
-	console.log(item)
     let pesoUnitario = document.createElement('td')
     pesoUnitario.textContent = cantPiezaFabricada //item.peso
     row.appendChild(pesoUnitario)
-
-    /*let pesoTotal = document.createElement('td')
-    let resultadoPeso = item.cantReq * item.peso
-    pesoTotal.textContent = resultadoPeso.toFixed(2)
-    row.appendChild(pesoTotal)*/
 
     row.addEventListener('mouseover', function() {
         row.style.cursor = 'pointer'
