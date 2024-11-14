@@ -195,9 +195,11 @@ async function llenarTablaPiezasOperario(){
 }
 
 async function obtenerCantPiezasFabricadas(idCT, item){
-	let ref = item.idParte != 0? item.idParte: item.idItemFab
-	const tipo = ref != 0 ? 'parte' : 'conjunto';
-	    
+	let ref = item.idParte != 0 ? item.idParte: item.idItemFab
+	const tipo = item.idParte != 0 ? 'parte' : 'conjunto';
+	console.log('item: ',item)
+	console.log('item: ',item.idParte)
+	console.log(`tipo: ${tipo} ref: ${ref}`)    
     try {
         const response = await fetch(`/centros-trabajo/${idCT}/piezas-fabricadas/${item.idItem}/tipo/${tipo}/${ref}`);
         
@@ -1380,9 +1382,11 @@ async function handleKeyPressPiezasOperario(event) {
 			
 		
 		let piezas = await obtenerPiezasOperarioCt(operarioDTO)
+		console.log('Reporte de piezas')
 		const piezasConCantidades = await Promise.all(
             piezas.map(async (pieza) => {
                 const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, pieza);
+				console.log(`Pieza: ${pieza.idItem}-${pieza.idItemFab} cantFab: ${cantPiezaFabricada}`)
                 return {
                     ...pieza,
                     cantFabricada: cantPiezaFabricada
@@ -1395,7 +1399,7 @@ async function handleKeyPressPiezasOperario(event) {
         )
 					
 					
-		if(piezas.length == 0) {
+		if(piezasPendientes.length == 0) {
 			mostrarAlert("No tiene piezas asignadas pendientes en proceso", "warning")
 			modalReportar.hide()
 		}else{
