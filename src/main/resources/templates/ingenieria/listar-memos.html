@@ -43,6 +43,7 @@
 							<th>Proyecto</th>
 							<th>OP</th>
 							<th>Solicita</th>
+							<th>Estado</th>
 						</tr>
 					</thead>
 					<tbody id="body-memos">
@@ -52,6 +53,12 @@
 							<td th:text="${memo.proyecto}"></td>
 							<td th:text="${memo.op}"></td>
 							<td th:text="${memo.usuarioCrea}"></td>
+							<td>
+								<span th:switch="${memo.idEstado}">
+									<span th:case="0" class="badge bg-warning text-dark">Pendiente</span>
+									<span th:case="1" class="badge bg-success">Aprobado</span>
+								</span>
+							</td>
 						</tr>
 					</tbody>
 				</table>
