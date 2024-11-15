@@ -56,12 +56,13 @@ public class TurnoServiceImpl implements TurnoService {
 	private boolean esTurnoFinalizado(Turno turno, LocalTime ahora, LocalDate hoy) {
         LocalTime inicioTurno = LocalTime.parse(turno.getInicio());
         LocalTime finTurno = LocalTime.parse(turno.getFin());
+        
         if (inicioTurno.isBefore(finTurno)) {
             // Turno en el mismo día
-            return ahora.isAfter(finTurno) || ahora.isBefore(inicioTurno);
+        	return !(ahora.isAfter(inicioTurno) && ahora.isBefore(finTurno));
         } else {
             // Turno que cruza la medianoche
-            return ahora.isAfter(finTurno) && ahora.isBefore(inicioTurno);
+        	return !(ahora.isAfter(inicioTurno) || ahora.isBefore(finTurno));
         }
     }
 
