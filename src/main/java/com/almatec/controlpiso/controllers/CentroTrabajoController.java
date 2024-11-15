@@ -185,7 +185,7 @@ public class CentroTrabajoController {
 		ReporteDTO reporte = centroTrabajoService.buscarItemCtReporte(idItemOp, idCT, idOperario, idItem, tipo);
 		Integer idItemFab = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
 		ItemInterface itemFab = itemService.obtenerItemFabricaPorId(idItemFab);
-		reporte.setPeso(itemFab.getitem_peso_b());
+		reporte.setPeso(itemFab.getitem_peso_b().divide(new BigDecimal(reporte.getCantSol())));
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);

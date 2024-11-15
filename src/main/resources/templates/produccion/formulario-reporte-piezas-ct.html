@@ -24,14 +24,17 @@
                                 <label for="nombre-operario" class="form-label">Operario:</label>
                                 <input type="text" id="nombre-operario" th:value="*{operario.nombre}" class="form-control" required readonly/>                           
                             </div>
+							
                             <div class="mb-3">
                                 <label for="num-op" class="form-label">Numero Op:</label>
                                 <input type="number" id="num-op" class="form-control" th:field="*{numOp}" readonly/>                           
                             </div>
+							
                             <div class="mb-3">
                                 <label for="proyecto" class="form-label">Proyecto:</label>
                                 <input type="text" id="proyecto" class="form-control" th:field="*{proyecto}" required readonly/>                           
                             </div>
+							
 							<div class="row">
 	                            <div class="col-md-3 mb-3">
 	                                <label for="id-item" class="form-label">Ref:</label>
@@ -42,29 +45,22 @@
 	                                <input type="text" id="item" class="form-control" th:field="*{ref}" required readonly/>                   
 	                            </div>								
 							</div>
+							
                             <div class="mb-3">
                                 <label for="color" class="form-label">Color:</label>
                                 <input type="text" id="color" class="form-control" th:field="*{color}" required readonly/>                   
                             </div>
+							
                             <div class="mb-3">
                                 <label for="cant-solic" class="form-label">Cant solicitada:</label>
                                 <input type="number" id="cant-solic" class="form-control" th:field="*{cantSol}" required readonly/>                           
                             </div>
+							
                             <div class="mb-3">
                                 <label for="cant-fabricadas" class="form-label">Cant Fabricada:</label>
                                 <input type="number" id="cant-fabricadas" class="form-control" th:field="*{cantFab}" required readonly/>                           
                             </div>
-							<div class="row">
-	                            <div class="col-md-6 mb-3">
-	                                <label for="cant-reportar" class="form-label">Cant reportar:</label>
-	                                <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}" required />                           
-	                            </div>
-								
-								<div class="col-md-6 mb-3">
-								    <label for="kg-reportar" class="form-label">Kg reportar:</label>
-								    <input type="number"  id="kg-reportar" class="form-control" th:attr="data-peso-item=${reporte.peso}" readonly />                           
-								</div>								
-							</div>
+							
 							<div id="kg-warning" class="alert alert-warning mt-3" style="display: none;">
 							    Los kilogramos reportados son mayores que los disponibles en el lote.
 							</div>
@@ -84,6 +80,18 @@
 								    <label for="kg-disponible" class="form-label">Kg Diponibles :</label>
 								    <input type="number"  id="kg-disponible" class="form-control" readonly />                           
 								</div>	
+							</div>
+							
+							<div class="row">
+	                            <div class="col-md-6 mb-3">
+	                                <label for="cant-reportar" class="form-label">Cant reportar:</label>
+	                                <input type="number" min="1" th:max="*{cantSol - cantFab}" id="cant-reportar" class="form-control" th:field="*{cantReportar}" required />                           
+	                            </div>
+								
+								<div class="col-md-6 mb-3">
+								    <label for="kg-reportar" class="form-label">Kg reportar:</label>
+								    <input type="number"  id="kg-reportar" class="form-control" th:attr="data-peso-item=${reporte.peso}" readonly />                           
+								</div>								
 							</div>
                             <input type="hidden" id="operario" th:field="*{operario}" />
                             <input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" />
