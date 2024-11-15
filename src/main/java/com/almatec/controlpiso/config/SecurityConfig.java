@@ -74,7 +74,7 @@ public class SecurityConfig {
                         .antMatchers("/ingenieria/op/**").hasAuthority("ACCESS_ESTATUS_DE_PROYECTOS")
                         .antMatchers("/ingenieria/memos/nuevo").hasAuthority("ACCESS_CREAR_MEMO")
                         .antMatchers(HttpMethod.POST, "/ingenieria/memos").hasAuthority("ACCESS_CREAR_MEMO")
-                        .antMatchers(HttpMethod.POST, "/ingenieria/memos/{idMemo}/aprobar-memo").hasAuthority("ROLE_APROBAR_MEMO")
+                        .antMatchers(HttpMethod.POST, "/ingenieria/memos/{idMemo}/aprobar-memo").hasAuthority("ACCESS_APROBAR_MEMO")
                         .antMatchers("/ingenieria/memos/aprobar").hasAuthority("ACCESS_APROBAR_MEMO")
                         .antMatchers("/ingenieria/memos").hasAuthority("ACCESS_HISTORIAL_MEMOS")
                         .antMatchers("/programacion/**").hasAuthority("ACCESS_PRIORIDAD")
