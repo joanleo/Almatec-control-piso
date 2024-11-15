@@ -3,8 +3,10 @@ package com.almatec.controlpiso.almacen.util;
 import java.awt.Color;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -483,7 +485,7 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		opCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableDataCliente.addCell(opCell);
 		
-		PdfPCell numOpCell = new PdfPCell(new Phrase("OP-" + encabezado.getOp(), infoFont));
+		PdfPCell numOpCell = new PdfPCell(new Phrase(encabezado.getOp(), infoFont));
 		numOpCell.setBorder(Rectangle.NO_BORDER);
 		numOpCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(numOpCell);
@@ -600,6 +602,12 @@ public class RemisionPdfService extends PdfPageEventHelper{
         ColumnText.showTextAligned(writer.getDirectContent(),
                 Element.ALIGN_CENTER, pageNumberPhrase,
                 (document.left() + document.right()) / 2, document.bottom(), 0);
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Phrase datePhrase = new Phrase("Fecha Impresión: " + sdf.format(new Date()), poweredByFont);
+        ColumnText.showTextAligned(writer.getDirectContent(),
+                Element.ALIGN_RIGHT, datePhrase,
+                document.right(), document.bottom(), 0);
 	}
 
 }
