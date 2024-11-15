@@ -20,9 +20,7 @@ public class RegistroPiezaServiceImpl implements RegistroPiezaService{
 
 	@Override
 	public void actualizarRegistro(RegistroPieza registro) {
-
 		registroPiezaRepo.saveAndFlush(registro);
-
 	}
 
 	@Override

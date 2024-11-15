@@ -29,7 +29,7 @@
 					<input hidden type="text" id="formId" th:field="*{id}" />
 					<input hidden type="text" class="id-centro-trabajo" th:value="*{idCentroTrabajo}" />
 					<input hidden type="text" class="centro-trabajo" th:value="*{centroTrabajo}" />
-					<input hidden type="text" class="item" th:value="*{idItem}" name="idItem"  />
+					<input hidden type="text" class="item" th:value="*{idItemOp}" name="idItemOp"  />
 					<input hidden type="text" class="nombre-operario" th:value="${nombreOperario}" name="nombreOperario" />
 					<input hidden type="text" class="id-operario" th:value="${idOperario}" name="idOperario" />
 					<div class="d-flex justify-content-between my-3">
@@ -49,23 +49,34 @@
 		                    <span class="input-group-text">PROYECTO:</span>
 		                    <input type="text" th:field="*{proyecto}" id="proyecto" name="proyecto" class="form-control"/>
 		                </div>
+						
 						<div class="input-group size-l">
 						    <span class="input-group-text">PEDIDO/ZONA:</span>
 						    <input type="text" th:field="*{zona}" id="pedido" name="pedido" class="form-control"/>
 						</div>
-						<div class="input-group size-l">
-						    <span class="input-group-text">NOMBRE ITEM:</span>
+						
+						<div class="input-group size-s">
+                            <span class="input-group-text">REF:</span>
+                            <input type="text" id="id-item" class="form-control" th:value="*{idItemOp} + '-' + (*{idParte != 0} ? *{idParte} : *{idItemFab})"  required readonly/>                   
+                        </div>
+						
+						<div class="input-group">
+						    <span class="input-group-text">DESCRIPCION:</span>
 						    <input type="text" th:field="*{descripcionItem}" id="nombre" name="nombre" class="form-control"/>
 						</div>
+							
+							
 						<div class="input-group size-l">
 						    <span class="input-group-text">MARCA:</span>
 						    <input type="text" th:field="*{marca}" id="marca" name="marca" class="form-control"/>
 						</div>
+						
 						<div class="input-group size-l">
 						    <span class="input-group-text">CANTIDAD:</span>
 						    <input type="text" th:field="*{cantSol}" id="cant" name="cant" class="form-control"/>
 						</div>
-						<div class="input-group ">
+						
+						<div class="input-group size-l">
 				           <span class="input-group-text">Lote: </span>
 							   <select id="loteSelect" class="form-control" name="lote" th:field="*{lote}" >
 	   		                   		<option value=""></option>
@@ -103,6 +114,13 @@
 					                    <div class="input-group size-m">
 					                        <span class="input-group-text">LONGITUD [mm]:</span>
 					                        <input type="number" id="longitud" name="longitud" class="form-control" min="1" step="0.01"/>
+					                    </div>
+					                </div>
+									
+									<div id="espesorContainer" class="parameter-container">
+					                    <div class="input-group size-m">
+					                        <span class="input-group-text">ESPESOR [mm]:</span>
+					                        <input type="number" id="espesor" name="espesor" class="form-control" min="1" step="0.01"/>
 					                    </div>
 					                </div>
 	

@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
@@ -11,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -71,8 +71,8 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 	}
 
 	@Override
-	public ReporteCalidadDTO buscarItemReporteCalidadCt(Long idItem, Integer idCT, Integer idOperario) {
-		Set<OpCentroTrabajoDTO> ops = vistaOpItemsMaterialesRutaService.buscarItemCt(idItem, idCT);
+	public ReporteCalidadDTO buscarItemReporteCalidadCt(Long idItemOp, Integer idCT, Integer idOperario, Integer idItem, String tipo) {
+		Set<OpCentroTrabajoDTO> ops = vistaOpItemsMaterialesRutaService.buscarItemParteCt(idItemOp, idCT, idItem, tipo);
 		if (ops != null && !ops.isEmpty()) {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
 		    ItemOpCtDTO item = op.getItems().get(0);
@@ -80,17 +80,21 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 		    Integer cant = 0;
 		    String centroTrabajo = null;
 		    String marca = null;
+		    Integer idItemFab = 0;
+		    Integer idParte = 0;
 		    if(Objects.equals(item.getItem_centro_t_id(), idCT)) {
 		    	descripcion = item.getItem_desc();
 		    	cant = item.getCant_req();
 		    	centroTrabajo = item.getItem_centro_t_nombre();
 		    	marca = item.getMarca();
+		    	idItemFab = item.getItem_id();
 		    }
 		    if(descripcion == null) {
 		    	for(ComponenteDTO componente: item.getComponentes()) {
 		    		if(Objects.equals(componente.getMaterial_centro_t_id(), idCT)) {
 		    			descripcion = componente.getMaterial_desc();
 		    			cant = componente.getMaterial_cant();
+		    			idParte = componente.getMaterial_id();
 		    			centroTrabajo = componente.getMaterial_centro_t_nombre();
 		    		}
 		    	}
@@ -104,9 +108,11 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 		    reporte.setDescripcionItem(descripcion);
 		    reporte.setCentroTrabajo(centroTrabajo);
 		    reporte.setIdCentroTrabajo(idCT);
-		    reporte.setIdItem(idItem);
+		    reporte.setIdItemOp(idItemOp);
 		    reporte.setColor(item.getItem_color());
 		    reporte.setCantSol(cant);
+		    reporte.setIdParte(idParte);
+		    reporte.setIdItem(idItemFab);
 		    		    
 		    return reporte;
 		}
@@ -116,7 +122,7 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 
 	@Override
 	public Page<ReporteCalidadDTO> listarFormularios(int page, int size, String search) {
-	    Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 	    Page<ReporteCalidad> reportesPage;
 	    
 	    if (search != null && !search.isEmpty()) {

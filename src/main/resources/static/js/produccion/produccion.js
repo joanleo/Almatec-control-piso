@@ -197,9 +197,7 @@ async function llenarTablaPiezasOperario(){
 async function obtenerCantPiezasFabricadas(idCT, item){
 	let ref = item.idParte != 0 ? item.idParte: item.idItemFab
 	const tipo = item.idParte != 0 ? 'parte' : 'conjunto';
-	console.log('item: ',item)
-	console.log('item: ',item.idParte)
-	console.log(`tipo: ${tipo} ref: ${ref}`)    
+  
     try {
         const response = await fetch(`/centros-trabajo/${idCT}/piezas-fabricadas/${item.idItem}/tipo/${tipo}/${ref}`);
         
@@ -1540,7 +1538,7 @@ async function crearFilaMostrarPiezas(index, item, idTbody, operario) {
 	           window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=${idPieza}&idOperario=${operario.id}`
 	       }
 	       if (idTbody == 'listado-piezas-operario-calidad') {
-	           window.location.href = `/calidad/formulario/centro-trabajo/${centroTSelected.id}?idItem=${idPieza}&idOperario=${operario.id}`
+	           window.location.href = `/calidad/formulario/centro-trabajo/${centroTSelected.id}?idItemOp=${idPieza}&idOperario=${operario.id}&idItem=${ref}&tipo=${tipo}`
 	       }
 	   })
 	

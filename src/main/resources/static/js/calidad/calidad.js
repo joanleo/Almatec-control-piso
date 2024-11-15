@@ -258,6 +258,7 @@ async function fetchCentrosT(){
 
 function mostrarPunzonadora(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('pestanaContainer').setAttribute('hidden','')
 	document.getElementById('aletaContainer').setAttribute('hidden','')
@@ -299,6 +300,7 @@ function mostrarOmegas(){
 function mostrarVigas(){
 	
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('perfBordeContainer').setAttribute('hidden','')
 	document.getElementById('perforacionesContainer').setAttribute('hidden','')
@@ -315,6 +317,7 @@ function mostrarVigas(){
 
 function mostrarRefuerzos(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 
 	document.getElementById('perforacionesContainer').setAttribute('hidden','')
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
@@ -330,6 +333,7 @@ function mostrarRefuerzos(){
 
 function mostraCZ(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('troqueladoContainer').setAttribute('hidden','')
 	document.getElementById('corteContainer').setAttribute('hidden','')
@@ -344,6 +348,7 @@ function mostraCZ(){
 
 function mostrarBox(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('perfBordeContainer').setAttribute('hidden','')
 	document.getElementById('punzonadoContainer').setAttribute('hidden','')
@@ -381,6 +386,7 @@ function mostarTroqueladora(){
 }
 function mostarDobladora(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('pestanaContainer').setAttribute('hidden','')
 	document.getElementById('aletaContainer').setAttribute('hidden','')
@@ -407,6 +413,7 @@ function mostarDobladora(){
 
 function mostarSoldadura(){
 	document.getElementById('ralContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('pestanaContainer').setAttribute('hidden','')
 	document.getElementById('aletaContainer').setAttribute('hidden','')
@@ -449,6 +456,7 @@ function mostrarGranallado(){
 	document.getElementById('anchoContainer').setAttribute('hidden','')
 	document.getElementById('alturaContainer').setAttribute('hidden','')
 	document.getElementById('longitudContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('pestanaContainer').setAttribute('hidden','')
 	document.getElementById('aletaContainer').setAttribute('hidden','')
@@ -476,6 +484,7 @@ function mostrarPintura(){
 	document.getElementById('anchoContainer').setAttribute('hidden','')
 	document.getElementById('alturaContainer').setAttribute('hidden','')
 	document.getElementById('longitudContainer').setAttribute('hidden','')
+	document.getElementById('espesorContainer').setAttribute('hidden','')
 	
 	document.getElementById('pestanaContainer').setAttribute('hidden','')
 	document.getElementById('aletaContainer').setAttribute('hidden','')

@@ -10,7 +10,7 @@ public class ReporteCalidadDTO {
 	private String nombreOperario;
 	private Integer numOp;
 	private String zona;
-	private Long idItem;
+	private Long idItemOp;
 	private String color;
 	private Integer idCentroTrabajo;
     private String centroTrabajo;
@@ -20,10 +20,13 @@ public class ReporteCalidadDTO {
     private String marca;
     private Integer cantSol;
     private String lote;
+    private Integer idItem;
+    private Integer idParte;
     
     private Double ancho;
     private Double altura;
     private Double longitud;
+    private Double espesor;
     private String ral;
     
     private Boolean pestana;
@@ -87,8 +90,8 @@ public class ReporteCalidadDTO {
 		return zona;
 	}
 
-	public Long getIdItem() {
-		return idItem;
+	public Long getIdItemOp() {
+		return idItemOp;
 	}
 
 	public String getColor() {
@@ -125,6 +128,14 @@ public class ReporteCalidadDTO {
 
 	public String getLote() {
 		return lote;
+	}
+
+	public Integer getIdItem() {
+		return idItem;
+	}
+
+	public Integer getIdParte() {
+		return idParte;
 	}
 
 	public Double getAncho() {
@@ -215,6 +226,10 @@ public class ReporteCalidadDTO {
 		return diametro;
 	}
 
+	public Boolean getPasaPruebaAdherencia() {
+		return pasaPruebaAdherencia;
+	}
+
 	public Double getMedia1() {
 		return media1;
 	}
@@ -287,8 +302,8 @@ public class ReporteCalidadDTO {
 		this.zona = zona;
 	}
 
-	public void setIdItem(Long idItem) {
-		this.idItem = idItem;
+	public void setIdItemOp(Long idItemOp) {
+		this.idItemOp = idItemOp;
 	}
 
 	public void setColor(String color) {
@@ -325,6 +340,14 @@ public class ReporteCalidadDTO {
 
 	public void setLote(String lote) {
 		this.lote = lote;
+	}
+
+	public void setIdItem(Integer idItem) {
+		this.idItem = idItem;
+	}
+
+	public void setIdParte(Integer idParte) {
+		this.idParte = idParte;
 	}
 
 	public void setAncho(Double ancho) {
@@ -415,6 +438,10 @@ public class ReporteCalidadDTO {
 		this.diametro = diametro;
 	}
 
+	public void setPasaPruebaAdherencia(Boolean pasaPruebaAdherencia) {
+		this.pasaPruebaAdherencia = pasaPruebaAdherencia;
+	}
+
 	public void setMedia1(Double media1) {
 		this.media1 = media1;
 	}
@@ -463,12 +490,14 @@ public class ReporteCalidadDTO {
 		this.media12 = media12;
 	}
 
-	public Boolean getPasaPruebaAdherencia() {
-		return pasaPruebaAdherencia;
+	public Double getEspesor() {
+		return espesor;
 	}
 
-	public void setPasaPruebaAdherencia(Boolean pasaPruebaAdherencia) {
-		this.pasaPruebaAdherencia = pasaPruebaAdherencia;
+	public void setEspesor(Double espesor) {
+		this.espesor = espesor;
 	}
+
+	
 	
 }

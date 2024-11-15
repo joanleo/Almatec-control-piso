@@ -9,7 +9,7 @@ public interface ReporteCalidadService {
 
 	ReporteCalidad guardarReporteCalidad(ReporteCalidadDTO formCalidad);
 
-	ReporteCalidadDTO buscarItemReporteCalidadCt(Long idItem, Integer idCT, Integer idOperario);
+	ReporteCalidadDTO buscarItemReporteCalidadCt(Long idItemoP, Integer idCT, Integer idOperario, Integer idItem, String tipo);
 
 	Page<ReporteCalidadDTO> listarFormularios(int page, int size, String search);
 

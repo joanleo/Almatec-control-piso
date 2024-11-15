@@ -63,9 +63,11 @@ public class CalidadController {
 
 	@GetMapping("/formulario/centro-trabajo/{idCT}")
 	public String obtenerFormulario(@PathVariable Integer idCT,
-			  @RequestParam(required = false) Long idItem,
+			  @RequestParam(required = false) Long idItemOp,
 			  @RequestParam(required = false) Integer idOperario,
 			  @RequestParam(required = false) Long id,
+			  @RequestParam Integer idItem,
+			  @RequestParam String tipo,
 			  Model modelo) throws JsonProcessingException {
 		
 		ReporteCalidadDTO formulario;
@@ -77,7 +79,7 @@ public class CalidadController {
 	        idOper = formulario.getIdOperario();
 	    	nombreOperario = formulario.getNombreOperario();
 	    } else {
-	    	formulario = reporteCalidadService.buscarItemReporteCalidadCt(idItem, idCT, idOperario);
+	    	formulario = reporteCalidadService.buscarItemReporteCalidadCt(idItemOp, idCT, idOperario, idItem, tipo);
 	    	Operario operario = operarioService.buscarOperarioPorId(idOperario);
 	    	idOper = operario.getId();
 	    	nombreOperario = operario.getNombre();
@@ -91,7 +93,7 @@ public class CalidadController {
 	    String fechaFormateada = formulario.getFechaDoc().format(formatter);
 	    modelo.addAttribute("fechaFormateada", fechaFormateada);
 
-		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
+		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
 		ObjectMapper mapper = new ObjectMapper();
 	    String lotesJson = mapper.writeValueAsString(lotes);
 
