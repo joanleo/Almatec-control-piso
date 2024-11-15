@@ -90,7 +90,8 @@
 								
 								<div class="col-md-6 mb-3">
 								    <label for="kg-reportar" class="form-label">Kg reportar:</label>
-								    <input type="number"  id="kg-reportar" class="form-control" th:attr="data-peso-item=${reporte.peso}" readonly />                           
+								    <input type="number"  id="kg-reportar" class="form-control" 
+									th:attr="data-peso-item=${reporte.idCentroTrabajo == 17 ? reporte.pesoPintura : reporte.peso}"  readonly />                           
 								</div>								
 							</div>
                             <input type="hidden" id="operario" th:field="*{operario}" />

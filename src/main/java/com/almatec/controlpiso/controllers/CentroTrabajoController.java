@@ -2,6 +2,7 @@ package com.almatec.controlpiso.controllers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -183,9 +184,11 @@ public class CentroTrabajoController {
 								  Model modelo) {
 		
 		ReporteDTO reporte = centroTrabajoService.buscarItemCtReporte(idItemOp, idCT, idOperario, idItem, tipo);
-		Integer idItemFab = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
-		ItemInterface itemFab = itemService.obtenerItemFabricaPorId(idItemFab);
-		reporte.setPeso(itemFab.getitem_peso_b().divide(new BigDecimal(reporte.getCantSol())));
+		reporte.setPesoPintura(reporte.getPesoPintura().divide(new BigDecimal(reporte.getCantSol()), 2, RoundingMode.HALF_UP));
+		//Integer idItemFab = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+		//ItemInterface itemFab = itemService.obtenerItemFabricaPorId(idItemFab);
+		System.out.println(reporte);
+		//vista.getPesoPintura().divide(new BigDecimal(vista.getCantReq()), 2, RoundingMode.HALF_UP)
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);

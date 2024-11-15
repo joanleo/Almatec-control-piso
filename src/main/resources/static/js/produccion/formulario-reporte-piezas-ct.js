@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		if(this.value < 0) this.value = 0
 		if(this.value > max ) this.value = max
 		
-		inputKg.value = (pesoItem * this.value).toFixed(3)
+		inputKg.value = (pesoItem * this.value).toFixed(2)
 		
 		validateKg()
 	})
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	if (showLotes) {
         loteSelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
-            const disponible = Number(selectedOption.getAttribute('data-disponible')).toFixed(3);
+            const disponible = Number(selectedOption.getAttribute('data-disponible')).toFixed(2);
             kgDisponibleInput.value = disponible || 0;
 
             validateKg();

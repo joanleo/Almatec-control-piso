@@ -21,6 +21,7 @@ public class ItemOpCtDTO implements CommonDTO {
 	private Integer prioridad;
 	private Integer cant_cumplida;
 	private String marca;
+	private BigDecimal pesoPintura;
 
 	public ItemOpCtDTO() {
 		super();
@@ -134,13 +135,21 @@ public class ItemOpCtDTO implements CommonDTO {
 		this.marca = marca;
 	}
 
+	public BigDecimal getPesoPintura() {
+		return pesoPintura;
+	}
+
+	public void setPesoPintura(BigDecimal pesoPintura) {
+		this.pesoPintura = pesoPintura;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemOpCtDTO [item_op_id=" + item_op_id + ", item_id=" + item_id + ", item_desc=" + item_desc
 				+ ", cant_req=" + cant_req + ", item_centro_t_id=" + item_centro_t_id + ", item_centro_t_nombre="
 				+ item_centro_t_nombre + ", item_peso=" + item_peso + ", item_color=" + item_color + ", longitud="
 				+ longitud + ", componentes=" + componentes + ", prioridad=" + prioridad + ", cant_cumplida="
-				+ cant_cumplida + "]";
+				+ cant_cumplida + ", marca=" + marca + ", pesoPintura=" + pesoPintura + "]";
 	}
 
 	@Override

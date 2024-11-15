@@ -22,6 +22,7 @@ public class ReporteDTO {
 	private String color;
 	private Integer idConfigProceso;
 	private BigDecimal peso = new BigDecimal(1);
+	private BigDecimal pesoPintura = BigDecimal.ZERO;
 	
 	public String getProyecto() {
 		return proyecto;
@@ -155,6 +156,14 @@ public class ReporteDTO {
 		this.peso = peso;
 	}
 
+	public BigDecimal getPesoPintura() {
+		return pesoPintura;
+	}
+
+	public void setPesoPintura(BigDecimal pesoPintura) {
+		this.pesoPintura = pesoPintura;
+	}
+
 	public static class Builder {
         private ReporteDTO reporteDTO;
 
@@ -178,6 +187,7 @@ public class ReporteDTO {
             reporteDTO.lote = original.lote;
             reporteDTO.color = original.color;
             reporteDTO.idConfigProceso = original.idConfigProceso;
+            reporteDTO.pesoPintura = original.pesoPintura;
             return this;
         }
 
@@ -260,6 +270,11 @@ public class ReporteDTO {
             reporteDTO.peso = peso;
             return this;
         }
+        
+        public Builder setPesoPintura(BigDecimal pesoPintura) {
+        	reporteDTO.pesoPintura = pesoPintura;
+        	return this;
+        }
 
         public ReporteDTO build() {
             return reporteDTO;
@@ -272,7 +287,7 @@ public class ReporteDTO {
 				+ ", cantFab=" + cantFab + ", centroTrabajo=" + centroTrabajo + ", operario=" + operario
 				+ ", idCentroTrabajo=" + idCentroTrabajo + ", idItemFab=" + idItemFab + ", idParte=" + idParte
 				+ ", idItem=" + idItem + ", cantReportar=" + cantReportar + ", lote=" + lote + ", color=" + color
-				+ ", idConfigProceso=" + idConfigProceso + ", peso=" + peso + "]";
+				+ ", idConfigProceso=" + idConfigProceso + ", peso=" + peso + ", pesoPintura=" + pesoPintura + "]";
 	}
 
 }

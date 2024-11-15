@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -256,13 +257,16 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    Integer idItemFab = 0;
 		    Integer idParte = 0;
 		    Integer cantFabricada = 0;
+		    BigDecimal peso = BigDecimal.ZERO;
+		    BigDecimal pesoPintura = item.getPesoPintura();
 		    if(Objects.equals(item.getItem_centro_t_id(), idCT)) {
-		    	descripcion = item.getItem_desc();
+		    	descripcion = item.getItem_desc(); 
 		    	cant = item.getCant_req();
 		    	centroTrabajo = item.getItem_centro_t_nombre();
 		    	idItemFab = item.getItem_id();
 		    	Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasConjunto(idItemOp, idItemFab, idCT);
 		    	cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
+		    	peso = item.getItem_peso();
 		    }
 		    if(descripcion == null) {
 		    	for(ComponenteDTO componente: item.getComponentes()) {
@@ -273,6 +277,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    			idParte = componente.getMaterial_id();
 		    			Integer cantFabDb = reportePiezaCtService.buscarCantidadesFabricadasPerfil(idItemOp, idParte, idCT);
 		    			cantFabricada = cantFabDb != null ? cantFabDb : cantFabricada;
+		    			peso = componente.getMaterial_peso();
 		    		}
 		    	}
 		    }
@@ -290,7 +295,9 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setIdItem(idItemOp);
 		    reporte.setCantFab(cantFabricada);
 		    reporte.setColor(item.getItem_color());
-		    		    
+		    reporte.setPeso(peso);
+		    reporte.setPesoPintura(peso);
+		    reporte.setPesoPintura(pesoPintura);
 		    return reporte;
 		}
 		

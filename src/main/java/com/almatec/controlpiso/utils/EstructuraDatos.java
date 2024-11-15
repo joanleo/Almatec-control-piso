@@ -57,6 +57,7 @@ public class EstructuraDatos {
         itemProduccion.setLongitud(vista.getItem_long());
         itemProduccion.setCant_cumplida(vista.getCant_cumplida());
         itemProduccion.setMarca(vista.getMarca());
+        itemProduccion.setPesoPintura(vista.getPesoPintura());
         return itemProduccion;
     }
 
