@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -183,13 +184,16 @@ public class CentroTrabajoController {
 								  @RequestParam(required = false) Integer idConfigProceso,
 								  Model modelo) {
 		
+		StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 		ReporteDTO reporte = centroTrabajoService.buscarItemCtReporte(idItemOp, idCT, idOperario, idItem, tipo);
 		reporte.setPesoPintura(reporte.getPesoPintura().divide(new BigDecimal(reporte.getCantSol()), 2, RoundingMode.HALF_UP));
-		//Integer idItemFab = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
-		//ItemInterface itemFab = itemService.obtenerItemFabricaPorId(idItemFab);
-		System.out.println(reporte);
-		//vista.getPesoPintura().divide(new BigDecimal(vista.getCantReq()), 2, RoundingMode.HALF_UP)
+		stopWatch.stop();
+		logger.info("Tiempo de ejecución Total: {} ms", stopWatch.getTotalTimeMillis());
+		stopWatch.start();
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
+		stopWatch.stop();
+		logger.info("Tiempo de ejecución obtencion de lotes: {} ms", stopWatch.getTotalTimeMillis());
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
 		

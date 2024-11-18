@@ -8,12 +8,16 @@ import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
+import com.almatec.controlpiso.ingenieria.dtos.MemoDetalleDTO;
 import com.almatec.controlpiso.ingenieria.services.MemoService;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.Memo;
@@ -23,6 +27,7 @@ import com.almatec.controlpiso.integrapps.repositories.MemoRepository;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
 
+
 @Service
 @Transactional
 public class MemoServiceImpl implements MemoService {
@@ -30,6 +35,8 @@ public class MemoServiceImpl implements MemoService {
 	private final MemoRepository memoRepo;
 	private final UsuarioService usuarioService;
 	private final ItemOpRepository itemOpRepo;
+		
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	public MemoServiceImpl(MemoRepository memoRepo, 
 			UsuarioService usuarioService, 
@@ -93,9 +100,21 @@ public class MemoServiceImpl implements MemoService {
 	}
 
 	@Override
-	public List<MemoDetalle> obtenerDetalleMemo(Long idMemo) {
-		Memo memo = memoRepo.findById(idMemo).orElseThrow();
-		return memo.getDetalles();
+	public List<MemoDetalleDTO> obtenerDetalleMemo(Long idMemo) {
+		StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        List<Object[]> results = memoRepo.findByMemoId(idMemo);
+		List<MemoDetalleDTO> detalles = results.stream()
+				.map(result -> new MemoDetalleDTO(
+						((Number) result[0]).longValue(), 
+						(Integer) result[1],
+						(String) result[2],
+						(String) result[3]
+				))
+				.collect(Collectors.toList());
+		stopWatch.stop();
+		logger.info("Tiempo de ejecución: {} ms", stopWatch.getTotalTimeMillis());
+		return detalles;
 	}
 
 	@Override

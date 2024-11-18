@@ -1,13 +1,22 @@
 package com.almatec.controlpiso.ingenieria.dtos;
 
-public class MemoDetalleDto {
+public class MemoDetalleDTO {
 
 	private Long idItemOp;
 	private Integer cantidad;
 	private String operacion;
+	private String descripcion;
 	
-	public MemoDetalleDto() {
+	public MemoDetalleDTO() {
 		super();
+	}
+
+	public MemoDetalleDTO(Long idItemOp, Integer cantidad, String operacion, String descripcion) {
+		super();
+		this.idItemOp = idItemOp;
+		this.cantidad = cantidad;
+		this.operacion = operacion;
+		this.descripcion = descripcion;
 	}
 
 	public Long getIdItemOp() {
@@ -32,6 +41,14 @@ public class MemoDetalleDto {
 
 	public void setOperacion(String operacion) {
 		this.operacion = operacion;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}	
 	
 }

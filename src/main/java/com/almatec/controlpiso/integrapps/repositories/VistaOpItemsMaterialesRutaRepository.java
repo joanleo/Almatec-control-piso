@@ -50,6 +50,6 @@ public interface VistaOpItemsMaterialesRutaRepository extends JpaRepository<Vist
 		    + "     OR ((item_op_id = :idItemOp) AND (material_centro_t_id = :idCT) AND (estado_op = 1)) "
 		    + "     OR ((item_op_id = :idItemOp) AND (material_centro_t_id = :idCT) AND (estado_op = 2)) "
 		    + "  ))", nativeQuery = true)
-		List<VistaOpItemsMaterialesRuta> buscarItemParteCt(Long idItemOp, Integer idItem, Integer idCT, String tipo);
+	List<VistaOpItemsMaterialesRuta> buscarItemParteCt(Long idItemOp, Integer idItem, Integer idCT, String tipo);
 
 }

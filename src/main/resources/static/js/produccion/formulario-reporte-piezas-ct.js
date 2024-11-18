@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const kgDisponibleInput = document.getElementById('kg-disponible');
 	const kgWarning = document.getElementById('kg-warning');
 	const btnGuardar = document.getElementById('btnGuardar');
+	const loteDescripcion = document.getElementById('lote-descripcion');
 	
 	inputCant.value = 0;
     inputKg.value = 0;
@@ -57,10 +58,22 @@ document.addEventListener('DOMContentLoaded', function(){
             const selectedOption = this.options[this.selectedIndex];
             const disponible = Number(selectedOption.getAttribute('data-disponible')).toFixed(2);
             kgDisponibleInput.value = disponible || 0;
+			
+			const descripcion = selectedOption.dataset.descripcion || '';
+			loteDescripcion.value = descripcion;
 
             validateKg();
         });
+		
+		if (loteSelect.value) {
+	        const selectedOption = loteSelect.options[loteSelect.selectedIndex];
+	        kgDisponible.value = selectedOption.dataset.disponible || 0;
+	        loteDescripcion.value = selectedOption.dataset.descripcion || '';
+	        calcularKilogramos();
+	        validarKilogramos();
+	    }
     }
+	
 
 	updateIdConfigProceso()
 })

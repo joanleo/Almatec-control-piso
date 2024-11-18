@@ -8,7 +8,7 @@ public class MemoDTO {
 	private Integer idOpIntegrapps;
 	private Integer idUsuario;
 	private String observacion;
-	private List<MemoDetalleDto> detalles;
+	private List<MemoDetalleDTO> detalles;
 	
 	public MemoDTO() {
 		super();
@@ -30,7 +30,7 @@ public class MemoDTO {
 		return idUsuario;
 	}
 
-	public List<MemoDetalleDto> getDetalles() {
+	public List<MemoDetalleDTO> getDetalles() {
 		return detalles;
 	}
 
@@ -42,7 +42,7 @@ public class MemoDTO {
 		this.idUsuario = idUsuario;
 	}
 
-	public void setDetalles(List<MemoDetalleDto> detalles) {
+	public void setDetalles(List<MemoDetalleDTO> detalles) {
 		this.detalles = detalles;
 	}
 

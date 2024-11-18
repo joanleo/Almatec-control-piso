@@ -45,11 +45,11 @@ function fillTableDetalleMemo(detallesMemo){
 			let row = document.createElement('tr')
 			
 			let cellItem = document.createElement('td')
-			cellItem.textContent = detalle.itemOp.id
+			cellItem.textContent = detalle.idItemOp
 			row.appendChild(cellItem)
 			
 			let cellDescripcion = document.createElement('td')
-			cellDescripcion.textContent = detalle.itemOp.descripcion
+			cellDescripcion.textContent = detalle.descripcion
 			row.appendChild(cellDescripcion)
 			
 			let cellCant = document.createElement('td')

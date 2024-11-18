@@ -289,6 +289,11 @@ public class ItemOpServiceImpl implements ItemOpService {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public Integer obtenerIdOpIntegrappsPorIdItem(Long idItem) {
+		return itemOpRepo.buscarIdOpIntegrappsPorIdItem(idItem);
+	}
+
 	
 
 }

@@ -65,18 +65,24 @@
 							    Los kilogramos reportados son mayores que los disponibles en el lote.
 							</div>
 							<div class="row mb-3" id="divLotes" hidden>
-	                            <div class="col-md-6 mb-3">
+	                            <div class="col-md-3 mb-3">
 	                                <label for="loteSelect" class="form-label">Lote:</label>
 	                                <select id="loteSelect" class="form-select" name="lote" th:field="*{lote}">
 	                                    <option value=""></option>
 	                                    <option th:each="lot : ${lotes}" 
 												th:value="${lot.loteErp}" 
 												th:text="${lot.loteErp}"
-												th:data-disponible="${lot.disponible}"></option>
+												th:data-disponible="${lot.disponible}"
+												th:data-descripcion="${lot.descripcion}"></option>></option>
 	                                </select>               
 	                            </div>
 								
 								<div class="col-md-6 mb-3">
+								    <label for="lote-descripcion" class="form-label">Descripcion :</label>
+								    <input type="text"  id="lote-descripcion" class="form-control" readonly />                           
+								</div>
+																
+								<div class="col-md-3 mb-3">
 								    <label for="kg-disponible" class="form-label">Kg Diponibles :</label>
 								    <input type="number"  id="kg-disponible" class="form-control" readonly />                           
 								</div>	

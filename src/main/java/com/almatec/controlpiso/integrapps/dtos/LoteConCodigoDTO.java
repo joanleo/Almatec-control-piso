@@ -7,6 +7,7 @@ public class LoteConCodigoDTO {
 	private Integer codErp;
     private String loteErp;
     private BigDecimal disponible;
+    private String descripcion;
     
 	public LoteConCodigoDTO() {
 		super();
@@ -40,6 +41,14 @@ public class LoteConCodigoDTO {
 
 	public void setDisponible(BigDecimal disponible) {
 		this.disponible = disponible;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 
 	@Override

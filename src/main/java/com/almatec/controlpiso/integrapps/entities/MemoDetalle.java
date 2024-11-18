@@ -13,7 +13,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "memo_detalle")
@@ -24,7 +24,7 @@ public class MemoDetalle {
 	@Column(name = "id_memo_detalle")
 	private Long id;
 	
-	@JsonBackReference
+	@JsonIgnoreProperties("detalles")
 	@ManyToOne
     @JoinColumn(name = "id_memo")
     private Memo memo;
@@ -126,12 +126,12 @@ public class MemoDetalle {
 		super();
 	}
 
-	@Override
+	/*@Override
 	public String toString() {
 		return "MemoDetalle [id=" + id + ", itemOp=" + itemOp + ", cantidad=" + cantidad + ", operacion=" + operacion
 				+ ", observacion=" + observacion + ", fechaCreacion=" + fechaCreacion + ", fechaActualizacion="
 				+ fechaActualizacion + "]";
-	}
+	}*/
 	
 	
 }

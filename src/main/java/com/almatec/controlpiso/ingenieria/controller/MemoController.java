@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
+import com.almatec.controlpiso.ingenieria.dtos.MemoDetalleDTO;
 import com.almatec.controlpiso.ingenieria.services.MemoService;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
-import com.almatec.controlpiso.integrapps.entities.MemoDetalle;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
@@ -102,7 +102,7 @@ public class MemoController {
 	}
 	
 	@GetMapping("/{idMemo}/detalle-memo")
-	public ResponseEntity<List<MemoDetalle>> obtenerDetalleMemo(@PathVariable Long idMemo){		
+	public ResponseEntity<List<MemoDetalleDTO>> obtenerDetalleMemo(@PathVariable Long idMemo){		
 		return ResponseEntity.ok(memoService.obtenerDetalleMemo(idMemo));
 	}
 	

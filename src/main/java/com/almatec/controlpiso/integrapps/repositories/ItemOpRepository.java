@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.integrapps.repositories;
 
+import java.security.cert.TrustAnchor;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -147,6 +148,11 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid = orden_pv.Row851_id "
 			+ "WHERE   (orden_pv.id_op_ia = :idOpIntegrapps) ", nativeQuery = true)
 	List<Integer> buscarCentrosTrabajoPorIdOpIA(@Param("idOpIntegrapps")Integer idOpIntegrapps);
+
+	@Query(value = "SELECT id_op_ia "
+			+ "FROM items_op "
+			+ "WHERE items_op.item_id = :idItem ", nativeQuery = true)
+	Integer buscarIdOpIntegrappsPorIdItem(@Param("idItem")Long idItem);
 
 
 }

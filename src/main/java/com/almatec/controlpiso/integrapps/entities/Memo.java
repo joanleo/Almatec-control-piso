@@ -18,7 +18,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import com.almatec.controlpiso.security.entities.Usuario;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "memos")
@@ -52,8 +52,8 @@ public class Memo {
 	@Column(name = "id_estado")
 	private Integer idEstado = 0;
 	
-	@JsonManagedReference
-	@OneToMany(mappedBy = "memo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("memo")
+	@OneToMany(mappedBy = "memo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<MemoDetalle> detalles;
 	
 	

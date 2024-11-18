@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
+import com.almatec.controlpiso.ingenieria.dtos.MemoDetalleDTO;
 import com.almatec.controlpiso.integrapps.entities.MemoDetalle;
 import com.almatec.controlpiso.security.entities.Usuario;
 
@@ -16,7 +17,7 @@ public interface MemoService {
 
 	List<MemoWithOP> obtenerMemosSinAprobar();
 
-	List<MemoDetalle> obtenerDetalleMemo(Long idMemo);
+	List<MemoDetalleDTO> obtenerDetalleMemo(Long idMemo);
 
 	MemoDTO aprobarMemo(Long idMemo, Usuario usuario);
 

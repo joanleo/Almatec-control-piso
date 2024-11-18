@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
+import com.almatec.controlpiso.ingenieria.dtos.MemoDetalleDTO;
 import com.almatec.controlpiso.integrapps.entities.Memo;
+import com.almatec.controlpiso.integrapps.entities.MemoDetalle;
 
 public interface MemoRepository extends JpaRepository<Memo, Long> {
 
@@ -59,5 +61,12 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
             + "web_usuarios.usu_nombre LIKE %:keyword%)",
             nativeQuery = true)
     Page<MemoWithOP> findAllWithSearch(@Param("keyword") String keyword, Pageable pageable);
+	
+	
+	@Query(value = "SELECT io.item_id, md.cantidad, md.operacion, io.descripcion "
+			+ "FROM memo_detalle md "
+			+ "LEFT JOIN items_op io ON md.id_item_op = io.item_id "
+			+ "WHERE md.id_memo = :idMemo ", nativeQuery = true)
+	List<Object[]>findByMemoId(@Param("idMemo") Long idMemo);
 
 }

@@ -9,9 +9,12 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
@@ -67,6 +70,8 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	
 	@Autowired
 	private VistaOpItemsMaterialesRutaService opItemsMaterialesRutaService;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Override
 	public List<Compania> buscarCompanias() {
@@ -144,45 +149,11 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	@Override
 	public void asignarActualizarPiezaOperario(Integer idCT, List<PiezaOperarioDTO> piezas) {
 		try {
+			if (idCT == null || piezas == null || piezas.isEmpty()) {
+	            throw new IllegalArgumentException("Parámetros inválidos");
+	        }
 			for(PiezaOperarioDTO pieza: piezas) {
-				Integer idProceso = pieza.getIdProceso();
-				Integer idOperario = pieza.getIdOperario();
-				Integer idItemOp = pieza.getIdItemOp();
-				Integer idItem = pieza.getIdItem();
-				RegistroPieza registro;
-				if(pieza.getIsComponente()) {
-					registro = registroPiezaService.consultaRegistroPieza(idCT, idProceso, idOperario, idItemOp, idItem);
-				}else {
-					registro = registroPiezaService.consultaRegistroPieza(idCT, idProceso, idOperario, idItemOp);
-				}
-				
-				LocalDateTime fecha = LocalDateTime.now();
-				if(registro != null) {
-					Boolean estaActivo = !registro.getIsActivo();
-					registro.setIsActivo(estaActivo);
-					registro.setFechaEdicion(fecha);
-					registroPiezaService.actualizarRegistro(registro);
-					continue;
-				}
-				RegistroPieza nuevoRegistro = new RegistroPieza();
-				nuevoRegistro.setIdCT(idCT);
-				nuevoRegistro.setIdConfig(idProceso);
-				nuevoRegistro.setIdOperario(idOperario);
-				nuevoRegistro.setIdItem(idItemOp);
-				if(Boolean.TRUE.equals(pieza.getIsComponente())) {
-					nuevoRegistro.setIdItemParte(idItem);				
-				}else {
-					nuevoRegistro.setIdItemFab(idItem);
-				}
-				nuevoRegistro.setFechaCreacion(fecha);
-				nuevoRegistro.setIsActivo(pieza.getEstaActivo());
-				registroPiezaService.actualizarRegistro(nuevoRegistro);
-				//validar registro operariodia parada == 50 cambiar a cero
-				RegistroOperDia registroOperario = registroOperdiaService.obtenerRegistroOperario(idCT, idProceso, idOperario);
-				if(registroOperario.getIdParada() == 50) {
-					Integer idParada = 0;
-					registroOperdiaService.actualizaParada(registroOperario, idParada);					
-				}
+				procesarPieza(idCT, pieza);
 			}
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -191,6 +162,71 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		
 	}
 	
+	private void procesarPieza(Integer idCT, PiezaOperarioDTO pieza) {
+		
+		RegistroPieza registro = obtenerRegistroExistente(idCT, pieza);
+		
+		LocalDateTime fecha = LocalDateTime.now();
+		if(registro != null) {
+			actualizarRegistroExistente(registro, fecha);
+			return;
+		}
+		
+		crearnuevoRegistro(idCT, pieza, fecha);
+		actualizarParadaOperario(idCT, pieza.getIdProceso(), pieza.getIdOperario());		
+		
+	}
+
+	private void actualizarParadaOperario(Integer idCT, Integer idProceso, Integer idOperario) {
+		//validar registro operariodia parada == 50 cambiar a cero
+		RegistroOperDia registroOperario = registroOperdiaService.obtenerRegistroOperario(idCT, idProceso, idOperario);
+		if(registroOperario.getIdParada() == 50) {
+			Integer idParada = 0;
+			registroOperdiaService.actualizaParada(registroOperario, idParada);					
+		}
+		
+	}
+
+	private void crearnuevoRegistro(Integer idCT, PiezaOperarioDTO pieza, LocalDateTime fecha) {
+		RegistroPieza nuevoRegistro = new RegistroPieza();
+		nuevoRegistro.setIdCT(idCT);
+		nuevoRegistro.setIdConfig(pieza.getIdProceso());
+		nuevoRegistro.setIdOperario(pieza.getIdOperario());
+		nuevoRegistro.setIdItem(pieza.getIdItemOp());
+		
+		if(Boolean.TRUE.equals(pieza.getIsComponente())) {
+			nuevoRegistro.setIdItemParte(pieza.getIdItem());				
+		}else {
+			nuevoRegistro.setIdItemFab(pieza.getIdItem());
+		}
+		
+		nuevoRegistro.setFechaCreacion(fecha);
+		nuevoRegistro.setIsActivo(pieza.getEstaActivo());
+		registroPiezaService.actualizarRegistro(nuevoRegistro);
+		
+	}
+
+	private void actualizarRegistroExistente(RegistroPieza registro, LocalDateTime fecha) {
+		registro.setIsActivo(!registro.getIsActivo());
+	    registro.setFechaEdicion(fecha);
+	    registroPiezaService.actualizarRegistro(registro);		
+	}
+	
+	private RegistroPieza obtenerRegistroExistente(Integer idCT, PiezaOperarioDTO pieza) {
+		return pieza.getIsComponente() 
+		        ? registroPiezaService.consultaRegistroPieza(
+		            idCT, 
+		            pieza.getIdProceso(), 
+		            pieza.getIdOperario(), 
+		            pieza.getIdItemOp(), 
+		            pieza.getIdItem())
+		        : registroPiezaService.consultaRegistroPieza(
+		            idCT, 
+		            pieza.getIdProceso(), 
+		            pieza.getIdOperario(), 
+		            pieza.getIdItemOp());
+	}
+
 	public ReporteDTO buscarItemCt(Long idItemOp, Integer idCT, Integer idOperario) {
 		Operario operario = operarioService.buscarOperarioPorId(idOperario);
 		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemCt(idItemOp, idCT);
@@ -246,7 +282,12 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 
 	@Override
 	public ReporteDTO buscarItemCtReporte(Long idItemOp, Integer idCT, Integer idOperario, Integer idItem, String tipo) {
+		StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 		Operario operario = operarioService.buscarOperarioPorId(idOperario);
+		stopWatch.stop();
+		logger.info("Tiempo de ejecución de consulta a los datos del operario: {} ms", stopWatch.getTotalTimeMillis());
+		stopWatch.start();
 		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemParteCt(idItemOp, idCT, idItem, tipo);
 		if (ops != null && !ops.isEmpty()) {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
@@ -298,9 +339,10 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setPeso(peso);
 		    reporte.setPesoPintura(peso);
 		    reporte.setPesoPintura(pesoPintura);
+		    stopWatch.stop();
+		    logger.info("Tiempo de ejecución de tratamiento de los datos del reporte: {} ms", stopWatch.getTotalTimeMillis());
 		    return reporte;
 		}
-		
 		return null;
 	}
 
