@@ -63,7 +63,7 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     Page<MemoWithOP> findAllWithSearch(@Param("keyword") String keyword, Pageable pageable);
 	
 	
-	@Query(value = "SELECT io.item_id, md.cantidad, md.operacion, io.descripcion "
+	@Query(value = "SELECT io.item_id, md.cantidad, md.operacion, io.descripcion, md.observacion "
 			+ "FROM memo_detalle md "
 			+ "LEFT JOIN items_op io ON md.id_item_op = io.item_id "
 			+ "WHERE md.id_memo = :idMemo ", nativeQuery = true)

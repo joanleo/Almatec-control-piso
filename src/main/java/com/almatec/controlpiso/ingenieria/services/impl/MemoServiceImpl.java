@@ -109,7 +109,8 @@ public class MemoServiceImpl implements MemoService {
 						((Number) result[0]).longValue(), 
 						(Integer) result[1],
 						(String) result[2],
-						(String) result[3]
+						(String) result[3],
+						(String) result[4]
 				))
 				.collect(Collectors.toList());
 		stopWatch.stop();

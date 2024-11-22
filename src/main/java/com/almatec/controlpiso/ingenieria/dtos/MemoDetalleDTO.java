@@ -6,17 +6,20 @@ public class MemoDetalleDTO {
 	private Integer cantidad;
 	private String operacion;
 	private String descripcion;
+	private String observacion;
 	
 	public MemoDetalleDTO() {
 		super();
 	}
 
-	public MemoDetalleDTO(Long idItemOp, Integer cantidad, String operacion, String descripcion) {
+	public MemoDetalleDTO(Long idItemOp, Integer cantidad, String operacion, 
+			String descripcion, String observacion) {
 		super();
 		this.idItemOp = idItemOp;
 		this.cantidad = cantidad;
 		this.operacion = operacion;
 		this.descripcion = descripcion;
+		this.observacion = observacion;
 	}
 
 	public Long getIdItemOp() {
@@ -49,6 +52,14 @@ public class MemoDetalleDTO {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public String getObservacion() {
+		return observacion;
+	}
+
+	public void setObservacion(String observacion) {
+		this.observacion = observacion;
 	}	
 	
 }
