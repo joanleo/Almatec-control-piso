@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -34,6 +36,8 @@ public class MensajeServicesImpl implements MensajeServices{
 	private final UsuarioService usuarioService;
     private final SpringTemplateEngine templateEngine;
     private final OrdenPvService ordenPvService;
+    
+    private Logger logger = LoggerFactory.getLogger(getClass());
 	
 
     public MensajeServicesImpl(MensajeRepository mensajeRepo, UsuarioService usuarioService,
@@ -54,7 +58,7 @@ public class MensajeServicesImpl implements MensajeServices{
     	
     	Context context = new Context();
         context.setVariable("idRemision", "RM-" + remision.getIdRemision());
-        context.setVariable("idOpIa", orden.getTipoOp() + "-" + orden.getNumOp());
+        context.setVariable("op", orden.getTipoOp() + "-" + orden.getNumOp());
         context.setVariable("cliente", orden.getCliente());
         context.setVariable("proyecto", orden.getCentroOperaciones());
         context.setVariable("fecha", fechaStr);
@@ -62,9 +66,15 @@ public class MensajeServicesImpl implements MensajeServices{
         context.setVariable("detalles", remision.getDetalles());
         context.setVariable("observaciones", remision.getObservaciones());
 
-        String content = templateEngine.process("remision-generada", context);
+        String content = templateEngine.process("remision-generada ", context);
         
-        crearEmail("CREACION_RM", "Remision Generada" , content);
+        crearEmail("CREACION_RM", 
+        			"Remision Generada " 
+    				+"RM-" + remision.getIdRemision() 
+    				+ "_" + orden.getTipoOp() + "-" + orden.getNumOp() 
+    				+ "_" + orden.getCentroOperaciones()
+    				+ "_" + orden.getCliente() , 
+    				content);
     }
 
 	@Override
@@ -80,8 +90,12 @@ public class MensajeServicesImpl implements MensajeServices{
     	
     	String contenido = templateEngine.process("solicitud-transferencia", context);
 		
-		crearEmail("SOLICITUD_TR", 
-				"Solicitud de Transferencia", 
+		crearEmail("SOLICITUD_TR", 	
+				"Solicitud de Transferencia "
+				+ "ST-" + solicitud.getId()
+				+ "_" + orden.getTipoOp() + "-" + orden.getNumOp() 
+				+ "_" + orden.getCentroOperaciones() 
+				+ "_" + orden.getCliente(), 
 				contenido);
 	}
 	
@@ -101,7 +115,11 @@ public class MensajeServicesImpl implements MensajeServices{
     	String contenido = templateEngine.process("aprobacion-transferencia", context);
 		
 		crearEmail("APROBACION_TR", 
-				"Aprobacion de Solicitud de Transferencia", 
+				"Aprobacion de Solicitud de Transferencia "
+				+ "ST-" + solicitud.getId()
+				+ "_" + orden.getTipoOp() + "-" + orden.getNumOp() 
+				+ "_" + orden.getCentroOperaciones() 
+				+ "_" + orden.getCliente(), 
 				contenido);
 		
 	}
@@ -123,7 +141,12 @@ public class MensajeServicesImpl implements MensajeServices{
         
         String contenido = templateEngine.process("orden-produccion-creada", context);        
         
-        crearEmail("CREACION_OP", "Orden de Producción Generada", contenido);
+        crearEmail("CREACION_OP", 
+        		"Orden de Producción Generada " 
+				+ "_" + orden.getTipoOp() + "-" + orden.getNumOp() 
+				+ "_" + orden.getCentroOperaciones() 
+				+ "_" + orden.getCliente(),
+        		contenido);
     }
     
     @Override
@@ -134,7 +157,12 @@ public class MensajeServicesImpl implements MensajeServices{
         }
         String contenido = templateEngine.process("pedido-aprobado-orden-produccion", context);
 
-        crearEmail("APROBACION_PV", "Pedido Aprobado y Orden de Producción Generada", contenido);
+        crearEmail("APROBACION_PV", 
+        		"Pedido Aprobado y Orden de Producción Generada "
+				+ "PV-" + datos.get("pedido") 
+				+ "_" + datos.get("ordenProduccion")
+				+ "_" + datos.get("proyecto")
+				+ "_" + datos.get("cliente"), contenido);
     }
 	
 	private void crearEmail(String tipoMensaje, String asunto, String contenidoMensaje) {
@@ -153,6 +181,7 @@ public class MensajeServicesImpl implements MensajeServices{
             mensajeRepo.save(email);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Error al tratar de crear el email ", e);
         }
     }
 	
