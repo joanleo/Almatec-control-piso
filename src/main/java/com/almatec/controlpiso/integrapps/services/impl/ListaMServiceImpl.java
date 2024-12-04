@@ -66,9 +66,7 @@ public class ListaMServiceImpl implements ListaMService {
         stopWatch.start();
         
 	    //ItemOp item = itemOpService.obtenerItemPorId(idItem);
-        System.out.println(idItem);
 	    Integer idOpIntegrapps = itemOpService.obtenerIdOpIntegrappsPorIdItem(idItem);
-	    System.out.println(idOpIntegrapps);
 	    List<LoteConCodigoDTO> lotes = listaMaterialRepo.obtenerLotesOpPorItem(idOpIntegrapps);
 	    
 	    if (lotes == null || lotes.isEmpty()) {

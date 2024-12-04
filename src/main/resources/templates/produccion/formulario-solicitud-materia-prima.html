@@ -10,6 +10,15 @@
 				<div hidden id="spinner">
 					<div>Cargando ...</div>
 				</div>
+				
+				<div id="globalLoader" class="loader-container" style="display: none;">
+				  <div class="loader-content">
+				      <div class="spinner-border text-primary" role="status">
+				          <span class="visually-hidden">Cargando...</span>
+				      </div>
+				      <div class="loader-text mt-2">Procesando...</div>
+				  </div>
+				</div>
 								
 				<div th:replace="fragments/alerts :: alerts"></div>
 				

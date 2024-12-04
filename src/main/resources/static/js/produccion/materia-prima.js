@@ -11,10 +11,8 @@ document.getElementById('id-op').addEventListener('change', async function () {
 		const divDescripcion = document.getElementById('descripcionDiv')
 		document.getElementById('descripcion').value = proyecto
 		divDescripcion.hidden = false
-        console.log(this.options[this.selectedIndex])
         const lista = await obtenerListaMateriales(idOP)
         fillTableListaMateriales(lista)
-        console.log(lista)           
     }
 })
 
@@ -41,7 +39,6 @@ function fillTableListaMateriales(lista) {
         row.appendChild(cellUm)
 
         let cellCantReq = document.createElement('td')
-		console.log(item.cantRequeridaActualizada)
         cellCantReq.textContent = (item.cantRequeridaActualizada).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         row.appendChild(cellCantReq)
 		
@@ -59,13 +56,11 @@ function fillTableListaMateriales(lista) {
         })
 
         row.addEventListener('click', async function() {
-            console.log(tbody)
             if (tbody.id == 'body-lista-materiales') {
 				document.getElementById("select").removeAttribute("hidden")
 				document.getElementById("itemSelec").value = item.descripcion
 				document.getElementById("cantItemSelec").value = cantPendiente
 				document.getElementById("umSelec").textContent = item.um
-                console.log("Debera actualizar tabla de disponible")
                 const filtro = {
                     "codigo": item.codigoErp,
                     "um": '',
@@ -81,16 +76,16 @@ function fillTableListaMateriales(lista) {
 }
 
 async function obtenerListaMateriales(idOP){
-	spinner.removeAttribute('hidden')
+	showLoader('Cargando ordenes de produccion...');
 	const response = await fetch(`/produccion/listas-materiales/ordenes-produccion/${idOP}`)
 	const data = await response.json()
-	spinner.setAttribute('hidden', '')
+	hideLoader()
     return data
 }
  
 
 async function getItemsDispon(filtro){
-	spinner.removeAttribute('hidden')
+	showLoader(`Cargando disponibilidad para la referencia ${filtro.codigo} ...`);
 	const response = await fetch('/produccion/items/disponibilidad', {
         method: 'POST',
         headers: {
@@ -100,7 +95,7 @@ async function getItemsDispon(filtro){
     })
 
     const data = await response.json()
-    spinner.setAttribute('hidden', '')
+    hideLoader()
     return data
 }
 
@@ -115,7 +110,6 @@ async function buscarItems(){
 		"lote": lote
 	}
 	
-	console.log(codigo)
 	if(codigo == '' && um == '' && lote == ''){
 		document.getElementById("disponible").innerHTML = ''
 	}else{
@@ -159,21 +153,22 @@ function fillTableDisponible(items) {
 	    selectButton.classList.add('btn', 'btn-primary')
 	    selectButton.addEventListener('click', function(event) {
 			event.preventDefault()
-		    if (itemsSeleccionados.has(item.idItem)) {
+		    if (itemsSeleccionados.has(item.idUnico)) {
 		        console.log('El item ya ha sido seleccionado:', item)
+				const msj = `La materia prima con ref ${item.idItem} y lote ${item.lote} ya ha sido agregada a la solicitud.`
+				mostrarAlert(msj, 'warning')
 		        return 
 		    }
 		    
-	        console.log('Item seleccionado:', item)
             let codigo = item.idItem
             let descripcion = item.descripcionItem
             let um = item.um
-           let lote = item.lote
+           	let lote = item.lote
             let disponible = item.disponible
             const idBodega = item.idBodega
 
             let newRow = document.createElement('tr')
-			let uniqueId = 'cantSol_' + lote + disponible
+			let uniqueId = item.idUnico //'cantSol_' + lote + disponible
 		    itemsSeleccionados.add(uniqueId)
 		       
 			
@@ -184,7 +179,7 @@ function fillTableDisponible(items) {
                 <td data-idBodega="${idBodega}">${idBodega}</td>
                 <td>${lote}</td>
                 <td>${disponible}</td>
-                <td><input class="form-control" type='number' id='${uniqueId}' min="1" max="${disponible}" step="0.001"required value="${item.disponible}"  /></td>
+                <td><input class="form-control" type='number' id='${uniqueId}' min="1" max="${disponible}" step="0.001" required value="${item.disponible}"  /></td>
                 <td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
             `
 
@@ -204,52 +199,63 @@ function eliminarFila(button){
 }
 
 
-//document.getElementById("submitForm").addEventListener('submit', function(event){
-//event.preventDefault()})
-
 function enviarSolicitud(event) {
 	event.preventDefault()
+	const submitButton = document.getElementById("submitForm");
+    submitButton.disabled = true;
 	const detalleRows = document.querySelectorAll('#detalle-solicitud tr');
     if (detalleRows.length === 0) {
         mostrarAlert('Debe agregar al menos un item a la solicitud antes de enviarla.', 'warning');
+		submitButton.disabled = false;
         return;
     }	
 
     let hasValidQuantity = false;
-	let loteTotals = {};
-    let loteAvailable = {};
+	let itemTotals = {};
+    let itemAvailable = {};
     for (const row of detalleRows) {
+		const codErp = row.cells[0].textContent
         const cantSolInput = row.querySelector('input[type="number"]');
 		const lote = row.cells[4].textContent;
         const cantSol = parseFloat(cantSolInput.value) || 0;
         const disponible = parseFloat(row.cells[5].textContent);
-		console.log(cantSol)
+		
+		const itemKey = `${lote}-${codErp}`;
+		
         if (cantSol > 0) {
             hasValidQuantity = true;
         }
 		
-		if (!loteTotals[lote]) {
-            loteTotals[lote] = 0;
-            loteAvailable[lote] = disponible;
+		if (!itemTotals[itemKey]) {
+            itemTotals[itemKey] = 0;
+            itemAvailable[itemKey] = disponible;
         }
-        loteTotals[lote] += cantSol;
+        itemTotals[itemKey] += cantSol;
     }
 	
 	let hasExceededQuantity = false;
-    for (const lote in loteTotals) {
-        if (loteTotals[lote] > loteAvailable[lote]) {
+    for (const itemKey in itemTotals) {
+        if (itemTotals[itemKey] > itemAvailable[itemKey]) {
             hasExceededQuantity = true;
-            mostrarAlert(`La cantidad total solicitada (${loteTotals[lote]}) excede la disponible (${loteAvailable[lote]}) para el lote ${lote}`, 'warning');
+            // Split the composite key to show the error message
+            const [lote, codErp] = itemKey.split('-');
+            mostrarAlert(
+                `La cantidad total solicitada (${itemTotals[itemKey]}) excede la disponible ` +
+                `(${itemAvailable[itemKey]}) para el código ${codErp} en el lote ${lote}`, 
+                'warning'
+            );
         }
     }
 	
 	if (hasExceededQuantity) {
         mostrarAlert('No se puede procesar la solicitud. Algunas cantidades exceden lo disponible.', 'warning');
+		submitButton.disabled = false;
         return;
     }
 
     if (!hasValidQuantity) {
         mostrarAlert('Al menos un item debe tener una cantidad solicitada mayor a cero.', 'warning');
+		submitButton.disabled = false;
         return;
     }
     const idusuario = document.querySelector('#usuarioId').value
@@ -278,17 +284,18 @@ function enviarSolicitud(event) {
             cantSol: parseFloat(element.cells[6].querySelector('input').value),
             idUsuarioSol: idusuario,
         }
-        console.log(detalle.bodegaEntrega)
         dto.solicitud.bodegaErp = bodega
         dto.detalles.push(detalle)
     }
 	
 	if (dto.detalles.length === 0) {
 	        mostrarAlert('Debe tener al menos un item con cantidad mayor a cero para crear la solicitud.', 'warning');
+			submitButton.disabled = false;
 	        return;
 	    }
 
-	console.log(dto)
+	showLoader(`Enviando solicitud de transferencia para su aprobacion...`);
+	
     fetch('/produccion/materia-prima/solicitud', {
         method: 'POST',
         headers: {
@@ -308,5 +315,9 @@ function enviarSolicitud(event) {
         console.error(error)
 		mostrarAlert(error.mensaje, 'danger')
     })
+	.finally(() => {
+        hideLoader()
+        submitButton.disabled = false;
+    });
 }
 

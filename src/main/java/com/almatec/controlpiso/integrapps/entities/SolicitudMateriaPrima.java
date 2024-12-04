@@ -26,7 +26,7 @@ public class SolicitudMateriaPrima {
 	@Column(name = "Bodega_Erp")
 	private String bodegaErp = "BOD";
 	@Column(name = "Tipo_doc")
-	private String tipoDoc = "SMP";
+	private String tipoDoc = "ST";
 	@Column(name = "Num_doc")
 	private Integer numDoc = 0;
 	@Column(name = "Fecha_Doc")

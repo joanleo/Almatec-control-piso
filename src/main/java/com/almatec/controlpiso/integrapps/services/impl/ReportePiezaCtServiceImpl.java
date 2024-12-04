@@ -39,8 +39,10 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	private final ConfigurationService configService;
 	private final EntregaService entregaService;
 
+	static final String RESPUESTA_OK = "Operacion realizada exitosamente";
+	
 	/**
-	 *SE REALIZA EL LLAMADO AL WEBSERVICE PARA  REPORTAR TEP YREALIZAR CONSUMOS
+	 *SE REALIZA EL LLAMADO AL WEBSERVICE PARA  REPORTAR TEP Y REALIZAR CONSUMOS
 	 */
 	@Transactional
 	@Override
@@ -58,7 +60,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			
 			boolean isConsume = centrosReporteConsumo.contains(reporte.getIdCentroT());
 
-			if(isConsume && (item.getCentroTConsumo() == null || item.getCentroTConsumo() == 0)) {
+			if(isConsume) {
 					//Se realiza consumo y TEP
 					LocalDateTime now = LocalDateTime.now();			        
 					String dateTime = now.format(formatter);
@@ -66,12 +68,15 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 					String responseService = xmlService.postImportarXML(conectoresTepYConsumo);
 					util.guardarRegistroXml(xmlService.crearPlanoXml(conectoresTepYConsumo), "SCP_TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
 					util.crearArchivoPlano(conectoresTepYConsumo, "SCP_TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
-					if("Operacion realizada exitosamente".equals(responseService)) {//
+					if(RESPUESTA_OK.equals(responseService)) {//
 						reporte.setIsConsume(true);//REVISAR RESPUESTA
 						reporte.setIsTep(true);
 						item.setCentroTConsumo(reporte.getIdCentroT());
 						
 						List<Integer> centrosTep = item.getCentrosTep();
+						if (centrosTep.size() == 1 && centrosTep.get(0) == 0) {
+						    centrosTep.clear(); // Eliminamos el cero inicial
+						}
 						String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroT()).trim();
 						Integer idCTErp = Integer.valueOf(idCTErpString);
 						centrosTep.add(idCTErp);

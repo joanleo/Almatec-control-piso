@@ -167,15 +167,24 @@ public class ProduccionController {
 		try {
 			SolicitudMateriaPrima solicitud = solicitudMateriaPrimaService.crearSolicitud(solicitudMP.getSolicitud());
 			List<DetalleSolicitudMateriaPrima> detalleSolicitud = detalleSolicitudMateriaPrimaService.crearDetalleSolicitud(solicitud.getId(), solicitudMP.getDetalles());
-	        Map<String, String> respuesta = new HashMap<>();
 	        Usuario usuarioP = usuarioService.buscarUsuarioPorId(solicitud.getIdUsuarioSol());
 	        mensajeService.enviarEmailSolicitudMateriaPrima(solicitud, detalleSolicitud, usuarioP.getNombres());
-	        respuesta.put("mensaje", "Solicitud creada correctamente");
+	        
+	        String mensaje = String.format(
+	                "Solicitud de transferencia %s-%s creada exitosamente. " +
+	                "Se ha enviado una notificación por correo electrónico con los detalles. " +
+	                "El proceso continuará con la aprobación correspondiente.",
+	                solicitud.getTipoDoc(),
+	                solicitud.getId()
+	            );
+	        
+	        Map<String, String> respuesta = new HashMap<>();
+	        respuesta.put("mensaje", mensaje);
 	        respuesta.put("status", "ok");
 	        return ResponseEntity.ok(respuesta);
 	    } catch (Exception e) {
 	        Map<String, String> respuesta = new HashMap<>();
-	        respuesta.put("mensaje", "Error al crear la solicitud");
+	        respuesta.put("mensaje", "No se pudo procesar la solicitud de transferencia. Por favor, intente nuevamente o contacte al administrador del sistema.");
 	        respuesta.put("status", "error");
 	        return ResponseEntity.badRequest().body(respuesta);
 	    }
