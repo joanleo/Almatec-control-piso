@@ -51,4 +51,6 @@ public interface ItemOpService {
 	List<Integer> obtenerCentrosTrabajoPorIdOpIA(Integer idOpIntegrapps);
 
 	Integer obtenerIdOpIntegrappsPorIdItem(Long idItem);
+
+	List<Integer> obtenerRutaItem(Integer idItemFab);
 }

@@ -154,5 +154,10 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "WHERE items_op.item_id = :idItem ", nativeQuery = true)
 	Integer buscarIdOpIntegrappsPorIdItem(@Param("idItem")Long idItem);
 
+	@Query(value = "SELECT   C_centrotrabajo_id "
+			+ "FROM    Items_rutas "
+			+ "WHERE   (Item_fab_Id = :idItemFab) AND (activo = 1)", nativeQuery = true)
+	List<Integer> buscarRutaItemPorIdItemFab(@Param("idItemFab")Integer idItemFab);
+
 
 }

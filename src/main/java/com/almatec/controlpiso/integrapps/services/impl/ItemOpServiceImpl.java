@@ -294,6 +294,11 @@ public class ItemOpServiceImpl implements ItemOpService {
 		return itemOpRepo.buscarIdOpIntegrappsPorIdItem(idItem);
 	}
 
+	@Override
+	public List<Integer> obtenerRutaItem(Integer idItemFab) {
+		return itemOpRepo.buscarRutaItemPorIdItemFab(idItemFab);
+	}
+
 	
 
 }
