@@ -1,15 +1,68 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <section id="alerts" aria-live="polite" th:fragment="alerts">
-        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${message}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    </section>
+<section id="alerts" aria-live="polite" th:fragment="alerts">
+    <!-- Mantenemos los divs originales pero los ocultamos inicialmente -->
+    <div th:if="${message}" 
+         class="d-none"
+         id="flash-success-message" 
+         th:data-message="${message}">
+    </div>
+    
+    <div th:if="${error}" 
+         class="d-none"
+         id="flash-error-message" 
+         th:data-message="${error}">
+    </div>
+    
+    <!-- Script para procesar los mensajes flash -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Procesar mensaje de éxito
+            const successElement = document.getElementById('flash-success-message');
+            if (successElement) {
+                const message = successElement.getAttribute('data-message');
+                if (message) {
+                    // Usamos setTimeout para asegurar que se muestre después de que la página esté completamente cargada
+                    setTimeout(() => {
+                        mostrarAlert(message, 'success');
+                    }, 100);
+                }
+            }
+            
+            // Procesar mensaje de error
+            const errorElement = document.getElementById('flash-error-message');
+            if (errorElement) {
+                const message = errorElement.getAttribute('data-message');
+                if (message) {
+                    setTimeout(() => {
+                        mostrarAlert(message, 'danger');
+                    }, 100);
+                }
+            }
+        });
+        
+        // Función para manejar mensajes flash enviados mediante AJAX
+        function handleFlashMessage(response) {
+            if (response.redirected) {
+                const url = new URL(response.url);
+                const params = new URLSearchParams(url.search);
+                
+                const successMessage = params.get('message');
+                const errorMessage = params.get('error');
+                
+                if (successMessage) {
+                    mostrarAlert(decodeURIComponent(successMessage), 'success');
+                }
+                if (errorMessage) {
+                    mostrarAlert(decodeURIComponent(errorMessage), 'danger');
+                }
+            }
+        }
+        
+        // Agregar la función al objeto window para acceso global
+        window.handleFlashMessage = handleFlashMessage;
+    </script>
+</section>
 </body>
 </html>
