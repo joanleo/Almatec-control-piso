@@ -47,7 +47,7 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 
 		encabezado.setF450_id_centro_trabajo(idCTErp);// revisar
 		encabezado.setF450_turno(1);// revisar
-		encabezado.setF350_notas("Reporte de: " + item.getDescripcion() + " Cant: " + reporte.getCantReportar());
+		encabezado.setF350_notas("Creado desde Guayacan reporte de: " + item.getDescripcion() + " Cant: " + reporte.getCantReportar());
 		return encabezado;
 	}
 
@@ -117,7 +117,6 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 			mov.setF880_id_maquina(dataTE.getf807_id());// Revisar
 			mov.setF880_ind_operacion_completa(0);
 			mov.setF880_cant_completa_base(kilosReportar);
-			
 			double horasPreCalculadas = precalcularHoras(cantidadReportar.doubleValue());
 			
 			mov.setF880_horas(horasPreCalculadas);

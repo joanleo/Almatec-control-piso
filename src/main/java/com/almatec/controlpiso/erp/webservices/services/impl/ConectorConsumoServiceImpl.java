@@ -80,6 +80,7 @@ public class ConectorConsumoServiceImpl implements ConectorConsumoService {
 		mov.setF470_id_co_movto(configService.getC_O());
 		mov.setF470_id_un_movto("001");
 		mov.setF470_id_unidad_medida(data.getf120_id_unidad_inventario());
+		mov.setF470_notas("Creado desde Guayacan, reporte de " + itemReporteDTO.getCant() + "piezas de " + itemFab.getitem_desc());
 				
 		movs.add(mov);
 		
