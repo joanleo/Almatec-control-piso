@@ -2,8 +2,12 @@ package com.almatec.controlpiso.erp.services.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import com.almatec.controlpiso.erp.entities.ListaMaterial;
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
@@ -16,6 +20,7 @@ import com.almatec.controlpiso.erp.repositories.ListaMaterialRepository;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
 import com.almatec.controlpiso.erp.webservices.interfaces.TipoServicioYGrupoImpositivo;
+import com.almatec.controlpiso.exceptions.RutaItemException;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 
 @Service
@@ -23,6 +28,8 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 
 	@Autowired
 	private ListaMaterialRepository listaMaterialRepo;
+	
+	private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public List<ListaMaterial> obtenerListaActual(Integer f820_id) {
@@ -57,7 +64,9 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 
 	@Override
 	public DataConsumoInterface obtenerDataParaConsumo(Integer idOp) {
-		return listaMaterialRepo.obtenerDataParaConsumo(idOp);
+		DataConsumoInterface data = listaMaterialRepo.obtenerDataParaConsumo(idOp);
+
+		return data;
 	}
 
 	@Override
@@ -67,12 +76,56 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 
 	@Override
 	public DataTEP obtenerDataTEP(String idRuta, String idCentroTrabajo) {
+		if (StringUtils.isEmpty(idRuta)) {
+            throw new RutaItemException(
+                "El ID de ruta no puede estar vacío",
+                "TEP_001",
+                "Parámetro idRuta es null o vacío"
+            );
+        }
+        
+        if (StringUtils.isEmpty(idCentroTrabajo)) {
+            throw new RutaItemException(
+                "El ID de centro de trabajo no puede estar vacío",
+                "TEP_002",
+                "Parámetro idCentroTrabajo es null o vacío"
+            );
+        }
 		try {
-			return listaMaterialRepo.obtenerDataTEP(idRuta, idCentroTrabajo);			
-		}catch (Exception e) {
-			System.err.println(e);
-		}
-		return null;
+			
+			DataTEP resultado = listaMaterialRepo.obtenerDataTEP(idRuta, idCentroTrabajo);
+
+            // Validación del resultado
+            if (resultado == null) {
+                throw new RutaItemException(
+                    "No se encontraron datos para la ruta " + idRuta + 
+                    " y centro de trabajo " + idCentroTrabajo,
+                    "TEP_003",
+                    "La consulta retornó null"
+                );
+            }
+            
+            return resultado;		
+		} catch (DataAccessException e) {
+            // Error específico de acceso a datos
+            String mensaje = "Error al acceder a los datos TEP";
+            log.error("{}: {}", mensaje, e.getMessage(), e);
+            throw new RutaItemException(
+                mensaje,
+                "TEP_004",
+                "Error de acceso a datos: " + e.getMessage()
+            );
+            
+        } catch (Exception e) {
+            // Cualquier otra excepción no prevista
+            String mensaje = "Error inesperado al obtener datos TEP";
+            log.error("{}: {}", mensaje, e.getMessage(), e);
+            throw new RutaItemException(
+                mensaje,
+                "TEP_999",
+                "Error inesperado: " + e.getMessage()
+            );
+        }
 	}
 
 	@Override
