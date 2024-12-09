@@ -1,7 +1,8 @@
 
 document.getElementById('reporteForm').addEventListener('submit', function() {
-				document.getElementById('spinner').removeAttribute('hidden')
-			});
+	document.getElementById('spinner').removeAttribute('hidden')
+});
+
 document.addEventListener('DOMContentLoaded', function(){
 	const ct = parseInt( document.getElementById('centroTrabajo').value)
 	const ctsMuestranLote = [3,4,5,6,7,8,9,17]

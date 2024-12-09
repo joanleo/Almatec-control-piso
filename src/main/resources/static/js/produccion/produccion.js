@@ -357,28 +357,89 @@ async function calculateTurno() {
     }
 }
 	
+function handleMessages() {
+    // Verificar parámetros de URL
+    const params = new URLSearchParams(window.location.search);
+    const tipoParam = params.get('alert');
+    const mensajeParam = params.get('mensaje');
+    
+    // Obtener mensajes flash del DOM
+    const flashSuccessElement = document.getElementById('flash-success-message');
+    const flashErrorElement = document.getElementById('flash-error-message');
+    
+    // Priorizar mensajes flash sobre parámetros URL
+    if (flashSuccessElement) {
+        const message = flashSuccessElement.getAttribute('data-message');
+        if (message) {
+            mostrarAlert(message, 'success');
+            return; // Evitar mostrar múltiples mensajes
+        }
+    }
+    
+    if (flashErrorElement) {
+        const message = flashErrorElement.getAttribute('data-message');
+        if (message) {
+            mostrarAlert(message, 'danger');
+            return;
+        }
+    }
+    
+    // Si no hay mensajes flash, verificar parámetros URL
+    if (mensajeParam) {
+        // Mapear tipos de alerta para asegurar valores válidos
+        const tipoAlerta = ['success', 'warning', 'danger', 'info'].includes(tipoParam) 
+            ? tipoParam 
+            : 'info';
+        
+        mostrarAlert(decodeURIComponent(mensajeParam), tipoAlerta);
+    }
+}
+
+function updateInterface() {
+    document.getElementById('title-nombre-ct').textContent = centroTSelected.nombre;
+    document.getElementById('title-turno').textContent = "Turno actual " + turnoSelected.descripcion;
+}
+
+async function loadOperarioData() {
+    await actualizarTablasConTiemposOperarios();
+    await llenarTablaPiezasOperario();
+    actualizarKilosTotales();
+    initializeChart('piechart');
+}
+
+async function initializeApplication() {
+    try {
+        // Manejar mensajes al inicio
+        handleMessages();
+        
+        // Cargar datos necesarios
+        loadFromLocalStorage();
+        await fillTurnosDropdown();
+        centrosTrabajo = await fetchCentrosT();
+        
+        // Actualizar interfaz si hay un centro seleccionado
+        if (centroTSelected) {
+            updateInterface();
+            await loadOperarioData();
+        }
+        
+        // Inicializar componentes adicionales
+        mostrarOperariosCT();
+        setupTableSync();
+        
+    } catch (error) {
+        console.error('Error durante la inicialización:', error);
+        mostrarAlert('Error al inicializar la aplicación: ' + error.message, 'danger');
+    }
+}
+
+// Evento principal de carga
 document.addEventListener('DOMContentLoaded', function () {
-	(async ()=> {
-		const params = new URLSearchParams(window.location.search)
-		const tipoParam = params.get('alert')
-        const mensajeParam = params.get('mensaje')
-		mostrarAlert(mensajeParam, tipoParam)
-		loadFromLocalStorage()
-		await fillTurnosDropdown()
-		centrosTrabajo = await fetchCentrosT()
-		
-	    if(centroTSelected !== null){			
-			document.getElementById('title-nombre-ct').textContent = centroTSelected.nombre			
-			document.getElementById('title-turno').textContent = "Turno actual " + turnoSelected.descripcion
-		    actualizarTablasConTiemposOperarios()
-		    llenarTablaPiezasOperario()
-			actualizarKilosTotales()
-			initializeChart('piechart');
-		}
-	    mostrarOperariosCT()
-		setupTableSync()
-    })()
-})
+    initializeApplication().catch(error => {
+        console.error('Error crítico durante la inicialización:', error);
+        mostrarAlert('Error crítico en la aplicación: ' + error.message, 'danger');
+    });
+});
 
 document.getElementById('codigo').addEventListener('change', function () {
 	(async()=>{
@@ -470,7 +531,7 @@ async function configuraCentroTrabajo(codigo){
 	mostrarAlert("El centro de trabajo no existe.", "danger")
 }
 
-function mostrarAlert(mensaje, tipo){
+/*function mostrarAlert(mensaje, tipo){
 	const alertElement = document.createElement('div')
     	alertElement.className = `alert alert-${tipo} alert-dismissible fade show fixed-top`
     	alertElement.role = 'alert'
@@ -482,7 +543,7 @@ function mostrarAlert(mensaje, tipo){
         document.body.appendChild(alertElement)
         
         setTimeout(() => alertElement.remove(), 5000)
-}
+}*/
 
 async function registraUsuarioCT(codigo){
 	if(centroTSelected === null){
