@@ -47,7 +47,6 @@ import com.almatec.controlpiso.integrapps.dtos.TiemposOperariosDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasOperarios;
-import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
@@ -78,7 +77,6 @@ public class CentroTrabajoController {
 	private final RegistroParadaService registroParadaService;
 	private final ListaMService listaMService;
 	private final CentrosTrabajoPDFService centrosTrabajoPDFService;
-	private final ItemOpService itemService;
 	
 
 	
@@ -91,8 +89,7 @@ public class CentroTrabajoController {
 			NovedadCtService novedadCtService,
 			RegistroParadaService registroParadaService, 
 			ListaMService listaMService,
-			CentrosTrabajoPDFService centrosTrabajoPDFService,
-			ItemOpService itemService) {
+			CentrosTrabajoPDFService centrosTrabajoPDFService) {
 		super();
 		this.centroTrabajoService = centroTrabajoService;
 		this.util = util;
@@ -104,7 +101,6 @@ public class CentroTrabajoController {
 		this.registroParadaService = registroParadaService;
 		this.listaMService = listaMService;
 		this.centrosTrabajoPDFService = centrosTrabajoPDFService;
-		this.itemService = itemService;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -184,16 +180,16 @@ public class CentroTrabajoController {
 								  @RequestParam(required = false) Integer idConfigProceso,
 								  Model modelo) {
 		
-		StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+		//StopWatch stopWatch = new StopWatch();
+        //stopWatch.start();
 		ReporteDTO reporte = centroTrabajoService.buscarItemCtReporte(idItemOp, idCT, idOperario, idItem, tipo);
 		reporte.setPesoPintura(reporte.getPesoPintura().divide(new BigDecimal(reporte.getCantSol()), 2, RoundingMode.HALF_UP));
-		stopWatch.stop();
-		logger.info("Tiempo de ejecución Total: {} ms", stopWatch.getTotalTimeMillis());
-		stopWatch.start();
+		//stopWatch.stop();
+		//logger.info("Tiempo de ejecución Total: {} ms", stopWatch.getTotalTimeMillis());
+		//stopWatch.start();
 		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
-		stopWatch.stop();
-		logger.info("Tiempo de ejecución obtencion de lotes: {} ms", stopWatch.getTotalTimeMillis());
+		//stopWatch.stop();
+		//logger.info("Tiempo de ejecución obtencion de lotes: {} ms", stopWatch.getTotalTimeMillis());
 		modelo.addAttribute("reporte", reporte);
 		modelo.addAttribute("lotes", lotes);
 		

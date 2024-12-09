@@ -62,8 +62,8 @@ public class ListaMServiceImpl implements ListaMService {
 
 	@Override
 	public List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem) {
-		StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+		//StopWatch stopWatch = new StopWatch();
+        //stopWatch.start();
         
 	    //ItemOp item = itemOpService.obtenerItemPorId(idItem);
 	    Integer idOpIntegrapps = itemOpService.obtenerIdOpIntegrappsPorIdItem(idItem);
@@ -102,8 +102,8 @@ public class ListaMServiceImpl implements ListaMService {
 	        }
 	    });*/
 	    
-	    stopWatch.stop();
-		logger.info("Tiempo de ejecución lotes: {} ms", stopWatch.getTotalTimeMillis());
+	    //stopWatch.stop();
+		//logger.info("Tiempo de ejecución lotes: {} ms", stopWatch.getTotalTimeMillis());
 
 	    return lotes;
 	}

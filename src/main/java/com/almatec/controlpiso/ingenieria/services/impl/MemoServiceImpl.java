@@ -101,8 +101,8 @@ public class MemoServiceImpl implements MemoService {
 
 	@Override
 	public List<MemoDetalleDTO> obtenerDetalleMemo(Long idMemo) {
-		StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+		//StopWatch stopWatch = new StopWatch();
+        //stopWatch.start();
         List<Object[]> results = memoRepo.findByMemoId(idMemo);
 		List<MemoDetalleDTO> detalles = results.stream()
 				.map(result -> new MemoDetalleDTO(
@@ -113,8 +113,8 @@ public class MemoServiceImpl implements MemoService {
 						(String) result[4]
 				))
 				.collect(Collectors.toList());
-		stopWatch.stop();
-		logger.info("Tiempo de ejecución: {} ms", stopWatch.getTotalTimeMillis());
+		//stopWatch.stop();
+		//logger.info("Tiempo de ejecución: {} ms", stopWatch.getTotalTimeMillis());
 		return detalles;
 	}
 

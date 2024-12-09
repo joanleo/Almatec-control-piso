@@ -113,12 +113,12 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 	
 	@Override
 	public Set<OpCentroTrabajoDTO> buscarItemParteCt(Long idItemOp, Integer idCT, Integer idItem, String tipo) {
-		StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+		//StopWatch stopWatch = new StopWatch();
+        //stopWatch.start();
 		List<VistaOpItemsMaterialesRuta> listaRutas = vistaOpItemsMaterialesRutaRepo.buscarItemParteCt(idItemOp, idItem, idCT, tipo);
-		stopWatch.stop();
-		logger.info("Tiempo de ejecución de consulta a la vista: {} ms", stopWatch.getTotalTimeMillis());
-		stopWatch.start();
+		//stopWatch.stop();
+		//logger.info("Tiempo de ejecución de consulta a la vista: {} ms", stopWatch.getTotalTimeMillis());
+		//stopWatch.start();
 		List<OpCentroTrabajoDTO> ordenesProduccion = EstructuraDatos.crearEstructura(listaRutas);
 		Set<OpCentroTrabajoDTO> filterOrdenesProduccion = new HashSet<>(ordenesProduccion);
 		for(OpCentroTrabajoDTO op:filterOrdenesProduccion) {
@@ -126,8 +126,8 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 			List<ItemOpCtDTO> conjuntoItems = new ArrayList<>(mergeItemsReporte(new ArrayList<>(setItems)));			
 			op.setItems(conjuntoItems);
 		}
-		stopWatch.stop();
-		logger.info("Tiempo de ejecución de conversion de datos de la vista: {} ms", stopWatch.getTotalTimeMillis());
+		//stopWatch.stop();
+		//logger.info("Tiempo de ejecución de conversion de datos de la vista: {} ms", stopWatch.getTotalTimeMillis());
 		return filterOrdenesProduccion;
 	}
 

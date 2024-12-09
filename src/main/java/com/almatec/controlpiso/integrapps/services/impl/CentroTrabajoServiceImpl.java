@@ -282,12 +282,12 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 
 	@Override
 	public ReporteDTO buscarItemCtReporte(Long idItemOp, Integer idCT, Integer idOperario, Integer idItem, String tipo) {
-		StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+		//StopWatch stopWatch = new StopWatch();
+        //stopWatch.start();
 		Operario operario = operarioService.buscarOperarioPorId(idOperario);
-		stopWatch.stop();
-		logger.info("Tiempo de ejecución de consulta a los datos del operario: {} ms", stopWatch.getTotalTimeMillis());
-		stopWatch.start();
+		//stopWatch.stop();
+		//logger.info("Tiempo de ejecución de consulta a los datos del operario: {} ms", stopWatch.getTotalTimeMillis());
+		//stopWatch.start();
 		Set<OpCentroTrabajoDTO> ops = opItemsMaterialesRutaService.buscarItemParteCt(idItemOp, idCT, idItem, tipo);
 		if (ops != null && !ops.isEmpty()) {
 		    OpCentroTrabajoDTO op = ops.iterator().next();
@@ -339,8 +339,8 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 		    reporte.setPeso(peso);
 		    reporte.setPesoPintura(peso);
 		    reporte.setPesoPintura(pesoPintura);
-		    stopWatch.stop();
-		    logger.info("Tiempo de ejecución de tratamiento de los datos del reporte: {} ms", stopWatch.getTotalTimeMillis());
+		    //stopWatch.stop();
+		    //logger.info("Tiempo de ejecución de tratamiento de los datos del reporte: {} ms", stopWatch.getTotalTimeMillis());
 		    return reporte;
 		}
 		return null;
