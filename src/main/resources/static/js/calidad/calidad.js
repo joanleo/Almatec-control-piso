@@ -34,6 +34,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     toleranciasButton.addEventListener('click', handleToleranciaClick);
+	
+	if(modoEdicion)[
+		seleccionarLoteGuardado()
+	]
+
 })
 
 document.addEventListener('DOMContentLoaded',  function() {
@@ -54,9 +59,11 @@ document.addEventListener('DOMContentLoaded',  function() {
 		jsonData['id'] = document.querySelector('#formId').value
 		jsonData['centroTrabajo'] = document.querySelector('.centro-trabajo').value
 		jsonData['idCentroTrabajo'] = Number(document.querySelector('.id-centro-trabajo').value) 
-		jsonData['idItem'] = Number(document.querySelector('.item').value)
+		//jsonData['idItem'] = Number(document.querySelector('.item').value)
 		jsonData['idOperario'] = Number(document.querySelector('.id-operario').value)
 		jsonData['nombreOperario'] = document.querySelector('.nombre-operario').value
+		jsonData['idItem'] = document.querySelector('.item-conjunto-id').value
+		jsonData['idParte'] = document.querySelector('.item-parte-id').value
         try{
 	        const response = await fetch('/calidad/formulario/guardar', {
 	            method: 'POST',
@@ -435,9 +442,30 @@ function mostarSoldadura(){
 	document.getElementById('medidas').removeAttribute('hidden')
 }
 
+function seleccionarLoteGuardado() {
+    const loteSelect = document.getElementById('loteSelect');
+    
+    if (!loteSelect) return;
+
+    // Obtener el lote del formulario (el que está guardado)
+    const loteGuardado = document.querySelector('.lote-guardado').value;
+    
+    if (!loteGuardado) return;
+
+    // Buscar la opción que coincida con el lote guardado
+    for (let i = 0; i < loteSelect.options.length; i++) {
+        if (loteSelect.options[i].value === loteGuardado) {
+            loteSelect.selectedIndex = i;
+            // Actualizar cualquier campo relacionado con el lote
+            //mostrarCodigo();
+            break;
+        }
+    }
+}
+
 function mostrarCodigo() {
     const select = document.getElementById('loteSelect')
-    let codigo = document.getElementById('codErpMatriaPrima')
+    let codigo = document.querySelector('.lote-guardado')
     const loteSeleccionado = select.options[select.selectedIndex].value
 	const lotesConCodigos = JSON.parse(lotesConCodigosString)
     const loteConCodigo = lotesConCodigos.find(function(lote) {

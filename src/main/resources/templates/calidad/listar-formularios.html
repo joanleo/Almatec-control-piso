@@ -48,7 +48,7 @@
                     <td th:text="${formulario.zona}"></td>
                     <td th:text="${#temporals.format(formulario.fechaDoc, 'dd-MM-yyyy')}"></td>
                     <td>
-                        <a th:href="@{/calidad/formulario/centro-trabajo/{idCT}(idCT=${formulario.idCentroTrabajo},id=${formulario.id},idItem=${formulario.idItem})}" class="btn btn-primary btn-sm">Editar</a>
+                        <a th:href="@{/calidad/formulario/centro-trabajo/{idCT}(idCT=${formulario.idCentroTrabajo},id=${formulario.id},idItem=${formulario.idItem}, idItemOp=${formulario.idItemOp})}" class="btn btn-primary btn-sm">Editar</a>
                     </td>
                 </tr>
             </tbody>

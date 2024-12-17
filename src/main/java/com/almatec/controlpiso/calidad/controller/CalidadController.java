@@ -67,7 +67,7 @@ public class CalidadController {
 			  @RequestParam(required = false) Integer idOperario,
 			  @RequestParam(required = false) Long id,
 			  @RequestParam Integer idItem,
-			  @RequestParam String tipo,
+			  @RequestParam(required = false) String tipo,
 			  Model modelo) throws JsonProcessingException {
 		
 		ReporteCalidadDTO formulario;

@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -19,261 +21,385 @@ import com.almatec.controlpiso.erp.webservices.XmlService;
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 import com.almatec.controlpiso.erp.webservices.services.ConsumosTepService;
 import com.almatec.controlpiso.erp.webservices.services.EntregaService;
+import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
+import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.ReportePiezaCt;
 import com.almatec.controlpiso.integrapps.repositories.ReportePiezaCtRepository;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
+import com.almatec.controlpiso.integrapps.services.ItemService;
 import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
+import com.almatec.controlpiso.integrapps.services.VistaOrdenPvService;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
 @Service
 public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
-	
-	private final ReportePiezaCtRepository reportePiezaCtRepository;	
-	private final ItemOpService itemOpService;	
-	private final XmlService xmlService;	
+
+	private final ReportePiezaCtRepository reporteRepository;
+	private final ItemOpService itemOpService;
+	private final XmlService xmlService;
 	private final ConsumosTepService consumosTepService;
 	private final SolicitudMateriaPrimaService solicitudMateriaPrimaService;
 	private final UtilitiesApp util;
 	private final ConfigurationService configService;
 	private final EntregaService entregaService;
+	private final ItemService itemService;
+	private final VistaOrdenPvService ordenPvService;
 
-	static final String RESPUESTA_OK = "Operacion realizada exitosamente";
-	
+	static final String RESPUESTA_EXITOSA = "Operacion realizada exitosamente";
+	private static final String FORMATO_FECHA = "yyyyMMdd_HHmmss";
+	private static final String RESPUESTA_ENTREGA_EXITOSA = "Consumo y TEP creado exitosamente. Entrega creada Exitosamente. ";
+
+	private static final List<Integer> CENTROS_CONSUMO_PRINCIPAL = List.of(3, 4, 5, 6, 7, 8, 9);
+	private static final List<Integer> CENTROS_CONSUMO_PLATINAS = List.of(10, 11);
+	private static final int CENTRO_FINAL = 17;
+	private static final int CENTRO_PUNZONADORA = 2;
+
+	private Logger log = LoggerFactory.getLogger(getClass());
+
 	/**
-	 *SE REALIZA EL LLAMADO AL WEBSERVICE PARA  REPORTAR TEP Y REALIZAR CONSUMOS
+	 * Procesa y guarda un reporte de producción, gestionando TEP y consumos según
+	 * el centro de trabajo.
 	 */
 	@Transactional
 	@Override
-	public ResponseMessage guardarReporte(ReporteDTO reporteDTO) {
-		//Crea entidad reporte integrapps
-		ReportePiezaCt reporte = generaReporte(reporteDTO);
+	public ResponseMessage guardarReporte(ReporteDTO reporteDTO) throws ServiceException {
 		ResponseMessage response = new ResponseMessage();
-		String message = "";
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-		try {			
-			//Obtengo el itemOp 
-			ItemOp item =  itemOpService.obtenerItemPorId(reporte.getItemId());
-			
-			Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
-			List<Integer> ruta = itemOpService.obtenerRutaItem(idItem);
-			
-			//Se configuran centros de trabajo iniciales donde se realizara el consumo en la op
-			List<Integer> centrosReporteConsumo = List.of(3, 4, 5, 6, 7, 8, 9);
-			
-			boolean isConsume = centrosReporteConsumo.contains(reporte.getIdCentroT());
-			List<Integer> centrosTep = item.getCentrosTep();
+		ReportePiezaCt reporte = crearEntidadReporte(reporteDTO);
 
-			List<Conector> conectoresTepYConsumo = new ArrayList<>();
-			if(isConsume) {
-				//Se realiza consumo y TEP				
-				List<Conector> tepYConsumo = consumosTepService.crearTEPYConsumos(item, reporteDTO);
-				conectoresTepYConsumo.addAll(tepYConsumo);
-				LocalDateTime now = LocalDateTime.now();			        
-				String dateTime = now.format(formatter);
-				util.guardarRegistroXml(xmlService.crearPlanoXml(conectoresTepYConsumo), "SCP_TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
-				util.crearArchivoPlano(conectoresTepYConsumo, "SCP_TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
-
-				String responseService = xmlService.postImportarXML(conectoresTepYConsumo);
-				if(RESPUESTA_OK.equals(responseService)) {//
-					reporte.setIsConsume(true);//REVISAR RESPUESTA
-					reporte.setIsTep(true);
-					item.setCentroTConsumo(reporte.getIdCentroT());
-					
-					if (centrosTep.size() == 1 && centrosTep.get(0) == 0) {
-					    centrosTep.clear(); // Eliminamos el cero inicial
-					}
-					String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroT()).trim();
-					Integer idCTErp = Integer.valueOf(idCTErpString);
-					centrosTep.add(idCTErp);					
-					
-					item.setCentrosTep(centrosTep);
-					
-					itemOpService.guardarItemOp(item);
-					responseService = "Consumo y TEP creados exitosamente.";
-				}
-				message += responseService;
-				
-				boolean isPunzonadora = ruta.contains(2);
-				if(isPunzonadora) {
-					ReporteDTO auxiliar = new ReporteDTO.Builder()
-							.from(reporteDTO)
-							.setIdCentroTrabajo(2)
-							.build();
-
-					List<Conector> tepPunzonadora = reportarTep(item, auxiliar, false);
-					conectoresTepYConsumo.addAll(tepPunzonadora);
-
-					centrosTep.add(2);
-					
-					now = LocalDateTime.now();			        
-					dateTime = now.format(formatter);
-					util.guardarRegistroXml(xmlService.crearPlanoXml(tepPunzonadora), "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
-					util.crearArchivoPlano(tepPunzonadora, "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
-					String responseTepPunzonadora = xmlService.postImportarXML(tepPunzonadora);							
-					if(RESPUESTA_OK.equals(responseTepPunzonadora)) {
-						message += "TEP punzonadora creado exitosamente." ;
-					}
-				}
-								
-					
-			}else if (reporte.getIdCentroT() == 17) {
-				/*
-				 * Se valida si es el utltimo centro de trabajoj por donde pasan las piezas, aqui se debera actualizar los itemOp,
-				 * consumir lo que este pendiente de la lista de materiales
-				 * realizar entrega de los item terminados
-				 */
-				//Se valida si no se ha reportado ninguna cantidad del itemOp
-				//Validar que haya reporte en todos los centros de trabajo
-				List<Integer> idsCentroTrabajoRuta = itemOpService.obtenerCentrosTrabajoPorIdOpIA(item.getIdOpIntegrapps());
-				
-				List<Integer> centrosFaltantes = validarYObtenerCentrosTepFaltantes(idsCentroTrabajoRuta, centrosTep);
-				System.out.println("Centro de trabajo sin tep: " + centrosFaltantes.toString());
-				if (!centrosFaltantes.isEmpty()) {
-				    // Realizar reporte en los centros de trabajo faltantes
-					reportarTepsFaltantes(centrosFaltantes, item, reporteDTO, centrosTep);
-					//String responseServiceTep = xmlService.crearTEP(item, reporteDTO);					
-				} 
-				//System.exit(0);
-				actualizarCantidadCumplida(reporteDTO, item);
-				itemOpService.guardarItemOp(item);
-				String responseEntrega = entregaService.crearEntrega(item, reporteDTO);
-				if("Entrega creada Exitosamente.".equals(responseEntrega)) {
-					centrosTep.add(14);
-					reporte.setIsTep(true);
-					reporte.setIsConsume(true);
-				}
-				message += responseEntrega;
-			} else{
-				LocalDateTime now = LocalDateTime.now();			        
-				String dateTime = now.format(formatter);
-				List<Conector> xmlTep = consumosTepService.crearTEP(item, reporteDTO, false);
-				util.guardarRegistroXml(xmlService.crearPlanoXml(xmlTep), "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime);
-				util.crearArchivoPlano(xmlTep, "TEP-OP_" + reporteDTO.getNumOp() + "_" + dateTime , configService.getCIA());
-				String responseServiceTep = xmlService.postImportarXML(xmlTep);
-				if(RESPUESTA_OK.equals(responseServiceTep)) {
-					reporte.setIsTep(true);
-					String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroT()).trim();
-					Integer idCTErp = Integer.valueOf(idCTErpString);
-					centrosTep.add(idCTErp);
-					item.setCentrosTep(centrosTep);
-					itemOpService.guardarItemOp(item);
-					responseServiceTep = "TEP creado exitosamente.";
-				}
-				message += responseServiceTep;
-			}
-			
-			if(!"".equals(message)) {
-				message += "\n" + "Reporte guardado exitosamente.";
-			}else {
-				message += "Reporte guardado exitosamente.";
-			}
-			response.setMensaje(message);
-			response.setError(false);
-			
+		try {
+			ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
+			Integer idItemReportar = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+			Item itemReporte = itemService.buscarItemFabrica(idItemReportar);
+			log.info("Procesando reporte de {} en el centro de trabajo {} {} und(s).", reporteDTO.getRef(),
+					reporteDTO.getIdCentroTrabajo(), reporteDTO.getCantReportar());
+			procesarReporteSegunCentroTrabajo(reporte, reporteDTO, itemOp, itemReporte, response);
+			reporteRepository.save(reporte);
 		} catch (DataIntegrityViolationException e) {
-	        response.setMensaje("Error al guardar el reporte. Violación de integridad de datos: " + e.getMessage());
-	        response.setError(true);
-	    } catch (Exception e) {	    	
-	        response.setMensaje(obteneMensajeError(e));
-	        response.setError(true);
-	    }
-    	
-		reportePiezaCtRepository.save(reporte);			
+			manejarErrorIntegridad(response, e);
+		} catch (Exception e) {
+			manejarErrorGeneral(response, e);
+		}
 		return response;
 	}
 
-	private void reportarTepsFaltantes(List<Integer> centrosFaltantes, ItemOp item, ReporteDTO reporteDTO, List<Integer> centrosTep) {
-		centrosFaltantes.forEach(centro->{
-			try {
-				if(centro != 14) {
-					ReporteDTO auxiliar = new ReporteDTO.Builder()
-						    .from(reporteDTO)
-						    .setIdCentroTrabajo(centro)
-						    .build();
+	private void procesarReporteSegunCentroTrabajo(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Item itemReporte, ResponseMessage response) throws ServiceException, IOException{
+		StringBuilder mensajeResultado = new StringBuilder();
 
-					List<Conector> tep = reportarTep(item, auxiliar, true);
-					LocalDateTime now = LocalDateTime.now();
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-					String dateTime = now.format(formatter);
-					util.crearArchivoPlano(tep, "TEP-OP_" + auxiliar.getNumOp() + "_" + dateTime , configService.getCIA());
-					util.guardarRegistroXml(xmlService.crearPlanoXml(tep), "TEP-OP_" + auxiliar.getNumOp() + "_" + dateTime);
-					String response = xmlService.postImportarXML(tep);
-					System.out.println(response);
-					System.out.println(centrosTep.toString());
-					centrosTep.add(centro);
-					item.setCentrosTep(centrosTep);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+		if (CENTROS_CONSUMO_PRINCIPAL.contains(reporte.getIdCentroT())) {
+			procesarReporteConConsumoPrincipal(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		} else if (CENTROS_CONSUMO_PLATINAS.contains(reporte.getIdCentroT())) {
+			if (itemOperacion.getCentroTConsumo() == 0) {
+				procesarReporteConConsumoPlatinas(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+			} else {
+				procesarReporteSimple(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
 			}
-		});
+		} else if (reporte.getIdCentroT() == CENTRO_FINAL) {
+			procesarReporteFinal(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		} else {
+			procesarReporteSimple(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		}
+
+		actualizarRespuesta(response, mensajeResultado.toString());
+	}
+	
+	private void procesarReporteConConsumoPrincipal(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Item itemReporte, StringBuilder mensajeResultado) throws ServiceException, IOException {
+
+		List<Conector> conectores = new ArrayList<>();
+
+		// Verificar si ya existe consumo en algún centro de trabajo principal
+		boolean tieneConsumoExistente = false;
+		if (itemReporte.getCentroTrabajoConsumo() != 0) {
+			log.info("La pieza {} ya tieneun consumo realizado en el centro de trabajo {}", reporteDTO.getRef(),
+					itemOperacion.getCentroTConsumo());
+			if (itemReporte.getCentroTrabajoConsumo().intValue() != reporteDTO.getIdCentroTrabajo().intValue()) {
+				tieneConsumoExistente = true;
+			}
+		}
+
+		if (!tieneConsumoExistente) {
+			log.info("Creando conectores para consumo y tep para {}", reporteDTO.getRef());
+			// Si no tiene consumo o el consumo se realizo es el mismo del reporte, crear tanto TEP como consumos
+			conectores.addAll(agregarConsumoTepCentroTrabajo(reporteDTO, itemOperacion, false));
+		} else {
+			// Si ya tiene consumo, crear solo TEP
+			log.info("Creando conectore tep para {}", reporteDTO.getRef());
+			procesarReporteSimple(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		}
+
+		// Procesar TEP y consumos
+		String nombreArchivo = generarNombreArchivo("SCP_TEP_" + reporteDTO.getIdCentroTrabajo() + "_OP",
+				reporteDTO.getNumOp().toString());
+		log.info("Creando xml y archivo plano");
+		guardarArchivos(conectores, nombreArchivo);
+
+		log.info("Enviando xml al erp {}.", nombreArchivo);
+		String respuestaWeService = xmlService.postImportarXML(conectores);
+		log.info("Respuesta del webservices {}.", respuestaWeService);
+		if (RESPUESTA_EXITOSA.equals(respuestaWeService)) {
+			mensajeResultado.append("Consumo y TEP creados exitosamente.");
+			log.info("Actualizando datos en integrapps item_op reporte");
+			itemOperacion.setCentroTConsumo(reporte.getIdCentroT());
+			actualizarCentrosTep(itemOperacion, reporteDTO.getIdCentroTrabajo(), false);
+			reporte.setIsConsume(true);
+			reporte.setIsTep(true);
+		} else {
+			String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
+			log.error(errorMsg);
+			throw new ServiceException(errorMsg);
+		}
+
+		// Verificar si requiere proceso de punzonadora
+		if (requierePunzonadora(itemReporte)) {
+			log.info("La ruta del item incluye punzonadora, creando conector tep");
+			conectores = new ArrayList<>();
+			conectores.addAll(agregarConsumoPunzonadora(reporteDTO, itemOperacion));
+			String nombrePunzonadora = "TEP_PUNZONADORA";
+			nombreArchivo = generarNombreArchivo(nombrePunzonadora + "_OP", reporteDTO.getNumOp().toString());
+			log.info("Creando xml y archivo plano");
+			guardarArchivos(conectores, nombreArchivo);
+
+			respuestaWeService = xmlService.postImportarXML(conectores);
+			log.info("Respuesta del webservices {}.", respuestaWeService);
+			if (RESPUESTA_EXITOSA.equals(respuestaWeService)) {
+				mensajeResultado.append("TEP punzonadora creado exitosamente.");
+				log.info("Actualizando datos en integrapps reporte");
+				actualizarCentrosTep(itemOperacion, CENTRO_PUNZONADORA, false);
+			} else {
+				String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
+				log.error(errorMsg);
+				throw new ServiceException(errorMsg);
+			}
+		}
+
 	}
 
-	private List<Conector> reportarTep(ItemOp item, ReporteDTO auxiliar, boolean isFaltante) {
-		List<Conector> tep = consumosTepService.crearTEP(item, auxiliar, isFaltante);		
-		return tep;
+
+	private void procesarReporteSimple(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Item itemReporte, StringBuilder mensaje) throws IOException, ServiceException {
+
+		String nombreArchivo = generarNombreArchivo("TEP_" + reporteDTO.getIdCentroTrabajo() + "_OP",
+				reporteDTO.getNumOp().toString());
+		List<Conector> tepSimple = consumosTepService.crearTEP(itemOperacion, reporteDTO, false);
+
+		guardarArchivos(tepSimple, nombreArchivo);
+
+		String respuestaWeService = xmlService.postImportarXML(tepSimple);
+		if (RESPUESTA_EXITOSA.equals(respuestaWeService)) {
+			reporte.setIsTep(true);
+			reporte.setIsConsume(true);
+			actualizarCentrosTep(itemOperacion, reporteDTO.getIdCentroTrabajo(), false);
+			reporteRepository.save(reporte);
+			mensaje.append("TEP creado exitosamente.");
+		} else {
+			String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
+			throw new ServiceException(errorMsg);
+		}
 	}
 
-	private List<Integer> validarYObtenerCentrosTepFaltantes(List<Integer> idsCentroTrabajoRuta,
-			List<Integer> centrosTep) {
-		List<Integer> centrosFaltantes = idsCentroTrabajoRuta.stream()
-		                .filter(centro -> !centrosTep.contains(centro))
-		                .collect(Collectors.toList());
-		return centrosFaltantes;
+	private void procesarReporteFinal(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Item itemReporte, StringBuilder mensaje) throws IOException, ServiceException {
+
+		List<Integer> centrosPendientes = obtenerCentrosPendientesPorReporteTepEnOP(itemOperacion, itemReporte);
+		if (!centrosPendientes.isEmpty()) {
+			log.info("Procesando centros de trabajo con tep pendientes");
+			procesarCentrosPendientes(centrosPendientes, itemOperacion, itemReporte, reporteDTO, mensaje);
+		}
+
+		actualizarCantidadCumplida(reporteDTO, itemOperacion);
+		itemOpService.guardarItemOp(itemOperacion);
+		String respuestaWeService = entregaService.crearEntrega(itemOperacion, reporteDTO);
+		if (RESPUESTA_ENTREGA_EXITOSA.equals(respuestaWeService)) {
+			actualizarCentrosTep(itemOperacion, 14, true);
+			reporte.setIsTep(true);
+			reporte.setIsConsume(true);
+		} else {
+			String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
+			throw new ServiceException(errorMsg);
+		}
+
+		mensaje.append(respuestaWeService);
+	}
+
+	private List<Integer> obtenerCentrosPendientesPorReporteTepEnOP(ItemOp itemOperacion, Item itemReporte) {
+		List<Integer> rutaCentrosTrabajoErp = itemOpService.obtenerCentrosTrabajoRutaPorIdOpIA(itemOperacion.getIdOpIntegrapps());
+		
+		List<Integer> centrosTepOp = ordenPvService.obtenerCentrosTrabajoTep(itemOperacion.getIdOpIntegrapps());
+		return rutaCentrosTrabajoErp.stream().filter(centro -> !centrosTepOp.contains(centro))
+				.collect(Collectors.toList());
+	}
+
+	private void procesarCentrosPendientes(List<Integer> centrosPendientes, ItemOp itemOperacion, Item itemReporte,
+			ReporteDTO reporteDTO, StringBuilder mensajeResultado) throws IOException, ServiceException {
+
+		for (Integer centro : centrosPendientes) {
+			if (centro != 14) { // Excluir centro específico
+				ReporteDTO reporteCentro = new ReporteDTO.Builder().from(reporteDTO).setIdCentroTrabajo(centro).build();
+				List<Conector> tep = consumosTepService.crearTEP(itemOperacion, reporteCentro, true);
+				String nombreArchivo = generarNombreArchivo("TEP_" + reporteDTO.getIdCentroTrabajo() + "_OP",
+						reporteCentro.getNumOp().toString());
+
+				guardarArchivos(tep, nombreArchivo);
+				String respuestaWeService = xmlService.postImportarXML(tep);
+				if (RESPUESTA_EXITOSA.equals(respuestaWeService)) {
+					mensajeResultado.append("TEP centro de trabajo " + centro + " creado exitosamente.");
+					actualizarCentrosTep(itemOperacion, centro, true);
+				}else {
+					String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
+					log.error(errorMsg);
+					throw new ServiceException(errorMsg);
+				}
+			}
+		}
+	}
+
+	private void procesarReporteConConsumoPlatinas(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Item itemReporte, StringBuilder mensajeResultado) throws IOException, ServiceException {
+		List<Conector> conectores = new ArrayList<>();
+		conectores.addAll(agregarConsumoTepCentroTrabajo(reporteDTO, itemOperacion, true));
+		String nombreArchivo = generarNombreArchivo("SCP_TEP_" + reporteDTO.getIdCentroTrabajo() + "-OP",
+				reporteDTO.getNumOp().toString());
+		guardarArchivos(conectores, nombreArchivo);
+
+		String respuestaWeService = xmlService.postImportarXML(conectores);
+		if (RESPUESTA_EXITOSA.equals(respuestaWeService)) {
+			mensajeResultado.append("Consumo y TEP creados exitosamente.");
+			actualizarCentrosTep(itemOperacion, reporteDTO.getIdCentroTrabajo(), false);
+			reporte.setIsConsume(true);
+			reporte.setIsTep(true);
+		} else {
+			String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
+			log.error(errorMsg);
+			throw new ServiceException(errorMsg);
+		}
+
+	}
+
+	
+	private List<Conector> agregarConsumoTepCentroTrabajo(ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Boolean platinas) {
+
+		List<Conector> tepYConsumo = consumosTepService.crearTEPYConsumos(itemOperacion, reporteDTO, platinas);
+		return tepYConsumo;
+	}
+
+	private boolean requierePunzonadora(Item itemReporte) {
+		List<Integer> ruta = itemOpService.obtenerRutaItem(itemReporte.getIdItem());
+		return ruta.contains(CENTRO_PUNZONADORA);
+	}
+
+	private List<Conector> agregarConsumoPunzonadora(ReporteDTO reporteDTO, ItemOp itemOperacion) {
+		ReporteDTO reportePunzonadora = new ReporteDTO.Builder().from(reporteDTO).setIdCentroTrabajo(CENTRO_PUNZONADORA)
+				.build();
+
+		List<Conector> tepPunzonadora = consumosTepService.crearTEP(itemOperacion, reportePunzonadora, false);
+
+		return tepPunzonadora;
+	}
+
+	private void actualizarCentrosTep(ItemOp itemOp, Integer nuevoCentro, Boolean centroTrabajoErp) {
+		try {
+			List<Integer> centrosTep = ordenPvService.obtenerCentrosTrabajoTep(itemOp.getIdOpIntegrapps());
+			log.debug("Centros TEP actuales: {}", centrosTep);
+			if (centrosTep.size() == 1 && centrosTep.get(0) == 0) {
+				log.debug("Limpiando lista de centros TEP vacía");
+				centrosTep.clear();
+			}
+			
+			Integer idCTErp = nuevoCentro;
+			if(!centroTrabajoErp) {
+				String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(nuevoCentro).trim();
+				log.debug("Convertido centro trabajo {} a centro trabajo ERP: {}", nuevoCentro, idCTErpString);
+				idCTErp = Integer.valueOf(idCTErpString);			
+			}
+	
+			if (!centrosTep.contains(idCTErp)) {
+	            centrosTep.add(idCTErp);
+	            log.debug("Lista final de centros TEP a actualizar: {}", centrosTep);
+	            
+	            // Actualizar en la base de datos
+	            ordenPvService.actualizarCentrosTep(itemOp.getIdOpIntegrapps(), centrosTep);
+	            log.debug("Actualización de centros TEP completada");
+	        } else {
+	            log.debug("Centro TEP {} ya existe en la lista, no se requiere actualización", idCTErp);
+	        }
+	
+			//itemReporte.setCentrosTrabajoTep(centrosTep);
+			//itemService.guardarItem(itemReporte);
+			//ordenPvService.actualizarCentrosTep(itemOp.getIdOpIntegrapps(), centrosTep);
+		} catch (Exception e) {
+	        log.error("Error al actualizar centros TEP: {}", e.getMessage(), e);
+	        throw new RuntimeException("Error al actualizar centros TEP: " + e.getMessage(), e);
+	    }
+	}
+
+	private void guardarArchivos(List<Conector> conectores, String nombreArchivo) throws IOException {
+
+		util.guardarRegistroXml(xmlService.crearPlanoXml(conectores), nombreArchivo);
+		util.crearArchivoPlano(conectores, nombreArchivo, configService.getCIA());
+	}
+
+	private String generarNombreArchivo(String prefijo, String numeroOp) {
+		return String.format("%s_%s_%s", prefijo, numeroOp,
+				LocalDateTime.now().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)));
+	}
+
+	private void actualizarRespuesta(ResponseMessage response, String mensaje) {
+		response.setMensaje(mensaje + "Reporte guardado exitosamente.");
+		response.setError(false);
+	}
+
+	private void manejarErrorIntegridad(ResponseMessage response, DataIntegrityViolationException e) {
+		response.setMensaje("Error al guardar el reporte. Violación de integridad de datos: " + e.getMessage());
+		response.setError(true);
+	}
+
+	private void manejarErrorGeneral(ResponseMessage response, Exception e) {
+		Throwable causa = e.getCause();
+		String mensaje = (causa instanceof SQLException)
+				? "Error al guardar el reporte. Error de base de datos: " + causa.getMessage()
+				: "Se presentó un error al guardar el reporte: " + e.getMessage();
+
+		response.setMensaje(mensaje);
+		response.setError(true);
 	}
 
 	private void actualizarCantidadCumplida(ReporteDTO reporteDTO, ItemOp item) {
-		if(item.getCantCumplida() == null || item.getCantCumplida() == 0) {
+		if (item.getCantCumplida() == null || item.getCantCumplida() == 0) {
 			item.setCantCumplida(reporteDTO.getCantReportar().doubleValue());
-		}else {
-			item.setCantCumplida(item.getCantCumplida() + reporteDTO.getCantReportar().doubleValue());					
+		} else {
+			item.setCantCumplida(item.getCantCumplida() + reporteDTO.getCantReportar().doubleValue());
 		}
 	}
-	
-	private String obteneMensajeError(Exception e) {
-		Throwable cause = e.getCause();
-        if (cause instanceof SQLException) {
-            SQLException sqlEx = (SQLException) cause;
-            return "Error al guardar el reporte. Error de base de datos: " + sqlEx.getMessage();
-        } else {
-            return "Se presentó un error al guardar el reporte: " + e.getMessage();
-        }
-	}
 
-	private ReportePiezaCt generaReporte(ReporteDTO reporteDTO) {
-	    return new ReportePiezaCt.Builder()
-	        .idItemFab(reporteDTO.getIdItemFab())
-	        .idParte(reporteDTO.getIdParte())
-	        .idCentroT(reporteDTO.getIdCentroTrabajo())
-	        .idOperario(reporteDTO.getOperario().getId())
-	        .cant(reporteDTO.getCantReportar())
-	        .fechaCreacion(LocalDateTime.now())
-	        .itemId(reporteDTO.getIdItem())
-	        .lote(reporteDTO.getLote())
-	        .idConfigProceso(reporteDTO.getIdConfigProceso())
-	        .build();
+	private ReportePiezaCt crearEntidadReporte(ReporteDTO reporteDTO) {
+		return new ReportePiezaCt.Builder().idItemFab(reporteDTO.getIdItemFab()).idParte(reporteDTO.getIdParte())
+				.idCentroT(reporteDTO.getIdCentroTrabajo()).idOperario(reporteDTO.getOperario().getId())
+				.cant(reporteDTO.getCantReportar()).fechaCreacion(LocalDateTime.now()).itemId(reporteDTO.getIdItem())
+				.lote(reporteDTO.getLote()).idConfigProceso(reporteDTO.getIdConfigProceso()).build();
 	}
 
 	@Override
 	public Integer buscarCantidadesFabricadasConjunto(Long idItem, Integer idItemFab, Integer idCT) {
-		return reportePiezaCtRepository.buscarCantidadesFabricadasConjunto(idItem, idItemFab, idCT);
+		return reporteRepository.buscarCantidadesFabricadasConjunto(idItem, idItemFab, idCT);
 	}
 
 	@Override
 	public Integer buscarCantidadesFabricadasPerfil(Long idItem, Integer idPerfil, Integer idCT) {
-		return reportePiezaCtRepository.buscarCantidadesFabricadasPerfil(idItem, idPerfil, idCT);
+		return reporteRepository.buscarCantidadesFabricadasPerfil(idItem, idPerfil, idCT);
 	}
-	
-	
 
 	public ReportePiezaCtServiceImpl(ReportePiezaCtRepository reportePiezaCtRepository, ItemOpService itemOpService,
-			XmlService xmlService, ConsumosTepService consumosTepService, SolicitudMateriaPrimaService solicitudMateriaPrimaService,
-			UtilitiesApp util, ConfigurationService configService, EntregaService entregaService) {
+			XmlService xmlService, ConsumosTepService consumosTepService,
+			SolicitudMateriaPrimaService solicitudMateriaPrimaService, UtilitiesApp util,
+			ConfigurationService configService, EntregaService entregaService, ItemService itemService,
+			VistaOrdenPvService ordenPvService) {
 		super();
-		this.reportePiezaCtRepository = reportePiezaCtRepository;
+		this.reporteRepository = reportePiezaCtRepository;
 		this.itemOpService = itemOpService;
 		this.xmlService = xmlService;
 		this.consumosTepService = consumosTepService;
@@ -281,6 +407,8 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		this.util = util;
 		this.configService = configService;
 		this.entregaService = entregaService;
+		this.itemService = itemService;
+		this.ordenPvService = ordenPvService;
 	}
 
 }

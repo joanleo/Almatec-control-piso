@@ -498,6 +498,26 @@ public class ReporteCalidadDTO {
 		this.espesor = espesor;
 	}
 
+	@Override
+	public String toString() {
+		return "ReporteCalidadDTO [id=" + id + ", prefijo=" + prefijo + ", idOperario=" + idOperario
+				+ ", nombreOperario=" + nombreOperario + ", numOp=" + numOp + ", zona=" + zona + ", idItemOp="
+				+ idItemOp + ", color=" + color + ", idCentroTrabajo=" + idCentroTrabajo + ", centroTrabajo="
+				+ centroTrabajo + ", fechaDoc=" + fechaDoc + ", proyecto=" + proyecto + ", descripcionItem="
+				+ descripcionItem + ", marca=" + marca + ", cantSol=" + cantSol + ", lote=" + lote + ", idItem="
+				+ idItem + ", idParte=" + idParte + ", ancho=" + ancho + ", altura=" + altura + ", longitud=" + longitud
+				+ ", espesor=" + espesor + ", ral=" + ral + ", pestana=" + pestana + ", aleta=" + aleta + ", perfBorde="
+				+ perfBorde + ", perforaciones=" + perforaciones + ", troquelado=" + troquelado + ", cuadratura="
+				+ cuadratura + ", corona=" + corona + ", flechaH=" + flechaH + ", flechaV=" + flechaV + ", corte="
+				+ corte + ", punzonado=" + punzonado + ", granallado=" + granallado + ", pasaPrueba=" + pasaPrueba
+				+ ", rebaba=" + rebaba + ", anguloDoblez=" + anguloDoblez + ", numDoblez=" + numDoblez
+				+ ", pasaPruebaVisual=" + pasaPruebaVisual + ", diametro=" + diametro + ", pasaPruebaAdherencia="
+				+ pasaPruebaAdherencia + ", media1=" + media1 + ", media2=" + media2 + ", media3=" + media3
+				+ ", media4=" + media4 + ", media5=" + media5 + ", media6=" + media6 + ", media7=" + media7
+				+ ", media8=" + media8 + ", media9=" + media9 + ", media10=" + media10 + ", media11=" + media11
+				+ ", media12=" + media12 + "]";
+	}
+
 	
 	
 }

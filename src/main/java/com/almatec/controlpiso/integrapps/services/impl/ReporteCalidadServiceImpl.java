@@ -63,7 +63,7 @@ public class ReporteCalidadServiceImpl implements ReporteCalidadService {
 			}else {
 				reporte = modelMapper.map(formCalidad, ReporteCalidad.class);				
 			}
-			
+
 			return reporteCalidadRepo.save(reporte);
 		} catch (IllegalArgumentException | NoSuchElementException e) {
             throw new RuntimeException("Error al guardar el reporte de calidad: " + e.getMessage(), e);

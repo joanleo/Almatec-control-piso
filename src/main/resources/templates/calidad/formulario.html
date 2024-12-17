@@ -55,9 +55,9 @@
 						    <input type="text" th:field="*{zona}" id="pedido" name="pedido" class="form-control"/>
 						</div>
 						
-						<div class="input-group size-s">
+						<div class="input-group size-m">
                             <span class="input-group-text">REF:</span>
-                            <input type="text" id="id-item" class="form-control" th:value="*{idItemOp} + '-' + (*{idParte != 0} ? *{idParte} : *{idItemFab})"  required readonly/>                   
+                            <input type="text" id="id-item" class="form-control" th:value="*{idItemOp} + '-' + (*{idParte != 0} ? *{idParte} : *{idItem})"  required readonly/>                   
                         </div>
 						
 						<div class="input-group">
@@ -99,21 +99,21 @@
 					                <div id="anchoContainer" class="parameter-container">
 					                    <div class="input-group size-m">
 					                        <span class="input-group-text">ANCHO [mm]:</span>
-					                        <input type="number" id="ancho" name="ancho" class="form-control" min="1" step="0.01"/>
+					                        <input type="number" id="ancho" name="ancho" th:field="*{ancho}" class="form-control" min="1" step="0.01"/>
 					                    </div>
 					                </div>
 	
 					                <div id="alturaContainer" class="parameter-container">
 					                    <div class="input-group size-m">
 					                        <span class="input-group-text">ALTURA [mm]:</span>
-					                        <input type="number" id="altura" name="altura" class="form-control" min="1" step="0.01"/>
+					                        <input type="number" id="altura" name="altura" th:field="*{altura}"  class="form-control" min="1" step="0.01"/>
 					                    </div>
 					                </div>
 	
 					                <div id="longitudContainer" class="parameter-container">
 					                    <div class="input-group size-m">
 					                        <span class="input-group-text">LONGITUD [mm]:</span>
-					                        <input type="number" id="longitud" name="longitud" class="form-control" min="1" step="0.01"/>
+					                        <input type="number" id="longitud" name="longitud" th:field="*{longitud}" class="form-control" min="1" step="0.01"/>
 					                    </div>
 					                </div>
 									
@@ -139,15 +139,17 @@
 							<div class="parameters-section">
 					            <div class="parameters-grid">
 									
-					                <div class="input-group checkbox-group size-m" id="pestanaContainer">
-					                    <span class="parameter-label">PESTAÑA:</span>
-										<div class="radio-options">
-						                    <label for="pestanaSi" class="mx-3">SI
-							                    <input type="radio" id="pestanaSi" th:field="*{pestana}" name="pestana" value="true"/>											
-											</label>
-						                    <label for="pestanaNo">NO
-							                    <input type="radio" id="pestanaNo" th:field="*{pestana}" name="pestana" value="false"/>											
-											</label>
+					                <div class="parameter-container" id="pestanaContainer">
+										<div class="input-group checkbox-group size-m">
+						                    <span class="parameter-label">PESTAÑA:</span>
+											<div class="radio-group">
+							                    <label for="pestanaSi" class="mx-3">SI
+								                    <input type="radio" id="pestanaSi" th:field="*{pestana}" name="pestana" value="true"/>											
+												</label>
+							                    <label for="pestanaNo">NO
+								                    <input type="radio" id="pestanaNo" th:field="*{pestana}" name="pestana" value="false"/>											
+												</label>
+											</div>
 										</div>
 					                </div>
 									
@@ -460,7 +462,9 @@
 							</div>
 						</div>						
 					</div>
-					
+					<input hidden type="text" class="item-conjunto-id" th:value="*{idItem}" name="idItem"  />
+					<input hidden type="text" class="item-parte-id" th:value="*{idParte}" name="idParte"  />
+					<input hidden type="text" class="lote-guardado" th:value="*{lote}" name="lote-guardado"  />
 					<div class="d-grid">
 						<button type="submit" id="btnGuardar" class="btn btn-primary btn-lg" th:text="${modoEdicion ? 'Actualizar' : 'Guardar'}"></button>						
 					</div>
