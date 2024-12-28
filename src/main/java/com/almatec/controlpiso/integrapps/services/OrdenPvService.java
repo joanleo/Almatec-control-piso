@@ -41,4 +41,6 @@ public interface OrdenPvService {
 
 	Page<VistaOrdenPv> buscarProyectosPaginados(String keyword, Pageable pageable);
 
+	Integer obteneridItemOpPorIdOpIA(Integer idOPI);
+
 }

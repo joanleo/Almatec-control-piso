@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
@@ -40,10 +42,13 @@ public class OrdenProduccionHijoService {
 	private final OrdenPvService ordenPvService;
 	private final ConectorOrdenProduccionHijoService conectorOrdenProduccionHijoService;
 	private final MensajeServices mensajeServices;
+	private final ConectorOpOperacionesService conectorOpOperacionesService;
 	
 	private final UtilitiesApp util;
 	private final ConfigurationService configService;
 	static final String RESPUESTA_OK = "Operacion realizada exitosamente";
+	
+	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	public OrdenProduccionHijoService(
 			ConectorService conectorService,
@@ -56,7 +61,8 @@ public class OrdenProduccionHijoService {
 			ConectorOrdenProduccionHijoService conectorOrdenProduccionHijoService,
 			MensajeServices mensajeServices,
 			UtilitiesApp util,
-			ConfigurationService configService) {
+			ConfigurationService configService,
+			ConectorOpOperacionesService conectorOpOperacionesService) {
 		super();
 		this.conectorService = conectorService;
 		this.xmlService = xmlService;
@@ -69,6 +75,7 @@ public class OrdenProduccionHijoService {
 		this.mensajeServices = mensajeServices;
 		this.util = util;
 		this.configService = configService;
+		this.conectorOpOperacionesService = conectorOpOperacionesService;
 	}
 
 	public String crearOrdenProduccion(Integer idOPI) throws IOException {
@@ -83,7 +90,7 @@ public class OrdenProduccionHijoService {
 		String dateTime = now.format(formatter);
 		String responseItemRutaXml =xmlService.postImportarXML(itemRutaXml);
 		util.guardarRegistroXml(xmlService.crearPlanoXml(itemRutaXml), "ITEM_RUTA-OP_IA_" + idOPI + "_" + dateTime);
-		util.crearArchivoPlano(itemRutaXml, "SCP_TEP-OP_" + "ITEM_RUTA-OP_IA_" + idOPI  + dateTime , configService.getCIA());
+		util.crearArchivoPlano(itemRutaXml, "ITEM_RUTA-OP_IA_" + idOPI  + dateTime , configService.getCIA());
 		if (!responseItemRutaXml.equals(RESPUESTA_OK)) {
 			return responseItemRutaXml;
 		}
@@ -116,7 +123,7 @@ public class OrdenProduccionHijoService {
 		VistaOrdenPv ordenIntegrapps = ordenPvService.obtenerOrdenPorId(idOPI);
 		VistaOrdenPv ordenPadreIF = ordenPvService.obtenerOrdenPorId(ordenIntegrapps.getIdPadre());
 		
-		Double cantBase = Double.valueOf(listaMateriales.get(0).getF820_cant_base());
+		Double cantBase = Double.valueOf(ordenIntegrapps.getKilosFabricar());
 		DoctoordenesdeproduccionDocumentosVersion01 encabezadoOpEntrega = conectorOrdenProduccionHijoService.crearEncabezadoOPEntrega(ordenPadreIF);
 		ordenProduccionXml.add(encabezadoOpEntrega);
 		DoctoordenesdeproduccionItemsVersion01 detalleOpEntrega = conectorOrdenProduccionHijoService.crearDetalleOpEntrega(item, ordenIntegrapps,
@@ -127,7 +134,6 @@ public class OrdenProduccionHijoService {
 		if (!responseOpEntrega.equals(RESPUESTA_OK)) {
 			return responseOpEntrega;
 		}
-		
 		// Respuesta final
 		// Actualizar tabla ordenPV rowid850 y rowid851, Num_Op,op_UnoEE,BarCodeH
 		ConsultaItemOpCreado creadoInterface = listaMaterialService.obtenerRowIdOpItemOp(item.getF120_id());
@@ -135,7 +141,18 @@ public class OrdenProduccionHijoService {
 		util.crearArchivoPlano(ordenProduccionXml, "OP-" + creado.getF850_consec_docto(), configService.getCIA());
 		ordenIntegrapps = ordenPvService.actualizarDatosOp(creado, ordenIntegrapps);
 		mensajeServices.enviarEmailCreacionOrdenProduccion(ordenIntegrapps);
+		//actualizarRutaOp(idOPI, ordenIntegrapps, item);
 		return "OP Creada Exitosamente";
 	}
+
+	/*private void actualizarRutaOp(Integer idOPI, VistaOrdenPv ordenIntegrapps, ItemsVersion05 item) {
+		List<Conector> opOperaciones = new ArrayList<>();
+		List<OrdenesdeproduccionOperacionesVersion01> conectorOpOperaciones = conectorOpOperacionesService.crearConector(idOPI, ordenIntegrapps, item);
+		opOperaciones.addAll(conectorOpOperaciones);
+		String response = xmlService.postImportarXML(opOperaciones);
+		if (!response.equals(RESPUESTA_OK)) {
+			log.info("Actualizacion de ruta ok. {}",response); 
+		}
+	}*/
 
 }

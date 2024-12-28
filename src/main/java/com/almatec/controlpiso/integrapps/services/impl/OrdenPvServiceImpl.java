@@ -132,4 +132,9 @@ public class OrdenPvServiceImpl implements OrdenPvService {
         return ordenPvRepo.buscarPorKeywordPaginado(keyword, pageable);
     }
 
+	@Override
+	public Integer obteneridItemOpPorIdOpIA(Integer idOPI) {
+		return ordenPvRepo.obteneridItemOpPorIdOpIA(idOPI);
+	}
+
 }

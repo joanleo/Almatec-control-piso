@@ -72,5 +72,28 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 	           "ORDER BY o.numOp DESC")
 	Page<VistaOrdenPv> buscarPorKeywordPaginado(String keyword, Pageable pageable);
 
+	@Transactional
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
+	@Query(value = "UPDATE orden_pv "
+			+ "SET centros_trabajo_tep_reportado = :centrosTep "
+			+ "WHERE id_op_ia = :idOpIntegrapps", nativeQuery = true)
+	int actualizarCentrosTep(@Param("idOpIntegrapps")Integer idOpIntegrapps, @Param("centrosTep")String centrosTep);
+
+	@Query(value = "SELECT * "
+			+ "FROM view_orden_pv "
+			+ "WHERE id_op_ia = :idOpIntegrapps ", nativeQuery = true)
+	VistaOrdenPv buscarPorId(@Param("idOpIntegrapps") Integer idOpIntegrapps);
+	
+	@Query(value = "SELECT   TOP (1) UnoEE_Prueba.dbo.t120_mc_items.f120_id "
+			+ "FROM      UnoEE_Prueba.dbo.t851_mf_op_docto_item "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t121_mc_items_extensiones "
+			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE_Prueba.dbo.t121_mc_items_extensiones.f121_rowid "
+			+ "INNER JOIN UnoEE_Prueba.dbo.t120_mc_items "
+			+ "ON UnoEE_Prueba.dbo.t121_mc_items_extensiones.f121_rowid_item = UnoEE_Prueba.dbo.t120_mc_items.f120_rowid "
+			+ "INNER JOIN Integrapps.dbo.orden_pv "
+			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid = Integrapps.dbo.orden_pv.Row851_id "
+			+ "WHERE   (Integrapps.dbo.orden_pv.id_op_ia = :idOPI) ", nativeQuery = true)
+	Integer obteneridItemOpPorIdOpIA(@Param("idOPI")Integer idOPI);
+
 
 }

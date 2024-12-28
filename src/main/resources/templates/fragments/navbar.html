@@ -74,6 +74,7 @@
           </button>
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/costos/ordenes-produccion">Ajuste Cantidades Ejecutar</a></li>
           </ul>
         </li>  
 		

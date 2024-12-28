@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Costos :: Ajuste Catidades Ejecutar')"></head>
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+		
+		<div class="container my-5" style="width:60%;">
+			<div hidden id="spinner">
+				<div>Cargando ...</div>
+			</div>
+			
+			<div id="globalLoader" class="loader-container" style="display: none;">
+			  <div class="loader-content">
+			      <div class="spinner-border text-primary" role="status">
+			          <span class="visually-hidden">Cargando...</span>
+			      </div>
+			      <div class="loader-text mt-2">Procesando...</div>
+			  </div>
+			</div>
+							
+			<div th:replace="fragments/alerts :: alerts"></div>
+			
+			<form id="productionOrderForm" >
+	            <div class="form-group">
+	                <label for="orderSelect" class="form-label">Orden de Producción:</label>
+	                <select class="form-select"
+	                    id="orderSelect" 
+	                    name="orderId" 
+	                    required
+	                >
+	                    <option value="">Seleccione una orden</option>
+	                    <option 
+	                        th:each="order : ${numsOps}" 
+	                        th:value="${order.idOpIa}" 
+	                        th:text="${order.numOp + ' - ' + order.descripcion}"
+	                    ></option>
+	                </select>
+	            </div>
+
+	            <button type="submit" class="btn btn-primary mt-5" id="updateButton">
+	                Actualizar Cantidades
+	            </button>
+	        </form>
+		</div>			 
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/general.js"></script>
+		<script src="/js/costos/costos.js"></script>
+			
+	</body>
+</html>
