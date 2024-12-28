@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +30,7 @@ import com.almatec.controlpiso.security.entities.Modulo;
 import com.almatec.controlpiso.security.entities.Permission;
 import com.almatec.controlpiso.security.entities.Role;
 import com.almatec.controlpiso.security.services.ModuloService;
+import com.almatec.controlpiso.security.services.PermissionService;
 import com.almatec.controlpiso.security.services.RoleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,10 +41,16 @@ public class RoleController {
 
 	private final RoleService roleService;
 	private final ModuloService moduloServise;
+	private final PermissionService permissionService;
 	
-	public RoleController(RoleService roleService, ModuloService moduloServise) {
+	private Logger log = LoggerFactory.getLogger(getClass());
+	
+	public RoleController(RoleService roleService, 
+			ModuloService moduloServise,
+			PermissionService permissionService) {
 		this.roleService = roleService;
 		this.moduloServise = moduloServise;
+		this.permissionService = permissionService;
 	}
 	
 	@GetMapping
@@ -62,23 +73,34 @@ public class RoleController {
 		return "configuracion/roles/formulario-role";
 	}
 	
+	@Transactional
 	@PostMapping
 	public String guardarRole(@ModelAttribute("role") RoleDTO roleDTO, RedirectAttributes flash) {
-
+		log.info("Iniciando guardado de role: {}", roleDTO.getNombre());
+	    long startTime = System.currentTimeMillis();
+	    
 		Set<Permission> permissionsSet = convertStringToPermissionsSet(roleDTO.getPermissions());
+		log.info("Tiempo conversión permisos: {}ms", System.currentTimeMillis() - startTime);
+		
+		
 		Role roleSave = new Role();
 		if(roleDTO.getIdRole() != null) {
+			long dbFetchStart = System.currentTimeMillis();
 			roleSave = roleService.obtenerRole(roleDTO.getIdRole());
+			log.info("Tiempo fetch role: {}ms", System.currentTimeMillis() - dbFetchStart);
+			
 			roleSave.setNombre(roleDTO.getNombre());
 			roleSave.setPermissions(permissionsSet);
-			roleService.guardarRole(roleSave);
 		}else {
-			Role role = new Role();
-			role.setNombre(roleDTO.getNombre());
-			role.setPermissions(permissionsSet);			
-			roleService.guardarRole(role);
-			
+			roleSave.setNombre(roleDTO.getNombre());
+			roleSave.setPermissions(permissionsSet);						
 		}
+		
+		long saveStart = System.currentTimeMillis();
+	    roleService.guardarRole(roleSave);
+	    log.info("Tiempo guardado role: {}ms", System.currentTimeMillis() - saveStart);
+	    
+	    log.info("Tiempo total: {}ms", System.currentTimeMillis() - startTime);
 	    
 		flash.addFlashAttribute("message", "Role guardado exitosamente");
         return "redirect:/roles";
@@ -130,17 +152,20 @@ public class RoleController {
 	}
 	
 	private Set<Permission> convertStringToPermissionsSet(String permissionsString) {
-	    Set<Permission> permissionsSet = new HashSet<>();
-	    if (permissionsString != null && !permissionsString.isEmpty()) {
-	        String[] permissionsArray = permissionsString.split(",");
-	        for (String permissionId : permissionsArray) {
-	            if (!permissionId.isEmpty()) {
-	                Long id = Long.valueOf(permissionId);
-	                Permission permission = roleService.obtenerPermisoPorId(id);
-	                permissionsSet.add(permission);
-	            }
-	        }
+		if (permissionsString == null || permissionsString.isEmpty()) {
+	        return new HashSet<>();
 	    }
-	    return permissionsSet;
+		
+		Map<Long, Permission> permissionsMap = permissionService.getAllPermissions().stream()
+	            .collect(Collectors.toMap(Permission::getIdPermiso, p -> p));
+	    
+	    
+	    // Una sola consulta para todos los permisos
+	    return Arrays.stream(permissionsString.split(","))
+	            .filter(s -> !s.isEmpty())
+	            .map(Long::valueOf)
+	            .map(permissionsMap::get)
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toSet());
 	}
 }

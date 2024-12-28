@@ -5,6 +5,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,6 +28,8 @@ public class RoleServiceImpl implements RoleService {
 	private final RoleRepository rolRepo;
 	private final PermissionService permissionService;
 	
+	private Logger log = LoggerFactory.getLogger(getClass());
+	
 	public RoleServiceImpl(RoleRepository rolRepo, PermissionService permissionService) {
 		this.rolRepo = rolRepo;
 		this.permissionService = permissionService;
@@ -43,12 +47,14 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	@Transactional
-    @CacheEvict(value = {"roles", "permissions"}, allEntries = true)
+    @CacheEvict(value = "roles", key = "#role.id")
 	public void guardarRole(Role role) {
 		try {
+			log.debug("Guardando role: {}", role.getNombre());
 			rolRepo.save(role);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error al guardar role: {}", e.getMessage(), e);
+            throw new RuntimeException("Error al guardar role", e);
 		}
 		
 	}
