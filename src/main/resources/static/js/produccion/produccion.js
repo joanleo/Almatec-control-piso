@@ -1638,8 +1638,19 @@ function actualizarTablaModal() {
         tableContainer.className = 'table-responsive rounded-3 shadow-sm';
 		tableContainer.style.maxHeight = '20rem'; // o el valor que necesites
 		tableContainer.style.overflowY = 'auto';  // para asegurar el scroll vertical
+		
 	    const tablaClonada = tablaOriginal.cloneNode(true);
 	    tablaClonada.id = 'table-process-modal';
+		
+		// Eliminar la última columna (planos) de cada fila
+	    const filas = tablaClonada.getElementsByTagName('tr');
+	    Array.from(filas).forEach(fila => {
+	        const ultimaCelda = fila.lastElementChild;
+	        if (ultimaCelda) {
+	            fila.removeChild(ultimaCelda);
+	        }
+	    });
+		
 	    tableContainer.appendChild(tablaClonada);
 
 		modalTableSection.appendChild(tableContainer);

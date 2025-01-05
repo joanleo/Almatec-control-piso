@@ -10,4 +10,6 @@ public interface ItemService {
 
 	Item buscarItemFabricaPorIdItem(Integer idItemMAteriaPrima);
 
+	Item guardarItem(Item itemReporte);
+
 }

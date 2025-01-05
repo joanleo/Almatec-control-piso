@@ -14,11 +14,11 @@ public interface DetalleSolicitudMateriaPrimaRepository extends JpaRepository<De
 	@Query(value = "SELECT Mp_Sol_Det.id_sol_mp_det, Mp_Sol_Det.id_sol_mp, Mp_Sol_Det.Cod_Erp, Mp_Sol_Det.Und_Erp, "
 			+ "Mp_Sol_Det.Cant_Sol, Mp_Sol_Det.Cant_Entrega, Mp_Sol_Det.Lotes_Erp, Mp_Sol_Det.Estado_Item, "
 			+ "Mp_Sol_Det.Bodega_Entrega, Mp_Sol_Det.Id_Usu_Sol, Mp_Sol_Det.Id_Usu_Erp, Mp_Sol_Det.fecha, "
-			+ "UnoEE_Prueba.dbo.t120_mc_items.f120_descripcion "
+			+ "UnoEE.dbo.t120_mc_items.f120_descripcion "
 			+ "FROM Mp_Sol_Det "
 			+ "INNER JOIN "
-			+ "UnoEE_Prueba.dbo.t120_mc_items ON Mp_Sol_Det.Cod_Erp = UnoEE_Prueba.dbo.t120_mc_items.f120_id "
-			+ "WHERE(UnoEE_Prueba.dbo.t120_mc_items.f120_id_cia = 22) "
+			+ "UnoEE.dbo.t120_mc_items ON Mp_Sol_Det.Cod_Erp = UnoEE.dbo.t120_mc_items.f120_id "
+			+ "WHERE(UnoEE.dbo.t120_mc_items.f120_id_cia = 22) "
 			+ "AND Mp_Sol_Det.id_sol_mp = :idSolic ", nativeQuery = true)
 	List<DetalleSolicDesItemInterface> obtenerInterfacePorIdSolicitud(@Param("idSolic") Integer idSolic);
 

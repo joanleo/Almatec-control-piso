@@ -1,7 +1,11 @@
 package com.almatec.controlpiso.integrapps.entities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,125 +56,184 @@ public class Item {
 	@Column(name = "item_long")
 	private BigDecimal longitud;
 	
+	@Column(name = "centro_trabajo_consumo")
+	private Integer centroTrabajoConsumo;
 	
-	
-	
+	@Column(name = "centros_trabajo_tep_reportado")
+	private String centrosTrabajoTep;
 
 	public Item() {
 		super();
 	}
 
+	
 	public Integer getIdItem() {
 		return idItem;
 	}
+
 
 	public String getTipo() {
 		return tipo;
 	}
 
+
 	public Integer getCodErp() {
 		return codErp;
 	}
+
 
 	public String getDescripcion() {
 		return descripcion;
 	}
 
+
 	public String getFamilia() {
 		return familia;
 	}
+
 
 	public String getGrupo() {
 		return grupo;
 	}
 
+
 	public BigDecimal getPesoBruto() {
 		return pesoBruto;
 	}
+
 
 	public BigDecimal getPesoNeto() {
 		return pesoNeto;
 	}
 
+
 	public String getPlano() {
 		return plano;
 	}
+
 
 	public Boolean getImprimeEtiqueta() {
 		return imprimeEtiqueta;
 	}
 
+
 	public Boolean getIsActivo() {
 		return isActivo;
 	}
+
 
 	public String getUnidEmpaque() {
 		return unidEmpaque;
 	}
 
+
 	public BigDecimal getLongitud() {
 		return longitud;
 	}
+
+
+	public Integer getCentroTrabajoConsumo() {
+		return centroTrabajoConsumo;
+	}
+
+
+	public List<Integer> getCentrosTrabajoTep() {
+        if (centrosTrabajoTep == null || centrosTrabajoTep.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(centrosTrabajoTep.split(","))
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
 
 	public void setIdItem(Integer idItem) {
 		this.idItem = idItem;
 	}
 
+
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+
 
 	public void setCodErp(Integer codErp) {
 		this.codErp = codErp;
 	}
 
+
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
 
 	public void setFamilia(String familia) {
 		this.familia = familia;
 	}
 
+
 	public void setGrupo(String grupo) {
 		this.grupo = grupo;
 	}
+
 
 	public void setPesoBruto(BigDecimal pesoBruto) {
 		this.pesoBruto = pesoBruto;
 	}
 
+
 	public void setPesoNeto(BigDecimal pesoNeto) {
 		this.pesoNeto = pesoNeto;
 	}
+
 
 	public void setPlano(String plano) {
 		this.plano = plano;
 	}
 
+
 	public void setImprimeEtiqueta(Boolean imprimeEtiqueta) {
 		this.imprimeEtiqueta = imprimeEtiqueta;
 	}
+
 
 	public void setIsActivo(Boolean isActivo) {
 		this.isActivo = isActivo;
 	}
 
+
 	public void setUnidEmpaque(String unidEmpaque) {
 		this.unidEmpaque = unidEmpaque;
 	}
 
+
 	public void setLongitud(BigDecimal longitud) {
 		this.longitud = longitud;
 	}
+
+
+	public void setCentroTrabajoConsumo(Integer centroTrabajoConsumo) {
+		this.centroTrabajoConsumo = centroTrabajoConsumo;
+	}
+
+
+	public void setCentrosTrabajoTep(List<Integer> centrosTep) {
+        this.centrosTrabajoTep = centrosTep.stream()
+                                    .map(String::valueOf)
+                                    .collect(Collectors.joining(","));
+    }
+
 
 	@Override
 	public String toString() {
 		return "Item [idItem=" + idItem + ", tipo=" + tipo + ", codErp=" + codErp + ", descripcion=" + descripcion
 				+ ", familia=" + familia + ", grupo=" + grupo + ", pesoBruto=" + pesoBruto + ", pesoNeto=" + pesoNeto
 				+ ", plano=" + plano + ", imprimeEtiqueta=" + imprimeEtiqueta + ", isActivo=" + isActivo
-				+ ", unidEmpaque=" + unidEmpaque + ", longitud=" + longitud + "]";
+				+ ", unidEmpaque=" + unidEmpaque + ", longitud=" + longitud + ", centroTrabajoConsumo="
+				+ centroTrabajoConsumo + ", centrosTrabajoTep=" + centrosTrabajoTep + "]";
 	}
+
 
 	@Override
 	public int hashCode() {

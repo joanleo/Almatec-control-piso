@@ -48,7 +48,7 @@ public interface ItemOpService {
 
 	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(Integer idCT);
 
-	List<Integer> obtenerCentrosTrabajoPorIdOpIA(Integer idOpIntegrapps);
+	List<Integer> obtenerCentrosTrabajoRutaPorIdOpIA(Integer idOpIntegrapps);
 
 	Integer obtenerIdOpIntegrappsPorIdItem(Long idItem);
 

@@ -26,4 +26,10 @@ public class ItemServiceImpl implements ItemService {
 		return itemRepo.findByIdItem(idItemMAteriaPrima);
 	}
 
+	@Override
+	public Item guardarItem(Item itemReporte) {
+		return itemRepo.saveAndFlush(itemReporte);
+		
+	}
+
 }

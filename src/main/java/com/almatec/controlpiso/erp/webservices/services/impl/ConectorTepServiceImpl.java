@@ -47,7 +47,7 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 
 		encabezado.setF450_id_centro_trabajo(idCTErp);// revisar
 		encabezado.setF450_turno(1);// revisar
-		encabezado.setF350_notas("Creado desde Guayacan reporte de: " + item.getDescripcion() + " Cant: " + reporte.getCantReportar());
+		encabezado.setF350_notas("Creado desde Guayacan reporte de tiempos para: " + reporte.getRef() + " Cant: " + reporte.getCantReportar() + " und(s).");
 		return encabezado;
 	}
 

@@ -17,12 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.almatec.controlpiso.config.AppConfig;
+import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
 import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.InfoParadaDTO;
@@ -48,7 +49,6 @@ import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasOperarios;
 import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
-import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
 import com.almatec.controlpiso.integrapps.services.NovedadCtService;
 import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
@@ -78,6 +78,8 @@ public class CentroTrabajoController {
 	private final ListaMService listaMService;
 	private final CentrosTrabajoPDFService centrosTrabajoPDFService;
 	
+	
+	private static final String REDIRECT_HOME = "redirect:/produccion/home";
 
 	
 	public CentroTrabajoController(
@@ -200,13 +202,35 @@ public class CentroTrabajoController {
 	public String guardarReportePiezas(@ModelAttribute ReporteDTO reporte,
 										RedirectAttributes flash) {
 
-		ResponseMessage mensaje = reportePiezaCtService.guardarReporte(reporte);
-		if(Boolean.TRUE.equals(mensaje.getError())) {
-			flash.addFlashAttribute("error", mensaje.getMensaje());
-			return "redirect:/produccion/home";			
-		}
-			flash.addFlashAttribute("message", mensaje.getMensaje());
-			return "redirect:/produccion/home";
+		try {
+            ResponseMessage mensaje = reportePiezaCtService.guardarReporte(reporte);
+            if (Boolean.TRUE.equals(mensaje.getError())) {
+                flash.addFlashAttribute("error", mensaje.getMensaje());
+                return REDIRECT_HOME;
+            }
+            flash.addFlashAttribute("message", mensaje.getMensaje());
+            return REDIRECT_HOME;
+            
+        } catch (ServiceException ex) {
+            logger.error("Error al procesar el reporte: {}", ex.getMessage());
+            flash.addFlashAttribute("error", ex.getMessage());
+            return REDIRECT_HOME;
+            
+        } catch (DataIntegrityViolationException ex) {
+            logger.error("Error de integridad de datos: {}", ex.getMessage());
+            flash.addFlashAttribute("error", "Error al guardar el reporte: registro duplicado o datos inválidos");
+            return REDIRECT_HOME;
+            
+        } catch (IllegalArgumentException ex) {
+            logger.error("Error de validación: {}", ex.getMessage());
+            flash.addFlashAttribute("error", "Datos del reporte inválidos: " + ex.getMessage());
+            return REDIRECT_HOME;
+            
+        } catch (Exception ex) {
+            logger.error("Error inesperado al guardar el reporte: {}", ex.getMessage());
+            flash.addFlashAttribute("error", "Error inesperado al procesar el reporte. Por favor, intente nuevamente");
+            return REDIRECT_HOME;
+        }
 	}
 	
 	@GetMapping("/{idCT}/novedades")

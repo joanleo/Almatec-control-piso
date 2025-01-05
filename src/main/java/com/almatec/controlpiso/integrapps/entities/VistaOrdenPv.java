@@ -114,6 +114,8 @@ public class VistaOrdenPv {
 	private Integer itemId;
 	@Column(name = "estado_op")
 	private String estadoOp;
+	@Column(name = "centros_trabajo_tep_reportado")
+	private String centrosTrabajoTepReportado;
 	
 	public VistaOrdenPv() {
 		super();
@@ -317,6 +319,10 @@ public class VistaOrdenPv {
 
 	public Integer getIdEstadoOp() {
 		return idEstadoOp;
+	}
+
+	public String getCentrosTrabajoTepReportado() {
+		return centrosTrabajoTepReportado;
 	}
 
 	@Override

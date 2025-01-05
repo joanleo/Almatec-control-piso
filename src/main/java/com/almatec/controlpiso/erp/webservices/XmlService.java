@@ -37,6 +37,8 @@ public class XmlService {
 
 	private final ConfigurationService configService;
 	private final RestTemplate restTemplate;
+	
+	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public XmlService(ConfigurationService configService, 
 			RestTemplate restTemplate) {
@@ -65,6 +67,7 @@ public class XmlService {
 		List<Conector> datosObject = new ArrayList<>(conector);
 
 		String planoXml = crearPlanoXml(datosObject);
+		log.info(planoXml);
 		System.out.println(planoXml);
 		String soapRequest = crearBodyRequest(planoXml, 0);
 
@@ -83,7 +86,6 @@ public class XmlService {
 		}
 		String detalle = descomponerRespuestaXML(responseBody);
 
-		logger.error(detalle);
 		return detalle;
 
 	}

@@ -37,6 +37,7 @@ public class EntregaService {
     private static final String RESPUESTA_OK = "Operacion realizada exitosamente";
     private static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
     private static final String CONJUNTO_TYPE = "CONJUNTO";
+    private static final String RESPUESTA_ENTREGA_EXITOSA = "Consumo y TEP creado exitosamente. Entrega creada Exitosamente. ";
 	
 	private final ParametroService parametroService;
 	private final ItemOpService itemOpService;
@@ -239,7 +240,7 @@ public class EntregaService {
         //Se procesa la entrega
         String resultado = procesarDocumentosEntrega(item, reporte, dateTime);
         
-        return resultado.equals(RESPUESTA_OK) ? "Consumo y TEP creado exitosamente. Entrega creada Exitosamente" : resultado;
+        return resultado.equals(RESPUESTA_OK) ? RESPUESTA_ENTREGA_EXITOSA : resultado;
 
 	}
 }

@@ -1,6 +1,5 @@
 package com.almatec.controlpiso.integrapps.repositories;
 
-import java.security.cert.TrustAnchor;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,16 +47,16 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "FROM  items_op "
 			+ "INNER JOIN orden_pv "
 			+ "ON items_op.id_op_ia = orden_pv.id_op_ia "
-			+ "LEFT JOIN UnoEE_Prueba.dbo.t850_mf_op_docto "
-			+ "ON orden_pv.Row850_id = UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t851_mf_op_docto_item "
-			+ "ON UnoEE_Prueba.dbo.t850_mf_op_docto.f850_rowid = UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_op_docto "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t121_mc_items_extensiones ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE_Prueba.dbo.t121_mc_items_extensiones.f121_rowid "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = UnoEE_Prueba.dbo.t120_mc_items.f120_rowid "
+			+ "LEFT JOIN UnoEE.dbo.t850_mf_op_docto "
+			+ "ON orden_pv.Row850_id = UnoEE.dbo.t850_mf_op_docto.f850_rowid "
+			+ "INNER JOIN UnoEE.dbo.t851_mf_op_docto_item "
+			+ "ON UnoEE.dbo.t850_mf_op_docto.f850_rowid = UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_op_docto "
+			+ "INNER JOIN UnoEE.dbo.t121_mc_items_extensiones ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE.dbo.t121_mc_items_extensiones.f121_rowid "
+			+ "INNER JOIN UnoEE.dbo.t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = UnoEE.dbo.t120_mc_items.f120_rowid "
 			+ "WHERE  orden_pv.Tipo_OP = 'OP' "
 			+ "AND orden_pv.Num_Op <> 0 "
-			+ "AND ((UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
-			+ "OR (UnoEE_Prueba.dbo.t850_mf_op_docto.f850_ind_estado = 2)) "
+			+ "AND ((UnoEE.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
+			+ "OR (UnoEE.dbo.t850_mf_op_docto.f850_ind_estado = 2)) "
 			+ "ORDER BY orden_pv.Num_Op DESC", nativeQuery = true)
 	List<ConsultaOpIdInterface> obtenerNumsOps();
 
@@ -136,18 +135,18 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 		       "WHERE ct.id = :idCT ")
 	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(@Param("idCT") Integer idCT);
 
-	@Query(value = "SELECT  CAST(UnoEE_Prueba.dbo.t806_mf_centros_trabajo.f806_id AS INT) " 
-			+ "FROM      UnoEE_Prueba.dbo.t808_mf_rutas "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t809_mf_rutas_operacion "
-			+ "ON UnoEE_Prueba.dbo.t808_mf_rutas.f808_rowid = UnoEE_Prueba.dbo.t809_mf_rutas_operacion.f809_rowid_rutas "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t806_mf_centros_trabajo "
-			+ "ON UnoEE_Prueba.dbo.t809_mf_rutas_operacion.f809_rowid_ctrabajo = UnoEE_Prueba.dbo.t806_mf_centros_trabajo.f806_rowid "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t851_mf_op_docto_item "
-			+ "ON UnoEE_Prueba.dbo.t808_mf_rutas.f808_rowid = UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_ruta "
+	@Query(value = "SELECT  CAST(UnoEE.dbo.t806_mf_centros_trabajo.f806_id AS INT) " 
+			+ "FROM      UnoEE.dbo.t808_mf_rutas "
+			+ "INNER JOIN UnoEE.dbo.t809_mf_rutas_operacion "
+			+ "ON UnoEE.dbo.t808_mf_rutas.f808_rowid = UnoEE.dbo.t809_mf_rutas_operacion.f809_rowid_rutas "
+			+ "INNER JOIN UnoEE.dbo.t806_mf_centros_trabajo "
+			+ "ON UnoEE.dbo.t809_mf_rutas_operacion.f809_rowid_ctrabajo = UnoEE.dbo.t806_mf_centros_trabajo.f806_rowid "
+			+ "INNER JOIN UnoEE.dbo.t851_mf_op_docto_item "
+			+ "ON UnoEE.dbo.t808_mf_rutas.f808_rowid = UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_ruta "
 			+ "INNER JOIN orden_pv "
-			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid = orden_pv.Row851_id "
+			+ "ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid = orden_pv.Row851_id "
 			+ "WHERE   (orden_pv.id_op_ia = :idOpIntegrapps) ", nativeQuery = true)
-	List<Integer> buscarCentrosTrabajoPorIdOpIA(@Param("idOpIntegrapps")Integer idOpIntegrapps);
+	List<Integer> buscarCentrosTrabajoRutaPorIdOpIA(@Param("idOpIntegrapps")Integer idOpIntegrapps);
 
 	@Query(value = "SELECT id_op_ia "
 			+ "FROM items_op "

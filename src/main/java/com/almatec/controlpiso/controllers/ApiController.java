@@ -43,7 +43,7 @@ public class ApiController {
 	
 	@PostMapping("/entregas/crear-op/{idOPI}")
 	public ResponseEntity<?> crearOPEntrega(@PathVariable Integer idOPI){
-		logger.info("Se recibe solicitud de creacion de orden de produccion con base en id op integrapps no: {}", idOPI);
+		logger.info("Solicitud de creacion de orden de produccion con base en id op integrapps no: {}", idOPI);
 		try {
 			String response = ordenProduccionHijoService.crearOrdenProduccion(idOPI);
 			return ResponseEntity.ok(response);
@@ -55,7 +55,7 @@ public class ApiController {
 	
 	@PostMapping("/transferencia/{idSol}")
 	public ResponseEntity<?> crearTransferenciaPorIdSol(@PathVariable Integer idSol) throws IOException{
-		logger.info("Se recibe solicitud de Transferncia por id: {}", idSol);
+		logger.info("Solicitud de Transferncia por id: {}", idSol);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuarioP = usuarioService.ObtenerUsuarioPorNombreUsuario(authentication.getName());
 		ResponseMessage mensaje = transferenciaService.crearTransferencia(idSol, usuarioP);

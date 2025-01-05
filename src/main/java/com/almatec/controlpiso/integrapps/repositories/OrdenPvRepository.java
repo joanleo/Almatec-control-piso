@@ -84,14 +84,14 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 			+ "WHERE id_op_ia = :idOpIntegrapps ", nativeQuery = true)
 	VistaOrdenPv buscarPorId(@Param("idOpIntegrapps") Integer idOpIntegrapps);
 	
-	@Query(value = "SELECT   TOP (1) UnoEE_Prueba.dbo.t120_mc_items.f120_id "
-			+ "FROM      UnoEE_Prueba.dbo.t851_mf_op_docto_item "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t121_mc_items_extensiones "
-			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE_Prueba.dbo.t121_mc_items_extensiones.f121_rowid "
-			+ "INNER JOIN UnoEE_Prueba.dbo.t120_mc_items "
-			+ "ON UnoEE_Prueba.dbo.t121_mc_items_extensiones.f121_rowid_item = UnoEE_Prueba.dbo.t120_mc_items.f120_rowid "
+	@Query(value = "SELECT   TOP (1) UnoEE.dbo.t120_mc_items.f120_id "
+			+ "FROM      UnoEE.dbo.t851_mf_op_docto_item "
+			+ "INNER JOIN UnoEE.dbo.t121_mc_items_extensiones "
+			+ "ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE.dbo.t121_mc_items_extensiones.f121_rowid "
+			+ "INNER JOIN UnoEE.dbo.t120_mc_items "
+			+ "ON UnoEE.dbo.t121_mc_items_extensiones.f121_rowid_item = UnoEE.dbo.t120_mc_items.f120_rowid "
 			+ "INNER JOIN Integrapps.dbo.orden_pv "
-			+ "ON UnoEE_Prueba.dbo.t851_mf_op_docto_item.f851_rowid = Integrapps.dbo.orden_pv.Row851_id "
+			+ "ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid = Integrapps.dbo.orden_pv.Row851_id "
 			+ "WHERE   (Integrapps.dbo.orden_pv.id_op_ia = :idOPI) ", nativeQuery = true)
 	Integer obteneridItemOpPorIdOpIA(@Param("idOPI")Integer idOPI);
 

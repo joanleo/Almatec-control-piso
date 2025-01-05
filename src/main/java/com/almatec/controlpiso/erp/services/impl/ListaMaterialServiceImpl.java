@@ -57,7 +57,7 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 			DetalleTransferenciaInterface detalle = listaMaterialRepo.obtenerDetalleTransferencia(idSolIntegrapps);
 			return detalle;
 		}catch (Exception e) {
-			System.err.println(e);
+			log.error(e.getMessage());
 		}
 		return null;
 	}

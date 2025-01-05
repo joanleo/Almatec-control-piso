@@ -2,13 +2,17 @@ package com.almatec.controlpiso.erp.webservices.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
 import com.almatec.controlpiso.erp.interfaces.DataTEP;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
+import com.almatec.controlpiso.erp.webservices.dto.ConsumoDTO;
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosConsumos;
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosMovtoInventarioV4;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPDocumentosVersion01;
@@ -17,6 +21,7 @@ import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
+import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 
 @Service
@@ -28,6 +33,7 @@ public class ConsumosTepService {
 	private final ConectorConsumoService conectorConsumoService;
 	private final ConectorTepService conectorTepService;
 	
+	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	public ConsumosTepService(ListaMaterialService listaMaterialService,
 			SolicitudMateriaPrimaService solicitudMateriaPrimaService, ItemOpService itemOpService,
@@ -40,30 +46,50 @@ public class ConsumosTepService {
 		this.conectorTepService = conectorTepService;
 	}
 
-	public List<Conector> crearTEPYConsumos(ItemOp item, ReporteDTO reporte) {
+	public List<Conector> crearTEPYConsumos(ItemOp itemOp, ReporteDTO reporte, Boolean platinas) {
 		List<Conector> tepYConsumosXml = new ArrayList<>();
 		
-		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
+		//Datos del item
+		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(itemOp.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
+		
 		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
-
+		
+		//Datos para tep
 		DataTEP dataTE = listaMaterialService.obtenerDataTEP(idRuta, idCTErp);
-
+		
+		log.info("Creando conector encabezado consumo");
 		ConsumosdesdeCompromisosConsumos encabezadoConsumo = conectorConsumoService.crearEncabezadoConsumo(data);		
 		tepYConsumosXml.add(encabezadoConsumo);
-		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
-		ItemInterface itemFab = itemOpService.obtenerItemFabricaPorId(idItem);
 		
-		Integer codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());
+		Integer idItemReportar = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+		ItemInterface itemFab = itemOpService.obtenerItemFabricaPorId(idItemReportar);
+		
+		Integer codErpMateriaPrima = 0;
+		if(Boolean.FALSE.equals(platinas)) {
+			codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());			
+		}else {
+			List<ItemListaMateriaInterface> materiaPrima = itemOpService.obtenerListaMaterialesItemPorIdItem(itemOp.getId().intValue(), itemOp.getIdItemFab());
+			
+			codErpMateriaPrima = materiaPrima.stream()
+			                    .filter(itemM -> Objects.equals(itemM.getid_parte(), idItemReportar))
+			                    .map(ItemListaMateriaInterface::getid_materia_prima)
+			                    .findFirst()
+			                    .orElse(0);  // En caso de no encontrar coincidencia
+						}
+		log.info("Creando conector movimientos consumo");
 		List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = conectorConsumoService.crearDetalleConsumo(
 				itemFab, data, reporte, null, codErpMateriaPrima);		
 		tepYConsumosXml.addAll(movsConsumo);
 
-		DoctoTEPDocumentosVersion01 encabezadoTep = conectorTepService.crearEncabezadoTEP(item,reporte, idCTErp);
+		log.info("Creando conector encabezado tep");
+		DoctoTEPDocumentosVersion01 encabezadoTep = conectorTepService.crearEncabezadoTEP(itemOp,reporte, idCTErp);
 		tepYConsumosXml.add(encabezadoTep);
 		
+		log.info("creando conector movimientos tep");
 		List<DoctoTEPMovimientosVersion01> movsTep = conectorTepService.crearMovTiempos(reporte, data, dataTE, idCTErp, false);
 		tepYConsumosXml.addAll(movsTep);
+		
 		return tepYConsumosXml;
 	}
 

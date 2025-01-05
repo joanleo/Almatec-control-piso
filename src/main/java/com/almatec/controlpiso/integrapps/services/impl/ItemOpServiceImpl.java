@@ -9,6 +9,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,6 +41,7 @@ import com.almatec.controlpiso.integrapps.services.ItemOpService;
 @Service
 public class ItemOpServiceImpl implements ItemOpService {
 	
+	private Logger log = LoggerFactory.getLogger(getClass());
 	private static final Comparator<ItemOpDatable> EMPTY_COMPARATOR = (e1, e2) -> 0;
 	
 	@Autowired
@@ -171,7 +174,7 @@ public class ItemOpServiceImpl implements ItemOpService {
             return comparator;
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return EMPTY_COMPARATOR;
@@ -279,9 +282,9 @@ public class ItemOpServiceImpl implements ItemOpService {
 	}
 
 	@Override
-	public List<Integer> obtenerCentrosTrabajoPorIdOpIA(Integer idOpIntegrapps) {
+	public List<Integer> obtenerCentrosTrabajoRutaPorIdOpIA(Integer idOpIntegrapps) {
 		try {
-			List<Integer> ids = itemOpRepo.buscarCentrosTrabajoPorIdOpIA(idOpIntegrapps); 
+			List<Integer> ids = itemOpRepo.buscarCentrosTrabajoRutaPorIdOpIA(idOpIntegrapps); 
 			return ids;
 		} catch (Exception e) {
 			e.printStackTrace();
