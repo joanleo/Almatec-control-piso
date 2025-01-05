@@ -71,7 +71,7 @@ public class ComercialController {
     }
 	
 	
-	@GetMapping
+	@GetMapping("/pedidos/listar")
 	public String listarPedidosVentaErp(Model modelo,
             @RequestParam(required = false) String keyword,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -85,7 +85,7 @@ public class ComercialController {
 		return "comercial/listar-pedidos";
 	}
 	
-	@GetMapping("/pedidos/{idPedido}")
+	@GetMapping("/pedidos/estado/{idPedido}")
 	public String verDetallePedido(@PathVariable Integer idPedido, Model modelo) {
 		List<VistaItemPedidoErp> itemsPedido = vistaItemPedidosErp.buscarItemsPedido(idPedido);
 		String noPedido = itemsPedido.get(0).getTipoPedido() +"-" + itemsPedido.get(0).getNoPedido();

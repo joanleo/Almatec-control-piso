@@ -73,7 +73,7 @@ public class ProgramacionController {
 	@Autowired
 	private VistaPiezasReportadasService vistaPiezasReportadasService;
 	
-	@GetMapping
+	@GetMapping("/prioridades")
 	public String getItemsPrioridad(Model modelo,
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

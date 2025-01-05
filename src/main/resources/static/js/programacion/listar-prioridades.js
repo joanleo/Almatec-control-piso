@@ -117,7 +117,7 @@ function cargarDatos(centroTrabajoId, page = 0, size = 10, sortField = 'idOpInte
 	const op = document.getElementById('op').value;
 	const marca = document.getElementById('marca').value;
 
-	const url = `/programacion?page=${page}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&centroTrabajoId=${centroTrabajoId}&descripcion=${encodeURIComponent(descripcion)}&cantidad=${encodeURIComponent(cantidad)}&proyecto=${encodeURIComponent(proyecto)}&zona=${encodeURIComponent(zona)}&prioridad=${encodeURIComponent(prioridad)}&op=${encodeURIComponent(op)}&marca=${encodeURIComponent(marca)}`;
+	const url = `/programacion/prioridades?page=${page}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&centroTrabajoId=${centroTrabajoId}&descripcion=${encodeURIComponent(descripcion)}&cantidad=${encodeURIComponent(cantidad)}&proyecto=${encodeURIComponent(proyecto)}&zona=${encodeURIComponent(zona)}&prioridad=${encodeURIComponent(prioridad)}&op=${encodeURIComponent(op)}&marca=${encodeURIComponent(marca)}`;
    
 		fetch(url, {
 	    	headers: {

@@ -85,12 +85,6 @@ public class ProduccionController {
 	@Autowired
 	private MensajeServices mensajeService;
 	
-	@GetMapping("/dashboard")
-	public String dashboard(Model model) {
-		return "produccion/dashboard";
-	}
-	
-	
 	@GetMapping("/home")
 	public String homeProduction(@RequestParam(required = false) String alert,
 			@RequestParam(required = false) String mensaje,

@@ -1,6 +1,6 @@
 const ALERT_SETTINGS = {
     success: {
-        duration: 15000,  // Coincide con el tiempo de recarga de la página
+        duration: 15000, 
         icon: '<i class="fa-solid fa-circle-check me-2"></i>',
         animation: 'fade-in'
     },

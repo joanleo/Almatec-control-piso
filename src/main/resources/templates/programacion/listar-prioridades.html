@@ -22,7 +22,7 @@
                     </select>
                 </div>
 				
-				<form id="filtroForm" th:object="${filtro}" method="get" th:action="@{/programacion}" class="my-4">
+				<form id="filtroForm" th:object="${filtro}" method="get" th:action="@{/programacion/prioridades}" class="my-4">
 					<div class="d-flex align-items-center flex-wrap">
 						<div class="me-3 size-s mb-2">
 					      <input id="op" type="text" class="form-control" th:field="*{op}" placeholder="O.P...">
@@ -62,37 +62,37 @@
 										</div>
 									</th>
 									<th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='op', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='op', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'op' ? (sortDir == 'asc' ? 'O.P.  ▲' : 'O.P.  ▼') : 'O.P.'}"></span>
 						                </a>
 									</th>
 									<th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='marca', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='marca', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'marca' ? (sortDir == 'asc' ? 'MARCA  ▲' : 'MARCA  ▼') : 'MARCA'}"></span>
 						                </a>
 									</th>
 									<th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='itemDescripcion', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='itemDescripcion', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'itemDescripcion' ? (sortDir == 'asc' ? 'Descripción  ▲' : 'Descripción  ▼') : 'Descripción'}"></span>
 						                </a>
 									</th>
 				                    <th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='cantReq', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='cantReq', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'cantReq' ? (sortDir == 'asc' ? 'Cantidad  ▲' : 'Cantidad  ▼') : 'Cantidad'}"></span>
 						                </a>
 									</th>
 				                    <th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='un', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='un', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'un' ? (sortDir == 'asc' ? 'Proyecto  ▲' : 'Proyecto  ▼') : 'Proyecto'}"></span>
 						                </a>
 									</th>
 									<th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='zona', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='zona', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'zona' ? (sortDir == 'asc' ? 'Zona  ▲' : 'Zona  ▼') : 'Zona'}"></span>
 						                </a>
 									</th>
 				                    <th>
-										<a class="dropdown-item sort-link" th:href="@{/programacion (page=${itemsPage.number}, size=10, sortField='prioridad', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+										<a class="dropdown-item sort-link" th:href="@{/programacion/prioridades (page=${itemsPage.number}, size=10, sortField='prioridad', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 						                    <span th:text="${sortField == 'prioridad' ? (sortDir == 'asc' ? 'Prioridad  ▲' : 'Prioridad  ▼') : 'Prioridad'}"></span>
 						                </a>
 									</th>
@@ -129,13 +129,13 @@
 						  <ul class="pagination justify-content-center">
 							
 						    <li class="page-item" th:classappend="${itemsPage.first ? 'disabled' : ''}">
-						      <a class="page-link" th:href="@{/programacion (page=0, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" aria-label="inicio">
+						      <a class="page-link" th:href="@{/programacion/prioridades (page=0, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" aria-label="inicio">
 						        Inicio
 						      </a>
 						    </li>
 							
 							<li class="page-item" th:classappend="${!itemsPage.hasPrevious() ? 'disabled' : ''}">
-						      <a class="page-link" th:href="@{/programacion (page=${itemsPage.number - 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" tabindex="-1">
+						      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.number - 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" tabindex="-1">
 								<span aria-hidden="true">&laquo;</span>
 							  </a>
 						    </li>
@@ -145,17 +145,17 @@
 							            itemsPage.number + 5 < itemsPage.totalPages - 1 ? itemsPage.number + 5 : itemsPage.totalPages - 1
 							        )}" 
 								th:classappend="${itemsPage.number == page ? 'active' : ''}">
-			                    <a class="page-link" th:href="@{/programacion (page=${page}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" th:text="${page + 1}"></a>
+			                    <a class="page-link" th:href="@{/programacion/prioridades (page=${page}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" th:text="${page + 1}"></a>
 			                </li>
 							
 							<li class="page-item" th:classappend="${!itemsPage.hasNext() ? 'disabled' : ''}">
-						      <a class="page-link" th:href="@{/programacion (page=${itemsPage.number + 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+						      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.number + 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 								<span aria-hidden="true">&raquo;</span>
 							  </a>
 						    </li>
 							
 							<li th:classappend="${itemsPage.last ? 'disabled' : ''}">
-							      <a class="page-link" th:href="@{/programacion (page=${itemsPage.totalPages - 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">Fin</a>
+							      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.totalPages - 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">Fin</a>
 							    </li>
 						  </ul>
 						</nav>

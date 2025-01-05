@@ -13,7 +13,7 @@
             Comercial
           </button>
           <ul class="dropdown-menu">
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial">Pedidos</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos/listar">Pedidos</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTADO_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos">Estado Pedidos</a></li>
           </ul>
         </li>
@@ -35,7 +35,7 @@
             Programacion
           </button>
           <ul class="dropdown-menu">
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion">Asignar/Editar Prioridad</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PRIORIDAD'')')}"><a class="dropdown-item" href="/programacion/prioridades">Asignar/Editar Prioridad</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_PROGRAMACION'')')}"><a class="dropdown-item" href="/programacion/consulta-materia-prima">Reporte Materia Prima</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_RESUMEN_FABRICADO'')')}"><a class="dropdown-item" href="/programacion/resumen-fabricado">Resumen fabricacion</a></li>
           </ul>
@@ -46,9 +46,8 @@
 			  Produccion
 		  </button>
 		  <ul class="dropdown-menu">
-			<!--<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/dashboard">Dashboard</a></li>-->
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/home">Planta</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CAGA_X_CT'')')}"><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CARGA_X_CT'')')}"><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
 			
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_SOLICITUD_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/produccion/materia-prima/solicitud">Solicitud Materia prima</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_OPERARIOS_REGISTRADOS'')')}"><a class="dropdown-item" href="/produccion/operarios-registrados">Operarios registrados</a></li>
@@ -74,7 +73,7 @@
           </button>
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/produccion/novedades">Desperdicios reportados</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_DESPERDICIOS_REPORTADOS'')')}"><a class="dropdown-item" href="/costos/ordenes-produccion">Ajuste Cantidades Ejecutar</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_AJUSTE_CANTIDADES_EJECUTAR_OP'')')}"><a class="dropdown-item" href="/costos/ordenes-produccion">Ajuste Cantidades Ejecutar</a></li>
           </ul>
         </li>  
 		

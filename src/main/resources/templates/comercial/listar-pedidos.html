@@ -8,7 +8,7 @@
 		<div class="container my-5">
 			<h1>Pedidos de venta</h1>
 			<div th:replace="fragments/alerts :: alerts"></div>
-			<form th:action="@{/comercial}" method="get">
+			<form th:action="@{/comercial/pedidos/listar}" method="get">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Buscar" name="keyword" th:value="${keyword}">
                     <button class="btn btn-outline-secondary" type="submit">Buscar</button>
@@ -38,7 +38,7 @@
 						<td th:text="${pedido.co }"></td>
 						<td th:text="'$ ' + ${#numbers.formatDecimal(pedido.valor, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
 						<td >
-							<a role="button" class="btn btn-primary" id="bt" th:href="@{/comercial/pedidos/{noPv}(noPv=${pedido.noPv})}">Ver</a>				
+							<a role="button" class="btn btn-primary" id="bt" th:href="@{/comercial/pedidos/estado/{noPv}(noPv=${pedido.noPv})}">Ver</a>				
 						</td>
 						</tr>
 					</tbody>
@@ -48,7 +48,7 @@
                 <ul class="pagination justify-content-center">
 
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, pedidosPage.totalPages - 1)}" th:classappend="${pedidosPage.number == i} ? 'active'">
-                        <a class="page-link" th:href="@{/comercial(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                        <a class="page-link" th:href="@{/comercial/pedidos/listar(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
                     </li>
 
                 </ul>
