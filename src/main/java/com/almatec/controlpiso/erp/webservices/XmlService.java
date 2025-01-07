@@ -154,7 +154,7 @@ public class XmlService {
 	}
 
 	private String crearConexion() {
-		String nombre = "Prueba";
+		String nombre = "Real";
 		int cia = configService.getCIA();
 		String usuario = "integrapps";
 		String clave = "8888";
