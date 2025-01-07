@@ -36,7 +36,7 @@
 						<td th:text="${pedido.nit}"></td>
 						<td th:text="${pedido.razonSocial}"></td>
 						<td th:text="${pedido.co }"></td>
-						<td th:text="'$ ' + ${#numbers.formatDecimal(pedido.valor, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+						<td th:text="'$ ' + ${#numbers.formatDecimal(pedido.valorBruto, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
 						<td >
 							<a role="button" class="btn btn-primary" id="bt" th:href="@{/comercial/pedidos/estado/{noPv}(noPv=${pedido.noPv})}">Ver</a>				
 						</td>

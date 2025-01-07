@@ -77,6 +77,9 @@ public class VistaPedidosErp {
 	
 	@Column(name = "pv_cliente_co_descripcion")
 	private String centroOperaciones; 
+	
+	@Column(name = "pv_valor_bruto")
+	private String valorBruto;
 
 	public VistaPedidosErp() {
 		super();
@@ -166,6 +169,10 @@ public class VistaPedidosErp {
 		return centroOperaciones;
 	}
 
+	public String getValorBruto() {
+		return valorBruto;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
@@ -174,7 +181,7 @@ public class VistaPedidosErp {
 				+ ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + ", unidadMedidaInventario="
 				+ unidadMedidaInventario + ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", tipoOp=" + tipoOp
 				+ ", numOp=" + numOp + ", kgCumplidos=" + kgCumplidos + ", centroOperaciones=" + centroOperaciones
-				+ "]";
+				+ ", valorBruto=" + valorBruto + "]";
 	}
 
 }
