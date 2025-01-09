@@ -63,7 +63,7 @@
 	                    <a class="page-link" th:href="@{/almacen/solicitudes(page=${pageNum},size=${solicitudes.size})}" 
 	                       th:text="${pageNum + 1}"></a>
 	                </li>
-	                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+	                <li class="page-item" th:if="${totalPages > 0}" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
 	                    <a class="page-link" th:href="@{/almacen/solicitudes(page=${currentPage + 1},size=${solicitudes.size})}">›</a>
 	                </li>
 	                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
@@ -71,6 +71,10 @@
 	                </li>
 	            </ul>
 	        </nav>
+			
+			<!--<div th:unless="${hasContent}" class="text-center mt-4">
+			    <p class="text-muted">No hay solicitudes pendientes para mostrar.</p>
+			</div>-->
 			
 			<div style="display: flex; flex-direction: column;" hidden id="solSel">
 				<h3>Solicitud selecionada:</h3>

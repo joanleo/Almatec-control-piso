@@ -59,7 +59,7 @@
 				</div>
 			</div>
 			
-			<nav aria-label="Paginación de solicitudes">
+			<nav aria-label="Paginación de solicitudes" >
 	            <ul class="pagination justify-content-center">
 	                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
 	                    <a class="page-link" th:href="@{/almacen/solicitudes/historial(page=0,size=${solicitudes.size})}">&laquo;</a>
@@ -80,6 +80,10 @@
 	                </li>
 	            </ul>
 	        </nav>
+			
+			<!--<div th:unless="${hasContent}" class="text-center mt-4">
+			    <p class="text-muted">No hay solicitudes para mostrar.</p>
+			</div>-->
 			
 			<div style="display: flex; flex-direction: column;" hidden id="solSel">
 				<h3>Solicitud selecionada:</h3>

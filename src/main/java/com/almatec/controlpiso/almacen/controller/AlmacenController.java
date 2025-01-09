@@ -83,9 +83,14 @@ public class AlmacenController {
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 		Page<SolicitudDTO> solicitudes = solicitudMateriaPrimaService.obtenerSolicitudesPendientesPaginadas(page, size);
+		
+		int totalPages = Math.max(1, solicitudes.getTotalPages());
+		
 	    modelo.addAttribute("currentPage", page);
-	    modelo.addAttribute("totalPages", solicitudes.getTotalPages());
+	    modelo.addAttribute("totalPages", totalPages);
 		modelo.addAttribute("solicitudes", solicitudes);
+		modelo.addAttribute("hasContent", solicitudes.hasContent());
+		
 		return "almacen/solicitudes-materia-prima.html";
 	}
 	
@@ -113,9 +118,15 @@ public class AlmacenController {
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 		Page<SolicitudDTO> solicitudes = solicitudMateriaPrimaService.obtenerTodasSolicitudesPaginadas(page, size);
+		
+		int totalPages = Math.max(1, solicitudes.getTotalPages());
+		
+		
 	    modelo.addAttribute("currentPage", page);
-	    modelo.addAttribute("totalPages", solicitudes.getTotalPages());
+	    modelo.addAttribute("totalPages", totalPages);
 		modelo.addAttribute("solicitudes", solicitudes);
+		modelo.addAttribute("hasContent", solicitudes.hasContent());
+		
 		return "almacen/historial-solicitudes-mp.html";
 	}
 	
