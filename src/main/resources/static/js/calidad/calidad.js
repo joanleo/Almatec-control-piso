@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", function() {
     
     toleranciasButton.addEventListener('click', handleToleranciaClick);
 	
-	if(modoEdicion)[
+	if(modoEdicion){
 		seleccionarLoteGuardado()
-	]
+	}
 
 })
 
