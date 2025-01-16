@@ -5,7 +5,7 @@ document.getElementById('reporteForm').addEventListener('submit', function() {
 
 document.addEventListener('DOMContentLoaded', function(){
 	const ct = parseInt( document.getElementById('centroTrabajo').value)
-	const ctsMuestranLote = [3,4,5,6,7,8,9,17]
+	const ctsMuestranLote = [3,4,5,6,7,8,9,10,11,17]
 	const divLotes = document.getElementById('divLotes');
 	const showLotes = ctsMuestranLote.includes(ct);
 
