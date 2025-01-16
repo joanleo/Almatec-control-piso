@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -49,6 +50,9 @@ public class ItemOpServiceImpl implements ItemOpService {
 	
 	@Autowired
 	private EventoService eventoService;
+	
+	@Value("${schema.unoee}")
+	private String schemaUnoee;
 
 	@Override
 	public List<ItemOp> obtenerItemsOp(Integer idOp) {
@@ -214,7 +218,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 
 	@Override
 	public List<ConsultaOpId> obtenerNumOps() {
-		List<ConsultaOpIdInterface> numOpInterface = itemOpRepo.obtenerNumsOps();
+		List<ConsultaOpIdInterface> numOpInterface = itemOpRepo.obtenerNumsOps(schemaUnoee);
 		List<ConsultaOpId> numOps = new ArrayList<>();
 		numOpInterface.forEach(item->{
 			ConsultaOpId nuevo = new ConsultaOpId(item.getid_op_ia(), item.getNum_Op(), item.getDescripcion());
@@ -284,7 +288,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 	@Override
 	public List<Integer> obtenerCentrosTrabajoRutaPorIdOpIA(Integer idOpIntegrapps) {
 		try {
-			List<Integer> ids = itemOpRepo.buscarCentrosTrabajoRutaPorIdOpIA(idOpIntegrapps); 
+			List<Integer> ids = itemOpRepo.buscarCentrosTrabajoRutaPorIdOpIA(schemaUnoee, idOpIntegrapps); 
 			return ids;
 		} catch (Exception e) {
 			e.printStackTrace();

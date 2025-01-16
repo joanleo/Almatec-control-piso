@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.dto.DetalleSolicitudDTO;
@@ -22,6 +23,9 @@ public class DetalleSolicitudMateriaPrimaServiceImpl implements DetalleSolicitud
 	
 	@Autowired
 	private ParametroService parametroService;
+	
+	@Value("${schema.unoee}")
+	private String schemaUnoee;
 
 	@Override
 	public List<DetalleSolicitudMateriaPrima> crearDetalleSolicitud(Integer numDoc, List<DetalleSolicitudMateriaPrima> detalles) {
@@ -34,7 +38,7 @@ public class DetalleSolicitudMateriaPrimaServiceImpl implements DetalleSolicitud
 
 	@Override
 	public List<DetalleSolicitudDTO> obtenerDetalleDTOPorIdSolic(Integer idSolic) {
-		List<DetalleSolicDesItemInterface> detallesInterface = detalleSolicitudMateriaPrimaRepo.obtenerInterfacePorIdSolicitud(idSolic);
+		List<DetalleSolicDesItemInterface> detallesInterface = detalleSolicitudMateriaPrimaRepo.obtenerInterfacePorIdSolicitud(schemaUnoee, idSolic);
 		List<Parametro> parametros = parametroService.obtenerParametros();
 		List<DetalleSolicitudDTO> detallesDTO = new ArrayList<>();
 

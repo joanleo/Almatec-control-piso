@@ -66,10 +66,11 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 	Page<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String tipoOp, int idEstadoDoc, Pageable pageable);
 
 	@Query("SELECT o FROM VistaOrdenPv o WHERE " +
-	           "LOWER(o.cliente) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+	           "(LOWER(o.cliente) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
 	           "LOWER(o.centroOperaciones) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-	           "LOWER(o.estadoOp) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-	           "ORDER BY o.numOp DESC")
+	           "LOWER(o.estadoOp) LIKE LOWER(CONCAT('%', :keyword, '%')))  AND "
+	           + "o.tipoOp = 'OP' AND o.idEstadoDoc = 1 "
+	           + "ORDER BY o.numOp DESC ")
 	Page<VistaOrdenPv> buscarPorKeywordPaginado(String keyword, Pageable pageable);
 
 	@Transactional
@@ -84,16 +85,22 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 			+ "WHERE id_op_ia = :idOpIntegrapps ", nativeQuery = true)
 	VistaOrdenPv buscarPorId(@Param("idOpIntegrapps") Integer idOpIntegrapps);
 	
-	@Query(value = "SELECT   TOP (1) UnoEE.dbo.t120_mc_items.f120_id "
-			+ "FROM      UnoEE.dbo.t851_mf_op_docto_item "
-			+ "INNER JOIN UnoEE.dbo.t121_mc_items_extensiones "
-			+ "ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE.dbo.t121_mc_items_extensiones.f121_rowid "
-			+ "INNER JOIN UnoEE.dbo.t120_mc_items "
-			+ "ON UnoEE.dbo.t121_mc_items_extensiones.f121_rowid_item = UnoEE.dbo.t120_mc_items.f120_rowid "
-			+ "INNER JOIN Integrapps.dbo.orden_pv "
-			+ "ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid = Integrapps.dbo.orden_pv.Row851_id "
-			+ "WHERE   (Integrapps.dbo.orden_pv.id_op_ia = :idOPI) ", nativeQuery = true)
-	Integer obteneridItemOpPorIdOpIA(@Param("idOPI")Integer idOPI);
+	@Query(value =
+			"DECLARE @schema NVARCHAR(100) = :schema\\; " +
+			"DECLARE @idOPI INT = :idOPI\\; " +
+			"DECLARE @sql NVARCHAR(MAX) = ' " +
+			"SELECT TOP (1) items.f120_id " +
+			"FROM ' + @schema + '.t851_mf_op_docto_item doc_item " +
+			"INNER JOIN ' + @schema + '.t121_mc_items_extensiones ext " +
+			"    ON doc_item.f851_rowid_item_ext_padre = ext.f121_rowid " +
+			"INNER JOIN ' + @schema + '.t120_mc_items items " +
+			"    ON ext.f121_rowid_item = items.f120_rowid " +
+			"INNER JOIN Integrapps.dbo.orden_pv op " +
+			"    ON doc_item.f851_rowid = op.Row851_id " +
+			"WHERE op.id_op_ia = @idOPI'; " +
+			"EXEC sp_executesql @sql, N'@idOPI INT', @idOPI",
+			nativeQuery = true)
+	Integer obteneridItemOpPorIdOpIA(@Param("schema") String schema, @Param("idOPI") Integer idOPI);
 
 
 }

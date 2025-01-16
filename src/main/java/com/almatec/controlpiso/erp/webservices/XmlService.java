@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,6 +38,18 @@ public class XmlService {
 
 	private final ConfigurationService configService;
 	private final RestTemplate restTemplate;
+	
+	@Value("${erp.webservice.url}")
+    private String urlWebservice;
+	
+	@Value("${erp.webservice.connection-name}")
+	private String connectionName;
+	
+	@Value("${erp.webservice.username}")
+	private String username;
+	
+	@Value("${erp.webservice.password}")
+	private String password;
 	
 	private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -76,8 +89,7 @@ public class XmlService {
 
 		String responseBody = null;
 		try {
-			response = restTemplate.postForEntity("http://10.75.98.4/WSUNOEE/WSUNOEE.asmx?wsdl", requestEntity,
-					String.class);
+			response = restTemplate.postForEntity(urlWebservice, requestEntity,	String.class);
 			// Obtener el contenido de la respuesta
 			responseBody = response.getBody();
 		} catch (RestClientException e) {
@@ -154,14 +166,12 @@ public class XmlService {
 	}
 
 	private String crearConexion() {
-		String nombre = "Real";
+		
 		int cia = configService.getCIA();
-		String usuario = "integrapps";
-		String clave = "8888";
-		return "        <NombreConexion>" + nombre + "</NombreConexion>\n" 
+		return "        <NombreConexion>" + connectionName + "</NombreConexion>\n" 
 				+ "        <IdCia>" + cia + "</IdCia>\n" 
-		        + "        <Usuario>" + usuario + "</Usuario>\n"
-				+ "        <Clave>" + clave + "</Clave>";
+		        + "        <Usuario>" + username + "</Usuario>\n"
+				+ "        <Clave>" + password + "</Clave>";
 	}
 
 	private String llenarDatos(List<Conector> datos) {

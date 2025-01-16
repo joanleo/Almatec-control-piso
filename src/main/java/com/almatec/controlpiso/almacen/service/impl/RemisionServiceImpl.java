@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +16,16 @@ import com.almatec.controlpiso.almacen.interfaces.EncabezadoRemision;
 import com.almatec.controlpiso.almacen.service.RemisionService;
 import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.almatec.controlpiso.integrapps.repositories.RemisionRepository;
+import java.util.Collections;
 
 @Service
 public class RemisionServiceImpl implements RemisionService {
 	
 	@Autowired
 	private RemisionRepository remisionRepo;
+	
+	@Value("${schema.unoee}")
+	private String schemaUnoee;
 
 	@Override
 	public Remision guardarRemision(Remision remision) {
@@ -39,13 +44,13 @@ public class RemisionServiceImpl implements RemisionService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public EncabezadoRemision obtenerEncabezadoRemisionPorId(Long idRemision) {
 		try {
-			return remisionRepo.obtenerEncabezadoRemisionPorId(idRemision);
+			return remisionRepo.obtenerEncabezadoRemisionPorId(schemaUnoee, idRemision);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -11,16 +11,21 @@ import com.almatec.controlpiso.integrapps.interfaces.DetalleSolicDesItemInterfac
 
 public interface DetalleSolicitudMateriaPrimaRepository extends JpaRepository<DetalleSolicitudMateriaPrima, Integer> {
 
-	@Query(value = "SELECT Mp_Sol_Det.id_sol_mp_det, Mp_Sol_Det.id_sol_mp, Mp_Sol_Det.Cod_Erp, Mp_Sol_Det.Und_Erp, "
-			+ "Mp_Sol_Det.Cant_Sol, Mp_Sol_Det.Cant_Entrega, Mp_Sol_Det.Lotes_Erp, Mp_Sol_Det.Estado_Item, "
-			+ "Mp_Sol_Det.Bodega_Entrega, Mp_Sol_Det.Id_Usu_Sol, Mp_Sol_Det.Id_Usu_Erp, Mp_Sol_Det.fecha, "
-			+ "UnoEE.dbo.t120_mc_items.f120_descripcion "
-			+ "FROM Mp_Sol_Det "
-			+ "INNER JOIN "
-			+ "UnoEE.dbo.t120_mc_items ON Mp_Sol_Det.Cod_Erp = UnoEE.dbo.t120_mc_items.f120_id "
-			+ "WHERE(UnoEE.dbo.t120_mc_items.f120_id_cia = 22) "
-			+ "AND Mp_Sol_Det.id_sol_mp = :idSolic ", nativeQuery = true)
-	List<DetalleSolicDesItemInterface> obtenerInterfacePorIdSolicitud(@Param("idSolic") Integer idSolic);
+	@Query(value =
+			"DECLARE @schema NVARCHAR(100) = :schema\\; " +
+			"DECLARE @idSolic INT = :idSolic\\; " +
+			"DECLARE @sql NVARCHAR(MAX) = ' " +
+			"SELECT det.id_sol_mp_det, det.id_sol_mp, det.Cod_Erp, det.Und_Erp, det.Cant_Sol, det.Cant_Entrega, det.Lotes_Erp, det.Estado_Item, " + 
+			"det.Bodega_Entrega, det.Id_Usu_Sol, det.Id_Usu_Erp, det.fecha, items.f120_descripcion " +
+			"FROM Mp_Sol_Det det " +
+			"INNER JOIN ' + @schema + '.t120_mc_items items " +
+			"    ON det.Cod_Erp = items.f120_id " +
+			"WHERE items.f120_id_cia = 22 " +
+			"    AND det.id_sol_mp = @idSolic'; " +
+			"EXEC sp_executesql @sql, N'@idSolic INT', @idSolic",
+			nativeQuery = true)
+			List<DetalleSolicDesItemInterface> obtenerInterfacePorIdSolicitud(@Param("schema") String schema,
+			@Param("idSolic") Integer idSolic);
 
 	List<DetalleSolicitudMateriaPrima> findByIdSolicitud(Integer idSol);
 

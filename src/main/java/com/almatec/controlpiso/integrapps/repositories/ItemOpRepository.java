@@ -43,22 +43,28 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "AND Estado = 0", nativeQuery = true)
 	String obtenerJsonPorId(@Param("id")Integer id);
 
-	@Query(value = "SELECT DISTINCT items_op.id_op_ia,orden_pv.Num_Op, t120_mc_items.f120_descripcion AS Descripcion "
-			+ "FROM  items_op "
-			+ "INNER JOIN orden_pv "
-			+ "ON items_op.id_op_ia = orden_pv.id_op_ia "
-			+ "LEFT JOIN UnoEE.dbo.t850_mf_op_docto "
-			+ "ON orden_pv.Row850_id = UnoEE.dbo.t850_mf_op_docto.f850_rowid "
-			+ "INNER JOIN UnoEE.dbo.t851_mf_op_docto_item "
-			+ "ON UnoEE.dbo.t850_mf_op_docto.f850_rowid = UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_op_docto "
-			+ "INNER JOIN UnoEE.dbo.t121_mc_items_extensiones ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_item_ext_padre = UnoEE.dbo.t121_mc_items_extensiones.f121_rowid "
-			+ "INNER JOIN UnoEE.dbo.t120_mc_items ON t121_mc_items_extensiones.f121_rowid_item = UnoEE.dbo.t120_mc_items.f120_rowid "
-			+ "WHERE  orden_pv.Tipo_OP = 'OP' "
-			+ "AND orden_pv.Num_Op <> 0 "
-			+ "AND ((UnoEE.dbo.t850_mf_op_docto.f850_ind_estado = 1) "
-			+ "OR (UnoEE.dbo.t850_mf_op_docto.f850_ind_estado = 2)) "
-			+ "ORDER BY orden_pv.Num_Op DESC", nativeQuery = true)
-	List<ConsultaOpIdInterface> obtenerNumsOps();
+	@Query(value =
+			"DECLARE @schema NVARCHAR(100) = :schema\\; " +
+			"DECLARE @sql NVARCHAR(MAX) = ' " +
+			"SELECT DISTINCT i.id_op_ia, op.Num_Op, items.f120_descripcion AS Descripcion " +
+			"FROM items_op i " +
+			"INNER JOIN orden_pv op ON i.id_op_ia = op.id_op_ia " +
+			"LEFT JOIN ' + @schema + '.t850_mf_op_docto doc " +
+			"    ON op.Row850_id = doc.f850_rowid " +
+			"INNER JOIN ' + @schema + '.t851_mf_op_docto_item doc_item " +
+			"    ON doc.f850_rowid = doc_item.f851_rowid_op_docto " +
+			"INNER JOIN ' + @schema + '.t121_mc_items_extensiones ext " +
+			"    ON doc_item.f851_rowid_item_ext_padre = ext.f121_rowid " +
+			"INNER JOIN ' + @schema + '.t120_mc_items items " +
+			"    ON ext.f121_rowid_item = items.f120_rowid " +
+			"WHERE op.Tipo_OP = ''OP'' " +
+			"    AND op.Num_Op <> 0 " +
+			"    AND (doc.f850_ind_estado = 1 " +
+			"    OR doc.f850_ind_estado = 2) " +
+			"ORDER BY op.Num_Op DESC'; " +
+			"EXEC sp_executesql @sql;",
+			nativeQuery = true)
+			List<ConsultaOpIdInterface> obtenerNumsOps(@Param("schema") String schema);
 
 	@Query(value = "SELECT Json "
 			+ "FROM Apis_Json "
@@ -135,18 +141,24 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 		       "WHERE ct.id = :idCT ")
 	List<ItemOpCTPrioridadDTO> findOpsItemsPorCentroTrabajo(@Param("idCT") Integer idCT);
 
-	@Query(value = "SELECT  CAST(UnoEE.dbo.t806_mf_centros_trabajo.f806_id AS INT) " 
-			+ "FROM      UnoEE.dbo.t808_mf_rutas "
-			+ "INNER JOIN UnoEE.dbo.t809_mf_rutas_operacion "
-			+ "ON UnoEE.dbo.t808_mf_rutas.f808_rowid = UnoEE.dbo.t809_mf_rutas_operacion.f809_rowid_rutas "
-			+ "INNER JOIN UnoEE.dbo.t806_mf_centros_trabajo "
-			+ "ON UnoEE.dbo.t809_mf_rutas_operacion.f809_rowid_ctrabajo = UnoEE.dbo.t806_mf_centros_trabajo.f806_rowid "
-			+ "INNER JOIN UnoEE.dbo.t851_mf_op_docto_item "
-			+ "ON UnoEE.dbo.t808_mf_rutas.f808_rowid = UnoEE.dbo.t851_mf_op_docto_item.f851_rowid_ruta "
-			+ "INNER JOIN orden_pv "
-			+ "ON UnoEE.dbo.t851_mf_op_docto_item.f851_rowid = orden_pv.Row851_id "
-			+ "WHERE   (orden_pv.id_op_ia = :idOpIntegrapps) ", nativeQuery = true)
-	List<Integer> buscarCentrosTrabajoRutaPorIdOpIA(@Param("idOpIntegrapps")Integer idOpIntegrapps);
+	@Query(value =
+			"DECLARE @schema NVARCHAR(100) = :schema\\; " +
+			"DECLARE @idOpIntegrapps INT = :idOpIntegrapps\\; " +
+			"DECLARE @sql NVARCHAR(MAX) = ' " +
+			"SELECT CAST(ct.f806_id AS INT) " +
+			"FROM ' + @schema + '.t808_mf_rutas ruta " +
+			"INNER JOIN ' + @schema + '.t809_mf_rutas_operacion ruta_op " +
+			"    ON ruta.f808_rowid = ruta_op.f809_rowid_rutas " +
+			"INNER JOIN ' + @schema + '.t806_mf_centros_trabajo ct " +
+			"    ON ruta_op.f809_rowid_ctrabajo = ct.f806_rowid " +
+			"INNER JOIN ' + @schema + '.t851_mf_op_docto_item doc_item " +
+			"    ON ruta.f808_rowid = doc_item.f851_rowid_ruta " +
+			"INNER JOIN orden_pv op " +
+			"    ON doc_item.f851_rowid = op.Row851_id " +
+			"WHERE op.id_op_ia = @idOpIntegrapps'; " +
+			"EXEC sp_executesql @sql, N'@idOpIntegrapps INT', @idOpIntegrapps",
+			nativeQuery = true)
+			List<Integer> buscarCentrosTrabajoRutaPorIdOpIA(@Param("schema") String schema, @Param("idOpIntegrapps") Integer idOpIntegrapps);
 
 	@Query(value = "SELECT id_op_ia "
 			+ "FROM items_op "
