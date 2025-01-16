@@ -189,7 +189,9 @@ public class CentroTrabajoController {
 		//stopWatch.stop();
 		//logger.info("Tiempo de ejecución Total: {} ms", stopWatch.getTotalTimeMillis());
 		//stopWatch.start();
-		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItemOp);
+		Integer codErpMp = listaMService.obtenerCodMateriaPrimaItemReporte(idItem);
+		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItemReporte(idItemOp, codErpMp);
+		//List<LoteConCodigoDTO> lotes_old = listaMService.obtenerLotesOpPorItem(idItemOp);
 		//stopWatch.stop();
 		//logger.info("Tiempo de ejecución obtencion de lotes: {} ms", stopWatch.getTotalTimeMillis());
 		modelo.addAttribute("reporte", reporte);

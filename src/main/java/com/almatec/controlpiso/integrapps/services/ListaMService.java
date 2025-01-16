@@ -16,6 +16,10 @@ public interface ListaMService {
 
 	List<LoteConCodigoDTO> obtenerLotesOpPorItem(Long idItem);
 
+	Integer obtenerCodMateriaPrimaItemReporte(Integer idItem);
+
+	List<LoteConCodigoDTO> obtenerLotesOpPorItemReporte(Long idItemOp, Integer codErpMp);
+
 
 
 }

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -36,11 +37,14 @@ public class ListaMServiceImpl implements ListaMService {
 	@Autowired
 	private VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
 	
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger log = LoggerFactory.getLogger(getClass());
 
+	@Value("${schema.unoee}")
+	private String schemaUnoee;
+	
 	@Override
 	public List<ListaMDTO> obtenerListaMDTOPorIdOp(Integer idOP) {
-		List<ListaMInterface> listaMInterface = listaMaterialRepo.ObtenerListaInterdacePorIdOp(idOP);
+		List<ListaMInterface> listaMInterface = listaMaterialRepo.ObtenerListaInterdacePorIdOp(schemaUnoee, idOP);
 		List<ListaMDTO> listaM = new ArrayList<>();
 		for(ListaMInterface itemI: listaMInterface) {
 			ListaMDTO itemLista = new ListaMDTO(itemI);
@@ -86,30 +90,40 @@ public class ListaMServiceImpl implements ListaMService {
             lote.setDescripcion(info.getDescripcion());
 	    });
 	    
-	    
-	    /*lotes.forEach(lote -> {
-	        SpecItemLoteDTO filtro = new SpecItemLoteDTO();
-	        filtro.setBodega("00102");
-	        filtro.setLote(lote.getLoteErp());
-	        
-	        List<VistaItemLoteDisponible> disponibles = vistaItemLoteDisponibleService.searchItems(filtro, false);
-	        
-	        if (disponibles.isEmpty()) {
-	            lote.setDisponible(BigDecimal.ZERO);
-	        } else {
-	            VistaItemLoteDisponible disponible = disponibles.get(0);
-	            lote.setDisponible(disponible != null ? disponible.getDisponible() : BigDecimal.ZERO);
-	        }
-	    });*/
-	    
-	    //stopWatch.stop();
-		//logger.info("Tiempo de ejecución lotes: {} ms", stopWatch.getTotalTimeMillis());
-
 	    return lotes;
 	}
 
 	private Map<String, LoteInfoDTO> obtenerDisponibilidadesBatch(Set<String> lotesErp) {
 		return vistaItemLoteDisponibleService.buscarDisponibilidadBatch(lotesErp, "00102");
+	}
+
+	@Override
+	public Integer obtenerCodMateriaPrimaItemReporte(Integer idItem) {
+		return listaMaterialRepo.obtenerCodMateriaPrimaItemReporte( idItem);
+	}
+
+	@Override
+	public List<LoteConCodigoDTO> obtenerLotesOpPorItemReporte(Long idItemOp, Integer codErpMp) {
+		Integer idOpIntegrapps = itemOpService.obtenerIdOpIntegrappsPorIdItem(idItemOp);
+	    List<LoteConCodigoDTO> lotes = listaMaterialRepo.obtenerLotesOpPorItemYCodErp(idOpIntegrapps, codErpMp);
+	    if (lotes == null || lotes.isEmpty()) {
+	        return new ArrayList<>(); 
+	    }
+	    
+	    Set<String> lotesErp = lotes.stream()
+	            .map(LoteConCodigoDTO::getLoteErp)
+	            .collect(Collectors.toSet());
+	    
+	    Map<String, LoteInfoDTO> disponibilidades = obtenerDisponibilidadesBatch(lotesErp);
+	    
+	    lotes.forEach(lote -> {
+        	LoteInfoDTO info = disponibilidades.getOrDefault(lote.getLoteErp().trim(), 
+                    new LoteInfoDTO(BigDecimal.ZERO, ""));
+            lote.setDisponible(info.getDisponible());
+            lote.setDescripcion(info.getDescripcion());
+	    });
+	    
+	    return lotes;
 	}
 
 
