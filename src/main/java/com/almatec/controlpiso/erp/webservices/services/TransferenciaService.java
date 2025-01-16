@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaService;
@@ -36,6 +38,8 @@ public class TransferenciaService {
 	private final ConfigurationService configService;
 	
 	static final String RESPUESTA_OK = "Operacion realizada exitosamente";
+	
+	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public TransferenciaService(ListaMaterialService listaMaterialService,
 			ConectorTransferenciaService conectorTransferenciaService, XmlService xmlService,
@@ -60,22 +64,14 @@ public class TransferenciaService {
 		
 		List<DetalleSolicitudMateriaPrima> detalleSol = detalleSolicitudMateriaPrimaService.obtenerDetallePorIdSol(idSolIntegrapps);
 		String nota = "Creado por IntegrApps ** Solicitud transferencia: " + idSolIntegrapps;//listaMaterialService.obtenerConsecutivoNotasTransferencia(idSolIntegrapps.toString());
-		/*if (nota != null) {
-			if (nota.split("-").length > 1) {
-				Integer consec = Integer.valueOf(nota.split("-")[1]);
-				nota = idSolIntegrapps + "-" + (consec + 1);
-			} else {
-				nota = idSolIntegrapps + "-" + 1;
-			}
-		} else {
-			nota = idSolIntegrapps.toString();
-		}*/
+
 		DoctoinventariosDocumentosVersion02 encabezado = conectorTransferenciaService.crearEncabezadoTransferencia(nota);
 		transferenciaXml.add(encabezado);
 		List<DoctoinventariosMovimientosVersion06> movs = conectorTransferenciaService.crearMovimientosTransferencia(detalleSol);
 		transferenciaXml.addAll(movs);
 
 		String responseCrear = xmlService.postImportarXML(transferenciaXml);
+		log.debug("Respuesta de creacion de transferencia: {}", responseCrear);
 		if (!responseCrear.equals(RESPUESTA_OK)) {
 			return new ResponseMessage(true, responseCrear);
 		}
