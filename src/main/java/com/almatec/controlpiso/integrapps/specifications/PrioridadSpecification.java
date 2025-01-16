@@ -26,6 +26,7 @@ public class PrioridadSpecification {
 			List<Predicate> predicates = new ArrayList<>();
 			
 			predicates.add(criteriaBuilder.notEqual(root.get("item_id"), 0));
+			predicates.add(criteriaBuilder.notEqual(root.get("estadoOp"), 9));
 			
 			if(filtro.getCentroTrabajoId() != null) {
                 Predicate materialCentroTIdPredicate = criteriaBuilder.equal(root.get("materialCentroTId"), filtro.getCentroTrabajoId());
