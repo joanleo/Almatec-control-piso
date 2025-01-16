@@ -3,7 +3,7 @@
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head th:replace="fragments/head :: head('Status Proyectos')"></head>
 	<body>
-		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')" aria-label="Nav bar"></nav>
 				 
 		<div class="container my-5">
 			<h1>Entregas - O.P's</h1>
@@ -60,56 +60,67 @@
 				</table>			
 			</div>
 			
+			<!-- Pagination component -->
 			<nav aria-label="Page navigation" th:if="${totalPages > 1}">
-	            <ul class="pagination justify-content-center">
-	                <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
-	                    <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage - 1}, keyword=${keyword})}" tabindex="-1">Previous</a>
-	                </li>
-					
-					<!-- Primera página -->
+			    <ul class="pagination justify-content-center">
+			        <!-- Previous button -->
+			        <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
+			            <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage - 1}, keyword=${keyword})}" 
+			               aria-label="Previous">
+			                <span aria-hidden="true">&laquo;</span>
+			            </a>
+			        </li>
+			        
+			        <!-- First page always shown -->
 			        <li class="page-item" th:classappend="${currentPage == 0} ? active">
 			            <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=0, keyword=${keyword})}">1</a>
 			        </li>
-					
-					<!-- Puntos suspensivos izquierdos -->
-			        <li class="page-item disabled" th:if="${currentPage > 3}">
+			        
+			        <!-- Ellipsis if needed -->
+			        <li class="page-item disabled" th:if="${currentPage > 2}">
 			            <span class="page-link">...</span>
 			        </li>
-					
-	                <!--<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? active">
-	                    <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
-	                </li>-->
-					
-					<!-- Páginas centrales -->
-					<li class="page-item" 
-			            th:each="i : ${#numbers.sequence(currentPage > 1 ? currentPage - 1 : 1, currentPage + 1 < totalPages - 1 ? currentPage + 1 : totalPages - 1)}"
-			            th:classappend="${currentPage == i} ? active">
-			            <a class="page-link" 
-			               th:href="@{/ingenieria/status/proyectos(page=${i}, keyword=${keyword})}" 
-			               th:text="${i + 1}">
-			            </a>
+			        
+			        <!-- Previous page if applicable -->
+			        <li class="page-item" th:if="${currentPage > 1}">
+			            <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage - 1}, keyword=${keyword})}" 
+			               th:text="${currentPage}"></a>
 			        </li>
-					
-					<!-- Puntos suspensivos derechos -->
-			        <li class="page-item disabled" th:if="${currentPage < totalPages - 4}">
+			        
+			        <!-- Current page if not first or last -->
+			        <li class="page-item active" th:if="${currentPage > 0 && currentPage < totalPages - 1}">
+						<a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage}, keyword=${keyword})}" 
+			               th:text="${currentPage + 1}"></a>
+			        </li>
+			        
+			        <!-- Next page if applicable -->
+			        <li class="page-item" th:if="${currentPage < totalPages - 2}">
+			            <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage + 1}, keyword=${keyword})}" 
+			               th:text="${currentPage + 2}"></a>
+			        </li>
+			        
+			        <!-- Ellipsis if needed -->
+			        <li class="page-item disabled" th:if="${currentPage < totalPages - 3}">
 			            <span class="page-link">...</span>
 			        </li>
-					
-					<!-- Última página -->
+			        
+			        <!-- Last page if not first -->
 			        <li class="page-item" th:if="${totalPages > 1}" 
 			            th:classappend="${currentPage == totalPages - 1} ? active">
 			            <a class="page-link" 
 			               th:href="@{/ingenieria/status/proyectos(page=${totalPages - 1}, keyword=${keyword})}"
-			               th:text="${totalPages}">
+			               th:text="${totalPages}"></a>
+			        </li>
+			        
+			        <!-- Next button -->
+			        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? disabled">
+			            <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage + 1}, keyword=${keyword})}"
+			               aria-label="Next">
+			                <span aria-hidden="true">&raquo;</span>
 			            </a>
 			        </li>
-					
-					<!-- Botón Next -->
-	                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? disabled">
-	                    <a class="page-link" th:href="@{/ingenieria/status/proyectos(page=${currentPage + 1}, keyword=${keyword})}">Next</a>
-	                </li>
-	            </ul>
-	        </nav>
+			    </ul>
+			</nav>
 		</div>
 		
 		<div class="modal fade" id="detalleProyecto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="detalleProyectoLabel" aria-hidden="true">
