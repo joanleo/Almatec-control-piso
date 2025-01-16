@@ -48,7 +48,6 @@ public class ConsumosTepService {
 
 	public List<Conector> crearTEPYConsumos(ItemOp itemOp, ReporteDTO reporte, Boolean platinas) {
 		List<Conector> tepYConsumosXml = new ArrayList<>();
-		
 		//Datos del item
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(itemOp.getIdOpIntegrapps());
 		String idRuta = "0" + data.getf120_id();
@@ -70,7 +69,6 @@ public class ConsumosTepService {
 			codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());			
 		}else {
 			List<ItemListaMateriaInterface> materiaPrima = itemOpService.obtenerListaMaterialesItemPorIdItem(itemOp.getId().intValue(), itemOp.getIdItemFab());
-			
 			codErpMateriaPrima = materiaPrima.stream()
 			                    .filter(itemM -> Objects.equals(itemM.getid_parte(), idItemReportar))
 			                    .map(ItemListaMateriaInterface::getid_materia_prima)

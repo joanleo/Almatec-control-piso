@@ -110,7 +110,6 @@ public class ComercialController {
 			util.guardarRegistroXml(xmlService.crearPlanoXml(opPapa), consecutivo);
 			util.crearArchivoPlano(opPapa, consecutivo, configService.getCIA());
 			String response = xmlService.postImportarXML(opPapa);
-			System.out.println(response);
 			if (RESPUESTA_OK.equals(response)) {
 				VistaPedidosErp pedido = vistaPedidosErpService.obtenerPorNoPedido(noPedido);
 				Map<String, String> datos = new HashMap<>();

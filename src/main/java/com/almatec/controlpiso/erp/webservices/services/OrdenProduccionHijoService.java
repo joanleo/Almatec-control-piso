@@ -88,16 +88,20 @@ public class OrdenProduccionHijoService {
 		
 		LocalDateTime now = LocalDateTime.now();			        
 		String dateTime = now.format(formatter);
+		log.debug("Creando item-ruta");
 		String responseItemRutaXml =xmlService.postImportarXML(itemRutaXml);
 		util.guardarRegistroXml(xmlService.crearPlanoXml(itemRutaXml), "ITEM_RUTA-OP_IA_" + idOPI + "_" + dateTime);
 		util.crearArchivoPlano(itemRutaXml, "ITEM_RUTA-OP_IA_" + idOPI  + dateTime , configService.getCIA());
+		log.debug("Respuesta creacion item-ruta");
 		if (!responseItemRutaXml.equals(RESPUESTA_OK)) {
 			return responseItemRutaXml;
 		}
 		
 		List<Conector> operacionesXml = new ArrayList<>();
 		operacionesXml.addAll(conectorService.crearConectorRutasOperaciones(idOPI, ruta));
+		log.debug("Creando operaciones para id_op_ia: {}", idOPI);
 		String responseOperaciones = xmlService.postImportarXML(operacionesXml);
+		log.debug("Respuesta creacion operaciones");
 		if (!responseOperaciones.equals(RESPUESTA_OK)) {
 			return responseOperaciones;
 		}
