@@ -1,6 +1,6 @@
 const ALERT_SETTINGS = {
     success: {
-        duration: 15000, 
+        duration: 5000, 
         icon: '<i class="fa-solid fa-circle-check me-2"></i>',
         animation: 'fade-in'
     },
