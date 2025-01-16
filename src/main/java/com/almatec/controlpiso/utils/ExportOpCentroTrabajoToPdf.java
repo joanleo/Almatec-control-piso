@@ -142,10 +142,21 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
     
     private void agregarOActualizarFila(Map<String, RowItemPdf> uniqueRows, OpCentroTrabajoDTO op, ItemOpCtDTO item, 
             String descripcion, Integer cantidad, BigDecimal peso, BigDecimal longitud, String ref) {
-		String key = descripcion + "_" + cantidad;
+    	String key = String.format("%s_%s_%s_%s_%s", 
+    	        op.getOp(),           // Incluir OP
+    	        item.getMarca(),      // Incluir marca
+    	        descripcion,          // Descripción actual
+    	        cantidad,             // Cantidad actual
+    	        ref                   // Referencia del material/item
+    	    );
 		if (uniqueRows.containsKey(key)) {
 			RowItemPdf existingRow = uniqueRows.get(key);
-			existingRow.setPeso(existingRow.getPeso().add(peso != null ? peso : BigDecimal.ZERO));
+			if (peso != null) {
+	            existingRow.setPeso(existingRow.getPeso().add(peso));
+	        }
+			if (item.getPrioridad() < existingRow.getPrioridad()) {
+	            existingRow.setPrioridad(item.getPrioridad());
+	        }
 		// Actualizar otros campos si es necesario
 		} else {
 			RowItemPdf newRow = crearRowItemPdf(op, item, descripcion, cantidad, peso, longitud, ref);

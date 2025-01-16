@@ -71,9 +71,11 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
                     }
 	                    foundItems = true
                 }
-				if(!foundItems){
+				
 	                let componentes = itemOp.componentes
 					for (const componente of componentes) {
+						console.log(componente.material_centro_t_id )
+						console.log(componente.material_desc )
 	                    if (componente.material_centro_t_id == selectedCentroId) {
 	                        const componenteKey = `${itemOp.marca}-${componente.material_desc}-${selectedOp.proyecto}-${selectedOp.op}-${componente.material_cant}`
 	                        const existingComponente = uniqueComponentes.get(componenteKey)
@@ -90,7 +92,7 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
 	                        foundComponentes = true
 	                    }
 	                }					
-				}
+				
             }
         }
     })
