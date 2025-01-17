@@ -10,7 +10,7 @@ public interface VistaPiezasReportadasRepository extends JpaRepository<VistaPiez
 
 	List<VistaPiezasReportadas> findByItemCentroTIdOrMaterialCentroTId(Integer idCT, Integer idCT2);
 
-	List<VistaPiezasReportadas> findByItemCentroTIdOrMaterialCentroTIdOrderByIdOpIntegrappsDesc(Integer idCT,
+	List<VistaPiezasReportadas> findByEstadoOpAndItemCentroTIdOrMaterialCentroTIdOrderByIdOpIntegrappsDesc(Integer estadoOp, Integer idCT,
 			Integer idCT2);
 
 }

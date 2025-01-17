@@ -26,7 +26,7 @@ public class VistaPiezasReportadasServiceImpl implements VistaPiezasReportadasSe
 	
 	@Override
 	public Set<OrdenProduccionResumen> buscarOps(Integer idCT) {
-		List<VistaPiezasReportadas> listaPiezas = vistaPiezasReportadasRepo.findByItemCentroTIdOrMaterialCentroTIdOrderByIdOpIntegrappsDesc(idCT, idCT);
+		List<VistaPiezasReportadas> listaPiezas = vistaPiezasReportadasRepo.findByEstadoOpAndItemCentroTIdOrMaterialCentroTIdOrderByIdOpIntegrappsDesc(1,idCT, idCT);
 		
 		Set<OrdenProduccionResumen> ordenesProducion = new HashSet<>();
 		
