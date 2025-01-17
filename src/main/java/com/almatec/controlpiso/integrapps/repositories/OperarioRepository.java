@@ -17,7 +17,8 @@ public interface OperarioRepository extends JpaRepository<Operario, Integer> {
 	@Query(value = "SELECT pro_operario.C_prooperario_id "
 			+ "FROM pro_operario "
 			+ "RIGHT JOIN personas ON pro_operario.Per_Id = personas.Per_Id "
-			+ "WHERE (personas.Per_Doc_Num = :numCedula) ", nativeQuery = true)
+			+ "WHERE (personas.Per_Doc_Num = :numCedula) "
+			+ "AND pro_operario.E_activo = 1 ", nativeQuery = true)
 	Integer obtenerIdOperario(@Param("numCedula") String numCedula);
 
 	@Query(value = "SELECT pro_operario.A_Operario_Nombre, personas.Barcode " +

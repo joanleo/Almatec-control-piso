@@ -16,9 +16,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "pro_operario")
+@Table(name = "pro_operario", uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"Per_Id"},
+                name = "uk_operario_persona"
+            )
+        })
 public class Operario {
 
 	@Id
