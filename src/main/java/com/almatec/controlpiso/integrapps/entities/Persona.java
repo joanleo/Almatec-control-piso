@@ -9,9 +9,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "personas")
+@Table(name = "personas",uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"Per_Id"},
+                name = "uk__persona_id"
+            )
+        })
 public class Persona {
 
 	@Id
