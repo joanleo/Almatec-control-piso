@@ -7,7 +7,7 @@ let spinner
 document.addEventListener('DOMContentLoaded', async function(){
 	spinner = document.getElementById('spinner')
 	spinner.removeAttribute('hidden')
-	const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9, 17];
+	const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 17];
 
 	const centrosTrabajo = await fetchCentrosT()
 	

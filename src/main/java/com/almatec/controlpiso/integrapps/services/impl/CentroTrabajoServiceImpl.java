@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.integrapps.dtos.CentroOperacion;
@@ -71,7 +70,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	@Autowired
 	private VistaOpItemsMaterialesRutaService opItemsMaterialesRutaService;
 	
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	@Override
 	public List<Compania> buscarCompanias() {

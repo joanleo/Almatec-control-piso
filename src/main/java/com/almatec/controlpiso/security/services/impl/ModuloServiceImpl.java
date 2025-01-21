@@ -49,9 +49,6 @@ public class ModuloServiceImpl implements ModuloService {
             if (mainPermission != null) {
                 modulo.setPermission(mainPermission);
             }
-            log.info("Módulo: {}, Permiso principal asignado: {}", 
-                modulo.getNombre(), 
-                modulo.getPermission() != null ? modulo.getPermission().getName() : "Sin permiso");
         }
         
         return modulos;

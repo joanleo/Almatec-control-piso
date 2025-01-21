@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -125,7 +122,6 @@ public class RoleController {
 
 	    try {
 	        RoleDTO role = roleService.obtenerRoleDTOConPermisos(idRole);
-	        log.info("Role obtenido: {}", role);
 
 	        List<Modulo> modulos = moduloServise.findAll();
 
@@ -147,7 +143,6 @@ public class RoleController {
 	        }
 	        
 	        String rolePermissionsJson = mapper.writeValueAsString(permissionsJson);
-	        log.info("Permisos procesados: {}", rolePermissionsJson);
 	        
 	        modelo.addAttribute("role", role);
 	        modelo.addAttribute("modulos", modulos);
