@@ -87,6 +87,7 @@ public class SecurityConfig {
                         .antMatchers("/produccion/impresion-etiquetas").hasAuthority("ACCESS_IMPRESION_DE_ETIQUETAS")
                         .antMatchers("/informes/produccion/excel-general").hasAuthority("ACCESS_GENERAR_INFORME_GENERAL")
                         .antMatchers("/informes/produccion/excel-mes").hasAuthority("ACCESS_GENERAR_INFORME_MENSUAL")
+                        .antMatchers("/almacen/solicitudes/historial").hasAuthority("ACCESS_VER_HISTORIAL_SOLICITUDES_MATERIA_PRIMA")
                         .antMatchers("/almacen/solicitudes/**").hasAuthority("ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA")
                         .antMatchers("/almacen/detalle/**").hasAuthority("ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA")
                         .antMatchers("/almacen/remisiones/nueva").hasAuthority("ACCESS_CREAR_REMISION")
