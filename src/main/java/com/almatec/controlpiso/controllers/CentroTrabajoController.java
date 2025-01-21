@@ -46,9 +46,11 @@ import com.almatec.controlpiso.integrapps.dtos.RegistroParadaDTO;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.dtos.TiemposOperariosDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
+import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.Operario;
 import com.almatec.controlpiso.integrapps.entities.VistaPiezasOperarios;
 import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
+import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
 import com.almatec.controlpiso.integrapps.services.NovedadCtService;
 import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
@@ -77,6 +79,7 @@ public class CentroTrabajoController {
 	private final RegistroParadaService registroParadaService;
 	private final ListaMService listaMService;
 	private final CentrosTrabajoPDFService centrosTrabajoPDFService;
+	private final ItemOpService itemOpService;
 	
 	
 	private static final String REDIRECT_HOME = "redirect:/produccion/home";
@@ -91,7 +94,8 @@ public class CentroTrabajoController {
 			NovedadCtService novedadCtService,
 			RegistroParadaService registroParadaService, 
 			ListaMService listaMService,
-			CentrosTrabajoPDFService centrosTrabajoPDFService) {
+			CentrosTrabajoPDFService centrosTrabajoPDFService,
+			ItemOpService itemOpService) {
 		super();
 		this.centroTrabajoService = centroTrabajoService;
 		this.util = util;
@@ -103,6 +107,7 @@ public class CentroTrabajoController {
 		this.registroParadaService = registroParadaService;
 		this.listaMService = listaMService;
 		this.centrosTrabajoPDFService = centrosTrabajoPDFService;
+		this.itemOpService = itemOpService;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -189,8 +194,16 @@ public class CentroTrabajoController {
 		//stopWatch.stop();
 		//logger.info("Tiempo de ejecución Total: {} ms", stopWatch.getTotalTimeMillis());
 		//stopWatch.start();
-		Integer codErpMp = listaMService.obtenerCodMateriaPrimaItemReporte(idItem);
-		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItemReporte(idItemOp, codErpMp);
+		Integer codigoBusqueda;
+	    if(idCT == 17) {
+	        ItemOp item = itemOpService.obtenerItemPorId(idItemOp);
+	        System.out.println(item);
+	        codigoBusqueda = item.getCodigoPintura();
+	    } else {
+	        codigoBusqueda = listaMService.obtenerCodMateriaPrimaItemReporte(idItem);
+	    }
+	    
+	    List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItemReporte(idItemOp, codigoBusqueda);
 		//List<LoteConCodigoDTO> lotes_old = listaMService.obtenerLotesOpPorItem(idItemOp);
 		//stopWatch.stop();
 		//logger.info("Tiempo de ejecución obtencion de lotes: {} ms", stopWatch.getTotalTimeMillis());
