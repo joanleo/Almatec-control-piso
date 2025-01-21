@@ -100,6 +100,8 @@ public class OrdenProduccionHijoService {
 		List<Conector> operacionesXml = new ArrayList<>();
 		operacionesXml.addAll(conectorService.crearConectorRutasOperaciones(idOPI, ruta));
 		log.debug("Creando operaciones para id_op_ia: {}", idOPI);
+		util.guardarRegistroXml(xmlService.crearPlanoXml(operacionesXml), "RUTA_OPERACIONES-OP_IA_" + idOPI + "_" + dateTime);
+		util.crearArchivoPlano(operacionesXml, "RUTA_OPERACIONES-OP_IA_" + idOPI  + dateTime , configService.getCIA());
 		String responseOperaciones = xmlService.postImportarXML(operacionesXml);
 		log.debug("Respuesta creacion operaciones");
 		if (!responseOperaciones.equals(RESPUESTA_OK)) {
@@ -142,6 +144,7 @@ public class OrdenProduccionHijoService {
 		// Actualizar tabla ordenPV rowid850 y rowid851, Num_Op,op_UnoEE,BarCodeH
 		ConsultaItemOpCreado creadoInterface = listaMaterialService.obtenerRowIdOpItemOp(item.getF120_id());
 		ConsultaOpCreadaDTO creado = new ConsultaOpCreadaDTO(creadoInterface);
+		util.guardarRegistroXml(xmlService.crearPlanoXml(ordenProduccionXml), "OP-" + creado.getF850_consec_docto());
 		util.crearArchivoPlano(ordenProduccionXml, "OP-" + creado.getF850_consec_docto(), configService.getCIA());
 		ordenIntegrapps = ordenPvService.actualizarDatosOp(creado, ordenIntegrapps);
 		mensajeServices.enviarEmailCreacionOrdenProduccion(ordenIntegrapps);
