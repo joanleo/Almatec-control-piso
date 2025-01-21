@@ -1,14 +1,12 @@
 package com.almatec.controlpiso.security.services.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,7 +45,6 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	@Transactional
-    @CacheEvict(value = "roles", key = "#role.id")
 	public void guardarRole(Role role) {
 		try {
 			log.debug("Guardando role: {}", role.getNombre());
@@ -73,23 +70,51 @@ public class RoleServiceImpl implements RoleService {
 	}
  
 	@Override
-	@Cacheable("roles")
 	public RoleDTO obtenerRoleDTO(Long idRole) {
 		try {
 			Role roleEdita = rolRepo.findById(idRole)
-					.orElseThrow();
-			ModelMapper mapper = new ModelMapper();
-			return mapper.map(roleEdita, RoleDTO.class);
+					.orElseThrow(() -> new RuntimeException("Role no encontrado"));
+			RoleDTO dto = new RoleDTO();
+	        dto.setIdRole(roleEdita.getIdRole());
+	        dto.setNombre(roleEdita.getNombre());
+	        dto.setPermissions(roleEdita.getPermissions().stream()
+	            .map(p -> p.getIdPermiso().toString())
+	            .collect(Collectors.joining(",")));
+	        
+	        return dto;
 		} catch (Exception e) {
 			e.printStackTrace();  
+			return null;
 		}
-		return null;
 	}
 
 	@Override
-	@Cacheable("roles")
 	public Role obtenerRole(Long idRole) {
-		return rolRepo.findById(idRole).orElse(null);
+		try {
+			Role role =rolRepo.findByIdRole(idRole).orElseThrow(()-> new RuntimeException("No se encontro el role con id: " + idRole));
+			System.out.println(role);
+			return role;
+		} catch (Exception e) {
+			e.printStackTrace(); 
+			return null;
+		}
+	}
+
+	@Override
+	public RoleDTO obtenerRoleDTOConPermisos(Long idRole) {
+	    Role role = rolRepo.findByIdWithPermissions(idRole)
+	        .orElseThrow(() -> new RuntimeException("Role no encontrado"));
+
+	    RoleDTO roleDTO = new RoleDTO();
+	    roleDTO.setIdRole(role.getIdRole());
+	    roleDTO.setNombre(role.getNombre());
+	    roleDTO.setPermissions(
+	        role.getPermissions().stream()
+	        	.map(permission -> String.format("%d:%s", permission.getIdPermiso(), permission.getName()))
+	            .collect(Collectors.joining(","))
+	    );
+
+	    return roleDTO;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.almatec.controlpiso.security.controllers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,6 +65,10 @@ public class RoleController {
 	public String nuevo(Model modelo) throws JsonProcessingException {
 		RoleDTO role = new RoleDTO();
 		List<Modulo> modulos = moduloServise.findAll();
+		log.info("Módulo de costos: {}", modulos.stream()
+		        .filter(m -> m.getNombre().equals("Costos"))
+		        .findFirst()
+		        .orElse(null));
 		ObjectMapper mapper = new ObjectMapper();
 		String modulosJson = mapper.writeValueAsString(modulos);
 		modelo.addAttribute("role", role);
@@ -78,8 +83,10 @@ public class RoleController {
 	public String guardarRole(@ModelAttribute("role") RoleDTO roleDTO, RedirectAttributes flash) {
 		log.info("Iniciando guardado de role: {}", roleDTO.getNombre());
 	    long startTime = System.currentTimeMillis();
+	    System.out.println(roleDTO);	    	    
 	    
 		Set<Permission> permissionsSet = convertStringToPermissionsSet(roleDTO.getPermissions());
+		System.out.println("Permisos convertidos: " + permissionsSet);
 		log.info("Tiempo conversión permisos: {}ms", System.currentTimeMillis() - startTime);
 		
 		
@@ -88,9 +95,15 @@ public class RoleController {
 			long dbFetchStart = System.currentTimeMillis();
 			roleSave = roleService.obtenerRole(roleDTO.getIdRole());
 			log.info("Tiempo fetch role: {}ms", System.currentTimeMillis() - dbFetchStart);
-			
-			roleSave.setNombre(roleDTO.getNombre());
-			roleSave.setPermissions(permissionsSet);
+			if(roleSave != null) {
+	            roleSave.setNombre(roleDTO.getNombre());
+	            roleSave.setPermissions(permissionsSet);
+	        } else {
+	            // Si no existe, crear uno nuevo
+	            roleSave = new Role();
+	            roleSave.setNombre(roleDTO.getNombre());
+	            roleSave.setPermissions(permissionsSet);
+	        }
 		}else {
 			roleSave.setNombre(roleDTO.getNombre());
 			roleSave.setPermissions(permissionsSet);						
@@ -108,36 +121,45 @@ public class RoleController {
 	
 	@GetMapping("/editar/{idRole}")
 	public String editarRole(Model modelo, @PathVariable Long idRole) throws JsonProcessingException {
-		RoleDTO role = roleService.obtenerRoleDTO(idRole);
-		List<Modulo> modulos = moduloServise.findAll();
-		ObjectMapper mapper = new ObjectMapper();
-		String modulosJson = mapper.writeValueAsString(modulos);
-		
-		List<Map<String, String>> permissionsJson = Arrays.stream(role.getPermissions().split("\\], "))
-	        .map(permissionString -> {
-        		Map<String, String> permissionMap = new HashMap<>();
-                
-                // Usar expresiones regulares para extraer id y name
-                Pattern pattern = Pattern.compile("Permission \\[idPermiso=(\\d+), name=(.+)\\]?");
-                Matcher matcher = pattern.matcher(permissionString);
-                
-                if (matcher.find()) {
-                    permissionMap.put("id", matcher.group(1));
-                    permissionMap.put("name", matcher.group(2));
-                }
-                
-                return permissionMap;
-            })
-            .collect(Collectors.toList());
-	    
-	    String rolePermissionsJson = mapper.writeValueAsString(permissionsJson);
-		
-		modelo.addAttribute("role", role);
-		modelo.addAttribute("modulos", modulos);
-		modelo.addAttribute("modulosJson", modulosJson);
-		
-		modelo.addAttribute("rolePermissionsJson", rolePermissionsJson);
-		return "configuracion/roles/formulario-role";
+		log.info("Iniciando edición de role con ID: {}", idRole);
+
+	    try {
+	        RoleDTO role = roleService.obtenerRoleDTOConPermisos(idRole);
+	        log.info("Role obtenido: {}", role);
+
+	        List<Modulo> modulos = moduloServise.findAll();
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        String modulosJson = mapper.writeValueAsString(modulos);
+	        
+	        // Procesamiento de los permisos
+	        List<Map<String, String>> permissionsJson = new ArrayList<>();
+	        if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+	            permissionsJson = Arrays.stream(role.getPermissions().split(","))
+	            		.map(permission -> {
+	                        String[] parts = permission.split(":"); // Divide id y nombre
+	                        Map<String, String> permissionMap = new HashMap<>();
+	                        permissionMap.put("id", parts[0]);     // ID del permiso
+	                        permissionMap.put("name", parts[1]);   // Nombre del permiso
+	                        return permissionMap;
+	                    })
+	                    .collect(Collectors.toList());
+	        }
+	        
+	        String rolePermissionsJson = mapper.writeValueAsString(permissionsJson);
+	        log.info("Permisos procesados: {}", rolePermissionsJson);
+	        
+	        modelo.addAttribute("role", role);
+	        modelo.addAttribute("modulos", modulos);
+	        modelo.addAttribute("modulosJson", modulosJson);
+	        modelo.addAttribute("rolePermissionsJson", rolePermissionsJson);
+
+	        return "configuracion/roles/formulario-role";
+	    } catch (Exception e) {
+	        log.error("Error al editar role: {}", e.getMessage(), e);
+	        modelo.addAttribute("error", "Error al cargar el rol para editar");
+	        return "redirect:/roles";
+	    }
 	}
 	
 	@PostMapping("/eliminar")
@@ -156,16 +178,12 @@ public class RoleController {
 	        return new HashSet<>();
 	    }
 		
-		Map<Long, Permission> permissionsMap = permissionService.getAllPermissions().stream()
-	            .collect(Collectors.toMap(Permission::getIdPermiso, p -> p));
+		List<Long> permissionIds = Arrays.stream(permissionsString.split(","))
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+		Set<Permission> permissions = new HashSet<>(permissionService.findAllByIdIn(permissionIds));
 	    
-	    
-	    // Una sola consulta para todos los permisos
-	    return Arrays.stream(permissionsString.split(","))
-	            .filter(s -> !s.isEmpty())
-	            .map(Long::valueOf)
-	            .map(permissionsMap::get)
-	            .filter(Objects::nonNull)
-	            .collect(Collectors.toSet());
+	    log.info("Permisos convertidos: {}", permissions);
+	    return permissions;
 	}
 }

@@ -72,6 +72,14 @@ public class Permission {
 		this.opcionModulo = opcionModulo;
 	}
 
+	public Modulo getModulo() {
+		return modulo;
+	}
+
+	public void setModulo(Modulo modulo) {
+		this.modulo = modulo;
+	}
+
 	public Permission() {
 		super();
 	}

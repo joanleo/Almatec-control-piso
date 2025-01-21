@@ -4,7 +4,12 @@ document.addEventListener("DOMContentLoaded", function() {
     let permissionsField = document.getElementById('permissions-field');
     let selectedPermissions = new Set(rolePermissions.map(p => p.id));
     
-    // Inicializar el campo de permisos con los IDs de los permisos del rol
+    // Log inicial para depuración
+    console.log('Módulos cargados:', modulos);
+    console.log('Permisos del rol:', rolePermissions);
+    console.log('Permisos seleccionados:', Array.from(selectedPermissions));
+    
+    // Inicializar el campo de permisos
     permissionsField.value = Array.from(selectedPermissions).join(',');
     
     let checkboxes = document.querySelectorAll('.modulos input[type="checkbox"]');
@@ -16,7 +21,17 @@ document.addEventListener("DOMContentLoaded", function() {
             return modulo.nombre === moduleSelect;
         });
         
-        if (moduloSeleccionado && moduloSeleccionado.permission && selectedPermissions.has(moduloSeleccionado.permission.idPermiso.toString())) {
+        // Log para verificar el módulo seleccionado
+        console.log('Procesando módulo:', {
+            nombre: moduleSelect,
+            modulo: moduloSeleccionado,
+            permisoModulo: moduloSeleccionado?.permission
+        });
+        
+        // Verificar si el permiso principal del módulo está seleccionado
+        if (moduloSeleccionado && 
+            moduloSeleccionado.permission && 
+            selectedPermissions.has(moduloSeleccionado.permission.idPermiso.toString())) {
             checkbox.checked = true;
             cargarOpcionesModulo(moduloSeleccionado, moduleSelect);
         }
@@ -24,14 +39,28 @@ document.addEventListener("DOMContentLoaded", function() {
         checkbox.addEventListener('change', function() {
             if (this.checked) {
                 if (moduloSeleccionado && moduloSeleccionado.permission) {
+                    console.log('Activando módulo:', moduleSelect, moduloSeleccionado.permission);
+                    // Agregar el permiso principal del módulo
                     selectedPermissions.add(moduloSeleccionado.permission.idPermiso.toString());
                     cargarOpcionesModulo(moduloSeleccionado, moduleSelect);
                 }
-            } else if (moduloSeleccionado && moduloSeleccionado.permission) {
-                selectedPermissions.delete(moduloSeleccionado.permission.idPermiso.toString());
-                let moduleDivWrapper = divDetalleModulos.querySelector(`div[data-module-name="${moduleSelect}"]`);
-                if (moduleDivWrapper) {
-                    divDetalleModulos.removeChild(moduleDivWrapper);
+            } else {
+                if (moduloSeleccionado && moduloSeleccionado.permission) {
+                    console.log('Desactivando módulo:', moduleSelect);
+                    // Eliminar el permiso principal del módulo
+                    selectedPermissions.delete(moduloSeleccionado.permission.idPermiso.toString());
+                    
+                    // Eliminar los permisos de las opciones
+                    moduloSeleccionado.opciones.forEach(opcion => {
+                        if (opcion.permission) {
+                            selectedPermissions.delete(opcion.permission.idPermiso.toString());
+                        }
+                    });
+                    
+                    let moduleDivWrapper = divDetalleModulos.querySelector(`div[data-module-name="${moduleSelect}"]`);
+                    if (moduleDivWrapper) {
+                        divDetalleModulos.removeChild(moduleDivWrapper);
+                    }
                 }
             }
             updatePermissionsField();
@@ -39,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     
     function cargarOpcionesModulo(moduloSeleccionado, moduleSelect) {
-        const opcionesMudulo = moduloSeleccionado.opciones;
+        const opcionesModulo = moduloSeleccionado.opciones || [];
         let moduloDivWrapper = document.createElement('div');
         moduloDivWrapper.dataset.moduleName = moduleSelect;
         moduloDivWrapper.classList.add('my-4');
@@ -51,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function() {
         titulo.textContent = moduleSelect;
         moduloDivWrapper.appendChild(titulo);
         
-        opcionesMudulo.forEach(function(opcion) {
+        opcionesModulo.forEach(function(opcion) {
             if (opcion && opcion.permission) {
                 let moduloDivGroup = document.createElement('div');
                 moduloDivGroup.classList.add('form-check', 'form-switch', 'mb-5', 'mx-4');
@@ -87,12 +116,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
         });
+        
         moduloDivWrapper.appendChild(moduloDiv);
         divDetalleModulos.appendChild(moduloDivWrapper);
     }
     
     function updatePermissionsField() {
         let data = Array.from(selectedPermissions).join(',');
-        permissionsField.value = data
+        permissionsField.value = data;
+        console.log('Permisos actualizados:', data);
     }
 });

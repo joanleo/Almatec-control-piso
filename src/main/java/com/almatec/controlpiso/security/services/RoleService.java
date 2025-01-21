@@ -20,4 +20,6 @@ public interface RoleService {
 
 	Role obtenerRole(Long idRol);
 
+	RoleDTO obtenerRoleDTOConPermisos(Long idRole);
+
 }

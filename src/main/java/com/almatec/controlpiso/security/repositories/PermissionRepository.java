@@ -13,4 +13,6 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
 	
 	List<Permission> findByIdPermisoIn(Collection<Long> ids);
 
+	List<Permission> findByOpcionModuloIdOpcionIsNull();
+
 }
