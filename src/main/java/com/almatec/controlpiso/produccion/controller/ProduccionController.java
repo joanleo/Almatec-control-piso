@@ -1,12 +1,19 @@
 package com.almatec.controlpiso.produccion.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +25,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
+import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
 import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
 import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
@@ -38,13 +47,17 @@ import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
 import com.almatec.controlpiso.integrapps.entities.VistaNovedades;
+import com.almatec.controlpiso.integrapps.services.CentroTrabajoService;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ListaMService;
 import com.almatec.controlpiso.integrapps.services.NovedadCtService;
+import com.almatec.controlpiso.integrapps.services.OperarioService;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 import com.almatec.controlpiso.integrapps.services.RegistroOperDiaService;
+import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaItemLoteDisponibleService;
 import com.almatec.controlpiso.integrapps.services.VistaNovedadesService;
+import com.almatec.controlpiso.produccion.dtos.ReportePiezaCtDTO;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.security.services.UsuarioService;
 
@@ -84,6 +97,15 @@ public class ProduccionController {
 	
 	@Autowired
 	private MensajeServices mensajeService;
+	
+	@Autowired
+	private ReportePiezaCtService reportePiezaCtService;
+	
+	@Autowired
+	private OperarioService operarioService;
+	
+	@Autowired
+	private CentroTrabajoService centroTrabajoService;
 	
 	@GetMapping("/home")
 	public String homeProduction(@RequestParam(required = false) String alert,
@@ -217,5 +239,67 @@ public class ProduccionController {
 	public ResponseEntity<List<ItemOp>> getItemsOpByIdOp(@PathVariable Integer idOp){
 		return  ResponseEntity.ok(itemOpService.obtenerItemsOpProduccion(idOp));
 	}	
+	
+	
+	@GetMapping("/historial-reportes")
+    public String mostrarReportes(
+            @RequestParam(required = false) 
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio,
+            @RequestParam(required = false) 
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin,
+            @RequestParam(required = false) Integer idOperario,
+            @RequestParam(required = false) Integer idCentroT,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "fechaCreacion") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            Model model) throws ServiceException {
+		
+		LocalDateTime fechaInicioDateTime = fechaInicio != null ? fechaInicio.atStartOfDay() : null;
+	    LocalDateTime fechaFinDateTime = fechaFin != null ? fechaFin.atTime(23, 59, 59) : null;
+            
+        Page<ReportePiezaCtDTO> reportes = reportePiezaCtService.getReportesPiezaWithFilters(
+        		fechaInicioDateTime, fechaFinDateTime, idOperario, idCentroT, page, size, sortBy, sortDirection);
+            
+        // Add data for filter dropdowns
+        model.addAttribute("operarios", operarioService.obtenerOperariosGeneral());
+        model.addAttribute("centrosTrabajo", centroTrabajoService.buscarCentrosTrabajo(22));
+        
+        // Add current filter values
+        model.addAttribute("fechaInicio", fechaInicio);
+        model.addAttribute("fechaFin", fechaFin);
+        model.addAttribute("idOperario", idOperario);
+        model.addAttribute("idCentroT", idCentroT);
+        
+     // Calculate page range for pagination
+        int totalPages = reportes.getTotalPages();
+        int start = Math.max(0, page - 2);
+        int end = Math.min(totalPages - 1, page + 2);
+        
+        List<Integer> pageNumbers = IntStream.rangeClosed(start, end)
+                .boxed()
+                .collect(Collectors.toList());
+        
+        // Add pagination data
+        model.addAttribute("reportes", reportes);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", reportes.getTotalPages());
+        model.addAttribute("totalItems", reportes.getTotalElements());
+        model.addAttribute("pageNumbers", pageNumbers);
+        
+        return "produccion/historial-reportes";
+    }
+	
+	@ResponseBody
+	@PostMapping("/reenviar-reporte/{idReporte}")
+	public ResponseEntity<String> reenviarReporte(@PathVariable Integer idReporte){
+		try {
+			reportePiezaCtService.reprocesarReporte(idReporte);
+	        return ResponseEntity.ok("Reporte reenviado exitosamente");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                           .body("Error al reenviar el reporte");
+	    }
+	}
 
 }

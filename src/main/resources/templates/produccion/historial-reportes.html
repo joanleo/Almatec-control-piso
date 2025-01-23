@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+  	<head th:replace="fragments/head :: head('Produccion :: Historial de Reportes de Piezas')">	</head>
+	<th:block th:append="head">
+	    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+	</th:block>   
+	<body>
+		<nav th:replace="fragments/navbar :: nav-bar('Almacen')" aria-label="Site menu"></nav>
+		
+	    <div class="container mt-4">
+	        <h2>Historial de Reportes de Piezas</h2>
+	        
+	        <!-- Filtros -->
+	        <div class="card mb-4">
+	            <div class="card-body">
+	                <form th:action="@{/produccion/historial-reportes}" method="get" class="row g-3">
+	                    <div class="col-md-3">
+	                        <label class="form-label" for="fechaInicio">Fecha Inicio:</label>
+	                        <input id="fechaInicio" type="datetime-local" class="form-control flatpickr" 
+	                               name="fechaInicio" th:value="${fechaInicio}">
+	                    </div>
+	                    
+	                    <div class="col-md-3">
+	                        <label class="form-label" for="fechaFin">Fecha Fin:</label>
+	                        <input id="fechaFin" type="datetime-local" class="form-control flatpickr" 
+	                               name="fechaFin" th:value="${fechaFin}">
+	                    </div>
+	                    
+	                    <div class="col-md-3">
+	                        <label class="form-label" for="operario">Operario:</label>
+	                        <select class="form-select" id="operario" name="idOperario">
+	                            <option value="">Todos</option>
+	                            <option th:each="operario : ${operarios}"
+	                                    th:value="${operario.id}"
+	                                    th:text="${operario.nombres}"
+	                                    th:selected="${operario.id == idOperario}">
+	                            </option>
+	                        </select>
+	                    </div>
+	                    
+	                    <div class="col-md-3">
+	                        <label class="form-label" for="centroTrabajo">Centro de Trabajo:</label>
+	                        <select class="form-select" id="centroTrabajo" name="idCentroT">
+	                            <option value="">Todos</option>
+	                            <option th:each="centro : ${centrosTrabajo}"
+	                                    th:value="${centro.id}"
+	                                    th:text="${centro.nombre}"
+	                                    th:selected="${centro.id == idCentroT}">
+	                            </option>
+	                        </select>
+	                    </div>
+	                    
+	                    <div class="col-12">
+	                        <button type="submit" class="btn btn-primary">Filtrar</button>
+	                        <a th:href="@{/produccion/historial-reportes}" class="btn btn-secondary">Limpiar</a>
+	                    </div>
+	                </form>
+	            </div>
+	        </div>
+	
+	        <!-- Tabla de Resultados -->
+	        <div class="table-responsive">
+	            <table class="table table-striped table-bordered">
+	                <thead class="table-dark">
+	                    <tr>
+	                        <th>Operario</th>
+	                        <th>Centro de Trabajo</th>
+	                        <th>Item</th>
+	                        <th>Cant</th>
+	                        <th>Lote</th>
+	                        <th>Fecha Creación</th>
+							<th>Estado</th>
+							<th>Acciones</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr th:each="reporte : ${reportes.content}">
+	                        <td th:text="${reporte.operarioNombre}"></td>
+	                        <td th:text="${reporte.centroTrabajoNombre}"></td>
+	                        <td th:text="${reporte.itemDescripcion}"></td>
+	                        <td th:text="${reporte.cant}"></td>
+	                        <td th:text="${reporte.lote}"></td>
+	                        <td th:text="${#temporals.format(reporte.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+							<td th:text="${reporte.estado}"></td>
+							<td class="text-center">
+					            <button th:if="${reporte.estado == 'PENDIENTE'}"
+					                    class="btn btn-primary btn-sm"
+					                    onclick="reenviarReporte(this)"
+					                    th:data-reporte-id="${reporte.id}"
+										data-bs-toggle="tooltip"
+							            data-bs-placement="top"
+							            title="Reenviar">
+					                <i class="fas fa-sync-alt"></i> 
+					            </button>
+					        </td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+	
+			<!-- Paginación -->
+			<nav th:if="${reportes.totalPages > 1}" aria-label="Paginacion">
+			    <ul class="pagination justify-content-center">
+			        <!-- First Page -->
+			        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=0, size=10, 
+			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
+			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               aria-label="Primera página">
+			                <span aria-hidden="true">&laquo;</span>
+			            </a>
+			        </li>
+			        
+			        <!-- Previous Page -->
+			        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${currentPage - 1}, size=10, 
+			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
+			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               aria-label="Anterior">
+			                <span aria-hidden="true">‹</span>
+			            </a>
+			        </li>
+			        
+			        <!-- Page Numbers -->
+			        <li class="page-item" th:each="pageNum : ${pageNumbers}"
+			            th:classappend="${pageNum == currentPage ? 'active' : ''}">
+			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${pageNum}, size=10, 
+			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
+			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               th:text="${pageNum + 1}"></a>
+			        </li>
+			        
+			        <!-- Next Page -->
+			        <li class="page-item" th:classappend="${currentPage >= reportes.totalPages - 1 ? 'disabled' : ''}">
+			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${currentPage + 1}, size=10, 
+			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
+			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               aria-label="Siguiente">
+			                <span aria-hidden="true">›</span>
+			            </a>
+			        </li>
+			        
+			        <!-- Last Page -->
+			        <li class="page-item" th:classappend="${currentPage >= reportes.totalPages - 1 ? 'disabled' : ''}">
+			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${reportes.totalPages - 1}, size=10, 
+			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
+			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               aria-label="Última página">
+			                <span aria-hidden="true">&raquo;</span>
+			            </a>
+			        </li>
+			    </ul>
+			</nav>
+	    </div>
+	
+	    <!-- Scripts -->
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	    <script>
+	        document.addEventListener('DOMContentLoaded', function() {
+	            flatpickr(".flatpickr", {
+	                dateFormat: "Y-m-d",
+					allowInput: true,
+	            });
+				
+				let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+				let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+				  return new bootstrap.Tooltip(tooltipTriggerEl)
+				})
+	        });
+	    </script>
+		<script src="/js/produccion/historial-reportes.js"></script>
+	</body>
+</html>

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +14,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "pro_reporte_pieza_ct")
 public class ReportePiezaCt {
+	
+	public enum Estado {
+        PENDIENTE,          // Reporte guardado inicialmente
+        PROCESANDO,         // Durante el envío al ERP
+        CONSUMO_COMPLETO,   // Consumo procesado exitosamente
+        TEP_COMPLETO,       // TEP procesado exitosamente
+        COMPLETO,           // proceso exitoso
+        ERROR              // Error en algún paso
+    }
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +52,8 @@ public class ReportePiezaCt {
 	@Column(name = "fecha_ceacion")
 	private LocalDateTime fechaCreacion;
 	
-	private Integer estado=0;
+	@Enumerated(EnumType.STRING)
+	private Estado estado;
 	
 	@Column(name = "item_id")
 	private Long itemId;
@@ -56,6 +68,12 @@ public class ReportePiezaCt {
 	
 	@Column(name = "id_configproceso")
 	private Integer idConfigProceso;
+	
+	@Column(name = "mensaje_error")
+	private String mensajeError;  
+
+	@Column(name = "ultimo_intento")
+    private LocalDateTime ultimoIntento;
 	
 
 	public Integer getId() {
@@ -122,11 +140,11 @@ public class ReportePiezaCt {
 		this.fechaCreacion = fechaCreacion;
 	}
 
-	public Integer getEstado() {
+	public Estado getEstado() {
 		return estado;
 	}
 
-	public void setEstado(Integer estado) {
+	public void setEstado(Estado estado) {
 		this.estado = estado;
 	}
 
@@ -176,6 +194,22 @@ public class ReportePiezaCt {
 
 	public void setIdConfigProceso(Integer idConfigProceso) {
 		this.idConfigProceso = idConfigProceso;
+	}
+
+	public String getMensajeError() {
+		return mensajeError;
+	}
+
+	public LocalDateTime getUltimoIntento() {
+		return ultimoIntento;
+	}
+
+	public void setMensajeError(String mensajeError) {
+		this.mensajeError = mensajeError;
+	}
+
+	public void setUltimoIntento(LocalDateTime ultimoIntento) {
+		this.ultimoIntento = ultimoIntento;
 	}
 
 	public ReportePiezaCt() {

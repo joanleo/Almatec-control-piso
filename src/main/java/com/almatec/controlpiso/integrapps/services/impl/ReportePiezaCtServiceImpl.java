@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.integrapps.services.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,10 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
@@ -21,17 +26,20 @@ import com.almatec.controlpiso.erp.webservices.XmlService;
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 import com.almatec.controlpiso.erp.webservices.services.ConsumosTepService;
 import com.almatec.controlpiso.erp.webservices.services.EntregaService;
+import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
 import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.Item;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.ReportePiezaCt;
+import com.almatec.controlpiso.integrapps.entities.ReportePiezaCt.Estado;
 import com.almatec.controlpiso.integrapps.repositories.ReportePiezaCtRepository;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ItemService;
 import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaOrdenPvService;
+import com.almatec.controlpiso.produccion.dtos.ReportePiezaCtDTO;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
 @Service
@@ -68,6 +76,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	public ResponseMessage guardarReporte(ReporteDTO reporteDTO) throws ServiceException {
 		ResponseMessage response = new ResponseMessage();
 		ReportePiezaCt reporte = crearEntidadReporte(reporteDTO);
+		reporte.setEstado(Estado.PENDIENTE);
 
 		try {
 			ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
@@ -75,11 +84,23 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			Item itemReporte = itemService.buscarItemFabrica(idItemReportar);
 			log.info("Procesando reporte de {} en el centro de trabajo {} {} und(s).", reporteDTO.getRef(),
 					reporteDTO.getIdCentroTrabajo(), reporteDTO.getCantReportar());
+			
+			reporte.setEstado(Estado.PROCESANDO);
+	        reporteRepository.save(reporte);
 			procesarReporteSegunCentroTrabajo(reporte, reporteDTO, itemOp, itemReporte, response);
+			reporte.setEstado(Estado.COMPLETO);
 			reporteRepository.save(reporte);
 		} catch (DataIntegrityViolationException e) {
+			reporte.setEstado(Estado.ERROR);
+	        reporte.setMensajeError("Error de integridad: " + e.getMessage());
+	        reporte.setUltimoIntento(LocalDateTime.now());
+	        reporteRepository.save(reporte);
 			manejarErrorIntegridad(response, e);
 		} catch (Exception e) {
+			reporte.setEstado(Estado.ERROR);
+	        reporte.setMensajeError("Error de integridad: " + e.getMessage());
+	        reporte.setUltimoIntento(LocalDateTime.now());
+	        reporteRepository.save(reporte);
 			manejarErrorGeneral(response, e);
 		}
 		return response;
@@ -311,7 +332,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			}
 			
 			Integer idCTErp = nuevoCentro;
-			if(!centroTrabajoErp) {
+			if(Boolean.FALSE.equals(centroTrabajoErp)) {
 				String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(nuevoCentro).trim();
 				log.debug("Convertido centro trabajo {} a centro trabajo ERP: {}", nuevoCentro, idCTErpString);
 				idCTErp = Integer.valueOf(idCTErpString);			
@@ -409,6 +430,137 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		this.entregaService = entregaService;
 		this.itemService = itemService;
 		this.ordenPvService = ordenPvService;
+	}
+
+	@Override
+	public Page<ReportePiezaCtDTO> getReportesPiezaWithFilters(
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Integer idOperario,
+            Integer idCentroT,
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection) {
+            
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? 
+            Sort.Direction.DESC : Sort.Direction.ASC;
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        
+        return reporteRepository.findReportesPiezaWithFilters(
+            fechaInicio, fechaFin, idOperario, idCentroT, pageable); 
+    }
+
+	@Override
+	public ReportePiezaCt validarYObtenerReporte(Integer idReporte) throws ServiceException {
+		ReportePiezaCt reporte = reporteRepository.findById(idReporte)
+	            .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado: " + idReporte));
+	        
+	        if (Estado.PROCESANDO.equals(reporte.getEstado())) {
+	            throw new ServiceException("Reporte ya está siendo procesado");
+	        }
+	        
+	        if (Estado.COMPLETO.equals(reporte.getEstado())) {
+	            log.warn("Reprocesando reporte que ya estaba completo. ID: {}", idReporte);
+	        }
+	        
+	        return reporte;
+	}
+	
+	private ReporteDTO construirReporteDTO(ReportePiezaCt reporte, Item itemReporte, ItemOp itemOp) {
+		
+        ReporteDTO reporteDTO = toReporteDTO(reporte);
+        reporteDTO.setPeso(itemReporte.getPesoBruto());
+        reporteDTO.setPesoPintura(BigDecimal.valueOf(itemOp.getPesoPintura()));
+                
+        return reporteDTO;
+    }
+	
+	private void procesarReporte(ReportePiezaCt reporte, ReporteDTO reporteDTO, 
+            ItemOp itemOp, Item itemReporte, ResponseMessage response) 
+            throws ServiceException, IOException {
+        try {
+            reporte.setEstado(Estado.PROCESANDO);
+            reporte.setUltimoIntento(LocalDateTime.now());
+            reporteRepository.save(reporte);
+            
+            //procesarReporteSegunCentroTrabajo(reporte, reporteDTO, itemOp, itemReporte, response);
+            
+            reporte.setEstado(Estado.COMPLETO);
+            reporte.setUltimoIntento(LocalDateTime.now());
+            reporteRepository.save(reporte);
+            
+            //response.setMensaje(mensajeResultado.toString());
+            //response.setError(false);
+            
+        } catch (Exception e) {
+            manejarErrorProcesamiento(reporte, e);
+            throw e;
+        }
+    }
+	
+	private void manejarErrorProcesamiento(ReportePiezaCt reporte, Exception e) {
+        log.error("Error procesando reporte ID: {}", reporte.getId(), e);
+        reporte.setEstado(Estado.ERROR);
+        reporte.setMensajeError(e.getMessage());
+        reporte.setUltimoIntento(LocalDateTime.now());
+        reporteRepository.save(reporte);
+    }
+
+	@Transactional
+	@Override
+	public void reprocesarReporte(Integer idReporte) throws ServiceException, IOException {
+		log.info("Iniciando reprocesamiento de reporte ID: {}", idReporte);
+		ResponseMessage response = new ResponseMessage();
+		try {
+			ReportePiezaCt reporte = validarYObtenerReporte(idReporte);
+			ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
+            Integer idItemReportar = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+            Item itemReporte = itemService.buscarItemFabrica(idItemReportar);
+            
+            // Construir DTO con datos ya obtenidos
+            ReporteDTO reporteDTO = construirReporteDTO(reporte, itemReporte, itemOp);
+            
+            procesarReporte(reporte, reporteDTO, itemOp, itemReporte, response);
+            
+            log.info("Reprocesamiento exitoso para reporte ID: {}", idReporte);
+			
+		}catch (Exception e) {
+            log.error("Error en reprocesamiento de reporte ID: {}", idReporte, e);
+            manejarError(response, e);
+            throw new ServiceException("Error en reprocesamiento: " + e.getMessage(), e);
+        }				
+	}
+	
+	private void manejarError(ResponseMessage response, Exception e) {
+        response.setError(true);
+        response.setMensaje(determinarMensajeError(e));
+    }
+
+    private String determinarMensajeError(Exception e) {
+        if (e instanceof ResourceNotFoundException) {
+            return "Reporte no encontrado: " + e.getMessage();
+        } else if (e instanceof DataIntegrityViolationException) {
+            return "Error de integridad de datos: " + e.getMessage();
+        } else if (e instanceof ServiceException) {
+            return "Error de servicio: " + e.getMessage();
+        }
+        return "Error inesperado: " + e.getMessage();
+    }
+
+	private ReporteDTO toReporteDTO(ReportePiezaCt reporte) {
+
+		ReporteDTO reporteDTO = new ReporteDTO();
+		reporteDTO.setIdCentroTrabajo(reporte.getIdCentroT());
+		reporteDTO.setIdItemFab(reporte.getIdItemFab());
+		reporteDTO.setIdParte(reporte.getIdParte());
+		reporteDTO.setIdItem(reporte.getItemId());
+		reporteDTO.setCantReportar(reporte.getCant());
+		reporteDTO.setLote(reporte.getLote());
+		reporteDTO.setIdConfigProceso(reporte.getIdConfigProceso());		
+		
+		return reporteDTO;
 	}
 
 }
