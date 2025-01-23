@@ -47,7 +47,7 @@
 		  </button>
 		  <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/home">Planta</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PLANTA'')')}"><a class="dropdown-item" href="/produccion/historial-reportes">Historial Reportes</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_HISTORIAL_REPORTES_FABRICACION'')')}"><a class="dropdown-item" href="/produccion/historial-reportes">Historial Reportes</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CARGA_X_CT'')')}"><a class="dropdown-item" href="/centros-trabajo/carga">Carga x CT</a></li>
 			
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_SOLICITUD_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/produccion/materia-prima/solicitud">Solicitud Materia prima</a></li>
