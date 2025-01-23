@@ -212,7 +212,7 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	}
 	
 	private RegistroPieza obtenerRegistroExistente(Integer idCT, PiezaOperarioDTO pieza) {
-		return pieza.getIsComponente() 
+		return Boolean.TRUE.equals(pieza.getIsComponente()) 
 		        ? registroPiezaService.consultaRegistroPieza(
 		            idCT, 
 		            pieza.getIdProceso(), 

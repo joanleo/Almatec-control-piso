@@ -12,11 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
 import com.almatec.controlpiso.integrapps.dtos.LoteConCodigoDTO;
-import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.ListaM;
 import com.almatec.controlpiso.integrapps.interfaces.ListaMInterface;
 import com.almatec.controlpiso.integrapps.repositories.ListaMRepository;

@@ -46,5 +46,5 @@ public interface CentroTrabajoService {
 
 	ReporteDTO buscarItemCtReporte(Long idItem, Integer idCT, Integer idOperario, Integer idItem2, String tipo);
 
-
+	
 }
