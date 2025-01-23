@@ -292,13 +292,26 @@ public class ProduccionController {
 	
 	@ResponseBody
 	@PostMapping("/reenviar-reporte/{idReporte}")
-	public ResponseEntity<String> reenviarReporte(@PathVariable Integer idReporte){
-		try {
-			reportePiezaCtService.reprocesarReporte(idReporte);
-	        return ResponseEntity.ok("Reporte reenviado exitosamente");
+	public ResponseEntity<?> reenviarReporte(@PathVariable Integer idReporte) {
+	    try {
+	        reportePiezaCtService.reprocesarReporte(idReporte);
+	        return ResponseEntity.ok()
+	            .body(Map.of(
+	                "mensaje", "Reporte reenviado exitosamente",
+	                "tipo", "success"
+	            ));
+	    } catch (ServiceException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body(Map.of(
+	                "mensaje", e.getMessage(),
+	                "tipo", "warning"
+	            ));
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                           .body("Error al reenviar el reporte");
+	            .body(Map.of(
+	                "mensaje", "Error interno al reenviar el reporte: " + e.getMessage(),
+	                "tipo", "danger"
+	            ));
 	    }
 	}
 

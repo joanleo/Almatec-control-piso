@@ -485,7 +485,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
             reporte.setUltimoIntento(LocalDateTime.now());
             reporteRepository.save(reporte);
             
-            //procesarReporteSegunCentroTrabajo(reporte, reporteDTO, itemOp, itemReporte, response);
+            procesarReporteSegunCentroTrabajo(reporte, reporteDTO, itemOp, itemReporte, response);
             
             reporte.setEstado(Estado.COMPLETO);
             reporte.setUltimoIntento(LocalDateTime.now());
