@@ -1596,7 +1596,7 @@ async function crearFilaMostrarPiezas(index, item, idTbody, operario) {
 	           window.location.href = `/centros-trabajo/${centroTSelected.id}/reporte?idItemOp=${idPieza}&idOperario=${operario.id}&idItem=${ref}&tipo=${tipo}`
 	       }
 	       if (idTbody == 'listado-piezas-operario-novedades') {
-	           window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItem=${idPieza}&idOperario=${operario.id}`
+	           window.location.href = `/centros-trabajo/${centroTSelected.id}/novedades?idItemOp=${idPieza}&idOperario=${operario.id}&idItem=${ref}&tipo=${tipo}`
 	       }
 	       if (idTbody == 'listado-piezas-operario-calidad') {
 	           window.location.href = `/calidad/formulario/centro-trabajo/${centroTSelected.id}?idItemOp=${idPieza}&idOperario=${operario.id}&idItem=${ref}&tipo=${tipo}`

@@ -197,7 +197,6 @@ public class CentroTrabajoController {
 		Integer codigoBusqueda;
 	    if(idCT == 17) {
 	        ItemOp item = itemOpService.obtenerItemPorId(idItemOp);
-	        System.out.println(item);
 	        codigoBusqueda = item.getCodigoPintura();
 	    } else {
 	        codigoBusqueda = listaMService.obtenerCodMateriaPrimaItemReporte(idItem);
@@ -250,13 +249,25 @@ public class CentroTrabajoController {
 	
 	@GetMapping("/{idCT}/novedades")
 	public String reporteNovedadesCT(@PathVariable Integer idCT,
-								  @RequestParam Long idItem,
+								  @RequestParam Long idItemOp,
 								  @RequestParam Integer idOperario,
+								  @RequestParam Integer idItem,
+								  @RequestParam String tipo,
+								  @RequestParam(required = false) Integer idConfigProceso,
 								  Model modelo) throws JsonProcessingException {
-		ReporteDTO reporte = centroTrabajoService.buscarItemCt(idItem, idCT, idOperario);
+		ReporteDTO reporte = centroTrabajoService.buscarItemCtReporte(idItemOp, idCT, idOperario, idItem, tipo);
 		NovedadDTO novedad = new NovedadDTO(reporte);
 		Integer ultimoConsecutivo = novedadCtService.obtenerUltimoConsecutivo();
-		List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItem(idItem);
+
+		Integer codigoBusqueda;
+	    if(idCT == 17) {
+	        ItemOp item = itemOpService.obtenerItemPorId(idItemOp);
+	        codigoBusqueda = item.getCodigoPintura();
+	    } else {
+	        codigoBusqueda = listaMService.obtenerCodMateriaPrimaItemReporte(idItem);
+	    }
+	    
+	    List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItemReporte(idItemOp, codigoBusqueda);
 		ObjectMapper mapper = new ObjectMapper();
 	    String lotesJson = mapper.writeValueAsString(lotes);
 	    	    

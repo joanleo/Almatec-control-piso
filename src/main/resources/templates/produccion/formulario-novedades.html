@@ -64,19 +64,29 @@
 				           <span class="input-group-text"> kg </span> 				   
 			       	</div>								   					   			           
 					
-					<div class="input-group my-3">
-			           <span class="input-group-text">Lote: </span>
-						   <select id="loteSelect" class="form-control" name="lote" onchange="mostrarCodigo()" th:field="*{lote}" >
-   		                   		<option value=""></option>
-   		                        <option th:each="lot : ${lotes}" th:value="${lot.loteErp}" th:text="${lot.loteErp}"></option>
-   		                   </select>				   
-			       	</div>
-					
-					<div class="input-group my-3">
-			           <span class="input-group-text">Codigo materia prima: </span>
-				           <input type="number" id="codErpMatriaPrima" class="form-control" th:field="*{codErpMp}"  readonly  style="text-align: right;"/>
-			       	</div>
-			       	
+					<div class="row">
+					    <div class="col-md-4">
+					        <div class="input-group">
+					            <span class="input-group-text">Lote: </span>
+					            <select id="loteSelect" class="form-select" name="lote" th:field="*{lote}">
+					                <option value=""></option>
+					                <option th:each="lot : ${lotes}" 
+					                        th:value="${lot.loteErp}" 
+					                        th:text="${lot.loteErp}"
+					                        th:data-descripcion="${lot.descripcion}">
+					                </option>
+					            </select>
+					        </div>
+					    </div>
+					    <div class="col-md-8">
+					        <div class="input-group">
+					            <span class="input-group-text">Descripcion: </span>
+								<input type="text" id="descripcionLote" class="form-control" readonly style="text-align: right;"/>
+						        <input type="hidden" id="codErpMatriaPrima" th:field="*{codErpMp}"/>
+					        </div>
+					    </div>
+					</div>
+								       	
 			       	
 			       	<input type="hidden" id="operario" th:field="*{operario}" />
 			       	<input type="hidden" id="centroTrabajo" th:field="*{idCentroTrabajo}" />
