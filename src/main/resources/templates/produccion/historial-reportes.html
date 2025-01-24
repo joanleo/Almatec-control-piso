@@ -72,6 +72,8 @@
 	                        <th>Fecha Creación</th>
 							<th>Estado</th>
 							<th>Acciones</th>
+							<th>Ultimo Intento</th>
+							<th>Mensaje Error</th> 
 	                    </tr>
 	                </thead>
 	                <tbody>
@@ -84,7 +86,7 @@
 	                        <td th:text="${#temporals.format(reporte.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
 							<td th:text="${reporte.estado}"></td>
 							<td class="text-center">
-					            <button th:if="${reporte.estado == 'PENDIENTE'}"
+					            <button th:if="${reporte.estado == 'PENDIENTE' or reporte.estado == 'ERROR'}"
 					                    class="btn btn-primary btn-sm"
 					                    onclick="reenviarReporte(this)"
 					                    th:data-reporte-id="${reporte.id}"
@@ -94,6 +96,8 @@
 					                <i class="fas fa-sync-alt"></i> 
 					            </button>
 					        </td>
+							<td th:text="${#temporals.format(reporte.ultimoIntento, 'dd/MM/yyyy HH:mm')}"></td>
+							<td th:text="${reporte.mensajeError}"></td>
 	                    </tr>
 	                </tbody>
 	            </table>
