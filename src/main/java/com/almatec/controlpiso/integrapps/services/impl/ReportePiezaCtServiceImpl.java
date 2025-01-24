@@ -468,11 +468,13 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	        return reporte;
 	}
 	
-	private ReporteDTO construirReporteDTO(ReportePiezaCt reporte, Item itemReporte, ItemOp itemOp) {
+	private ReporteDTO construirReporteDTO(ReportePiezaCt reporte, Item itemReporte, ItemOp itemOp,Integer numOp) {
 		
         ReporteDTO reporteDTO = toReporteDTO(reporte);
+        reporteDTO.setRef(itemReporte.getDescripcion());
         reporteDTO.setPeso(itemReporte.getPesoBruto());
         reporteDTO.setPesoPintura(BigDecimal.valueOf(itemOp.getPesoPintura()));
+        reporteDTO.setNumOp(numOp);
                 
         return reporteDTO;
     }
@@ -518,9 +520,10 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
             Integer idItemReportar = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
             Item itemReporte = itemService.buscarItemFabrica(idItemReportar);
+            Integer numOp = ordenPvService.obtenerNumOpPorIdOpIA(itemOp.getIdOpIntegrapps());
             
             // Construir DTO con datos ya obtenidos
-            ReporteDTO reporteDTO = construirReporteDTO(reporte, itemReporte, itemOp);
+            ReporteDTO reporteDTO = construirReporteDTO(reporte, itemReporte, itemOp, numOp);
             
             procesarReporte(reporte, reporteDTO, itemOp, itemReporte, response);
             

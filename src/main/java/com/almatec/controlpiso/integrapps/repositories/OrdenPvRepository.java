@@ -102,5 +102,10 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 			nativeQuery = true)
 	Integer obteneridItemOpPorIdOpIA(@Param("schema") String schema, @Param("idOPI") Integer idOPI);
 
+	@Query(value = "SELECT Num_Op "
+			+ "FROM view_orden_pv "
+			+ "WHERE id_op_ia = :idOpIntegrapps ", nativeQuery = true)
+	Integer obtenerNumOpPorIdOpIA(@Param("idOpIntegrapps")Integer idOpIntegrapps);
+
 
 }

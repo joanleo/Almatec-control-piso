@@ -57,6 +57,10 @@ public class VistaOrdenPvServiceImpl implements VistaOrdenPvService {
                 throw new IllegalArgumentException("idOpIntegrapps y centrosTep no pueden ser null");
             }
 
+            if (!centrosTep.contains(idOpIntegrapps)) {
+                centrosTep.add(idOpIntegrapps);
+            }
+            
             // Normalizar y ordenar los nuevos centros
             String centrosTepString = centrosTep.stream()
                 .distinct()
@@ -84,6 +88,11 @@ public class VistaOrdenPvServiceImpl implements VistaOrdenPvService {
             throw new RuntimeException("Error al actualizar centros TEP: " + e.getMessage(), e);
         }
 		
+	}
+
+	@Override
+	public Integer obtenerNumOpPorIdOpIA(Integer idOpIntegrapps) {
+		return ordenPvRepo.obtenerNumOpPorIdOpIA(idOpIntegrapps);
 	}
 
 

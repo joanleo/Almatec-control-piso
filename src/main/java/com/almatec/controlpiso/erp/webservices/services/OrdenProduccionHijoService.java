@@ -129,7 +129,7 @@ public class OrdenProduccionHijoService {
 		VistaOrdenPv ordenIntegrapps = ordenPvService.obtenerOrdenPorId(idOPI);
 		VistaOrdenPv ordenPadreIF = ordenPvService.obtenerOrdenPorId(ordenIntegrapps.getIdPadre());
 		
-		Double cantBase = Double.valueOf(ordenIntegrapps.getKilosFabricar());
+		Double cantBase = ordenIntegrapps.getKilosFabricar();
 		DoctoordenesdeproduccionDocumentosVersion01 encabezadoOpEntrega = conectorOrdenProduccionHijoService.crearEncabezadoOPEntrega(ordenPadreIF);
 		ordenProduccionXml.add(encabezadoOpEntrega);
 		DoctoordenesdeproduccionItemsVersion01 detalleOpEntrega = conectorOrdenProduccionHijoService.crearDetalleOpEntrega(item, ordenIntegrapps,

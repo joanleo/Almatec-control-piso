@@ -221,7 +221,8 @@ public class EntregaService {
 		Integer cantFabItemOp = getCantidadFabricada(item, reporte);		
 		
 		//se agregan consumos de materia prima que no ha sido reportada en la lista de materiales del item
-		List<ItemReporteConsumoDTO> itemsConsumo = processarListaMateriales(item, reporte, cantFabItemOp, piezasSinConsumo);
+		//List<ItemReporteConsumoDTO> itemsConsumo = processarListaMateriales(item, reporte, cantFabItemOp, piezasSinConsumo);
+		List<ItemReporteConsumoDTO> itemsConsumo = new ArrayList<>();
 		
 		//Se agrega consumo de pintura
 		agregarConsumoPintura(item, reporte, itemsConsumo);

@@ -8,4 +8,6 @@ public interface VistaOrdenPvService {
 
 	void actualizarCentrosTep(Integer idOpIntegrapps, List<Integer> centrosTep);
 
+	Integer obtenerNumOpPorIdOpIA(Integer idOpIntegrapps);
+
 }
