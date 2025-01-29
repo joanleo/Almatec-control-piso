@@ -7,11 +7,11 @@ let spinner
 document.addEventListener('DOMContentLoaded', async function(){
 	spinner = document.getElementById('spinner')
 	spinner.removeAttribute('hidden')
-	const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 17];
+	//const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 17];
 
 	const centrosTrabajo = await fetchCentrosT()
 	
-	centrosTrabajoPrioridad = centrosTrabajo.filter(centro=>centrosTrabajoFilter.includes(centro.id))
+	centrosTrabajoPrioridad = centrosTrabajo//.filter(centro=>centrosTrabajoFilter.includes(centro.id))
 	const select = document.getElementById('centroTrabajoSelect')
 	select.innerHTML = '';
 	
@@ -85,6 +85,24 @@ function addSortLinkListeners() {
 	});
 }
 
+function addPaginationListeners() {
+    document.querySelectorAll('.page-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = new URL(this.href);
+            const centroTrabajoId = document.getElementById('centroTrabajoSelect').value;
+
+            cargarDatos(
+                centroTrabajoId,
+                url.searchParams.get('page'),
+                url.searchParams.get('size'),
+                url.searchParams.get('sortField'),
+                url.searchParams.get('sortDir')
+            );
+        });
+    });
+}
+
 function handleSortClick(e) {
       e.preventDefault();
       const url = new URL(e.currentTarget.href);
@@ -130,7 +148,7 @@ function cargarDatos(centroTrabajoId, page = 0, size = 10, sortField = 'idOpInte
 	        document.getElementById('resultadosContainer').style.display = 'block';
 				  
 			addSortLinkListeners();
-				  
+			addPaginationListeners();	  
 			const checkAllElement = document.getElementById('checkAll');
 	        if (checkAllElement) {
 	        	checkAllElement.addEventListener('change', handleSelectAll);

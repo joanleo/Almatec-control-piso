@@ -12,11 +12,11 @@ let filterText = ''
 document.addEventListener('DOMContentLoaded', async function(){
 	spinner = document.getElementById('spinner')
 	spinner.removeAttribute('hidden')
-	const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9,11,13, 17];
+	//const centrosTrabajoFilter = [3, 4, 5, 6, 7, 8, 9,11,13, 17];
 
 	const centrosTrabajo = await fetchCentrosT()
 	
-	centrosTrabajoPrioridad = centrosTrabajo.filter(centro=>centrosTrabajoFilter.includes(centro.id))
+	centrosTrabajoPrioridad = centrosTrabajo//.filter(centro=>centrosTrabajoFilter.includes(centro.id))
 	const select = document.getElementById('centroTrabajoSelect')
 	select.innerHTML = '';
 	
@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 		document.getElementById('filterInput').value = ''
 		filterText = ''
 		centroTrabajoSelectedId = this.value;
-        if (centroTrabajoSelectedId) {		
+        if (centroTrabajoSelectedId) {	
+			console.log("Centro de trabajo seleccionado: ", centroTrabajoSelectedId)	
 			spinner.removeAttribute('hidden')	
             const ordenes = await obtenerOrdenes(centroTrabajoSelectedId);
 			ordenes.sort((a, b) => {
@@ -94,7 +95,7 @@ function updateTable() {
 }
 
 function updateSummary(items) {
-    const esCentroEspecial = [13, 17].includes(Number(centroTrabajoSelectedId));
+    const esCentroEspecial = [13, 17, 22].includes(Number(centroTrabajoSelectedId));
     let totalRequerido = 0;
     let totalReportado = 0;
     let summaryHTML = '';
@@ -257,7 +258,7 @@ function mostrarItems(items){
 	let tbody = document.getElementById("resumen-op")
 	tbody.innerHTML = ''
 	
-	const esCentroEspecial = [13, 17].includes(Number(centroTrabajoSelectedId));
+	const esCentroEspecial = [13, 17, 22].includes(Number(centroTrabajoSelectedId));
 	    
     // Actualizar los encabezados según el centro de trabajo
     const thead = document.querySelector('#resultsTable thead tr');
@@ -289,7 +290,55 @@ function mostrarItems(items){
                 </a>
             </th>
         `;
-    } 
+	} else {
+	    thead.innerHTML = `
+	        <th>
+	            <a data-sort="op">
+	                <span>O.P.</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Proyecto</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Descripción</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Cantidad</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Peso Bruto Und</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Cod. Materia Prima</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Materia Prima</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Peso Total Req.</span>
+	            </a>
+	        </th>
+	        <th>
+	            <a>
+	                <span>Cant. Finalizada</span>
+	            </a>
+	        </th>
+	    `;
+	}
 	
 	items.forEach(item => {
 		let row = document.createElement("tr")
@@ -399,7 +448,7 @@ function procesarElementosOp(op){
 		
 	op.items.forEach(elemento => {
 		if(centroTrabajoSelectedId == elemento.itemCentroTId){
-			if ([12, 17].includes(Number(centroTrabajoSelectedId))) {
+			if ([13, 17, 22].includes(Number(centroTrabajoSelectedId))) {
                 agregarOActualizarItem({
                     op: op.op,
                     un: op.un,
@@ -438,7 +487,7 @@ function procesarElementosOp(op){
 		if(elemento.componentes && elemento.componentes.length > 0){
 			elemento.componentes.forEach(componente => {
                 if (centroTrabajoSelectedId == componente.materialCentroTId) {
-                    if ([12, 17].includes(Number(centroTrabajoSelectedId))) {
+                    if ([13, 17, 22].includes(Number(centroTrabajoSelectedId))) {
                         agregarOActualizarItem({
                             op: op.op,
                             un: op.un,

@@ -135,7 +135,7 @@
 						    </li>
 							
 							<li class="page-item" th:classappend="${!itemsPage.hasPrevious() ? 'disabled' : ''}">
-						      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.number - 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" tabindex="-1">
+						      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.number > 0 ? itemsPage.number - 1 : 0}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}" tabindex="-1">
 								<span aria-hidden="true">&laquo;</span>
 							  </a>
 						    </li>
@@ -149,7 +149,7 @@
 			                </li>
 							
 							<li class="page-item" th:classappend="${!itemsPage.hasNext() ? 'disabled' : ''}">
-						      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.number + 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
+						      <a class="page-link" th:href="@{/programacion/prioridades (page=${itemsPage.number < itemsPage.totalPages - 1 ? itemsPage.number + 1 : itemsPage.totalPages - 1}, size=${itemsPage.size}, sortField=${sortField}, sortDir=${sortDir}, descripcion=${filtro.descripcion}, prioridad=${filtro.prioridad}, cantidad=${filtro.cantidad}, proyecto=${filtro.proyecto}, zona=${filtro.zona}, centroTrabajoId=${filtro.centroTrabajoId})}">
 								<span aria-hidden="true">&raquo;</span>
 							  </a>
 						    </li>
