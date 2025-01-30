@@ -52,19 +52,19 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
     document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked').forEach(function (checkbox) {
         let selectedIndex = parseInt(checkbox.value)
         let selectedOp = opsCargaCt[selectedIndex]
-
         let itemsOps = selectedOp.items
         if (itemsOps && itemsOps.length > 0) {
             for (const itemOp of itemsOps) {
-                if (itemOp.item_centro_t_id == selectedCentroId) {
-					const itemKey = `${itemOp.marca}-${itemOp.item_desc}-${selectedOp.proyecto}-${selectedOp.op}-${itemOp.cant_req}`
+                if (itemOp.itemCentroTId == selectedCentroId) {
+					const itemKey = `${itemOp.marca}-${itemOp.itemDescripcion}-${selectedOp.un}-${selectedOp.op}-${itemOp.cantReq}`
                     const existingItem = uniqueItems.get(itemKey)
                     if (!existingItem || itemOp.prioridad < existingItem.prioridad) {
                         uniqueItems.set(itemKey, {
 							marca: itemOp.marca,
-                            item_desc: itemOp.item_desc,
-                            cant_req: itemOp.cant_req,
-                            proyecto: selectedOp.proyecto,
+                            item_desc: itemOp.itemDescripcion,
+                            cant_req: itemOp.cantReq,
+							cant_fab: itemOp.cantReportadaPieza,
+                            proyecto: selectedOp.un,
                             op: selectedOp.op,
                             prioridad: itemOp.prioridad
                         })
@@ -74,17 +74,16 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
 				
 	                let componentes = itemOp.componentes
 					for (const componente of componentes) {
-						console.log(componente.material_centro_t_id )
-						console.log(componente.material_desc )
-	                    if (componente.material_centro_t_id == selectedCentroId) {
-	                        const componenteKey = `${itemOp.marca}-${componente.material_desc}-${selectedOp.proyecto}-${selectedOp.op}-${componente.material_cant}`
+	                    if (componente.materialCentroTId == selectedCentroId) {
+	                        const componenteKey = `${itemOp.marca}-${componente.materialDescripcion}-${selectedOp.un}-${selectedOp.op}-${componente.materialCant * itemOp.cantReq}`
 	                        const existingComponente = uniqueComponentes.get(componenteKey)
 	                        if (!existingComponente || itemOp.prioridad < existingComponente.prioridad) {
 	                            uniqueComponentes.set(componenteKey, {
 									marca: itemOp.marca,
-	                                material_desc: componente.material_desc,
-	                                material_cant: componente.material_cant,
-	                                proyecto: selectedOp.proyecto,
+	                                material_desc: componente.materialDescripcion,
+	                                material_cant: componente.materialCant * itemOp.cantReq,
+									material_fab: componente.cantReportadaMaterial,
+	                                proyecto: selectedOp.un,
 	                                op: selectedOp.op,
 	                                prioridad: itemOp.prioridad
 	                            })
@@ -104,13 +103,13 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
     // Add sorted items to the table
     let tbodyItems = document.getElementById("body-items")
     allItems.forEach(item => {
-        agregarFilaATabla(tbodyItems, [item.marca, item.item_desc, item.cant_req, item.proyecto, item.op, item.prioridad])
+        agregarFilaATabla(tbodyItems, [item.marca, item.item_desc, item.cant_req, item.cant_fab, item.proyecto, item.op, item.prioridad])
     })
 
     // Add sorted components to the table
     let tbodyComponentes = document.getElementById("body-componentes")
     allComponentes.forEach(componente => {
-        agregarFilaATabla(tbodyComponentes, [componente.marca, componente.material_desc, componente.material_cant, componente.proyecto, componente.op])
+        agregarFilaATabla(tbodyComponentes, [componente.marca, componente.material_desc, componente.material_cant, componente.material_fab, componente.proyecto, componente.op, componente.prioridad])
     })
 
     mostrarOcultarTabla('title-items', foundItems)
@@ -147,7 +146,7 @@ function mostrarOcultarTabla(elementId, condition) {
 async function obtenerOpCentroT(ct){
 	spinner.removeAttribute('hidden')
 	try{
-		const response = await fetch(`/centros-trabajo/${ct}/ordenes-produccion`)
+		const response = await fetch(`/programacion/centro-trabajo/${ct}/resumen-ops`)
 		if(!response.ok){
 			throw new Error(response)
 		}
@@ -173,6 +172,9 @@ document.getElementById('centroSelect').addEventListener('change', async functio
     document.getElementById('title-componentes').setAttribute('hidden', true)
 
     if (Array.isArray(opsCargaCt) && opsCargaCt.length > 0) {
+		
+		opsCargaCt.sort((a, b) => b.idOpIntegrapps - a.idOpIntegrapps)
+		
         let wrapper_table = document.createElement('div')
         wrapper_table.classList.add('table-responsive', 'text-nowrap', 'my-5','rounded-3', 'shadow-sm')
         
@@ -210,7 +212,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         
         let checkboxCounter = 1
         opsCargaCt.forEach(function (op, index) {
-            agregarFilaATabla(tbody, [`<input type="checkbox" value="${index}" id="checkbox_${checkboxCounter}" name="checkbox_${checkboxCounter}">`, op.cliente, op.proyecto, op.op])
+            agregarFilaATabla(tbody, [`<input type="checkbox" value="${index}" id="checkbox_${checkboxCounter}" name="checkbox_${checkboxCounter}">`, op.cliente, op.un, op.op])
             checkboxCounter++
         })
         
@@ -220,7 +222,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         document.getElementById('ops-ct').appendChild(wrapper_table)
 
         let table_items = crearTabla()
-        let encabezado_items = ['MARCA', 'ITEM', 'CANT', 'PROYECTO', 'OP', 'PRIORIDAD']
+        let encabezado_items = ['MARCA', 'ITEM', 'CANT REQ', 'CANT FAB', 'PROYECTO', 'OP', 'PRIORIDAD']
         let header_items = crearHeaderTabla(encabezado_items)
         table_items.appendChild(header_items)
         table_items.setAttribute('hidden', 'none')
@@ -230,7 +232,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
         document.getElementById('detalle-op').appendChild(wrapper_table_items)
 
         let table_componentes = crearTabla()
-        let encabezado_componentes = ['MARCA', 'DESCRIPCION', 'CANT', 'PROYECTO', 'OP']
+        let encabezado_componentes = ['MARCA', 'DESCRIPCION', 'CANT REQ', 'CANT FAB', 'PROYECTO', 'OP', 'PRIORIDAD']
         let header_componentes = crearHeaderTabla(encabezado_componentes)
         table_componentes.appendChild(header_componentes)
         table_componentes.setAttribute('hidden', 'none')
@@ -249,7 +251,6 @@ document.getElementById('centroSelect').addEventListener('change', async functio
 async function imprimirSeleccion() {
     let opsSeleccionadas = obtenerOPsSeleccionadas()
     let downloadedFilename 
-	
 	spinner.removeAttribute('hidden')
     fetch(`/centros-trabajo/${selectedCentroId}/descargar`, {
 	    method: 'POST',
@@ -262,7 +263,6 @@ async function imprimirSeleccion() {
 		const contentDispositionHeader = response.headers.get('Content-Disposition');
 		    if (contentDispositionHeader) {
 		        const filenameMatch = contentDispositionHeader.match(/filename=["']?([^"']+)["']?/);
-				console.log(filenameMatch)
 		        if (filenameMatch) {
 		            downloadedFilename = filenameMatch[1];
 		        }
@@ -290,7 +290,7 @@ function obtenerOPsSeleccionadas() {
     let checkboxesSeleccionados = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked')
 
     checkboxesSeleccionados.forEach(function (checkbox) {		
-        opsSeleccionadas.push(opsCargaCt[parseInt(checkbox.value)].idOp)
+        opsSeleccionadas.push(opsCargaCt[parseInt(checkbox.value)].idOpIntegrapps)
     })
 
     return opsSeleccionadas

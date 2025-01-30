@@ -151,7 +151,6 @@ public class VistaOpItemsMaterialesRutaServiceImpl implements VistaOpItemsMateri
 	    Pageable pageable = PageRequest.of(page, size, sort);
 		try {
 			Specification<VistaOpItemsMaterialesRuta> spec = prioridadSpecification.getItemsPrioridades(filtro);
-			logger.info("Filtro service: {}", filtro);
 
 	        // Obtener todos los elementos
 	        List<VistaOpItemsMaterialesRuta> allItems = vistaOpItemsMaterialesRutaRepo.findAll(spec);

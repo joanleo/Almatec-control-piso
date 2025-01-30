@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import com.almatec.controlpiso.integrapps.dtos.ComponenteDTO;
-import com.almatec.controlpiso.integrapps.dtos.ItemOpCtDTO;
-import com.almatec.controlpiso.integrapps.dtos.OpCentroTrabajoDTO;
 import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
+import com.almatec.controlpiso.programacion.dtos.ComponenteDTO;
+import com.almatec.controlpiso.programacion.dtos.ItemDTO;
+import com.almatec.controlpiso.programacion.dtos.OrdenProduccionResumen;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -38,13 +38,12 @@ import java.util.stream.Collectors;
 
 public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
     
-    private final List<OpCentroTrabajoDTO> opsCt;
+    private final List<OrdenProduccionResumen> opsCt;
     private final List<Integer> opsSeleccionadas;
     private final CentroTrabajo centroTrabajo;
-    private static final int[] CENTROS_TRABAJO_PRIORIDAD = {3, 4, 5, 6, 7, 8, 9, 17};
     private static final String LOGO_PATH = "static/imgs/logo-almatec.png";
 
-    public ExportOpCentroTrabajoToPdf(Set<OpCentroTrabajoDTO> opsCt2, List<Integer> opsSeleccionadas, CentroTrabajo centroTrabajo, Rectangle pageSize) {
+    public ExportOpCentroTrabajoToPdf(Set<OrdenProduccionResumen> opsCt2, List<Integer> opsSeleccionadas, CentroTrabajo centroTrabajo, Rectangle pageSize) {
         super(pageSize);
         this.opsCt = new ArrayList<>(opsCt2);
         this.opsSeleccionadas = opsSeleccionadas;
@@ -66,7 +65,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
         }
     }
     
-    private void tableData(PdfPTable table, List<RowItemPdf> rows, BigDecimal[] totalPesoTtl, boolean priority) {
+    private void tableData(PdfPTable table, List<RowItemPdf> rows, BigDecimal[] totalPesoTtl) {
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 7);
         
         BigDecimal total = BigDecimal.ZERO;
@@ -79,6 +78,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
             addCell(table, row.getMarca(), Element.ALIGN_CENTER, font);
             addCell(table, row.getDescripcion(), Element.ALIGN_LEFT, font);
             addCell(table, row.getCant().toString(), Element.ALIGN_CENTER, font);
+            addCell(table, row.getCantFab().toString(), Element.ALIGN_CENTER, font);
             
             String longitud = Optional.ofNullable(row.getLongitud())
                 .map(l -> l.stripTrailingZeros().toPlainString())
@@ -93,12 +93,11 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
             
             addCell(table, row.getColor(), Element.ALIGN_CENTER, font);
             
-            if(priority) {
-                String prioridad = Optional.ofNullable(row.getPrioridad())
-                    .map(Object::toString)
-                    .orElse("");
-                addCell(table, prioridad, Element.ALIGN_CENTER, font);
-            }
+            String prioridad = Optional.ofNullable(row.getPrioridad())
+                .map(Object::toString)
+                .orElse("");
+            addCell(table, prioridad, Element.ALIGN_CENTER, font);
+            
             count++;
         }
         
@@ -116,37 +115,41 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
         Map<String, RowItemPdf> uniqueRows = new HashMap<>();
 
         opsCt.stream()
-            .filter(op -> opsSeleccionadas.contains(op.getIdOp()))
+            .filter(op -> opsSeleccionadas.contains(op.getIdOpIntegrapps()))
             .forEach(op -> obtenerFilasDeOp(op, uniqueRows));
 
         return uniqueRows.values().stream()
-            .sorted(Comparator.comparing(RowItemPdf::getPrioridad, 
-                    Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+				.sorted(
+			        Comparator.comparing(RowItemPdf::getIdOpIntegrapps, 
+			            Comparator.nullsLast(Comparator.reverseOrder()))
+			        .thenComparing(RowItemPdf::getPrioridad, 
+			            Comparator.nullsLast(Comparator.naturalOrder()))
+			    )
+			    .collect(Collectors.toList());
     }
     
-    private void obtenerFilasDeOp(OpCentroTrabajoDTO op, Map<String, RowItemPdf> uniqueRows) {
-        for (ItemOpCtDTO item : op.getItems()) {
-            if (Objects.equals(item.getItem_centro_t_id(), centroTrabajo.getId())) {
-                agregarOActualizarFila(uniqueRows, op, item, item.getItem_desc(), item.getCant_req(), 
-                         item.getItem_peso(), item.getLongitud(), item.getItem_id().toString());
+    private void obtenerFilasDeOp(OrdenProduccionResumen op, Map<String, RowItemPdf> uniqueRows) {
+        for (ItemDTO item : op.getItems()) {
+            if (Objects.equals(item.getItemCentroTId(), centroTrabajo.getId())) {
+                agregarOActualizarFila(uniqueRows, op, item, item.getItemDescripcion(), item.getCantReq(), 
+                         item.getItemPeso(), item.getItemLongitud(), item.getItemId().toString(), item.getCantCumplida().intValue());
             }
             for (ComponenteDTO componente : item.getComponentes()) {
-                if (Objects.equals(componente.getMaterial_centro_t_id(), centroTrabajo.getId())) {
-                    agregarOActualizarFila(uniqueRows, op, item, componente.getMaterial_desc(), componente.getMaterial_cant(), 
-                             componente.getMaterial_peso(), componente.getLongitud(), componente.getMaterial_id().toString());
+                if (Objects.equals(componente.getMaterialCentroTId(), centroTrabajo.getId())) {
+                    agregarOActualizarFila(uniqueRows, op, item, componente.getMaterialDescripcion(), componente.getMaterialCant().multiply(item.getCantReq()), 
+                             componente.getMaterialPeso(), componente.getMaterialLongitud(), componente.getMaterialId().toString(), componente.getCantReportadaMaterial());
                 }
             }
         }
     }
     
-    private void agregarOActualizarFila(Map<String, RowItemPdf> uniqueRows, OpCentroTrabajoDTO op, ItemOpCtDTO item, 
-            String descripcion, Integer cantidad, BigDecimal peso, BigDecimal longitud, String ref) {
+    private void agregarOActualizarFila(Map<String, RowItemPdf> uniqueRows, OrdenProduccionResumen op, ItemDTO item, 
+            String descripcion, BigDecimal cant, BigDecimal peso, BigDecimal longitud, String ref, Integer cantFab) {
     	String key = String.format("%s_%s_%s_%s_%s", 
     	        op.getOp(),           // Incluir OP
     	        item.getMarca(),      // Incluir marca
     	        descripcion,          // Descripción actual
-    	        cantidad,             // Cantidad actual
+    	        cant,             // Cantidad actual
     	        ref                   // Referencia del material/item
     	    );
 		if (uniqueRows.containsKey(key)) {
@@ -159,55 +162,52 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 	        }
 		// Actualizar otros campos si es necesario
 		} else {
-			RowItemPdf newRow = crearRowItemPdf(op, item, descripcion, cantidad, peso, longitud, ref);
+			RowItemPdf newRow = crearRowItemPdf(op, item, descripcion, cant, peso, longitud, ref, cantFab);
 			uniqueRows.put(key, newRow);
 			}
 	}
     
-    private RowItemPdf crearRowItemPdf(OpCentroTrabajoDTO op, ItemOpCtDTO item, String descripcion, 
-            Integer cantidad, BigDecimal peso, BigDecimal longitud, String ref) {
+    private RowItemPdf crearRowItemPdf(OrdenProduccionResumen op, ItemDTO item, String descripcion, 
+            BigDecimal cant, BigDecimal peso, BigDecimal longitud, String ref, Integer cantFab) {
 		RowItemPdf row = new RowItemPdf();
 		row.setDescripcion(descripcion != null ? descripcion : "");
-		row.setCant(cantidad != null ? cantidad : 0);
+		row.setCant(cant != null ? cant.intValue() : 0);
 		row.setOp(op.getOp() != null ? op.getOp() : "");
 		row.setPeso(peso != null ? peso.setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO);
-		row.setColor(item.getItem_color() != null ? item.getItem_color() : "");
+		row.setColor(item.getItemColor() != null ? item.getItemColor() : "");
 		row.setPrioridad(item.getPrioridad());
 		row.setRef(ref != null ? ref : "");
 		row.setLongitud(longitud != null ? longitud.setScale(2, RoundingMode.HALF_UP) : null);
-		row.setProyecto(op.getProyecto() != null ? op.getProyecto() : "");
+		row.setProyecto(op.getUn() != null ? op.getUn() : "");
 		row.setZona(op.getZona() != null ? op.getZona() : "");
 		row.setMarca(item.getMarca() != null ? item.getMarca() : "");
+		row.setCantFab(cantFab != null ? cantFab : 0);
+		row.setIdOpIntegrapps(op.getIdOpIntegrapps() != null ? op.getIdOpIntegrapps() : 0);
 		return row;
 	}
 
     @Override
     protected void addContent() throws DocumentException {
         List<RowItemPdf> rows = obtenerFilas();
-        List<String> columnsName = new ArrayList<>(Arrays.asList("#", "OP", "PROYECTO", "ZONA", "MARCA", "DESCRIPCION", "CANT", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "COLOR"));
+        List<String> columnsName = new ArrayList<>(Arrays.asList("#", "OP", "PROYECTO", "ZONA", "MARCA", "DESCRIPCION", "CANT SOL", "CANT FAB", "LONG [ml]", "PESO UN [kg]", "PESO TTL [kg]", "COLOR"));
         
-        boolean priority = Arrays.stream(CENTROS_TRABAJO_PRIORIDAD).anyMatch(x -> x == centroTrabajo.getId());
-        PdfPTable table = createTable(priority, columnsName);
+        PdfPTable table = createTable(columnsName);
         
         BigDecimal[] totalPesoTtl = new BigDecimal[1];
-        tableData(table, rows, totalPesoTtl, priority);
+        tableData(table, rows, totalPesoTtl);
         document.add(table);
         
         addTotalParagraph(totalPesoTtl[0]);
     }
     
-    private PdfPTable createTable(boolean priority, List<String> columnsName) throws DocumentException {
+    private PdfPTable createTable(List<String> columnsName) throws DocumentException {
         PdfPTable table;
-        if (priority) {
-            float[] columnsWidthPriority = {0.4f, 1.0f, 2.4f, 1.1f, 1.1f,2.3f, 0.8f, 0.8f, 0.8f, 1.0f, 1.3f, 1.3f};
-            table = new PdfPTable(12);
-            columnsName.add("PRIORIDAD");
-            table.setWidths(columnsWidthPriority);
-        } else {
-            float[] columnsWidth = {0.4f, 1.0f, 2.4f, 1.1f, 1.1f,2.3f, 0.8f, 0.8f, 0.8f, 1.0f, 1.3f};            
-            table = new PdfPTable(11);
-            table.setWidths(columnsWidth);            
-        }
+
+        float[] columnsWidthPriority = {0.4f, 1.0f, 2.0f, 0.9f, 1.1f,2.3f, 0.9f, 0.9f, 0.9f, 0.9f, 1.0f, 1.3f, 1.5f};
+        table = new PdfPTable(13);
+        columnsName.add("PRIORIDAD");
+        table.setWidths(columnsWidthPriority);
+
         table.setWidthPercentage(100);
         table.setSpacingBefore(40);
         tableHeader(table, columnsName);

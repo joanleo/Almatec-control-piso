@@ -56,6 +56,8 @@ import com.almatec.controlpiso.integrapps.services.NovedadCtService;
 import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
 import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasOperariosService;
+import com.almatec.controlpiso.integrapps.services.VistaPiezasReportadasService;
+import com.almatec.controlpiso.programacion.dtos.OrdenProduccionResumen;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.utils.CentrosTrabajoPDFService;
 import com.almatec.controlpiso.utils.ExportOpCentroTrabajoToPdf;
@@ -80,6 +82,7 @@ public class CentroTrabajoController {
 	private final ListaMService listaMService;
 	private final CentrosTrabajoPDFService centrosTrabajoPDFService;
 	private final ItemOpService itemOpService;
+	private final VistaPiezasReportadasService vistaPiezasReportadasService;
 	
 	
 	private static final String REDIRECT_HOME = "redirect:/produccion/home";
@@ -95,7 +98,8 @@ public class CentroTrabajoController {
 			RegistroParadaService registroParadaService, 
 			ListaMService listaMService,
 			CentrosTrabajoPDFService centrosTrabajoPDFService,
-			ItemOpService itemOpService) {
+			ItemOpService itemOpService,
+			VistaPiezasReportadasService vistaPiezasReportadasService) {
 		super();
 		this.centroTrabajoService = centroTrabajoService;
 		this.util = util;
@@ -108,6 +112,7 @@ public class CentroTrabajoController {
 		this.listaMService = listaMService;
 		this.centrosTrabajoPDFService = centrosTrabajoPDFService;
 		this.itemOpService = itemOpService;
+		this.vistaPiezasReportadasService = vistaPiezasReportadasService;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -371,7 +376,7 @@ public class CentroTrabajoController {
 		String headerValue = "attachment; filename=carga_trabajo_" + centroT.getNombre() + "_" + currentDateTime + ".pdf";
 		response.setHeader(headerKey, headerValue);
 		
-		Set<OpCentroTrabajoDTO> opsCt = centroTrabajoService.buscarOpCT(idCT);
+		Set<OrdenProduccionResumen> opsCt = vistaPiezasReportadasService.buscarOps(idCT);
 		
 		Rectangle letter = PageSize.LETTER;
 		//float halfLetterHeight = letter.getHeight() / 2;

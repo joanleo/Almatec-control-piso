@@ -14,6 +14,8 @@ public class RowItemPdf {
 	private String proyecto;
 	private String zona;
 	private String marca;
+	private Integer cantFab;
+	private Integer idOpIntegrapps;
 	
 	public String getDescripcion() {
 		return descripcion;
@@ -84,11 +86,24 @@ public class RowItemPdf {
 	public void setMarca(String marca) {
 		this.marca = marca;
 	}
+	public Integer getCantFab() {
+		return cantFab;
+	}
+	public void setCantFab(Integer cantFab) {
+		this.cantFab = cantFab;
+	}
+	public Integer getIdOpIntegrapps() {
+		return idOpIntegrapps;
+	}
 	@Override
 	public String toString() {
 		return "RowItemPdf [descripcion=" + descripcion + ", longitud=" + longitud + ", cant=" + cant + ", op=" + op
 				+ ", ref=" + ref + ", peso=" + peso + ", prioridad=" + prioridad + ", color=" + color + ", proyecto="
-				+ proyecto + ", zona=" + zona + ", marca=" + marca + "]";
+				+ proyecto + ", zona=" + zona + ", marca=" + marca + ", cantFab=" + cantFab + ", idOpIntegrapps="
+				+ idOpIntegrapps + "]";
+	}
+	public void setIdOpIntegrapps(Integer idOpIntegrapps) {
+		this.idOpIntegrapps = idOpIntegrapps;
 	}
 	
 }
