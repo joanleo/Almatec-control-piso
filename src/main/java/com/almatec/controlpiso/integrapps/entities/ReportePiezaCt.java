@@ -18,8 +18,8 @@ public class ReportePiezaCt {
 	public enum Estado {
         PENDIENTE,          // Reporte guardado inicialmente
         PROCESANDO,         // Durante el envío al ERP
-        CONSUMO_COMPLETO,   // Consumo procesado exitosamente
-        TEP_COMPLETO,       // TEP procesado exitosamente
+        //CONSUMO_COMPLETO,   // Consumo procesado exitosamente
+        //TEP_COMPLETO,       // TEP procesado exitosamente
         COMPLETO,           // proceso exitoso
         ERROR              // Error en algún paso
     }

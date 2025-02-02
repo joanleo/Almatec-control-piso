@@ -43,6 +43,7 @@ import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.entities.NovedadCt;
+import com.almatec.controlpiso.integrapps.entities.ReportePiezaCt;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.VistaItemLoteDisponible;
@@ -249,6 +250,10 @@ public class ProduccionController {
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin,
             @RequestParam(required = false) Integer idOperario,
             @RequestParam(required = false) Integer idCentroT,
+            @RequestParam(required = false) String op,        // Nuevo
+            @RequestParam(required = false) String co,        // Nuevo
+            @RequestParam(required = false) String zona,
+            @RequestParam(required = false) ReportePiezaCt.Estado estado,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "fechaCreacion") String sortBy,
@@ -259,7 +264,8 @@ public class ProduccionController {
 	    LocalDateTime fechaFinDateTime = fechaFin != null ? fechaFin.atTime(23, 59, 59) : null;
             
         Page<ReportePiezaCtDTO> reportes = reportePiezaCtService.getReportesPiezaWithFilters(
-        		fechaInicioDateTime, fechaFinDateTime, idOperario, idCentroT, page, size, sortBy, sortDirection);
+        		fechaInicioDateTime, fechaFinDateTime, idOperario, idCentroT,
+        		op, co, zona, estado, page, size, sortBy, sortDirection);
             
         // Add data for filter dropdowns
         model.addAttribute("operarios", operarioService.obtenerOperariosGeneral());
@@ -270,6 +276,10 @@ public class ProduccionController {
         model.addAttribute("fechaFin", fechaFin);
         model.addAttribute("idOperario", idOperario);
         model.addAttribute("idCentroT", idCentroT);
+        model.addAttribute("op", op);
+        model.addAttribute("co", co);
+        model.addAttribute("zona", zona);
+        model.addAttribute("estado", estado);
         
      // Calculate page range for pagination
         int totalPages = reportes.getTotalPages();

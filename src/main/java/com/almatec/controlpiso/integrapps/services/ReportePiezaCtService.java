@@ -21,7 +21,8 @@ public interface ReportePiezaCtService {
 	Integer buscarCantidadesFabricadasPerfil(Long idItem, Integer idPerfil, Integer idCT);
 
 	Page<ReportePiezaCtDTO> getReportesPiezaWithFilters(LocalDateTime fechaInicio, LocalDateTime fechaFin,
-			Integer idOperario, Integer idCentroT, int page, int size, String sortBy, String sortDirection);
+			Integer idOperario, Integer idCentroT, String op, String co, String zona, ReportePiezaCt.Estado estado,
+			int page, int size, String sortBy, String sortDirection);
 
 	ReportePiezaCt validarYObtenerReporte(Integer idReporte) throws ServiceException;
 

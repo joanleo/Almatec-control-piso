@@ -50,6 +50,36 @@
 	                            </option>
 	                        </select>
 	                    </div>
+						
+						<div class="col-md-3">
+					        <label class="form-label" for="op">OP:</label>
+					        <input type="text" class="form-control" id="op" name="op" 
+					               th:value="${op}">
+					    </div>
+					    
+					    <div class="col-md-3">
+					        <label class="form-label" for="co">CO:</label>
+					        <input type="text" class="form-control" id="co" name="co" 
+					               th:value="${co}">
+					    </div>
+					    
+					    <div class="col-md-3">
+					        <label class="form-label" for="zona">Zona:</label>
+					        <input type="text" class="form-control" id="zona" name="zona" 
+					               th:value="${zona}">
+					    </div>
+						
+						<div class="col-md-3">
+	                        <label class="form-label" for="centroTrabajo">Estado:</label>
+							<select class="form-select" id="estado" name="estado">
+						        <option value="">Todos</option>
+								<option th:each="estadoEnum : ${T(com.almatec.controlpiso.integrapps.entities.ReportePiezaCt.Estado).values()}"
+						                th:value="${estadoEnum}"
+						                th:text="${estadoEnum}"
+						                th:selected="${estado == estadoEnum}">
+						        </option>
+						    </select>
+	                    </div>
 	                    
 	                    <div class="col-12">
 	                        <button type="submit" class="btn btn-primary">Filtrar</button>
@@ -64,41 +94,59 @@
 	            <table class="table table-striped table-bordered">
 	                <thead class="table-dark">
 	                    <tr>
+							<th>Estado</th>
+							<th>O.P</th>
+							<th>C.O</th>
+							<th>Zona</th>
 	                        <th>Operario</th>
 	                        <th>Centro de Trabajo</th>
 	                        <th>Item</th>
 	                        <th>Cant</th>
 	                        <th>Lote</th>
 	                        <th>Fecha Creación</th>
-							<th>Estado</th>
-							<th>Acciones</th>
 							<th>Ultimo Intento</th>
 							<th>Mensaje Error</th> 
+							<th>Acciones</th>
 	                    </tr>
 	                </thead>
 	                <tbody>
-	                    <tr th:each="reporte : ${reportes.content}">
-	                        <td th:text="${reporte.operarioNombre}"></td>
-	                        <td th:text="${reporte.centroTrabajoNombre}"></td>
-	                        <td th:text="${reporte.itemDescripcion}"></td>
-	                        <td th:text="${reporte.cant}"></td>
-	                        <td th:text="${reporte.lote}"></td>
-	                        <td th:text="${#temporals.format(reporte.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
-							<td th:text="${reporte.estado}"></td>
-							<td class="text-center">
-					            <button th:if="${reporte.estado == 'PENDIENTE' or reporte.estado == 'ERROR'}"
-					                    class="btn btn-primary btn-sm"
-					                    onclick="reenviarReporte(this)"
-					                    th:data-reporte-id="${reporte.id}"
-										data-bs-toggle="tooltip"
-							            data-bs-placement="top"
-							            title="Reenviar">
-					                <i class="fas fa-sync-alt"></i> 
-					            </button>
-					        </td>
-							<td th:text="${#temporals.format(reporte.ultimoIntento, 'dd/MM/yyyy HH:mm')}"></td>
-							<td th:text="${reporte.mensajeError}"></td>
-	                    </tr>
+						<tr th:each="reporte : ${reportes.content}">
+			                <td class="text-center">
+			                    <span th:class="${'badge ' + 
+			                        (reporte.estado == 'COMPLETO' ? 'bg-success' : 
+			                        (reporte.estado == 'ERROR' ? 'bg-danger' : 
+			                        (reporte.estado == 'PENDIENTE' ? 'bg-warning' : 'bg-secondary')))}"
+			                        th:text="${reporte.estado}">
+			                    </span>
+			                </td>
+			                <td class="text-nowrap" th:text="${reporte.op}"></td>
+			                <td th:text="${reporte.co}"></td>
+			                <td th:text="${reporte.zona}"></td>
+			                <td class="text-nowrap" th:text="${reporte.operarioNombre}"></td>
+			                <td class="text-nowrap" th:text="${reporte.centroTrabajoNombre}"></td>
+			                <td class="text-nowrap" th:text="${reporte.itemDescripcion}"></td>
+			                <td class="text-center" th:text="${reporte.cant}"></td>
+			                <td class="text-nowrap" th:text="${reporte.lote}"></td>
+			                <td class="text-nowrap" th:text="${#temporals.format(reporte.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+			                <td class="text-nowrap" th:text="${#temporals.format(reporte.ultimoIntento, 'dd/MM/yyyy HH:mm')}"></td>
+			                <td style="width: 25%;">
+			                    <div style="max-width: 300px;" 
+			                         th:title="${reporte.mensajeError}"
+			                         th:text="${reporte.mensajeError}">
+			                    </div>
+			                </td>
+			                <td class="text-center">
+			                    <button th:if="${reporte.estado == 'PENDIENTE' or reporte.estado == 'ERROR'}"
+			                            class="btn btn-primary btn-sm"
+			                            onclick="reenviarReporte(this)"
+			                            th:data-reporte-id="${reporte.id}"
+			                            data-bs-toggle="tooltip"
+			                            data-bs-placement="top"
+			                            title="Reenviar">
+			                        <i class="fas fa-sync-alt"></i>
+			                    </button>
+			                </td>
+			            </tr>
 	                </tbody>
 	            </table>
 	        </div>
@@ -110,7 +158,11 @@
 			        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
 			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=0, size=10, 
 			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
-			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               idOperario=${idOperario}, idCentroT=${idCentroT},
+						       op=${op},
+						       co=${co},
+						       zona=${zona},
+							   estado=${estado})}"
 			               aria-label="Primera página">
 			                <span aria-hidden="true">&laquo;</span>
 			            </a>
@@ -120,7 +172,11 @@
 			        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
 			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${currentPage - 1}, size=10, 
 			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
-			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               idOperario=${idOperario}, idCentroT=${idCentroT},
+						       op=${op},
+						       co=${co},
+						       zona=${zona},
+							   estado=${estado})}"
 			               aria-label="Anterior">
 			                <span aria-hidden="true">‹</span>
 			            </a>
@@ -131,7 +187,11 @@
 			            th:classappend="${pageNum == currentPage ? 'active' : ''}">
 			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${pageNum}, size=10, 
 			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
-			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               idOperario=${idOperario}, idCentroT=${idCentroT},
+						       op=${op},
+						       co=${co},
+						       zona=${zona},
+							   estado=${estado})}"
 			               th:text="${pageNum + 1}"></a>
 			        </li>
 			        
@@ -139,7 +199,11 @@
 			        <li class="page-item" th:classappend="${currentPage >= reportes.totalPages - 1 ? 'disabled' : ''}">
 			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${currentPage + 1}, size=10, 
 			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
-			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               idOperario=${idOperario}, idCentroT=${idCentroT},
+						       op=${op},
+						       co=${co},
+						       zona=${zona},
+							   estado=${estado})}"
 			               aria-label="Siguiente">
 			                <span aria-hidden="true">›</span>
 			            </a>
@@ -149,7 +213,11 @@
 			        <li class="page-item" th:classappend="${currentPage >= reportes.totalPages - 1 ? 'disabled' : ''}">
 			            <a class="page-link" th:href="@{/produccion/historial-reportes(page=${reportes.totalPages - 1}, size=10, 
 			               fechaInicio=${fechaInicio}, fechaFin=${fechaFin}, 
-			               idOperario=${idOperario}, idCentroT=${idCentroT})}"
+			               idOperario=${idOperario}, idCentroT=${idCentroT},
+					       op=${op},
+					       co=${co},
+					       zona=${zona},
+					       estado=${estado})}"
 			               aria-label="Última página">
 			                <span aria-hidden="true">&raquo;</span>
 			            </a>

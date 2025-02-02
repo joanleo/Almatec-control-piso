@@ -438,6 +438,10 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
             LocalDateTime fechaFin,
             Integer idOperario,
             Integer idCentroT,
+            String op,
+            String co,
+            String zona,
+            ReportePiezaCt.Estado estado,
             int page,
             int size,
             String sortBy,
@@ -449,7 +453,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         
         return reporteRepository.findReportesPiezaWithFilters(
-            fechaInicio, fechaFin, idOperario, idCentroT, pageable); 
+            fechaInicio, fechaFin, idOperario, idCentroT, op, co, zona, estado, pageable); 
     }
 
 	@Override

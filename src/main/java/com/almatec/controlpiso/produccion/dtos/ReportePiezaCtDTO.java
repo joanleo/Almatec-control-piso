@@ -15,13 +15,17 @@ public class ReportePiezaCtDTO {
     private String estado;
     private LocalDateTime ultimoIntento;
     private String mensajeError;
+    private String op;
+    private String co;
+    private String zona;
     
 	public ReportePiezaCtDTO() {
 		super();
 	}
 
 	public ReportePiezaCtDTO(Integer id, String operarioNombre, String centroTrabajoNombre, String itemDescripcion,
-			Integer cant, LocalDateTime fechaCreacion, String lote, Estado estado, LocalDateTime ultimoIntento, String mensajeError) {
+			Integer cant, LocalDateTime fechaCreacion, String lote, Estado estado, LocalDateTime ultimoIntento, 
+			String mensajeError, String op, String co, String zona) {
 		super();
 		this.id = id;
 		this.operarioNombre = operarioNombre;
@@ -33,6 +37,9 @@ public class ReportePiezaCtDTO {
 		this.estado = estado.toString();
 		this.ultimoIntento = ultimoIntento;
 		this.mensajeError = mensajeError;
+		this.op = op;
+		this.co = co;
+		this.zona = zona;
 	}
 
 
@@ -114,6 +121,30 @@ public class ReportePiezaCtDTO {
 
 	public void setMensajeError(String mensajeError) {
 		this.mensajeError = mensajeError;
+	}
+
+	public String getOp() {
+		return op;
+	}
+
+	public void setOp(String op) {
+		this.op = op;
+	}
+
+	public String getCo() {
+		return co;
+	}
+
+	public String getZona() {
+		return zona;
+	}
+
+	public void setCo(String co) {
+		this.co = co;
+	}
+
+	public void setZona(String zona) {
+		this.zona = zona;
 	}
     
     
