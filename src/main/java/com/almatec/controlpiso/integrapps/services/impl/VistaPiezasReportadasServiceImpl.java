@@ -89,4 +89,10 @@ public class VistaPiezasReportadasServiceImpl implements VistaPiezasReportadasSe
 		return item;
 	}
 
+	@Override
+	public List<VistaPiezasReportadas> findByIdOpIntegrappsIn(List<Integer> listaIds) {
+		List<VistaPiezasReportadas> listaPiezas = vistaPiezasReportadasRepo.findAll();		
+		return listaPiezas;
+	}
+
 }

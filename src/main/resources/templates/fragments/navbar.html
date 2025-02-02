@@ -61,7 +61,8 @@
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuClickableInside">
 				    <li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_GENERAL'')')}"><a class="dropdown-item" href="/informes/produccion/excel-general">General Excel</a></li>
-				    <li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_MENSUAL'')')}"><a class="dropdown-item" href="/informes/produccion/excel-mes">Mensual</a></li>
+					<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_MENSUAL'')')}"><a class="dropdown-item" href="/informes/produccion/excel-mes">Mensual</a></li>
+					<li th:if="${#authorization.expression('hasAuthority(''ACCESS_GENERAR_INFORME_KG_CENTRO_TRABAJO'')')}"><a class="dropdown-item" href="/informes/produccion/sabana">Kg x Centro Trabajo</a></li>
 				  </ul>
 				</div>
 			</li>
