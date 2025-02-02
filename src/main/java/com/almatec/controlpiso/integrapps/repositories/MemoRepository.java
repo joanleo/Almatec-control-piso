@@ -9,9 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
-import com.almatec.controlpiso.ingenieria.dtos.MemoDetalleDTO;
 import com.almatec.controlpiso.integrapps.entities.Memo;
-import com.almatec.controlpiso.integrapps.entities.MemoDetalle;
 
 public interface MemoRepository extends JpaRepository<Memo, Long> {
 

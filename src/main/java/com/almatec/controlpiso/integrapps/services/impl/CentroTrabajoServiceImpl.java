@@ -9,8 +9,6 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -70,7 +68,6 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	@Autowired
 	private VistaOpItemsMaterialesRutaService opItemsMaterialesRutaService;
 	
-	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	@Override
 	public List<Compania> buscarCompanias() {

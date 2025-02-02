@@ -206,7 +206,6 @@ public class CentroTrabajoController {
 	    } else {
 	        codigoBusqueda = listaMService.obtenerCodMateriaPrimaItemReporte(idItem);
 	    }
-	    
 	    List<LoteConCodigoDTO> lotes = listaMService.obtenerLotesOpPorItemReporte(idItemOp, codigoBusqueda);
 		//List<LoteConCodigoDTO> lotes_old = listaMService.obtenerLotesOpPorItem(idItemOp);
 		//stopWatch.stop();

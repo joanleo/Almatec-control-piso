@@ -8,12 +8,9 @@ import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
@@ -36,8 +33,6 @@ public class MemoServiceImpl implements MemoService {
 	private final UsuarioService usuarioService;
 	private final ItemOpRepository itemOpRepo;
 		
-	private Logger logger = LoggerFactory.getLogger(getClass());
-
 	public MemoServiceImpl(MemoRepository memoRepo, 
 			UsuarioService usuarioService, 
 			ItemOpRepository itemOpRepo) {

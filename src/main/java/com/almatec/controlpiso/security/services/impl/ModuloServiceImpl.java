@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.security.entities.Modulo;
@@ -19,7 +17,6 @@ public class ModuloServiceImpl implements ModuloService {
 	
 	private final ModuloRepository moduloRepo;
 	private final PermissionRepository permissionRepo;
-	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 
 	public ModuloServiceImpl(ModuloRepository moduloRepo, PermissionRepository permissionRepo) {

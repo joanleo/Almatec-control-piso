@@ -42,7 +42,6 @@ public class OrdenProduccionHijoService {
 	private final OrdenPvService ordenPvService;
 	private final ConectorOrdenProduccionHijoService conectorOrdenProduccionHijoService;
 	private final MensajeServices mensajeServices;
-	private final ConectorOpOperacionesService conectorOpOperacionesService;
 	
 	private final UtilitiesApp util;
 	private final ConfigurationService configService;
@@ -61,8 +60,7 @@ public class OrdenProduccionHijoService {
 			ConectorOrdenProduccionHijoService conectorOrdenProduccionHijoService,
 			MensajeServices mensajeServices,
 			UtilitiesApp util,
-			ConfigurationService configService,
-			ConectorOpOperacionesService conectorOpOperacionesService) {
+			ConfigurationService configService) {
 		super();
 		this.conectorService = conectorService;
 		this.xmlService = xmlService;
@@ -75,7 +73,6 @@ public class OrdenProduccionHijoService {
 		this.mensajeServices = mensajeServices;
 		this.util = util;
 		this.configService = configService;
-		this.conectorOpOperacionesService = conectorOpOperacionesService;
 	}
 
 	public String crearOrdenProduccion(Integer idOPI) throws IOException {
@@ -151,15 +148,5 @@ public class OrdenProduccionHijoService {
 		//actualizarRutaOp(idOPI, ordenIntegrapps, item);
 		return "OP Creada Exitosamente";
 	}
-
-	/*private void actualizarRutaOp(Integer idOPI, VistaOrdenPv ordenIntegrapps, ItemsVersion05 item) {
-		List<Conector> opOperaciones = new ArrayList<>();
-		List<OrdenesdeproduccionOperacionesVersion01> conectorOpOperaciones = conectorOpOperacionesService.crearConector(idOPI, ordenIntegrapps, item);
-		opOperaciones.addAll(conectorOpOperaciones);
-		String response = xmlService.postImportarXML(opOperaciones);
-		if (!response.equals(RESPUESTA_OK)) {
-			log.info("Actualizacion de ruta ok. {}",response); 
-		}
-	}*/
 
 }
