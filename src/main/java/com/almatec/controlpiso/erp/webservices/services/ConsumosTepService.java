@@ -12,7 +12,6 @@ import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.erp.interfaces.DataConsumoInterface;
 import com.almatec.controlpiso.erp.interfaces.DataTEP;
 import com.almatec.controlpiso.erp.services.ListaMaterialService;
-import com.almatec.controlpiso.erp.webservices.dto.ConsumoDTO;
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosConsumos;
 import com.almatec.controlpiso.erp.webservices.generated.ConsumosdesdeCompromisosMovtoInventarioV4;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPDocumentosVersion01;
@@ -68,14 +67,32 @@ public class ConsumosTepService {
 		if(Boolean.FALSE.equals(platinas)) {
 			codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());			
 		}else {
+			System.out.println("Buscando codigo erp");
+			System.out.println("id item reportar: " + idItemReportar);
+			System.out.println(itemOp);
 			List<ItemListaMateriaInterface> materiaPrima = itemOpService.obtenerListaMaterialesItemPorIdItem(itemOp.getId().intValue(), itemOp.getIdItemFab());
 			codErpMateriaPrima = materiaPrima.stream()
-			                    .filter(itemM -> Objects.equals(itemM.getid_parte(), idItemReportar))
+			                    .filter(itemM -> {
+			                    	if("CONJUNTO".equals(itemM.getitem_op_tipo())) {
+			                    		return Objects.equals(itemM.getid_parte(), idItemReportar);
+			                    	}
+			                    	return Objects.equals(itemM.getid_item_fab(), idItemReportar);
+			                    	
+			                    })
 			                    .map(ItemListaMateriaInterface::getid_materia_prima)
 			                    .findFirst()
 			                    .orElse(0);  // En caso de no encontrar coincidencia
 						}
+		
+		if (codErpMateriaPrima == 0) {
+	        log.error("No se encontró código ERP de materia prima válido");
+	        throw new RuntimeException("No se pudo obtener el código ERP de materia prima");
+	    }
+
+	    log.info("Código ERP de materia prima obtenido: {}", codErpMateriaPrima);
+	    
 		log.info("Creando conector movimientos consumo");
+		
 		List<ConsumosdesdeCompromisosMovtoInventarioV4> movsConsumo = conectorConsumoService.crearDetalleConsumo(
 				itemFab, data, reporte, null, codErpMateriaPrima);		
 		tepYConsumosXml.addAll(movsConsumo);

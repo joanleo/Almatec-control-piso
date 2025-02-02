@@ -7,8 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.math.BigDecimal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,7 +33,6 @@ public class ListaMServiceImpl implements ListaMService {
 	@Autowired
 	private VistaItemLoteDisponibleService vistaItemLoteDisponibleService;
 	
-	private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${schema.unoee}")
 	private String schemaUnoee;
@@ -102,27 +99,37 @@ public class ListaMServiceImpl implements ListaMService {
 
 	@Override
 	public List<LoteConCodigoDTO> obtenerLotesOpPorItemReporte(Long idItemOp, Integer codErpMp) {
-		Integer idOpIntegrapps = itemOpService.obtenerIdOpIntegrappsPorIdItem(idItemOp);
+	    Integer idOpIntegrapps = itemOpService.obtenerIdOpIntegrappsPorIdItem(idItemOp);
 	    List<LoteConCodigoDTO> lotes = listaMaterialRepo.obtenerLotesOpPorItemYCodErp(idOpIntegrapps, codErpMp);
+	    
 	    if (lotes == null || lotes.isEmpty()) {
-	        return new ArrayList<>(); 
+	        return new ArrayList<>();
 	    }
-	    
-	    Set<String> lotesErp = lotes.stream()
-	            .map(LoteConCodigoDTO::getLoteErp)
-	            .collect(Collectors.toSet());
-	    
-	    Map<String, LoteInfoDTO> disponibilidades = obtenerDisponibilidadesBatch(lotesErp);
-	    
+
+
+	    Set<String> clavesCodigoLote = lotes.stream()
+	        .map(lote -> {
+	            String clave = generarClaveCodigoLote(lote.getCodErp().toString(), lote.getLoteErp());
+	            return clave;
+	        })
+	        .collect(Collectors.toSet());
+
+	    Map<String, LoteInfoDTO> disponibilidades = obtenerDisponibilidadesBatch(clavesCodigoLote);
+
 	    lotes.forEach(lote -> {
-        	LoteInfoDTO info = disponibilidades.getOrDefault(lote.getLoteErp().trim(), 
-                    new LoteInfoDTO(BigDecimal.ZERO, ""));
-            lote.setDisponible(info.getDisponible());
-            lote.setDescripcion(info.getDescripcion());
+	        String key = generarClaveCodigoLote(lote.getCodErp().toString(), lote.getLoteErp());
+	        
+	        LoteInfoDTO info = disponibilidades.getOrDefault(key, new LoteInfoDTO(BigDecimal.ZERO, ""));       
+	        lote.setDisponible(info.getDisponible());
+	        lote.setDescripcion(info.getDescripcion());
 	    });
-	    
+
 	    return lotes;
 	}
-
+	
+	private String generarClaveCodigoLote(String codigo, String lote) {
+		String loteFormateado = (lote != null && !lote.trim().isEmpty()) ? lote.trim() : "";
+	    return codigo + "|" + loteFormateado;
+	}
 
 }

@@ -74,7 +74,7 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 				BigDecimal cantReportarActual = reportes.get(i);
 				Double kiloIteracion = kilosTotales / reportes.size();
 				crearMovimiento(data, dataTE, idCTErp, cantReportarActual, movs, kiloIteracion);
-			}
+				}
 		}else {
 			BigDecimal horas = BigDecimal.valueOf(0.01);
 			crearMovimiento(data, dataTE, idCTErp, horas, movs, 0.0001);
@@ -128,12 +128,16 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 	}
 	
 	private double precalcularHoras(double horas) {
+		if (horas < 0.01) {
+	        horas = 0.01;
+	    }
 		int horasEnteras = (int) horas;
 		double minutos = (horas - horasEnteras);
 		// Ajustamos los minutos para contrarrestar el recálculo de la aplicación
 		double minutosAjustados = minutos * 60 / 100;
 
-		return horasEnteras + minutosAjustados;
+		double resultado = horasEnteras + minutosAjustados;
+	    return Math.round(resultado * 100.0) / 100.0;
 	}
 
 }

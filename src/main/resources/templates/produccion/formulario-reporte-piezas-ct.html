@@ -80,7 +80,7 @@
 	                                    <option value=""></option>
 	                                    <option th:each="lot : ${lotes}" 
 												th:value="${lot.loteErp}" 
-												th:text="${lot.loteErp}"
+												th:text="${lot.codErp + ' - ' + lot.loteErp  }"
 												th:data-disponible="${lot.disponible}"
 												th:data-descripcion="${lot.descripcion}"></option>
 	                                </select>               

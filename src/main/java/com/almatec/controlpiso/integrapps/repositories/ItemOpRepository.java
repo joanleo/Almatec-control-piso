@@ -102,7 +102,7 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "LEFT OUTER JOIN z_item_materia_prima AS im_1 ON im.id_materia_prima = im_1.id_item "
 			+ "WHERE im.activo = 1 "
 			+ "AND items_op.item_id = :idItem "
-			+ "AND items_fabrica.Item_fab_Id = :idFab ", nativeQuery = true)
+			+ "AND (items_fabrica.item_tipo <> 'CONJUNTO' OR im.id_materia_prima = :idFab) ", nativeQuery = true)
 	List<ItemListaMateriaInterface> obtenerListaMaterialesItemPorIdItem(@Param("idItem") Integer idItem, @Param("idFab") Integer idFab);
 
 	@Query(value = "SELECT DISTINCT io.id_op_ia AS IdOpIa, v.Tipo_OP AS TipoOp, v.Num_Op AS NumOp,"

@@ -50,41 +50,103 @@ public class VistaItemLoteDisponibleServiceImpl implements VistaItemLoteDisponib
     }
 
 	@Override
-	public Map<String, LoteInfoDTO> buscarDisponibilidadBatch(Set<String> lotes, String bodega) {
-        try {
-            // Verificar datos específicos de cada lote
-            String sqlDetalle = "SELECT v.f_id_lote, v.f_cant_disponible_1, v.f120_descripcion "
-            		+ "FROM Integrapps.dbo.view_items_lote_dispo v "
-            		+ "WHERE v.f150_id = :bodega "
-            		+ "AND v.f_id_lote IN :lotes";
+	public Map<String, LoteInfoDTO> buscarDisponibilidadBatch(Set<String> clavesCodigoLote, String bodega) {
+	    if (clavesCodigoLote == null || clavesCodigoLote.isEmpty()) {
+	        return new HashMap<>();
+	    }
+	    if (bodega == null || bodega.trim().isEmpty()) {
+	        throw new IllegalArgumentException("La bodega no puede ser nula o vacía");
+	    }
 
-            @SuppressWarnings("unchecked")
-            List<Object[]> results = entityManager.createNativeQuery(sqlDetalle)
-                .setParameter("bodega", bodega)
-                .setParameter("lotes", lotes)
-                .getResultList();
+	    try {
+	        // Separar las claves en códigos y lotes
+	        Map<String, String> mapaClaves = clavesCodigoLote.stream()
+	            .collect(Collectors.toMap(
+	                clave -> clave,
+	                clave -> {
+	                    String[] partes = clave.split("\\|", 2);
+	                    return partes.length > 1 ? partes[1] : "";
+	                }
+	            ));
 
-            // Construir el mapa de resultados
-            Map<String, LoteInfoDTO> disponibilidades = results.stream()
-            		.collect(Collectors.toMap(
-                            row -> ((String) row[0]).trim(),
-                            row -> new LoteInfoDTO(
-                                row[1] != null ? (BigDecimal) row[1] : BigDecimal.ZERO,
-                                row[2] != null ? (String) row[2] : ""
-                            ),
-                            (v1, v2) -> v1,
-                            HashMap::new
-                        ));
+	        Set<Integer> codigos = mapaClaves.keySet().stream()
+	            .map(codigoStr -> {
+	                try {
+	                    return Integer.parseInt(codigoStr.split("\\|")[0]); // Tomar solo el código antes del |
+	                } catch (NumberFormatException e) {
+	                    log.error("El código no es un número válido: {}", codigoStr);
+	                    throw new IllegalArgumentException("Código inválido: " + codigoStr);
+	                }
+	            })
+	            .collect(Collectors.toSet());
+	        
+	        codigos.forEach(System.out::println);
 
-            return disponibilidades;
+	        Set<String> lotes = mapaClaves.values().stream()
+	            .map(lote -> (lote != null && !lote.trim().isEmpty()) ? lote.trim() : "")
+	            .collect(Collectors.toSet());
+	        
+	        lotes.forEach(System.out::println);
 
-        } catch (Exception e) {
-            log.error("Error en consulta de disponibilidad", e);
-            log.error("SQL Parameters - bodega: {}, lotes: {}", bodega, lotes);
-            
-            return new HashMap<>();
-        }
-    }
+	        // Verificar si "SIN_LOTE" está presente
+	        boolean contieneVacio = lotes.contains("");
+
+	        // Construir la consulta SQL
+	        StringBuilder sqlDetalle = new StringBuilder(
+	            "SELECT v.f120_id, v.f_id_lote, v.f_cant_disponible_1, v.f120_descripcion "
+	            + "FROM Integrapps.dbo.view_items_lote_dispo v "
+	            + "WHERE v.f150_id = :bodega "
+	            + "AND v.f120_id IN :codigos "
+	        );
+
+	        if (contieneVacio) {
+	            sqlDetalle.append("AND (v.f_id_lote IN :lotes OR v.f_id_lote IS NULL) ");
+	        } else {
+	            sqlDetalle.append("AND v.f_id_lote IN :lotes ");
+	        }
+	        
+
+	        @SuppressWarnings("unchecked")
+	        List<Object[]> results = entityManager.createNativeQuery(sqlDetalle.toString())
+	            .setParameter("bodega", bodega)
+	            .setParameter("codigos", codigos)
+	            .setParameter("lotes", lotes)
+	            .getResultList();
+
+	        // Log de resultados para debugging
+	        if (log.isDebugEnabled()) {
+	            results.forEach(row -> {
+	                log.debug("Resultado: código={}, lote={}, cantidad={}, descripción={}",
+	                    row[0], row[1], row[2], row[3]);
+	            });
+	        }
+
+	        // Construir el mapa de resultados
+	        return results.stream()
+	                .collect(Collectors.toMap(
+	                    row -> generarClaveCodigoLote(
+	                        (Integer) row[0], 
+	                        row[1] != null ? (String) row[1] : null
+	                    ),
+	                    row -> new LoteInfoDTO(
+	                        row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO,
+	                        row[3] != null ? (String) row[3] : ""
+	                    ),
+	                    (v1, v2) -> v1,
+	                    HashMap::new
+	                ));
+
+	    } catch (Exception e) {
+	        log.error("Error en consulta de disponibilidad para bodega: {} con claves: {}", 
+	                  bodega, String.join(", ", clavesCodigoLote), e);
+	        return new HashMap<>();
+	    }
+	}
+
+	private String generarClaveCodigoLote(Integer codigo, String lote) {
+	    String loteFormateado = (lote != null && !lote.trim().isEmpty()) ? lote.trim() : "";
+	    return codigo + "|" + loteFormateado;
+	}
 	
 	
 
