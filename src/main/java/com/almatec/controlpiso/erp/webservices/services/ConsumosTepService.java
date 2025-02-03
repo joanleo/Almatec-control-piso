@@ -67,10 +67,9 @@ public class ConsumosTepService {
 		if(Boolean.FALSE.equals(platinas)) {
 			codErpMateriaPrima = solicitudMateriaPrimaService.obtenerCodErpPorLote(reporte.getLote());			
 		}else {
-			System.out.println("Buscando codigo erp");
-			System.out.println("id item reportar: " + idItemReportar);
-			System.out.println(itemOp);
-			List<ItemListaMateriaInterface> materiaPrima = itemOpService.obtenerListaMaterialesItemPorIdItem(itemOp.getId().intValue(), itemOp.getIdItemFab());
+			List<ItemListaMateriaInterface> materiaPrima = itemOpService.obtenerListaMaterialesItemPorIdItem(reporte.getIdItem().intValue(), idItemReportar);
+
+			materiaPrima.forEach(System.out::println);
 			codErpMateriaPrima = materiaPrima.stream()
 			                    .filter(itemM -> {
 			                    	if("CONJUNTO".equals(itemM.getitem_op_tipo())) {
