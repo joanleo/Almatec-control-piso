@@ -1,7 +1,7 @@
 
 function reenviarReporte(button) {
     const reporteId = button.getAttribute('data-reporte-id');
-    
+	showLoader('Reenviando reporte de produccion...');
     fetch(`/produccion/reenviar-reporte/${reporteId}`, {
         method: 'POST',
         headers: {
@@ -23,5 +23,6 @@ function reenviarReporte(button) {
     .catch(error => {
         console.error('Error:', error);
         mostrarAlert(error.message, 'danger');
-    });
+    })
+	.finally(() => hideLoader()) ;
 }

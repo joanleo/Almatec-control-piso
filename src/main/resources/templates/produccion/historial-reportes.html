@@ -8,6 +8,17 @@
 	<body>
 		<nav th:replace="fragments/navbar :: nav-bar('Almacen')" aria-label="Site menu"></nav>
 		
+		<div id="globalLoader" class="loader-container" style="display: none;">
+		  <div class="loader-content">
+		      <div class="spinner-border text-primary" role="status">
+		          <span class="visually-hidden">Cargando...</span>
+		      </div>
+		      <div class="loader-text mt-2">Procesando...</div>
+		  </div>
+		</div>
+						
+		<div th:replace="fragments/alerts :: alerts"></div>
+		
 	    <div class="container mt-4">
 	        <h2>Historial de Reportes de Piezas</h2>
 	        
