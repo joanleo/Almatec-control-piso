@@ -95,7 +95,7 @@ function updateTable() {
 }
 
 function updateSummary(items) {
-    const esCentroEspecial = [13, 17, 22].includes(Number(centroTrabajoSelectedId));
+    const esCentroEspecial = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22].includes(Number(centroTrabajoSelectedId));
     let totalRequerido = 0;
     let totalReportado = 0;
     let summaryHTML = '';
@@ -258,7 +258,7 @@ function mostrarItems(items){
 	let tbody = document.getElementById("resumen-op")
 	tbody.innerHTML = ''
 	
-	const esCentroEspecial = [13, 17, 22].includes(Number(centroTrabajoSelectedId));
+	const esCentroEspecial = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22].includes(Number(centroTrabajoSelectedId));
 	    
     // Actualizar los encabezados según el centro de trabajo
     const thead = document.querySelector('#resultsTable thead tr');
