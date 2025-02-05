@@ -38,6 +38,7 @@ function fillTableListaMateriales(lista) {
     let tbody = document.getElementById("body-lista-materiales")
     tbody.innerHTML = ''
     lista.forEach((item) => {
+		console.log(item)
         let row = document.createElement('tr')
 
         let cellCodigo = document.createElement('td')
@@ -55,6 +56,11 @@ function fillTableListaMateriales(lista) {
         let cellCantReq = document.createElement('td')
         cellCantReq.textContent = item.cantRequeridaActualizada.toFixed(2)
         row.appendChild(cellCantReq)
+		
+		const cantPendiente = (item.cantRequeridaActualizada - item.cantEntregada - item.cantExistencia).toFixed(2)
+        let cellCantPend = document.createElement('td')
+        cellCantPend.textContent = cantPendiente
+        row.appendChild(cellCantPend)
 
         tbody.appendChild(row)
     })

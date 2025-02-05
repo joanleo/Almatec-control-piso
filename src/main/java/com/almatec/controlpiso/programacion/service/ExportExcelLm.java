@@ -2,6 +2,7 @@ package com.almatec.controlpiso.programacion.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -25,6 +26,7 @@ public class ExportExcelLm {
         headerRow.createCell(1).setCellValue("Descripción");
         headerRow.createCell(2).setCellValue("UM");
         headerRow.createCell(3).setCellValue("Cantidad Requerida");
+        headerRow.createCell(3).setCellValue("Cantidad Pendiente");
         
         // Llenar los datos
         int rowNum = 1;
@@ -34,6 +36,8 @@ public class ExportExcelLm {
             row.createCell(1).setCellValue(material.getDescripcion());
             row.createCell(2).setCellValue(material.getUm());
             row.createCell(3).setCellValue(material.getCantRequeridaActualizada().toString());
+            BigDecimal canPendiente = material.getCantRequeridaActualizada().subtract(material.getCantEntregada()).subtract(material.getCantExistencia());
+            row.createCell(4).setCellValue(canPendiente.toString());
         }
         
         // Escribir el workbook en un ByteArrayOutputStream
