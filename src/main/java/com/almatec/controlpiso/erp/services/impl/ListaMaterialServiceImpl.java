@@ -76,6 +76,7 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
 
 	@Override
 	public DataTEP obtenerDataTEP(String idRuta, String idCentroTrabajo) {
+		System.out.println("Ruta: " + idRuta);
 		if (StringUtils.isEmpty(idRuta)) {
             throw new RutaItemException(
                 "El ID de ruta no puede estar vacío",
@@ -83,7 +84,7 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
                 "Parámetro idRuta es null o vacío"
             );
         }
-        
+        System.out.println("Centro de trabajo: " +idCentroTrabajo);
         if (StringUtils.isEmpty(idCentroTrabajo)) {
             throw new RutaItemException(
                 "El ID de centro de trabajo no puede estar vacío",
@@ -98,14 +99,17 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
             // Validación del resultado
             if (resultado == null) {
                 throw new RutaItemException(
-                    "No se encontraron datos para la ruta " + idRuta + 
-                    " y centro de trabajo " + idCentroTrabajo,
+                    "No se encontraron datos para la ruta id:" + idRuta + 
+                    " y centro de trabajo id:" + idCentroTrabajo,
                     "TEP_003",
                     "La consulta retornó null"
                 );
             }
             
             return resultado;		
+		} catch (RutaItemException e) {
+	        // Propagamos la excepción RutaItemException sin modificar
+	        throw e;
 		} catch (DataAccessException e) {
             // Error específico de acceso a datos
             String mensaje = "Error al acceder a los datos TEP";
@@ -118,10 +122,10 @@ public class ListaMaterialServiceImpl implements ListaMaterialService {
             
         } catch (Exception e) {
             // Cualquier otra excepción no prevista
-            String mensaje = "Error inesperado al obtener datos TEP";
-            log.error("{}: {}", mensaje, e.getMessage(), e);
+        	String mensajeDetallado = e.getMessage();
+            log.error("Error inesperado al obtener datos TEP: {}", mensajeDetallado, e);
             throw new RutaItemException(
-                mensaje,
+                mensajeDetallado,  // Usamos el mensaje original aquí
                 "TEP_999",
                 "Error inesperado: " + e.getMessage()
             );

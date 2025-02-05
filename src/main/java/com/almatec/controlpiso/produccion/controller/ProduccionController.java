@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.almatec.controlpiso.almacen.service.DetalleSolicitudMateriaPrimaService;
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
+import com.almatec.controlpiso.exceptions.RutaItemException;
 import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpId;
 import com.almatec.controlpiso.integrapps.dtos.DataItemImprimirDTO;
@@ -107,6 +110,8 @@ public class ProduccionController {
 	
 	@Autowired
 	private CentroTrabajoService centroTrabajoService;
+	
+	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	@GetMapping("/home")
 	public String homeProduction(@RequestParam(required = false) String alert,
@@ -310,6 +315,16 @@ public class ProduccionController {
 	                "mensaje", "Reporte reenviado exitosamente",
 	                "tipo", "success"
 	            ));
+	    }catch (RutaItemException e) {
+	    	log.error("Error de ruta al reenviar reporte {}: {}", idReporte, e.getMessage(), e);
+	        // Nuevo manejo específico para RutaItemException
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body(Map.of(
+	                "mensaje", e.getMessage(),
+	                "codigo", e.getCodigoError(),  // Asumiendo que existe un getter getCodigo()
+	                "detalle", e.getDetallesTecnicos(), // Asumiendo que existe un getter getDetalle()
+	                "tipo", "danger"
+	            ));
 	    } catch (ServiceException e) {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 	            .body(Map.of(
@@ -324,5 +339,5 @@ public class ProduccionController {
 	            ));
 	    }
 	}
-
+	
 }
