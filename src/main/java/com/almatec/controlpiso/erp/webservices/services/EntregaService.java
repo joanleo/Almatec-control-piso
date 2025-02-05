@@ -22,6 +22,7 @@ import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPMovimientosVers
 import com.almatec.controlpiso.erp.webservices.generated.DoctoentregasDocumentosVersión02;
 import com.almatec.controlpiso.erp.webservices.generated.DoctoentregasMovimientosVersión01;
 import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
+import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
@@ -213,8 +214,9 @@ public class EntregaService {
      * @param reporte El reporte contiene los datos de la entrega
      * @return String indica el resultado de la entrega
      * @throws IOException si existe un error procesando el XML
+	 * @throws ServiceException 
      */
-	public String crearEntrega(ItemOp item, ReporteDTO reporte) throws IOException {
+	public String crearEntrega(ItemOp item, ReporteDTO reporte) throws IOException, ServiceException {
 		
 		Integer piezasSinConsumo = 0;
 
@@ -225,6 +227,9 @@ public class EntregaService {
 		List<ItemReporteConsumoDTO> itemsConsumo = new ArrayList<>();
 		
 		//Se agrega consumo de pintura
+		if(item.getCodigoPintura() == 0 || item.getCodigoPintura() == null) {
+			throw new ServiceException(String.format("El código ERP de la pintura para el item '%s' no puede ser cero ni nulo", item.getDescripcion()));
+		}
 		agregarConsumoPintura(item, reporte, itemsConsumo);
 
 		//se generan los conectores de consumo y tep
