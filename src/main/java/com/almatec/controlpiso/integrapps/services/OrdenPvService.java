@@ -13,10 +13,6 @@ import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
 
 public interface OrdenPvService {
 
-	List<VistaOrdenPv> buscarProyectos();
-
-	List<VistaOrdenPv> buscarProyectos(String keyword);
-
 	List<ProyectoProduccionDTO> buscarProyectosOrdenPv();
 
 	List<ProyectoProduccionDTO> buscarProyectosOrdenPv(String keyword);

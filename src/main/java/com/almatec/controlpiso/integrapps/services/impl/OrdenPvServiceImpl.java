@@ -28,16 +28,6 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	private String schemaUnoee;
 
 	@Override
-	public List<VistaOrdenPv> buscarProyectos() {
-		return ordenPvRepo.findByTipoOpAndIdEstadoDocOrderByNumOpDesc("OP", 1); 
-	}
-
-	@Override
-	public List<VistaOrdenPv> buscarProyectos(String keyword) {
-		return ordenPvRepo.buscarPorKeyword(keyword);
-	}
-
-	@Override
 	public List<ProyectoProduccionDTO> buscarProyectosOrdenPv() {
 		List<Object[]> proyectosOPV = ordenPvRepo.findProyects();
 		List<ProyectoProduccionDTO> proyectos = new ArrayList<>(); 
@@ -118,7 +108,7 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	@Override
 	public List<VistaOrdenPv> obtenerOpActivas() {
 		
-		return ordenPvRepo.findByTipoOpAndIdEstadoDoc("OP", 1);
+		return ordenPvRepo.findByTipoOpAndIdEstadoOpOrderByNumOpDesc("OP", 1);
 	}
 
 	@Override

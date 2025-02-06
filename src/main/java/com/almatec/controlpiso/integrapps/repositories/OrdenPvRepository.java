@@ -59,11 +59,11 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 			+ "AND pv_tipo = 'PV'", nativeQuery = true)
 	OrdenPvEstadoData findByNumOp(@Param("noPedido") Integer noPedido);
 
-	List<VistaOrdenPv> findByTipoOpAndIdEstadoDoc(String string, int i);
+	List<VistaOrdenPv> findByTipoOpAndIdEstadoOp(String string, int i);
 
-	List<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String string, int i);
+	List<VistaOrdenPv> findByTipoOpAndIdEstadoOpOrderByNumOpDesc(String string, int i);
 
-	Page<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String tipoOp, int idEstadoDoc, Pageable pageable);
+	Page<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String tipoOp, int idEstadoOp, Pageable pageable);
 
 	@Query("SELECT o FROM VistaOrdenPv o WHERE " +
 	           "(LOWER(o.cliente) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
