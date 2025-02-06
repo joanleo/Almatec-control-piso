@@ -86,8 +86,8 @@
           <ul class="dropdown-menu">
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_HISTORIAL_SOLICITUDES_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes/historial">Historial Solicitudes materia prima</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Remision</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Remisiones</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Lista de Empaque</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Lista de Empaque</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_ALMACEN'')')}"><a class="dropdown-item" href="/almacen/consulta-materia-prima">Consulta Materia prima</a></li>
           </ul>
         </li>   

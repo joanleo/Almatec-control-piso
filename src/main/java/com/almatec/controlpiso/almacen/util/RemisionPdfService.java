@@ -280,7 +280,7 @@ public class RemisionPdfService extends PdfPageEventHelper{
 	private void datosTitulo(Document document) {
 		Font titleFont = new Font();
 		titleFont.setSize(20);
-		Paragraph title = new Paragraph("REMISION DE DESPACHOS", titleFont);
+		Paragraph title = new Paragraph("LISTA DE EMPAQUE", titleFont);
 		title.setAlignment(Element.ALIGN_CENTER);
 		title.setSpacingBefore(25);
 		document.add(title);

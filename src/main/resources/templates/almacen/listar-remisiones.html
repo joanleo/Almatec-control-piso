@@ -3,6 +3,27 @@
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 	  <head th:replace="fragments/head :: head('Almacen :: Remisiones')"></head>
 	  <body>
+		<style>
+		    .form-floating > .form-control {
+		        height: calc(3.5rem + 2px);
+		        line-height: 1.25;
+		    }
+		    
+		    .form-floating > label {
+		        padding: 1rem 0.75rem;
+		    }
+		    
+		    .modal .form-control:focus {
+		        border-color: #80bdff;
+		        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+		    }
+		    
+		    .modal h6 {
+		        color: #666;
+		        font-weight: 500;
+		    }
+		</style>
+		
 		<nav th:replace="fragments/navbar :: nav-bar('Almacen')" aria-label="Site menu"></nav>
 		
 		<div class="container my-5">
@@ -24,7 +45,7 @@
 			    <span aria-hidden="true">&times;</span>
 			  </button>
 			 </div>
-			 <h2 class="mb-2"> Remisiones </h2>
+			 <h2 class="mb-2"> Listas de Empaque </h2>
 			 <div class="d-flex justify-content-start my-4">
  				<input type="search" class="form-control size-xxl" id="searchInput" placeholder="Buscar remisión...">
  				<button type="button" class="btn btn-primary mx-3" id="searchButton">Buscar</button>				
@@ -32,10 +53,10 @@
 			<div style="display: flex; justify-content: center;">
 				<div class="table-responsive rounded-3 shadow-sm" style="width: 100%;">
 					<table class="table table-striped table-hover table-rounded caption-top">
-						<caption>Remisiones</caption>
+						<caption>Listas</caption>
 						<thead class="table-light sticky-top">
 							<tr>
-								<th># Remision</th>
+								<th># </th>
 								<th>OP</th>
 								<th>Cliente</th>
 								<th>Proyecto</th>
@@ -73,34 +94,34 @@
 			</div>
 			
 			<div style="display: flex; flex-direction: column;" hidden id="remSel">
-				<h3>Remision selecionada:</h3>
+				<h3>Lista de Empaque selecionada:</h3>
 				<div style="display: flex; justify-content: space-between;">
 					<div class="input-group my-3 size-s" >
 			           <span class="input-group-text"># RM</span>
 			           <input type="text" class="form-control" id="noRm" readonly style="text-align: right;" />
 			    	</div>
-					<div class="input-group my-3 mx-3 size-m" >
+					<div class="input-group my-3 mx-3" style="width: 12rem;">
 			           <span class="input-group-text">Fecha </span>
 			           <input type="text" class="form-control" id="fechaCreacion" readonly style="text-align: right;" />
 			    	</div>
-					<div class="input-group my-3 mx-3 size-m" >
+					<div class="input-group my-3 mx-3" style="width: 12rem;" >
 			           <span class="input-group-text">OP </span>
 			           <input type="text" class="form-control" id="opSel" readonly style="text-align: right;" />
 			    	</div>
-					<div class="input-group my-3 mx-3 size-l" >
+					<div class="input-group my-3 mx-3" style="width: 28rem;">
 			           <span class="input-group-text">Cliente </span>
 			           <input type="text" class="form-control" id="cliente" readonly style="text-align: right;" />
 			    	</div>
 					
 				</div>
 				<div class="d-grid my-4">
-					<button class="btn btn-primary" type="button" onclick="imprimirRemision()">Imprimir remision</button>
+					<button class="btn btn-primary" type="button" onclick="imprimirRemision()">Imprimir</button>
 				</div>		
 			</div>			
 			
 			<div class="table-responsive rounded-3 shadow-sm" style="margin-top: 3rem; margin-bottom: 2rem; max-height: 30rem; overflow-y: auto;">
 				<table class="table table-striped table-hover table-rounded caption-top">
-					<caption>Detalle Remision </caption>
+					<caption>Detalle </caption>
 					<thead class="table-light sticky-top">
 						<tr>
 							<th>Item</th>
@@ -134,6 +155,126 @@
 			</div>
  		    
 			
+		</div>
+		
+		<!-- Modal para la vista previa de la remisión -->
+		<div class="modal" id="previewRemision" tabindex="-1">
+		    <div class="modal-dialog modal-xl">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title">Vista Previa de Remisión</h5>
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body">
+		                <!-- Sección de encabezado con logo y título -->
+		                <div class="row mb-4">
+		                    <div class="col-3">
+		                        <!-- Espacio para el logo de la empresa -->
+		                        <div style="height: 80px;" class="bg-light">Logo</div>
+		                    </div>
+		                    <div class="col-6 text-center">
+		                        <h3 class="mb-2">REMISION DE DESPACHOS</h3>
+		                        <h4 class="mb-2">ALMATEC LOGISTICA INTELIGENTE S.A.S.</h4>
+		                        <h5>Nit: 900951036-1</h5>
+		                    </div>
+		                    <div class="col-3">
+		                        <!-- Número de remisión -->
+		                        <div id="preview-remision-number" class="text-end"></div>
+		                    </div>
+		                </div>
+
+		                <!-- Sección de información del cliente y detalles generales -->
+		                <div class="row mb-3">
+		                    <!-- Columna izquierda: Información del cliente -->
+		                    <div class="col-md-8">
+		                        <div class="row mb-2">
+		                            <div class="col-md-3"><strong>Cliente:</strong></div>
+		                            <div class="col-md-9" id="preview-cliente"></div>
+		                        </div>
+		                        <div class="row mb-2">
+		                            <div class="col-md-3"><strong>Proyecto:</strong></div>
+		                            <div class="col-md-9" id="preview-proyecto"></div>
+		                        </div>
+		                        <div class="row mb-2">
+		                            <div class="col-md-3"><strong>Dirección:</strong></div>
+		                            <div class="col-md-9" id="preview-direccion"></div>
+		                        </div>
+		                    </div>
+		                    <!-- Columna derecha: Información de la operación -->
+		                    <div class="col-md-4">
+		                        <div class="row mb-2">
+		                            <div class="col-md-4"><strong>OP:</strong></div>
+		                            <div class="col-md-8" id="preview-op"></div>
+		                        </div>
+		                        <div class="row mb-2">
+		                            <div class="col-md-4"><strong>Ciudad:</strong></div>
+		                            <div class="col-md-8" id="preview-ciudad"></div>
+		                        </div>
+		                        <div class="row mb-2">
+		                            <div class="col-md-4"><strong>Fecha:</strong></div>
+		                            <div class="col-md-8" id="preview-fecha"></div>
+		                        </div>
+		                    </div>
+		                </div>
+
+		                <!-- Sección de información del transporte -->
+		                <div class="row mb-4">
+		                    <!-- Datos del transportista -->
+		                    <div class="col-md-4">
+		                        <div class="mb-2"><strong>Transportadora:</strong> <span id="preview-transportadora"></span></div>
+		                        <div class="mb-2"><strong>Conductor:</strong> <span id="preview-conductor"></span></div>
+		                        <div class="mb-2"><strong>Cédula:</strong> <span id="preview-cedula"></span></div>
+		                        <div class="mb-2"><strong>Celular:</strong> <span id="preview-celular"></span></div>
+		                    </div>
+		                    <!-- Datos del vehículo -->
+		                    <div class="col-md-4">
+		                        <div class="mb-2"><strong>Vehículo:</strong> <span id="preview-vehiculo"></span></div>
+		                        <div class="mb-2"><strong>Placa:</strong> <span id="preview-placa"></span></div>
+		                        <div class="mb-2"><strong>Pase:</strong> <span id="preview-pase"></span></div>
+		                    </div>
+		                    <!-- Datos de peso y horarios -->
+		                    <div class="col-md-4">
+		                        <div class="mb-2"><strong>Peso Entrada:</strong> <span id="preview-peso-entrada"></span> Kg</div>
+		                        <div class="mb-2"><strong>Peso Salida:</strong> <span id="preview-peso-salida"></span> Kg</div>
+		                        <div class="mb-2"><strong>Peso Neto:</strong> <span id="preview-peso-neto"></span> Kg</div>
+		                        <div class="mb-2"><strong>Hora Entrada:</strong> <span id="preview-hora-entrada"></span></div>
+		                        <div class="mb-2"><strong>Hora Salida:</strong> <span id="preview-hora-salida"></span></div>
+		                    </div>
+		                </div>
+
+		                <!-- Tabla de detalles -->
+		                <div class="table-responsive">
+		                    <table class="table table-bordered table-striped">
+		                        <thead class="table-success">
+		                            <tr>
+		                                <th class="text-center">#</th>
+		                                <th class="text-center">Item</th>
+		                                <th class="text-center">Marca</th>
+		                                <th class="text-center">Descripción</th>
+		                                <th class="text-center">Cant</th>
+		                                <th class="text-center"># Paquetes</th>
+		                                <th class="text-center">Peso Un [Kg]</th>
+		                                <th class="text-center">Peso Ttl [Kg]</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody id="preview-detalles">
+		                            <!-- Aquí se insertarán dinámicamente las filas de detalles -->
+		                        </tbody>
+		                    </table>
+		                </div>
+
+		                <!-- Sección de notas y observaciones -->
+		                <div class="row mt-4">
+		                    <div class="col-12">
+		                        <strong>Nota:</strong> Después de recibido el material se cuenta con 48 horas para reportar novedades, 
+		                        de lo contrario se da por entendido que todo el material está conforme a lo remisionado.
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="modal-footer">>
+		            </div>
+		        </div>
+		    </div>
 		</div>
 		
 

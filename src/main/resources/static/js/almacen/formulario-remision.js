@@ -13,14 +13,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 	document.getElementById('tab-fabricado').addEventListener('click', async function() {
         document.getElementById('tab-fabricado').classList.add('active');
         document.getElementById('tab-ferreteria').classList.remove('active');
-        //const items = await obtenerItems(idOpSelected);
         renderItemTable('fabricado');
     });
 
     document.getElementById('tab-ferreteria').addEventListener('click', async function() {
         document.getElementById('tab-fabricado').classList.remove('active');
         document.getElementById('tab-ferreteria').classList.add('active');
-        //const items = await obtenerItems(idOpSelected);
         renderItemTable('ferreteria');
     });
 
@@ -35,7 +33,8 @@ function handleSearch(event) {
 		const numOpMatch = op.numOp.toString().includes(searchTerm);
         const clienteMatch = op.cliente.toLowerCase().includes(searchTerm);
         const proyectoMatch = op.proyecto.toLowerCase().includes(searchTerm);
-        return numOpMatch || clienteMatch || proyectoMatch;agregarItemTableDetalleRemision}
+        return numOpMatch || clienteMatch || proyectoMatch;
+		}
     );
     currentPage = 1;
     renderOpTable();
@@ -93,25 +92,108 @@ function renderOpTable() {
     renderPagination();
 }
 
+const PAGINATION_WINDOW = 2; // Number of pages to show before and after current page
+
 function renderPagination() {
     const pagination = document.getElementById('opPagination');
     const pageCount = Math.ceil(filteredOps.length / itemsPerPage);
     
+    // Don't render pagination if there's only one page
+    if (pageCount <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+
     let paginationHTML = '';
-    for (let i = 1; i <= pageCount; i++) {
+
+    // Previous button
+    paginationHTML += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>
+                <span aria-hidden="true">&laquo;</span>
+                <span class="visually-hidden">Previous</span>
+            </a>
+        </li>
+    `;
+
+    // Calculate range of pages to show
+    let startPage = Math.max(1, currentPage - PAGINATION_WINDOW);
+    let endPage = Math.min(pageCount, currentPage + PAGINATION_WINDOW);
+
+    // Always show first page
+    if (startPage > 1) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="changePage(1)">1</a>
+            </li>
+        `;
+        // Add ellipsis if there's a gap
+        if (startPage > 2) {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `;
+        }
+    }
+
+    // Add page numbers
+    for (let i = startPage; i <= endPage; i++) {
         paginationHTML += `
             <li class="page-item ${currentPage === i ? 'active' : ''}">
-                <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                <a class="page-link" href="#" onclick="changePage(${i})" ${currentPage === i ? 'aria-current="page"' : ''}>
+                    ${i}
+                </a>
             </li>
         `;
     }
-    
+
+    // Always show last page
+    if (endPage < pageCount) {
+        // Add ellipsis if there's a gap
+        if (endPage < pageCount - 1) {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `;
+        }
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="changePage(${pageCount})">${pageCount}</a>
+            </li>
+        `;
+    }
+
+    // Next button
+    paginationHTML += `
+        <li class="page-item ${currentPage === pageCount ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage + 1})" ${currentPage === pageCount ? 'tabindex="-1" aria-disabled="true"' : ''}>
+                <span aria-hidden="true">&raquo;</span>
+                <span class="visually-hidden">Next</span>
+            </a>
+        </li>
+    `;
+
     pagination.innerHTML = paginationHTML;
 }
 
+
 function changePage(page) {
+    const pageCount = Math.ceil(filteredOps.length / itemsPerPage);
+    
+    // Ensure page is within valid bounds
+    if (page < 1) {
+        page = 1;
+    } else if (page > pageCount) {
+        page = pageCount;
+    }
+    
     currentPage = page;
     renderOpTable();
+    
+    // Scroll to top of table for better user experience
+    document.querySelector('#opTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function selectOp(idOpIa) {

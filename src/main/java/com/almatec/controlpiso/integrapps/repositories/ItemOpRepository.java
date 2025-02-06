@@ -109,8 +109,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "v.f200_razon_social AS Cliente,  RTRIM(v.f285_id) + '-' + RTRIM(v.f285_descripcion) AS Proyecto "
 			+ "FROM      items_op AS io "
 			+ "INNER JOIN view_orden_pv AS v ON io.id_op_ia = v.id_op_ia "
-			+ "WHERE   (v.id_est_doc = 1 AND io.cant_cumplida <= io.cant_req) "
-			+ "OR      (v.id_est_doc = 2 AND io.cant_cumplida <= io.cant_req) "
+			+ "WHERE   (v.id_estado_op = 1 AND io.cant_cumplida <= io.cant_req) "
+			+ "OR      (v.id_estado_op = 2 AND io.cant_cumplida <= io.cant_req) "
 			+ "ORDER BY v.Num_Op DESC", nativeQuery = true)
 	List<OpConItemPendientePorRemision> buscarOpActivasConItemsPendientesPorEntregar();
 
@@ -123,8 +123,8 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 			+ "ON io.id_op_ia = v.id_op_ia "
 			+ "WHERE  (io.id_op_ia = :idOpIa) "
 			+ "AND ((Item_fab_Id <> 0 AND cant_cumplida > 0) OR codigo_erp <> 0)"
-			+ "AND (v.id_est_doc = 1) "
-			+ "OR  (v.id_est_doc = 2) "
+			+ "AND (v.id_estado_op = 1) "
+			+ "OR  (v.id_estado_op = 2) "
 			+ "ORDER BY io.Item_fab_Id", nativeQuery = true)
 	List<ItemOp> buscarItemsARemisionarPorIdOpIa(@Param("idOpIa") Integer idOpIa);
 
