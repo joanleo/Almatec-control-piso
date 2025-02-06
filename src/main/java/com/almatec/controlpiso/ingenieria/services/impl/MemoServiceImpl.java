@@ -155,7 +155,8 @@ public class MemoServiceImpl implements MemoService {
 
 	@Override
 	public Page<MemoWithOP> obtenerMemosPaginados(String keyword, Pageable pageable) {
-        return memoRepo.findAllWithSearch(keyword, pageable);
+		String searchTerm = keyword != null ? "%" + keyword + "%" : null;
+        return memoRepo.findAllWithSearch(searchTerm, pageable);
     }
 
 }

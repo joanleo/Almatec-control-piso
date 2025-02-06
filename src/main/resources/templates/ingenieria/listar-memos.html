@@ -41,8 +41,10 @@
 							<th>Num Memo</th>
 							<th>Cliente</th>
 							<th>Proyecto</th>
+							<th>Zona</th>
 							<th>OP</th>
 							<th>Solicita</th>
+							<th>Aprueba</th>
 							<th>Estado</th>
 						</tr>
 					</thead>
@@ -51,8 +53,10 @@
 							<td th:text="${'M' + '-' + memo.idMemo}"></td>
 							<td th:text="${memo.cliente}"></td> 
 							<td th:text="${memo.proyecto}"></td>
+							<td th:text="${memo.zona}"></td>
 							<td th:text="${memo.op}"></td>
 							<td th:text="${memo.usuarioCrea}"></td>
+							<td th:text="${memo.UsuarioAprueba}"></td>
 							<td>
 								<span th:switch="${memo.idEstado}">
 									<span th:case="0" class="badge bg-warning text-dark">Pendiente</span>
@@ -111,6 +115,6 @@
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-		<script src="/js/ingenieria/aprobar-memos.js"></script>
+		<script src="/js/ingenieria/listar-memos.js"></script>
 	</body>
 </html>

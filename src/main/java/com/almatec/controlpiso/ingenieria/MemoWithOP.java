@@ -8,8 +8,10 @@ public interface MemoWithOP {
 	Date getFechaCreacion();
 	Integer getIdEstado();
 	String getUsuarioCrea();
+	String getUsuarioAprueba();
 	Integer getIdOpIa();
 	String getOp();
 	String getCliente();
 	String getProyecto();
+	String getZona();
 }

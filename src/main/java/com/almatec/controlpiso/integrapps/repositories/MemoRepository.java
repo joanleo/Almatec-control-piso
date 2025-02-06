@@ -37,28 +37,39 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
 			+ "ON memos.id_usuario_crea = web_usuarios.usu_id ", nativeQuery = true)
 	List<MemoWithOP> buscarTodos();
 
-	@Query(value = "SELECT memos.id_memo AS IdMemo, memos.fecha_creacion AS FechaCreacion, "
-            + "memos.id_estado AS IdEstado, web_usuarios.usu_nombre AS UsuarioCrea, memos.id_op_ia AS IdOpIa, "
-            + "RTRIM(view_orden_pv.Tipo_OP) + '-' + RTRIM(view_orden_pv.Num_Op) AS Op, view_orden_pv.f200_razon_social AS Cliente, "
-            + "RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion) AS Proyecto "
-            + "FROM memos "
-            + "INNER JOIN view_orden_pv ON memos.id_op_ia = view_orden_pv.id_op_ia "
-            + "INNER JOIN web_usuarios ON memos.id_usuario_crea = web_usuarios.usu_id "
-            + "WHERE (:keyword IS NULL OR "
-            + "view_orden_pv.f200_razon_social LIKE %:keyword% OR "
-            + "view_orden_pv.f285_descripcion LIKE %:keyword% OR "
-            + "web_usuarios.usu_nombre LIKE %:keyword%) "
-            + "ORDER BY memos.id_memo DESC",
-            countQuery = "SELECT COUNT(*) "
-            + "FROM memos "
-            + "INNER JOIN view_orden_pv ON memos.id_op_ia = view_orden_pv.id_op_ia "
-            + "INNER JOIN web_usuarios ON memos.id_usuario_crea = web_usuarios.usu_id "
-            + "WHERE (:keyword IS NULL OR "
-            + "view_orden_pv.f200_razon_social LIKE %:keyword% OR "
-            + "view_orden_pv.f285_descripcion LIKE %:keyword% OR "
-            + "web_usuarios.usu_nombre LIKE %:keyword%)",
-            nativeQuery = true)
-    Page<MemoWithOP> findAllWithSearch(@Param("keyword") String keyword, Pageable pageable);
+	@Query(value = ""
+			+ "SELECT memos.id_memo AS IdMemo, "
+			+ "memos.fecha_creacion AS FechaCreacion, "
+			+ "memos.id_estado AS IdEstado, "
+			+ "usuCrea.usu_nombre AS UsuarioCrea, "
+			+ "usuAprueba.usu_nombre AS UsuarioAprueba, "
+			+ "memos.id_op_ia AS IdOpIa, "
+			+ "RTRIM(view_orden_pv.Tipo_OP) + '-' + RTRIM(view_orden_pv.Num_Op) AS Op, "
+			+ "view_orden_pv.f200_razon_social AS Cliente, "
+			+ "RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion) AS Proyecto, "
+			+ "view_orden_pv.Zona_Desc AS Zona "
+			+ "FROM memos "
+			+ "INNER JOIN view_orden_pv ON memos.id_op_ia = view_orden_pv.id_op_ia "
+			+ "INNER JOIN web_usuarios usuCrea ON memos.id_usuario_crea = usuCrea.usu_id "
+			+ "INNER JOIN web_usuarios usuAprueba ON memos.id_usuario_aprueba = usuAprueba.usu_id "
+			+ "WHERE (:keyword IS NULL OR "
+	        + "view_orden_pv.f200_razon_social LIKE :keyword OR "
+	        + "view_orden_pv.f285_descripcion LIKE :keyword OR "
+	        + "usuCrea.usu_nombre LIKE :keyword OR "
+	        + "usuAprueba.usu_nombre LIKE :keyword) "
+	        + "ORDER BY memos.id_memo DESC",
+	        countQuery = "SELECT COUNT(*) "
+	        + "FROM memos "
+	        + "INNER JOIN view_orden_pv ON memos.id_op_ia = view_orden_pv.id_op_ia "
+	        + "INNER JOIN web_usuarios usuCrea ON memos.id_usuario_crea = usuCrea.usu_id "
+	        + "INNER JOIN web_usuarios usuAprueba ON memos.id_usuario_aprueba = usuAprueba.usu_id "
+	        + "WHERE (:keyword IS NULL OR "
+	        + "view_orden_pv.f200_razon_social LIKE :keyword OR "
+	        + "view_orden_pv.f285_descripcion LIKE :keyword OR "
+	        + "usuCrea.usu_nombre LIKE :keyword OR "
+	        + "usuAprueba.usu_nombre LIKE :keyword) ",
+			nativeQuery = true)
+	Page<MemoWithOP> findAllWithSearch(@Param("keyword") String keyword, Pageable pageable);
 	
 	
 	@Query(value = "SELECT io.item_id, md.cantidad, md.operacion, io.descripcion, md.observacion "
