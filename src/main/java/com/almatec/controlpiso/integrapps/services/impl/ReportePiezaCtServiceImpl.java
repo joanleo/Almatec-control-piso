@@ -231,9 +231,15 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			log.info("Procesando centros de trabajo con tep pendientes");
 			procesarCentrosPendientes(centrosPendientes, itemOperacion, itemReporte, reporteDTO, mensaje);
 		}
-
-		actualizarCantidadCumplida(reporteDTO, itemOperacion);
-		itemOpService.guardarItemOp(itemOperacion);
+		
+		// Solo actualizar cantidad cumplida si no es un reprocesamiento
+		if (!Estado.ERROR.equals(reporte.getEstado())) {
+			log.debug("Actualizando cantidad cumplida para nuevo reporte");
+			actualizarCantidadCumplida(reporteDTO, itemOperacion);
+			itemOpService.guardarItemOp(itemOperacion);
+		} else {
+			log.debug("Omitiendo actualización de cantidad cumplida por ser un reprocesamiento");
+		}
 		String respuestaWeService = entregaService.crearEntrega(itemOperacion, reporteDTO);
 		if (RESPUESTA_ENTREGA_EXITOSA.equals(respuestaWeService)) {
 			actualizarCentrosTep(itemOperacion, 14, true);
