@@ -57,18 +57,8 @@
 		</div>
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-		<script>
-		    const createOpButtons = document.querySelectorAll('.create-op-button');
-			console.log(createOpButtons)
-		    createOpButtons.forEach(button => {
-		        button.addEventListener('click', function() {
-		            const noPedido = button.closest('tr').querySelector('[name="noPedido"]').value;
-		            const ref = button.closest('tr').querySelector('[name="referencia"]').value;
-					spinner.removeAttribute('hidden')
-		            document.getElementById('opForm').action = `/comercial/crear-op/${noPedido}/${ref}`;
-		            document.getElementById('opForm').submit();
-		        });
-		    });
-		</script>
+		<script src="/js/general.js"></script>
+		<script src="/js/comercial/pedido.js"></script>
+
 	</body>
 </html>
