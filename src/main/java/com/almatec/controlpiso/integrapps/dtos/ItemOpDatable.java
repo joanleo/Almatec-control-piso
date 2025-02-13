@@ -15,6 +15,7 @@ public class ItemOpDatable {
 	private Integer cantPentiente;
 	private Double pesoPendiente;
 	private String color;
+	private String plano;
 	
 	
 	public ItemOpDatable() {
@@ -22,16 +23,17 @@ public class ItemOpDatable {
 	}
 	
 	public ItemOpDatable(ItemOpInterface itemInterface) {
-		itemId = itemInterface.getitem_id();
-		marca = itemInterface.getmarca();
-		descripcion = itemInterface.getdescripcion();
-		cant = itemInterface.getcant_req().intValue();
-		peso = itemInterface.getpeso_unitario().doubleValue();
-		cantPentiente = cant - itemInterface.getcant_cumplida().intValue();
+		this.itemId = itemInterface.getitem_id();
+		this.marca = itemInterface.getmarca();
+		this.descripcion = itemInterface.getdescripcion();
+		this.cant = itemInterface.getcant_req().intValue();
+		this.peso = itemInterface.getpeso_unitario().doubleValue();
+		this.cantPentiente = cant - itemInterface.getcant_cumplida().intValue();
 		BigDecimal pesoPendienteTemp = itemInterface.getpeso_unitario().multiply(BigDecimal.valueOf(cant))
 		        .subtract(itemInterface.getpeso_unitario().multiply(BigDecimal.valueOf(itemInterface.getcant_cumplida())));
-		pesoPendiente = pesoPendienteTemp.setScale(3, RoundingMode.HALF_UP).doubleValue();
-		color = itemInterface.getpintura();
+		this.pesoPendiente = pesoPendienteTemp.setScale(3, RoundingMode.HALF_UP).doubleValue();
+		this.color = itemInterface.getpintura();
+		this.plano = itemInterface.getruta_plano();
 	}
 	
 	
@@ -87,13 +89,18 @@ public class ItemOpDatable {
 		this.color = color;
 	}
 
+	public String getPlano() {
+		return plano;
+	}
+
+	public void setPlano(String plano) {
+		this.plano = plano;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemOpDatable [itemId=" + itemId + ", marca=" + marca + ", descripcion=" + descripcion + ", cant="
 				+ cant + ", peso=" + peso + ", cantPentiente=" + cantPentiente + ", pesoPendiente=" + pesoPendiente
-				+ ", color=" + color + "]";
+				+ ", color=" + color + ", plano=" + plano + "]";
 	}
-	
-	
-	
 }

@@ -10,6 +10,7 @@ import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
+import com.almatec.controlpiso.integrapps.interfaces.VistaOrdenPvDTO;
 
 public interface OrdenPvService {
 
@@ -33,9 +34,9 @@ public interface OrdenPvService {
 
 	List<VistaOrdenPv> obtenerOrdenes();
 
-	Page<VistaOrdenPv> buscarProyectosPaginados(Pageable pageable);
+	Page<VistaOrdenPvDTO> buscarProyectosPaginados(Pageable pageable);
 
-	Page<VistaOrdenPv> buscarProyectosPaginados(String keyword, Pageable pageable);
+	Page<VistaOrdenPvDTO> buscarProyectosPaginados(String keyword, Pageable pageable);
 
 	Integer obteneridItemOpPorIdOpIA(Integer idOPI);
 

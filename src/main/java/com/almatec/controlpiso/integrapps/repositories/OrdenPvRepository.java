@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import com.almatec.controlpiso.integrapps.dtos.ConsultaOpCreadaDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
+import com.almatec.controlpiso.integrapps.interfaces.VistaOrdenPvDTO;
 
 public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> {
 
@@ -61,17 +62,64 @@ public interface OrdenPvRepository extends JpaRepository<VistaOrdenPv, Integer> 
 
 	List<VistaOrdenPv> findByTipoOpAndIdEstadoOp(String string, int i);
 
-	List<VistaOrdenPv> findByTipoOpAndIdEstadoOpOrderByNumOpDesc(String string, int i);
+	List<VistaOrdenPv> findByTipoOpAndIdEstadoOpIsNotNullOrderByNumOpDesc(String string);
 
-	Page<VistaOrdenPv> findByTipoOpAndIdEstadoDocOrderByNumOpDesc(String tipoOp, int idEstadoOp, Pageable pageable);
+	@Query(value = "SELECT v.f431_id_proyecto AS IdProyecto, " 
+			+ "v.f200_razon_social AS Cliente, "
+			+ "v.Tipo_OP AS TipoOp, "
+			+ "v.Num_Op AS NumOp, "
+			+ "v.f285_descripcion AS CentroOperaciones, "
+			+ "v.Zona_Desc AS Zona, "
+			+ "v.kg_fabricar AS KgFabricar, "
+			+ "r.kg_cumplidos AS KgCumplidos, "
+			+ "v.Fecha_Ent AS FechaEntrega, "
+			+ "v.estado_op AS EstadoOp, "
+			+ "v.Esq_Pintura AS EsquemaPintura, "
+			+ "v.Color_Bas AS ColorBastidores, "
+			+ "v.Color_Vigas AS ColorVigas, "
+			+ "v.Color_Pro AS ColorProtectores "
+			+ "FROM view_orden_pv v " +
+	       "LEFT OUTER JOIN view_resumen_kg_op r ON v.Tipo_OP = r.Tipo_OP " +
+	       "AND v.Num_Op = r.Num_Op " +
+	       "WHERE v.Tipo_OP = :tipoOp " +
+	       "AND v.Num_Op <> 0 " +
+	       "AND v.id_estado_op IS NOT NULL " +
+	       "ORDER BY v.Num_Op DESC", 
+	       nativeQuery = true)
+	Page<VistaOrdenPvDTO> findByTipoOpAndIdEstadoOpIsNotNullOrderByNumOpDesc(
+	    @Param("tipoOp") String tipoOp, 
+	    Pageable pageable
+	);
 
-	@Query("SELECT o FROM VistaOrdenPv o WHERE " +
-	           "(LOWER(o.cliente) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-	           "LOWER(o.centroOperaciones) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-	           "LOWER(o.estadoOp) LIKE LOWER(CONCAT('%', :keyword, '%')))  AND "
-	           + "o.tipoOp = 'OP' AND o.idEstadoDoc = 1 "
-	           + "ORDER BY o.numOp DESC ")
-	Page<VistaOrdenPv> buscarPorKeywordPaginado(String keyword, Pageable pageable);
+	@Query(value = "SELECT v.f431_id_proyecto AS IdProyecto, "
+			+ "v.f200_razon_social AS Cliente, "
+			+ "v.Tipo_OP AS TipoOp, "
+			+ "v.Num_Op AS NumOp, "
+			+ "v.f285_descripcion AS CentroOperaciones, "
+			+ "v.Zona_Desc AS Zona, "
+			+ "v.kg_fabricar AS KgFabricar, "
+			+ "r.kg_cumplidos AS KgCumplidos, "
+			+ "v.Fecha_Ent AS FechaEntrega, "
+			+ "v.estado_op AS EstadoOp, "
+			+ "v.Esq_Pintura AS EsquemaPintura, "
+			+ "v.Color_Bas AS ColorBastidores, "
+			+ "v.Color_Vigas AS ColorVigas, "
+			+ "v.Color_Pro AS colorProtectores "
+			+ "FROM view_orden_pv v " +
+	       "LEFT OUTER JOIN view_resumen_kg_op r ON v.Tipo_OP = r.Tipo_OP " +
+	       "AND v.Num_Op = r.Num_Op " +
+	       "WHERE (LOWER(v.f200_razon_social) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+	       "LOWER(v.centros_trabajo_tep_reportado) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+	       "LOWER(v.estado_op) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+	       "AND v.Tipo_OP = 'OP' " +
+	       "AND v.Num_Op <> 0 " +
+	       "AND v.id_estado_op IS NOT NULL " +
+	       "ORDER BY v.Num_Op DESC",
+	       nativeQuery = true)
+	Page<VistaOrdenPvDTO> buscarPorKeywordPaginado(
+	    @Param("keyword") String keyword, 
+	    Pageable pageable
+	);
 
 	@Transactional
 	@Modifying(flushAutomatically = true, clearAutomatically = true)

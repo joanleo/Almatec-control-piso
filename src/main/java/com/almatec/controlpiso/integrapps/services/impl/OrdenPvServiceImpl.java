@@ -15,6 +15,7 @@ import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.interfaces.OrdenPvEstadoData;
+import com.almatec.controlpiso.integrapps.interfaces.VistaOrdenPvDTO;
 import com.almatec.controlpiso.integrapps.repositories.OrdenPvRepository;
 import com.almatec.controlpiso.integrapps.services.OrdenPvService;
 
@@ -108,7 +109,7 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	@Override
 	public List<VistaOrdenPv> obtenerOpActivas() {
 		
-		return ordenPvRepo.findByTipoOpAndIdEstadoOpOrderByNumOpDesc("OP", 1);
+		return ordenPvRepo.findByTipoOpAndIdEstadoOpIsNotNullOrderByNumOpDesc("OP");
 	}
 
 	@Override
@@ -117,12 +118,12 @@ public class OrdenPvServiceImpl implements OrdenPvService {
 	}
 
 	@Override
-    public Page<VistaOrdenPv> buscarProyectosPaginados(Pageable pageable) {
-        return ordenPvRepo.findByTipoOpAndIdEstadoDocOrderByNumOpDesc("OP", 1, pageable);
+    public Page<VistaOrdenPvDTO> buscarProyectosPaginados(Pageable pageable) {
+        return ordenPvRepo.findByTipoOpAndIdEstadoOpIsNotNullOrderByNumOpDesc("OP", pageable);
     }
 
     @Override
-    public Page<VistaOrdenPv> buscarProyectosPaginados(String keyword, Pageable pageable) {
+    public Page<VistaOrdenPvDTO> buscarProyectosPaginados(String keyword, Pageable pageable) {
         return ordenPvRepo.buscarPorKeywordPaginado(keyword, pageable);
     }
 

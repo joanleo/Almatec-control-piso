@@ -67,7 +67,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 	
 	public PageArray obtenerItemsOpArray(PagingRequest pagingRequest, Integer idOp) {
 		pagingRequest.setColumns(Stream.of("itemId", "marca", "descripcion", "cant",
-				"peso", "cantPentiente","pesoPendiente","color")
+				"peso", "cantPentiente","pesoPendiente","color", "plano")
 				.map(Column :: new)
                 .collect(Collectors.toList()));
 		
@@ -87,7 +87,7 @@ public class ItemOpServiceImpl implements ItemOpService {
 	private List<String> toStringList(ItemOpDatable itemOp) {
         return Arrays.asList(itemOp.getItemId().toString(), itemOp.getMarca(), itemOp.getDescripcion(),
         		itemOp.getCant().toString(), itemOp.getPeso().toString(), itemOp.getCantPentiente().toString(),
-        		itemOp.getPesoPendiente().toString(), itemOp.getColor());
+        		itemOp.getPesoPendiente().toString(), itemOp.getColor(), itemOp.getPlano());
     }
 
 	Page<ItemOpDatable> obtenerItemsOpPage(PagingRequest pagingRequest, Integer idOp) {

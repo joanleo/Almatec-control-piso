@@ -133,7 +133,7 @@ public class EntregaService {
 	private List<Conector> generarDocumentosConsumoYTep(ItemOp item, ReporteDTO reporte,
             List<ItemReporteConsumoDTO> itemsConsumo) {
 		List<Conector> consumoYTep = new ArrayList<>();
-		
+		System.out.println("Consumos: " + reporte);
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
 		String idRuta = "0" + data.getf120_id();
@@ -221,6 +221,8 @@ public class EntregaService {
 		Integer piezasSinConsumo = 0;
 
 		Integer cantFabItemOp = getCantidadFabricada(item, reporte);		
+		
+		System.out.println("Creando entrega");
 		
 		//se agregan consumos de materia prima que no ha sido reportada en la lista de materiales del item
 		//List<ItemReporteConsumoDTO> itemsConsumo = processarListaMateriales(item, reporte, cantFabItemOp, piezasSinConsumo);

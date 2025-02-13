@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
+import com.almatec.controlpiso.integrapps.interfaces.VistaOrdenPvDTO;
 import com.almatec.controlpiso.integrapps.paging.PageArray;
 import com.almatec.controlpiso.integrapps.paging.PagingRequest;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
@@ -40,7 +41,7 @@ public class IngenieriaController {
 	public String estadoProyectos(Model modelo, @Param("keyword") String keyword,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
-		Page<VistaOrdenPv> proyectosPage = keyword == null
+		Page<VistaOrdenPvDTO> proyectosPage = keyword == null
 				? ordenPvService.buscarProyectosPaginados(PageRequest.of(page, size))
 				: ordenPvService.buscarProyectosPaginados(keyword, PageRequest.of(page, size));
 
@@ -49,7 +50,7 @@ public class IngenieriaController {
 		modelo.addAttribute("totalPages", proyectosPage.getTotalPages());
 		modelo.addAttribute("totalItems", proyectosPage.getTotalElements());
 		modelo.addAttribute("keyword", keyword);
-		return "ingenieria/status-proyectos.html";
+		return "ingenieria/ordenes-produccion.html";
 	}
 
 	@PostMapping("/op/{numOp}/detalle")
