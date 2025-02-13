@@ -10,12 +10,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.almatec.controlpiso.integrapps.dtos.PedidoSpecDTO;
-import com.almatec.controlpiso.integrapps.entities.VistaPedidosErp;
+import com.almatec.controlpiso.integrapps.entities.VistaPedidosKgCumplidos;
 
 @Component
 public class PedidoSpecification {
 
-	public Specification<VistaPedidosErp> getOrders(PedidoSpecDTO filtro){
+	public Specification<VistaPedidosKgCumplidos> getOrders(PedidoSpecDTO filtro){
 		return (root, query, criteriaBuilder) ->{
 			List<Predicate> predicates = new ArrayList<>();
 			

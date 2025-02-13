@@ -3,6 +3,7 @@ package com.almatec.controlpiso.comercial.controller;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,9 +34,13 @@ import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 import com.almatec.controlpiso.erp.webservices.services.OrdenProduccionPapaService;
 import com.almatec.controlpiso.integrapps.dtos.PedidoSpecDTO;
 import com.almatec.controlpiso.integrapps.entities.VistaItemPedidoErp;
+import com.almatec.controlpiso.integrapps.entities.VistaPedidoOp;
 import com.almatec.controlpiso.integrapps.entities.VistaPedidosErp;
+import com.almatec.controlpiso.integrapps.entities.VistaPedidosKgCumplidos;
 import com.almatec.controlpiso.integrapps.services.VistaItemPedidoErpService;
+import com.almatec.controlpiso.integrapps.services.VistaPedidoOpService;
 import com.almatec.controlpiso.integrapps.services.VistaPedidosErpService;
+import com.almatec.controlpiso.integrapps.services.VistaPedidosKgCumplidosService;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
@@ -49,6 +55,8 @@ public class ComercialController {
     private final UtilitiesApp util;
 	private final MensajeServices mensajeService;
 	private final OrdenProduccionPapaService ordenProduccionPapaService;
+	private final VistaPedidosKgCumplidosService vistaPedidosKgCumplidosService;
+	private final VistaPedidoOpService vistaPedidoOpService;
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -60,7 +68,9 @@ public class ComercialController {
                                XmlService xmlService,                               
                                UtilitiesApp util, 
                                MensajeServices mensajeService, 
-                               OrdenProduccionPapaService ordenProduccionPapaService) {
+                               OrdenProduccionPapaService ordenProduccionPapaService,
+                               VistaPedidosKgCumplidosService vistaPedidosKgCumplidosService,
+                               VistaPedidoOpService vistaPedidoOpService) {
         this.vistaPedidosErpService = vistaPedidosErpService;
         this.vistaItemPedidosErp = vistaItemPedidosErp;
         this.configService = configService;
@@ -68,6 +78,8 @@ public class ComercialController {
         this.util = util;
         this.mensajeService = mensajeService;
         this.ordenProduccionPapaService = ordenProduccionPapaService;
+        this.vistaPedidosKgCumplidosService = vistaPedidosKgCumplidosService;
+        this.vistaPedidoOpService = vistaPedidoOpService;
     }
 	
 	
@@ -116,7 +128,7 @@ public class ComercialController {
 				Map<String, String> datos = new HashMap<>();
 				datos.put("pedido", "PV-" + noPedido);
 				datos.put("cliente", items.get(0).getCliente());
-				datos.put("proyecto", pedido.getCentroOperaciones());
+				datos.put("proyecto", pedido.getCo());
 				datos.put("aprobador", usuario.getNombres());
 				datos.put("ordenProduccion", pedido.getTipoOp() + "-" + pedido.getNumOp());
 				datos.put("fechaAprobacion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -143,7 +155,7 @@ public class ComercialController {
 	}
 	
 	@PostMapping("/pedidos/filtrar")
-	public ResponseEntity<Page<VistaPedidosErp>> getPedidos(
+	public ResponseEntity<Page<VistaPedidosKgCumplidos>> getPedidos(
             @RequestBody PedidoSpecDTO busquedaSpec,
             @RequestParam int page,
             @RequestParam int size,
@@ -151,7 +163,21 @@ public class ComercialController {
             @RequestParam(defaultValue = "desc") String order) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sort));
-        Page<VistaPedidosErp> pedidos = vistaPedidosErpService.searchOrder(busquedaSpec, pageable); 
+        Page<VistaPedidosKgCumplidos> pedidos = vistaPedidosKgCumplidosService.searchOrder(busquedaSpec, pageable); 
         return ResponseEntity.ok(pedidos);
     }
+	
+	@GetMapping("/pedidos/{rowIdPV}/ordenes-produccion")
+	public ResponseEntity<List<VistaPedidoOp>> getOrdenesProduccion(@PathVariable Integer rowIdPV) {
+		logger.info("Recibida solicitud de órdenes de producción para rowId: {}", rowIdPV);
+	    try {
+	        List<VistaPedidoOp> ordenesProduccion = vistaPedidoOpService.findByPedido(rowIdPV);
+	        logger.info("Encontradas {} órdenes de producción", ordenesProduccion.size());
+	        return ResponseEntity.ok(ordenesProduccion);
+	    } catch (Exception e) {
+	        logger.error("Error al obtener órdenes de producción para rowId {}: {}", rowIdPV, e.getMessage(), e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body(Collections.emptyList());
+	    }
+	}
 }

@@ -14,8 +14,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class VistaPedidosErp {
 
 	@Id
+	@Column(name = "id_pedido_completo")
+	private String id;
+	
 	@Column(name = "pv_rowid")
-	private Long id;
+	private Long rowId;
 
 	@Column(name = "pv_cliente_nit")
 	private String nit;
@@ -38,7 +41,7 @@ public class VistaPedidosErp {
 	@Column(name = "pv_valor_neto")
 	private String valor;
 
-	@Column(name = "pv_cliente_co_id_descripcion")
+	@Column(name = "pv_cliente_co_descripcion")
 	private String co;
 
 	@JsonFormat(pattern = "yyyy-MM-dd")
@@ -72,22 +75,36 @@ public class VistaPedidosErp {
 	@Column(name = "pv_op_padre_num")
 	private Integer numOp;
 
-	@Column(name = "pv_kg_cumplidos")
-	private Double kgCumplidos;
-	
-	@Column(name = "pv_cliente_co_descripcion")
-	private String centroOperaciones; 
 	
 	@Column(name = "pv_valor_bruto")
 	private String valorBruto;
+	
+	/*@Column(name = "pv_op_hija_tipo")
+	private String tipoOpHija;
+
+	@Column(name = "pv_kg_cumplidos")
+	private Double kgCumplidos;
+
+	@Column(name = "pv_op_hijo_num")
+	private Integer numOpHija;
+	
+	@Column(name = "op_zona")
+	private String zona_op;*/
 
 	public VistaPedidosErp() {
 		super();
 	}
 
-	public Long getId() {
+
+	public String getId() {
 		return id;
 	}
+
+
+	public Long getRowId() {
+		return rowId;
+	}
+
 
 	public String getNit() {
 		return nit;
@@ -161,27 +178,34 @@ public class VistaPedidosErp {
 		return numOp;
 	}
 
-	public Double getKgCumplidos() {
-		return kgCumplidos;
-	}
-
-	public String getCentroOperaciones() {
-		return centroOperaciones;
-	}
 
 	public String getValorBruto() {
 		return valorBruto;
 	}
 
+	/*public String getTipoOpHija() {
+		return tipoOpHija;
+	}
+	public Double getKgCumplidos() {
+		return kgCumplidos;
+	}
+
+	public Integer getNumOpHija() {
+		return numOpHija;
+	}
+
+	public String getZona_op() {
+		return zona_op;
+	}*/
+
 	@Override
 	public String toString() {
-		return "VistaPedidosErp [id=" + id + ", nit=" + nit + ", razonSocial=" + razonSocial + ", sucursal=" + sucursal
-				+ ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor=" + valor + ", co=" + co
-				+ ", fecha=" + fecha + ", vendedor=" + vendedor + ", idEstado=" + idEstado + ", estado=" + estado
-				+ ", descripcion=" + descripcion + ", cantPedida=" + cantPedida + ", unidadMedidaInventario="
-				+ unidadMedidaInventario + ", unidadMedidaAdicional=" + unidadMedidaAdicional + ", tipoOp=" + tipoOp
-				+ ", numOp=" + numOp + ", kgCumplidos=" + kgCumplidos + ", centroOperaciones=" + centroOperaciones
-				+ ", valorBruto=" + valorBruto + "]";
+		return "VistaPedidosErp [id=" + id + ", rowId=" + rowId + ", nit=" + nit + ", razonSocial=" + razonSocial
+				+ ", sucursal=" + sucursal + ", tipo=" + tipo + ", noPv=" + noPv + ", pedidoNo=" + pedidoNo + ", valor="
+				+ valor + ", co=" + co + ", fecha=" + fecha + ", vendedor=" + vendedor + ", idEstado=" + idEstado
+				+ ", estado=" + estado + ", descripcion=" + descripcion + ", cantPedida=" + cantPedida
+				+ ", unidadMedidaInventario=" + unidadMedidaInventario + ", unidadMedidaAdicional="
+				+ unidadMedidaAdicional + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", valorBruto=" + valorBruto + "]";
 	}
 
 }

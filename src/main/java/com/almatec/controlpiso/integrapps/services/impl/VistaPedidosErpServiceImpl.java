@@ -33,7 +33,7 @@ public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 		return vistaPedidosErpRepo.buscarPedidosErpFilterByKeyword("PV", 2, keyword);
 	}
 
-	@Override
+	/*@Override
 	public List<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec) {
 		return vistaPedidosErpRepo.findAll(filter.getOrders(busquedaSpec)); 
 	}
@@ -41,11 +41,11 @@ public class VistaPedidosErpServiceImpl implements VistaPedidosErpService {
 	@Override
 	public Page<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec, Pageable pageable) {
 		return vistaPedidosErpRepo.findAll(filter.getOrders(busquedaSpec), pageable); 
-	}
+	}*/
 
 	@Override
 	public Page<VistaPedidosErp> buscarPedidosErp(Pageable pageable) {
-		return vistaPedidosErpRepo.findByTipoAndIdEstadoOrderByFechaDesc("PV", 9, pageable);
+		return vistaPedidosErpRepo.findByTipoAndIdEstadoNotOrderByFechaDesc("PV", 9, pageable);
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.almatec.controlpiso.integrapps.entities.VistaPedidosErp;
 
-public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp, Long>, JpaSpecificationExecutor<VistaPedidosErp> {
+public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp, String>, JpaSpecificationExecutor<VistaPedidosErp> {
 
 	List<VistaPedidosErp> findByTipoAndEstadoOrderByNoPvDesc(String tipoP, Integer idEstado);
 	@Query(value = "SELECT * "
@@ -42,11 +42,8 @@ public interface VistaPedidosErpRepository extends JpaRepository<VistaPedidosErp
 		       "ORDER BY p.fecha DESC, p.pedidoNo DESC")
     Page<VistaPedidosErp> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 	
-	@Query("SELECT p "
-			+ "FROM VistaPedidosErp p "
-			+ "WHERE (p.tipo= :tipo AND p.idEstado <> :idEstado) " +
-		    "ORDER BY p.fecha DESC, p.pedidoNo DESC")
-	Page<VistaPedidosErp> findByTipoAndIdEstadoOrderByFechaDesc(String tipo, Integer idEstado, Pageable pageable);
+	
+	Page<VistaPedidosErp> findByTipoAndIdEstadoNotOrderByFechaDesc(String tipo, Integer idEstado, Pageable pageable);
 	
 	VistaPedidosErp findByNoPv(Integer noPedido);
 	

@@ -14,9 +14,9 @@ public interface VistaPedidosErpService {
 
 	List<VistaPedidosErp> buscarPedidosErp(String keyword);
 
-	List<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec);
+	//List<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec);
 
-	Page<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec, Pageable pageable);
+	//Page<VistaPedidosErp> searchOrder(PedidoSpecDTO busquedaSpec, Pageable pageable);
 
 	Page<VistaPedidosErp> buscarPedidosErp(Pageable pageable);
 

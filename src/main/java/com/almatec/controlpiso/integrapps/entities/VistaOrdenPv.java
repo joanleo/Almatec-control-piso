@@ -116,7 +116,7 @@ public class VistaOrdenPv {
 	private String estadoOp;
 	@Column(name = "centros_trabajo_tep_reportado")
 	private String centrosTrabajoTepReportado;
-	
+
 	public VistaOrdenPv() {
 		super();
 	}
@@ -325,6 +325,7 @@ public class VistaOrdenPv {
 		return centrosTrabajoTepReportado;
 	}
 
+
 	@Override
 	public String toString() {
 		return "VistaOrdenPv [id=" + id + ", idPadre=" + idPadre + ", rowIdOp=" + rowIdOp + ", idEmpIng=" + idEmpIng
@@ -342,8 +343,8 @@ public class VistaOrdenPv {
 				+ colorProtectores + ", idProyecto=" + idProyecto + ", cliente=" + cliente + ", estadoDoc=" + estadoDoc
 				+ ", itemRef=" + itemRef + ", itemDescripcion=" + itemDescripcion + ", kilosFabricar=" + kilosFabricar
 				+ ", centroOperaciones=" + centroOperaciones + ", idEstadoOp=" + idEstadoOp + ", idCentroOperaciones="
-				+ idCentroOperaciones + ", itemId=" + itemId + ", estadoOp=" + estadoOp + "]";
+				+ idCentroOperaciones + ", itemId=" + itemId + ", estadoOp=" + estadoOp
+				+ ", centrosTrabajoTepReportado=" + centrosTrabajoTepReportado + "]";
 	}
-
 	
 }

@@ -25,6 +25,7 @@
 							<th>Razon Social</th>
 							<th>Proyecto</th>
 							<th>Valor</th>
+							<th>Estado</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -37,8 +38,17 @@
 						<td th:text="${pedido.razonSocial}"></td>
 						<td th:text="${pedido.co }"></td>
 						<td th:text="'$ ' + ${#numbers.formatDecimal(pedido.valorBruto, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+						<td>
+						    <span th:switch="${pedido.estado}">
+						        <span th:case="'Cumplido'" class="finished__badge" th:text="${pedido.estado}"></span>
+						        <span th:case="'Aprobado'" class="approved__badge" th:text="${pedido.estado}"></span>
+						        <span th:case="'Anulado'" class="canceled__badge" th:text="${pedido.estado}"></span>
+						        <span th:case="'Retenido'" class="in_preparation__badge" th:text="${pedido.estado}"></span>
+						        <span th:case="*" th:text="${pedido.estado}"></span>
+						    </span>
+						</td>
 						<td >
-							<a role="button" class="btn btn-primary" id="bt" th:href="@{/comercial/pedidos/estado/{noPv}(noPv=${pedido.noPv})}">Ver</a>				
+							<a th:if="${pedido.estado == 'Aprobado'}"  role="button" class="btn btn-primary" id="bt" th:href="@{/comercial/pedidos/estado/{noPv}(noPv=${pedido.noPv})}">Ver</a>				
 						</td>
 						</tr>
 					</tbody>

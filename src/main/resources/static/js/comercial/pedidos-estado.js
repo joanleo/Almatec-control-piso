@@ -1,68 +1,509 @@
-async function buscarPedidos(page = 0, size = 10, sortField = 'fecha', sortDirection = 'desc') {
-    const filtro = {
+// Estado global de la aplicación
+const state = {
+    loadedOrders: new Set(),
+    isLoading: false,
+    activeRequest: null,
+    productionOrdersData: new Map() // Cambiamos a Map para mejor manejo de datos
+};
+
+// Constantes y configuración
+const CONFIG = {
+    PAGE_SIZE: 10,
+    DEFAULT_SORT: 'fecha',
+    DEFAULT_DIRECTION: 'desc',
+    DATE_FORMAT: {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }
+};
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTooltips();
+    initializeDateConstraints();
+    initializeSortingListeners();
+    buscarPedidos(); // Búsqueda inicial
+});
+
+// Inicializadores
+function initializeTooltips() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+}
+
+function initializeDateConstraints() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').max = today;
+    document.getElementById('end_date').max = today;
+}
+
+function initializeSortingListeners() {
+    document.querySelectorAll('th.sortable').forEach(header => {
+        header.onclick = () => handleSort(header);
+    });
+}
+
+// Manejadores de eventos
+function handleSort(header) {
+    const sortField = header.dataset.sortField;
+    const sortDirection = header.dataset.sortDirection === 'asc' ? 'desc' : 'asc';
+    header.dataset.sortDirection = sortDirection;
+
+    updateSortIcons(header, sortDirection);
+    buscarPedidos(0, CONFIG.PAGE_SIZE, sortField, sortDirection);
+}
+
+function updateSortIcons(activeHeader, direction) {
+    document.querySelectorAll('th.sortable i').forEach(icon => icon.className = 'fa fa-sort');
+    activeHeader.querySelector('i').className = direction === 'asc' ? 'fa fa-sort-up' : 'fa fa-sort-down';
+}
+
+// Funciones de manejo de fechas
+function validateDates() {
+    const startDate = document.getElementById('start_date');
+    const endDate = document.getElementById('end_date');
+    
+    if (startDate.value && endDate.value) {
+        if (new Date(endDate.value) < new Date(startDate.value)) {
+            alert('La fecha final no puede ser menor que la fecha inicial');
+            endDate.value = startDate.value;
+        }
+    }
+    
+    endDate.min = startDate.value;
+    
+    if (startDate.value && endDate.value) {
+        buscarPedidos();
+    }
+}
+
+function setDateRange(range) {
+    const startDate = document.getElementById('start_date');
+    const endDate = document.getElementById('end_date');
+    const today = new Date();
+    
+    const ranges = {
+        today: {
+            start: today,
+            end: today
+        },
+        week: {
+            start: new Date(today.setDate(today.getDate() - 7)),
+            end: new Date()
+        },
+        month: {
+            start: new Date(today.setMonth(today.getMonth() - 1)),
+            end: new Date()
+        }
+    };
+
+    const selectedRange = ranges[range];
+    startDate.value = selectedRange.start.toISOString().split('T')[0];
+    endDate.value = selectedRange.end.toISOString().split('T')[0];
+    
+    buscarPedidos();
+}
+
+// Funciones de formateo
+const formatDate = (date) => date ? new Date(date).toISOString().slice(0, 10) : null;
+
+const formatNumber = (number) => {
+    return new Intl.NumberFormat('es-CO', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(number);
+};
+
+// Funciones de limpieza
+function clearFilters() {
+    document.querySelectorAll('.card-body input').forEach(input => {
+        input.value = '';
+    });
+    buscarPedidos();
+}
+
+// Funciones principales de datos
+async function buscarPedidos(page = 0, size = CONFIG.PAGE_SIZE, sortField = CONFIG.DEFAULT_SORT, sortDirection = CONFIG.DEFAULT_DIRECTION) {
+    if (state.isLoading) return; // Prevenir múltiples solicitudes
+    state.isLoading = true;
+    
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    loadingOverlay.classList.remove('d-none');
+
+    try {
+        const filtro = getFiltros();
+        const orders = await getOrders(filtro, page, size, sortField, sortDirection);
+        if (!orders || !orders.content) {
+            throw new Error('Datos de órdenes inválidos');
+        }
+        const listOrders = createListObjectsOrder(orders.content);
+        fillTableOrders(listOrders);
+        setupPagination(orders.totalPages, page, size, sortField, sortDirection);
+        
+        // Limpiar el estado de las órdenes cargadas cuando se hace una nueva búsqueda
+        state.loadedOrders.clear();
+    } catch (error) {
+        console.error('Error al buscar pedidos:', error);
+        showError('Error al cargar los pedidos');
+        document.getElementById("orders").innerHTML = `
+            <tr class="table-warning">
+                <td colspan="10" class="text-center">Error al cargar los datos</td>
+            </tr>
+        `;
+    } finally {
+        state.isLoading = false;
+        loadingOverlay.classList.add('d-none');
+    }
+}
+
+function getFiltros() {
+    return {
         un: document.getElementById('un').value,
         estado: document.getElementById('estado').value,
         asesor: document.getElementById('asesor').value,
         descripcion: document.getElementById('descripcion').value,
         cliente: document.getElementById('cliente').value,
-        tipo: document.getElementById('tipo').value,
         fechaInicio: formatDate(document.getElementById('start_date').value),
         fechaFin: formatDate(document.getElementById('end_date').value)
     };
-
-    try {
-        const orders = await getOrders(filtro, page, size, sortField, sortDirection);
-        const listOrders = createListObjectsOrder(orders.content);
-        fillTableOrders(listOrders);
-        setupPagination(orders.totalPages, page, size, sortField, sortDirection);
-    } catch (error) {
-        console.error('Error al buscar pedidos:', error);
-    }
 }
 
-const formatDate = (date) => date ? new Date(date).toISOString().slice(0, 10) : null;
-
 const createListObjectsOrder = (orders) => {
-    return orders.map(item => ({
-        un: item.co,
-        descripcion: item.descripcion,
-        cliente: item.razonSocial,
-        kgTotal: item.cantPedida,
-        kgCumplidos: item.kgCumplidos,
-        estado: item.estado,
-        asesor: item.vendedor,
-        fecha: new Date(item.fecha + "T00:00:00").toLocaleDateString("es-CO", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-        })
-    }));
+    return orders.map(item => {
+        // Validar fecha
+        let formattedDate;
+        try {
+            formattedDate = item.fecha ? 
+                new Date(item.fecha + "T00:00:00").toLocaleDateString("es-CO", CONFIG.DATE_FORMAT) :
+                'Fecha no disponible';
+        } catch (e) {
+            formattedDate = 'Fecha inválida';
+        }
+
+        return {
+            rowId: item.rowid,
+            pv: `${item.tipo || ''}-${item.noPv || ''}`,
+            co: item.co || '',
+            zona: item.zona || '',
+            descripcion: item.descripcion || '',
+            cliente: item.razonSocial || '',
+            kgTotal: item.cantPedida || 0,
+            kgCumplidos: item.totalKgCumplidos || 0,
+            estado: item.estado || 'Sin estado',
+            asesor: item.vendedor || '',
+            fecha: formattedDate
+        };
+    });
 };
 
 const fillTableOrders = (listOrders) => {
     const tbodyOrders = document.getElementById("orders");
-    tbodyOrders.innerHTML = listOrders.map(order => `
-        <tr>
-            <td>${order.un}</td>
-            <td>${order.descripcion}</td>
-            <td>${order.cliente}</td>
-            <td><div class="${getStatusClass(order.estado)}">${order.estado}</div></td>
-            <td>${(order.kgTotal).toFixed(2)}</td>
-            <td>${(order.kgTotal - order.kgCumplidos).toFixed(2)}</td>
-            <td>${((order.kgCumplidos / order.kgTotal) * 100).toFixed(2)}</td>
-            <td>${order.fecha}</td>
-            <td></td>
-            <td></td>
-        </tr>
-    `).join('');
+    
+    if (!listOrders.length) {
+        tbodyOrders.innerHTML = `
+            <tr class="table-warning">
+                <td colspan="10" class="text-center">No se encontraron registros</td>
+            </tr>
+        `;
+        return;
+    }
+            
+    tbodyOrders.innerHTML = listOrders.map(order => {
+        const porcentaje = order.kgTotal > 0 ? 
+            ((order.kgCumplidos / order.kgTotal) * 100).toFixed(2) : 
+            '0.00';
+            
+        return `
+            <tr class="order-row">
+                <td class="text-center">
+                    <button class="btn btn-link btn-sm expand-btn p-0" onclick="toggleProductionOrders('${order.rowId}', event)">
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+                </td>
+                <td class="text-nowrap">${order.pv}</td>
+                <td class="text-nowrap">${order.asesor}</td>
+                <td class="text-nowrap">${order.co}</td>
+                <td class="text-nowrap">${order.descripcion}</td>
+                <td class="text-nowrap">${order.cliente}</td>
+                <td><div class="${getStatusClass(order.estado)}">${order.estado}</div></td>
+                <td>${formatNumber(order.kgTotal)}</td>
+                <td>${formatNumber(order.kgTotal - order.kgCumplidos)}</td>
+                <td>
+                    <div class="progress-container">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: ${porcentaje}%"
+                                 aria-valuenow="${porcentaje}"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <span class="progress-value">${porcentaje}%</span>
+                    </div>
+                </td>
+                <td>${order.fecha}</td>
+            </tr>
+            
+			<tr class="production-orders-row d-none" id="production-orders-${order.rowId}">
+	            <td colspan="11">
+	                <div class="production-orders-container p-3">
+	                    <div class="d-flex justify-content-between align-items-center mb-3">
+	                        <h6 class="mb-0">Órdenes de Producción</h6>
+	                        <div class="spinner-border spinner-border-sm d-none" role="status" id="spinner-${order.rowId}">
+	                            <span class="visually-hidden">Cargando...</span>
+	                        </div>
+	                    </div>
+	                    <div class="table-responsive">
+	                        <table class="table table-sm production-orders-table" id="production-orders-table-${order.rowId}">
+	                            <thead>
+	                                <tr>
+	                                    <th class="sortable" data-sort-field="op">OP <i class="fa fa-sort"></i></th>
+	                                    <th class="sortable" data-sort-field="estado">Estado <i class="fa fa-sort"></i></th>
+	                                    <th class="sortable" data-sort-field="fechaProduccion">Fecha Prod <i class="fa fa-sort"></i></th>
+	                                    <th class="sortable" data-sort-field="fechaEntrega">Fecha Entrega <i class="fa fa-sort"></i></th>
+	                                    <th class="sortable" data-sort-field="kgPlaneados">Cant Planeada [Kg] <i class="fa fa-sort"></i></th>
+	                                    <th class="sortable" data-sort-field="kgCumplidos">Cant Cumplida [Kg] <i class="fa fa-sort"></i></th>
+	                                    <th class="sortable" data-sort-field="avance">Avance [%] <i class="fa fa-sort"></i></th>
+										<th>Acciones</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="production-orders-body-${order.rowId}">
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </td>
+        `;
+    }).join('');
 };
 
+function initializeProductionOrdersSorting(rowId) {
+    const table = document.getElementById(`production-orders-table-${rowId}`);
+    if (!table) return;
+
+    table.querySelectorAll('th.sortable').forEach(header => {
+        header.onclick = () => handleProductionOrderSort(header, rowId);
+    });
+}
+
+// 3. Función para manejar el ordenamiento
+function handleProductionOrderSort(header, rowId) {
+    const sortField = header.dataset.sortField;
+    const sortDirection = header.dataset.sortDirection === 'asc' ? 'desc' : 'asc';
+    header.dataset.sortDirection = sortDirection;
+
+	// Actualizar iconos
+    const table = header.closest('table');
+    table.querySelectorAll('th.sortable i').forEach(icon => icon.className = 'fa fa-sort');
+    header.querySelector('i').className = sortDirection === 'asc' ? 'fa fa-sort-up' : 'fa fa-sort-down';
+
+    // Ordenar y renderizar
+    if (state.productionOrdersData[rowId]) {
+        const sortedOrders = sortProductionOrders(state.productionOrdersData[rowId], sortField, sortDirection);
+        renderProductionOrders(sortedOrders, rowId);
+    }
+}
+
+function sortProductionOrders(orders, field, direction) {
+    return [...orders].sort((a, b) => {
+        let valueA, valueB;
+
+        switch(field) {
+            case 'op':
+                valueA = `${a.opHijoTipo}-${a.opHijoNum}`;
+                valueB = `${b.opHijoTipo}-${b.opHijoNum}`;
+                break;
+            case 'estado':
+                valueA = a.opHijoEstado;
+                valueB = b.opHijoEstado;
+                break;
+            case 'fechaProduccion':
+            case 'fechaEntrega':
+                valueA = a[field] ? new Date(a[field]) : new Date(0);
+                valueB = b[field] ? new Date(b[field]) : new Date(0);
+                break;
+            case 'kgPlaneados':
+                valueA = a.opHijoKgFabricar || 0;
+                valueB = b.opHijoKgFabricar || 0;
+                break;
+            case 'kgCumplidos':
+                valueA = a.opHijoKgCumplidos || 0;
+                valueB = b.opHijoKgCumplidos || 0;
+                break;
+            case 'avance':
+                valueA = ((a.opHijoKgCumplidos || 0) / (a.opHijoKgFabricar || 1)) * 100;
+                valueB = ((b.opHijoKgCumplidos || 0) / (b.opHijoKgFabricar || 1)) * 100;
+                break;
+            default:
+                valueA = a[field];
+                valueB = b[field];
+        }
+
+        // Comparación
+        if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+}
+
+function renderProductionOrders(orders, rowId) {
+    const tbody = document.getElementById(`production-orders-body-${rowId}`);
+    
+    tbody.innerHTML = orders.map(order => {
+        const kgCumplidos = order.opHijoKgCumplidos || 0;
+        const kgSolicitados = order.opHijoKgFabricar || 0;
+        const porcentaje = kgSolicitados > 0 ? 
+            ((kgCumplidos / kgSolicitados) * 100).toFixed(2) : 
+            '0.00';
+            
+        return `
+            <tr>
+                <td>${order.opHijoTipo}-${order.opHijoNum}</td>
+                <td><div class="${getStatusClass(order.opHijoEstado)}">${order.opHijoEstado}</div></td>
+                <td>${formatDate(order.fechaProduccion) || 'N/A'}</td>
+                <td>${formatDate(order.fechaEntrega) || 'N/A'}</td>
+                <td>${formatNumber(kgSolicitados)}</td>
+                <td>${formatNumber(kgCumplidos)}</td>
+                <td>
+                    <div class="progress-container">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: ${porcentaje}%"
+                                 aria-valuenow="${porcentaje}"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <span class="progress-value">${porcentaje}%</span>
+                    </div>
+                </td>
+				<td>
+                    <button type="button" class="btn btn-primary btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#detalleOrdenProduccion"
+                            onclick="verDetalleOP('${order.opHijoNum}')">
+                        Ver
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function toggleProductionOrders(rowId, event) {
+    const productionOrdersRow = document.getElementById(`production-orders-${rowId}`);
+    const expandBtn = event.currentTarget;
+    const icon = expandBtn.querySelector('i');
+    const spinner = document.getElementById(`spinner-${rowId}`);
+    
+    if (productionOrdersRow.classList.contains('d-none')) {
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+        productionOrdersRow.classList.remove('d-none');
+        
+        if (!state.loadedOrders.has(rowId)) {
+            if (state.activeRequest) {
+                state.activeRequest.abort();
+            }
+            await loadProductionOrders(rowId, spinner);
+            state.loadedOrders.add(rowId);
+            initializeProductionOrdersSorting(rowId);
+        }
+    } else {
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+        productionOrdersRow.classList.add('d-none');
+    }
+}
+
+async function loadProductionOrders(rowId, spinner) {
+    const tbody = document.getElementById(`production-orders-body-${rowId}`);
+    spinner.classList.remove('d-none');
+    
+    try {
+        const numericRowId = parseInt(rowId, 10);
+        if (isNaN(numericRowId)) {
+            throw new Error('ID de pedido inválido');
+        }
+
+        const controller = new AbortController();
+        state.activeRequest = controller;
+
+        const response = await fetch(`/comercial/pedidos/${numericRowId}/ordenes-produccion`, {
+            signal: controller.signal
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}`);
+        }
+        
+        const productionOrders = await response.json();
+		
+		console.log(productionOrders)
+        
+        if (!productionOrders || productionOrders.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        No se encontraron órdenes de producción
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Almacenar los datos
+        state.productionOrdersData[rowId] = productionOrders;
+        
+        // Renderizar con ordenamiento inicial
+        renderProductionOrders(productionOrders, rowId);
+        
+        // Inicializar los listeners de ordenamiento
+        initializeProductionOrdersSorting(rowId);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center text-danger">
+                    Error al cargar las órdenes de producción
+                </td>
+            </tr>
+        `;
+    } finally {
+        spinner.classList.add('d-none');
+    }
+}
+
+const styles = `
+.production-orders-container {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin: 0 20px;
+}
+
+.fa-chevron-up, .fa-chevron-down {
+    transition: all 0.3s ease;
+}
+
+.production-orders-row {
+    background-color: #fff;
+}
+
+.production-orders-row td {
+    padding: 0 !important;
+}
+`;
+
+// Agregar los estilos dinámicamente
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
+
 const getStatusClass = (estado) => {
-	console.log(estado)
     switch(estado) {
         case "Cumplido": return "finished__badge";
         case "Aprobado": return "approved__badge";
-		case "Anulado": return "canceled__badge"
+        case "Anulado": return "canceled__badge";
         default: return "in_preparation__badge";
     }
 }
@@ -144,5 +585,455 @@ document.querySelectorAll('th.sortable').forEach(header => {
 
         buscarPedidos(0, 10, sortField, sortDirection);
     };
-})
+});
 
+let detalleOPTable = null;
+
+async function verDetalleOP(numOp) {
+    if (detalleOPTable) {
+        detalleOPTable.destroy();
+    }
+	
+	$('#tablaDetalleOP').on('click', '.pdf-button', function() {
+        const plano = $(this).data('plano');
+        if (plano && plano !== "COM") {
+            window.open(`http://10.75.98.3:8090/centros-trabajo/descargar-pdf/${plano}.pdf`, '_blank');
+        }
+    });
+	
+	const fileName = 'OP-' + numOp;
+	
+    detalleOPTable = $('#tablaDetalleOP').DataTable({
+		ajax: {
+	        url: `/ingenieria/op/${numOp}/detalle`,
+	        type: "POST",
+	        dataType: "json",
+	        contentType: "application/json",
+	        data: function(d) {
+				const data = JSON.stringify(d);
+	            return JSON.stringify(d);
+	        }
+	    },
+		responsive: true,
+		scrollX: true,
+		fixedHeader: true,
+		processing: true,
+        serverSide: true,
+		columns: [
+			{ 
+                data: 0,
+                width: '10%',
+                className: 'text-nowrap'
+            },
+            { 
+                data: 1,
+                width: '8%',
+                className: 'text-nowrap'
+            },
+            { 
+                data: 2,
+                width: '25%',
+                className: 'text-nowrap'
+            },
+            { 
+                data: 3,
+                width: '8%',
+                className: 'text-nowrap text-end',
+
+            },
+            { 
+                data: 4,
+                width: '10%',
+                className: 'text-nowrap text-end',
+				render: function(data, type, row) {
+	                if (type === 'display') {
+	                    return formatNumber(data);
+	                }
+	                return data;
+	            }
+            },
+            { 
+                data: 5,
+                width: '12%',
+                className: 'text-nowrap text-end',
+            },
+            { 
+                data: 6,
+                width: '12%',
+                className: 'text-nowrap',
+				render: function(data, type, row) {
+	                if (type === 'display') {
+	                    return formatNumber(data);
+	                }
+	                return data;
+	            }
+            }
+			, 
+	        { 
+	            data: 7,
+	            width: '10%',
+	            className: 'text-nowrap'
+	        }, 
+	        { 
+	            data: 8,
+	            width: '5%',
+	            className: 'text-nowrap text-center',
+	            render: function(data, type, row) {
+	                if (!data || data === "COM") {
+	                    return '';
+	                }
+	                return `<button class="btn btn-primary btn-sm pdf-button" data-plano="${data}">
+	                         <i class="fas fa-file-pdf"></i>
+	                       </button>`;
+	            }
+	        } 
+        ],
+		columnDefs: [
+			{
+				targets: -1,
+				data: null,
+				render: function(data, type, row) {
+					const plano = row[8];
+					if (!plano || plano === "COM") {
+						return '';
+					}
+					const buttonClass = plano ? 'btn-primary' : 'btn-secondary';
+					const disabled = plano ? '' : 'disabled';
+					return `<button class="btn ${buttonClass} btn-sm pdf-button" ${disabled} onclick="descargarPlano('${data}')">
+                             <i class="fas fa-file-pdf"></i> 
+                           </button>`;
+				}
+			},
+			
+			{
+	            targets: '_all',
+	            className: 'text-nowrap'
+	        }
+		],
+		
+		dom: '<"top"B><"top"fi>rt<"bottom"lp><"clear">',
+		buttons: [
+			{
+				extend: 'excelHtml5',
+				title: fileName,
+				titleAttr: 'Exportar a Excel',
+				className: 'btn btn-primary',
+				exportOptions: {
+		            columns: ':not(:last-child)', // También excluimos la última columna para PDF
+		            format: {
+						body: function(data, row, column, node) {
+                            // Removemos el formato de número si existe
+                            if (typeof data === 'string') {
+                                // Primero, removemos los puntos de miles
+                                data = data.replace(/\./g, '');
+                                // Luego reemplazamos la coma decimal por punto
+                                data = data.replace(',', '.');
+                                
+                                // Si el resultado es un número válido, lo retornamos como número
+                                if (!isNaN(data)) {
+                                    return parseFloat(data);
+                                }
+                            }
+                            return data;
+                        }
+		            }
+		        },
+				customize: function(xlsx) {
+                    let sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    $('row c[r^="E"], row c[r^="G"]', sheet).each(function() {
+                        // Configuramos el formato de número para las columnas de peso (E y G)
+                        $(this).attr('s', '2'); // Estilo numérico con 2 decimales
+                    });
+                }
+			},
+			{
+				extend: 'pdfHtml5',
+				title: fileName,
+				titleAttr: 'Exportar a PDF',
+				className: 'btn btn-primary',
+				orientation: 'landscape', // Orientación del PDF (portrait o landscape)
+				pageSize: 'LEGAL',
+				exportOptions: {
+		            columns: ':not(:last-child)' 
+		        }
+			}
+	
+		],
+		lengthMenu: [5, 10, 15, 20, 50, 100],
+		pageLength: 50,
+		destroy: true,
+		language: {
+			"processing": "Procesando...",
+			"lengthMenu": "Mostrar _MENU_ registros",
+			"zeroRecords": "No se encontraron resultados",
+			"emptyTable": "Ningún dato disponible en esta tabla",
+			"infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+			"infoFiltered": "(filtrado de un total de _MAX_ registros)",
+			"search": "Buscar:",
+			"loadingRecords": "Cargando...",
+			"paginate": {
+				"first": "Primero",
+				"last": "Último",
+				"next": "Siguiente",
+				"previous": "Anterior"
+			},
+			"aria": {
+				"sortAscending": ": Activar para ordenar la columna de manera ascendente",
+				"sortDescending": ": Activar para ordenar la columna de manera descendente"
+			},
+			"buttons": {
+				"copy": "Copiar",
+				"colvis": "Visibilidad",
+				"collection": "Colección",
+				"colvisRestore": "Restaurar visibilidad",
+				"copyKeys": "Presione ctrl o u2318 + C para copiar los datos de la tabla al portapapeles del sistema. <br \/> <br \/> Para cancelar, haga clic en este mensaje o presione escape.",
+				"copySuccess": {
+					"1": "Copiada 1 fila al portapapeles",
+					"_": "Copiadas %ds fila al portapapeles"
+				},
+				"copyTitle": "Copiar al portapapeles",
+				"csv": "CSV",
+				"excel": "Excel",
+				"pageLength": {
+					"-1": "Mostrar todas las filas",
+					"_": "Mostrar %d filas"
+				},
+				"pdf": "PDF",
+				"print": "Imprimir",
+				"renameState": "Cambiar nombre",
+				"updateState": "Actualizar",
+				"createState": "Crear Estado",
+				"removeAllStates": "Remover Estados",
+				"removeState": "Remover",
+				"savedStates": "Estados Guardados",
+				"stateRestore": "Estado %d"
+			},
+			"autoFill": {
+				"cancel": "Cancelar",
+				"fill": "Rellene todas las celdas con <i>%d<\/i>",
+				"fillHorizontal": "Rellenar celdas horizontalmente",
+				"fillVertical": "Rellenar celdas verticalmente"
+			},
+			"decimal": ",",
+			"searchBuilder": {
+				"add": "Añadir condición",
+				"button": {
+					"0": "Constructor de búsqueda",
+					"_": "Constructor de búsqueda (%d)"
+				},
+				"clearAll": "Borrar todo",
+				"condition": "Condición",
+				"conditions": {
+					"date": {
+						"before": "Antes",
+						"between": "Entre",
+						"empty": "Vacío",
+						"equals": "Igual a",
+						"notBetween": "No entre",
+						"not": "Diferente de",
+						"after": "Después",
+						"notEmpty": "No Vacío"
+					},
+					"number": {
+						"between": "Entre",
+						"equals": "Igual a",
+						"gt": "Mayor a",
+						"gte": "Mayor o igual a",
+						"lt": "Menor que",
+						"lte": "Menor o igual que",
+						"notBetween": "No entre",
+						"notEmpty": "No vacío",
+						"not": "Diferente de",
+						"empty": "Vacío"
+					},
+					"string": {
+						"contains": "Contiene",
+						"empty": "Vacío",
+						"endsWith": "Termina en",
+						"equals": "Igual a",
+						"startsWith": "Empieza con",
+						"not": "Diferente de",
+						"notContains": "No Contiene",
+						"notStartsWith": "No empieza con",
+						"notEndsWith": "No termina con",
+						"notEmpty": "No Vacío"
+					},
+					"array": {
+						"not": "Diferente de",
+						"equals": "Igual",
+						"empty": "Vacío",
+						"contains": "Contiene",
+						"notEmpty": "No Vacío",
+						"without": "Sin"
+					}
+				},
+				"data": "Data",
+				"deleteTitle": "Eliminar regla de filtrado",
+				"leftTitle": "Criterios anulados",
+				"logicAnd": "Y",
+				"logicOr": "O",
+				"rightTitle": "Criterios de sangría",
+				"title": {
+					"0": "Constructor de búsqueda",
+					"_": "Constructor de búsqueda (%d)"
+				},
+				"value": "Valor"
+			},
+			"searchPanes": {
+				"clearMessage": "Borrar todo",
+				"collapse": {
+					"0": "Paneles de búsqueda",
+					"_": "Paneles de búsqueda (%d)"
+				},
+				"count": "{total}",
+				"countFiltered": "{shown} ({total})",
+				"emptyPanes": "Sin paneles de búsqueda",
+				"loadMessage": "Cargando paneles de búsqueda",
+				"title": "Filtros Activos - %d",
+				"showMessage": "Mostrar Todo",
+				"collapseMessage": "Colapsar Todo"
+			},
+			"select": {
+				"cells": {
+					"1": "1 celda seleccionada",
+					"_": "%d celdas seleccionadas"
+				},
+				"columns": {
+					"1": "1 columna seleccionada",
+					"_": "%d columnas seleccionadas"
+				},
+				"rows": {
+					"1": "1 fila seleccionada",
+					"_": "%d filas seleccionadas"
+				}
+			},
+			"thousands": ".",
+			"datetime": {
+				"previous": "Anterior",
+				"hours": "Horas",
+				"minutes": "Minutos",
+				"seconds": "Segundos",
+				"unknown": "-",
+				"amPm": [
+					"AM",
+					"PM"
+				],
+				"months": {
+					"0": "Enero",
+					"1": "Febrero",
+					"10": "Noviembre",
+					"11": "Diciembre",
+					"2": "Marzo",
+					"3": "Abril",
+					"4": "Mayo",
+					"5": "Junio",
+					"6": "Julio",
+					"7": "Agosto",
+					"8": "Septiembre",
+					"9": "Octubre"
+				},
+				"weekdays": {
+					"0": "Dom",
+					"1": "Lun",
+					"2": "Mar",
+					"4": "Jue",
+					"5": "Vie",
+					"3": "Mié",
+					"6": "Sáb"
+				},
+				"next": "Próximo"
+			},
+			"editor": {
+				"close": "Cerrar",
+				"create": {
+					"button": "Nuevo",
+					"title": "Crear Nuevo Registro",
+					"submit": "Crear"
+				},
+				"edit": {
+					"button": "Editar",
+					"title": "Editar Registro",
+					"submit": "Actualizar"
+				},
+				"remove": {
+					"button": "Eliminar",
+					"title": "Eliminar Registro",
+					"submit": "Eliminar",
+					"confirm": {
+						"_": "¿Está seguro de que desea eliminar %d filas?",
+						"1": "¿Está seguro de que desea eliminar 1 fila?"
+					}
+				},
+				"error": {
+					"system": "Ha ocurrido un error en el sistema (<a target=\"\\\" rel=\"\\ nofollow\" href=\"\\\">Más información&lt;\\\/a&gt;).<\/a>"
+				},
+				"multi": {
+					"title": "Múltiples Valores",
+					"restore": "Deshacer Cambios",
+					"noMulti": "Este registro puede ser editado individualmente, pero no como parte de un grupo.",
+					"info": "Los elementos seleccionados contienen diferentes valores para este registro. Para editar y establecer todos los elementos de este registro con el mismo valor, haga clic o pulse aquí, de lo contrario conservarán sus valores individuales."
+				}
+			},
+			"info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+			"stateRestore": {
+				"creationModal": {
+					"button": "Crear",
+					"name": "Nombre:",
+					"order": "Clasificación",
+					"paging": "Paginación",
+					"select": "Seleccionar",
+					"columns": {
+						"search": "Búsqueda de Columna",
+						"visible": "Visibilidad de Columna"
+					},
+					"title": "Crear Nuevo Estado",
+					"toggleLabel": "Incluir:",
+					"scroller": "Posición de desplazamiento",
+					"search": "Búsqueda",
+					"searchBuilder": "Búsqueda avanzada"
+				},
+				"removeJoiner": "y",
+				"removeSubmit": "Eliminar",
+				"renameButton": "Cambiar Nombre",
+				"duplicateError": "Ya existe un Estado con este nombre.",
+				"emptyStates": "No hay Estados guardados",
+				"removeTitle": "Remover Estado",
+				"renameTitle": "Cambiar Nombre Estado",
+				"emptyError": "El nombre no puede estar vacío.",
+				"removeConfirm": "¿Seguro que quiere eliminar %s?",
+				"removeError": "Error al eliminar el Estado",
+				"renameLabel": "Nuevo nombre para %s:"
+			},
+			"infoThousands": "."
+		},
+		initComplete: function(settings, json) {
+            // Ajustar columnas después de que la tabla se inicialice
+            this.api().columns.adjust();
+        },
+        drawCallback: function(settings) {
+            // Ajustar columnas después de cada redibujado
+            this.api().columns.adjust();
+        }
+    });
+	
+	$('#detalleOrdenProduccion').on('shown.bs.modal', function () {
+        if (detalleOPTable) {
+            detalleOPTable.columns.adjust();
+        }
+    });
+	
+	// Actualizar el título del modal
+	document.getElementById('detalleOrdenProduccionLabel').textContent = 
+	    `Detalle de Orden de Producción - ${numOp}`;
+}
+
+
+// Limpiar el DataTable cuando se cierra el modal
+$('#detalleOrdenProduccion').on('hidden.bs.modal', function () {
+    if (detalleOPTable) {
+		$('#tablaDetalleOP').off('click', '.pdf-button'); 
+		$('#detalleOrdenProduccion').off('shown.bs.modal');
+        detalleOPTable.destroy();
+        detalleOPTable = null;
+    }
+});

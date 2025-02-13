@@ -165,24 +165,60 @@ class DataTableHandler {
                         return JSON.stringify(d);
                     }
                 },
-				initComplete: function() {
-					this.api().columns.adjust();
-				}
+				drawCallback: function(settings) {
+                    const api = this.api();
+                    // Esperamos un breve momento para asegurar que el DOM se ha actualizado
+                    setTimeout(() => {
+                        api.columns.adjust();
+                        api.draw(false); // false para evitar un nuevo servidor request
+                    }, 100);
+                }
 			});
 
-			this.setupPDFButtonEvents();
-			state.dataTableInitialized = true;
+			this.setupResizeHandlers();
+            this.setupPDFButtonEvents();
+            state.dataTableInitialized = true;
 		} catch (error) {
 			console.error('Error inicializando DataTable:', error);
 			throw error;
 		}
 	}
+	
+	setupResizeHandlers() {
+        // Ajustar cuando la ventana cambia de tamaño
+        window.addEventListener('resize', () => {
+            if (state.dataTable) {
+                state.dataTable.columns.adjust();
+            }
+        });
+
+        // Ajustar cuando el modal se muestra
+        const modal = document.querySelector(CONSTANTS.SELECTORS.MODAL.DETALLE_PROYECTO);
+        if (modal) {
+            modal.addEventListener('shown.bs.modal', () => {
+                if (state.dataTable) {
+                    setTimeout(() => {
+                        state.dataTable.columns.adjust();
+                    }, 100);
+                }
+            });
+        }
+
+        // Ajustar cuando cambia la pestaña (si hay tabs)
+        $('a[data-toggle="tab"]').on('shown.bs.tab', () => {
+            if (state.dataTable) {
+                state.dataTable.columns.adjust();
+            }
+        });
+    }
 
 	async setupDataTableOptions() {
 		const fileName = this.getFileName();
 		state.dataTableOptions = {
 			responsive: true,
 			scrollX: true,
+			scrollCollapse: true,
+            autoWidth: false,
 			fixedHeader: true,
 			processing: true,
             serverSide: true,
@@ -205,7 +241,13 @@ class DataTableHandler {
 		        { 
 		            data: 3,
 		            width: '8%',
-		            className: 'text-nowrap text-end'
+		            className: 'text-nowrap text-end',
+					render: function(data, type, row) {
+	                    if (type === 'display') {
+	                        return data;
+	                    }
+	                    return data;
+	                }
 		        },  // CANT
 		        { 
 		            data: 4,
@@ -221,7 +263,13 @@ class DataTableHandler {
 		        { 
 		            data: 5,
 		            width: '12%',
-		            className: 'text-nowrap text-end'
+		            className: 'text-nowrap text-end',
+					render: function(data, type, row) {
+	                    if (type === 'display') {
+	                        return data;
+	                    }
+	                    return data;
+	                }
 		        },  // CANT PENDIENTE
 		        { 
 		            data: 6,
@@ -281,6 +329,33 @@ class DataTableHandler {
 					title: fileName,
 					titleAttr: 'Exportar a Excel',
 					className: 'btn btn-primary',
+					exportOptions: {
+			            columns: ':not(:last-child)',
+			            format: {
+							body: function(data, row, column, node) {
+	                            // Removemos el formato de número si existe
+	                            if (typeof data === 'string') {
+	                                // Primero, removemos los puntos de miles
+	                                data = data.replace(/\./g, '');
+	                                // Luego reemplazamos la coma decimal por punto
+	                                data = data.replace(',', '.');
+	                                
+	                                // Si el resultado es un número válido, lo retornamos como número
+	                                if (!isNaN(data)) {
+	                                    return parseFloat(data);
+	                                }
+	                            }
+	                            return data;
+	                        }
+			            }
+			        },
+					customize: function(xlsx) {
+	                    let sheet = xlsx.xl.worksheets['sheet1.xml'];
+	                    $('row c[r^="E"], row c[r^="G"]', sheet).each(function() {
+	                        // Configuramos el formato de número para las columnas de peso (E y G)
+	                        $(this).attr('s', '2'); // Estilo numérico con 2 decimales
+	                    });
+	                }
 				},
 				{
 					extend: 'pdfHtml5',
@@ -288,7 +363,10 @@ class DataTableHandler {
 					titleAttr: 'Exportar a PDF',
 					className: 'btn btn-primary',
 					orientation: 'landscape', // Orientación del PDF (portrait o landscape)
-					pageSize: 'LEGAL'
+					pageSize: 'LEGAL',
+					exportOptions: {
+			            columns: ':not(:last-child)' 
+			        }
 				}
 
 			],
@@ -538,8 +616,25 @@ class DataTableHandler {
 					"renameLabel": "Nuevo nombre para %s:"
 				},
 				"infoThousands": "."
-			}
+			},
+			initComplete: function(settings, json) {
+	            // Ajustar columnas después de que la tabla se inicialice
+	            this.api().columns.adjust();
+	        },
+			drawCallback: function(settings) {
+                const api = this.api();
+                // Esperamos un breve momento para asegurar que el DOM se ha actualizado
+                setTimeout(() => {
+                    api.columns.adjust();
+                    api.draw(false); // false para evitar un nuevo servidor request
+                }, 100);
+            }
 		};
+		$('#detalleOrdenProduccion').on('shown.bs.modal', function () {
+		        if (detalleOPTable) {
+		            detalleOPTable.columns.adjust();
+		        }
+		    });
 	}
 
 	setupPDFButtonEvents() {
@@ -555,7 +650,7 @@ class DataTableHandler {
 
 	getFileName() {
 		const modalTitle = document.querySelector(CONSTANTS.SELECTORS.MODAL.TITLE).textContent;
-		return modalTitle.split(' ').slice(1).join(' ');
+		return modalTitle;
 	}
 }
 
