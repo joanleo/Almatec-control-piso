@@ -98,6 +98,7 @@ public class SecurityConfig {
                         .antMatchers("/almacen/consulta-materia-prima").hasAuthority("ACCESS_CONSULTA_MATERIA_PRIMA_ALMACEN")
                         .antMatchers("/calidad/formularios").hasAuthority("ACCESS_LISTAR_REPORTES_CALIDAD")
                         .antMatchers("/centros-trabajo").hasAuthority("ACCESS_CENTROS_DE_TRABAJO")
+                        .antMatchers("/notificaciones").hasAuthority("ACESS_VER_CONFIGURACION_NOTIFICACIONES")
                         .antMatchers("/operarios/listar").hasAuthority("ACCESS_OPERARIOS")
                         .antMatchers("/operarios/editar/*").hasAuthority("ACCESS_OPERARIOS")
                         .antMatchers(HttpMethod.POST, "/operarios/guardar").hasAuthority("ACCESS_OPERARIOS")

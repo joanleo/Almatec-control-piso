@@ -13,8 +13,9 @@
             Comercial
           </button>
           <ul class="dropdown-menu">
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos/listar">Pedidos</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTADO_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos">Estado Pedidos</a></li>
+			<li><h6 class="dropdown-header">Pedidos</h6></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos/listar">Ver / Crear Orden Produccion</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTADO_PEDIDOS'')')}"><a class="dropdown-item" href="/comercial/pedidos">Estado</a></li>
           </ul>
         </li>
         
@@ -23,7 +24,9 @@
             Ingenieria
           </button>
           <ul class="dropdown-menu">
+			<li><h6 class="dropdown-header">Ordenes Produccion</h6></li>
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_ESTATUS_DE_PROYECTOS'')')}"><a class="dropdown-item" href="/ingenieria/status/proyectos">Estado proyectos</a></li>
+			<li><h6 class="dropdown-header">Memorandos</h6></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/nuevo">Crear memo</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_APROBAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/aprobar">Aprobar memos</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_HISTORIAL_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos">Historial memos</a></li>
@@ -84,11 +87,13 @@
             Almacen
           </button>
           <ul class="dropdown-menu">
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes materia prima</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_HISTORIAL_SOLICITUDES_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes/historial">Historial Solicitudes materia prima</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear Lista de Empaque</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver Lista de Empaque</a></li>
+			<li><h6 class="dropdown-header">Materia Prima</h6></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_SOLICITUDES_DE_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes">Solicitudes</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_HISTORIAL_SOLICITUDES_MATERIA_PRIMA'')')}"><a class="dropdown-item" href="/almacen/solicitudes/historial">Historial Solicitudes</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CONSULTA_MATERIA_PRIMA_ALMACEN'')')}"><a class="dropdown-item" href="/almacen/consulta-materia-prima">Consulta Materia prima</a></li>
+			<li><h6 class="dropdown-header">Lista de Empaque</h6></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_REMISION'')')}"><a class="dropdown-item" href="/almacen/remisiones/nueva">Crear</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_REMISIONES'')')}"><a class="dropdown-item" href="/almacen/remisiones">Ver</a></li>
           </ul>
         </li>   
 		
@@ -107,11 +112,12 @@
           </button>
           <ul class="dropdown-menu">
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_CENTROS_DE_TRABAJO'')')}"><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACESS_VER_CONFIGURACION_NOTIFICACIONES'')')}"><a class="dropdown-item" href="/notificaciones">Notificaciones</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PARAMETROS'')')}"><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
             <li><hr class="dropdown-divider"></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_OPERARIOS'')')}"><a class="dropdown-item" href="/operarios/listar">Operarios</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PERFILES_O_ROLES'')')}"><a class="dropdown-item" href="/roles">Perfiles o Roles</a></li>
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_USUARIOS'')')}"><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
-			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PARAMETROS'')')}"><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
           </ul>
         </li>
 

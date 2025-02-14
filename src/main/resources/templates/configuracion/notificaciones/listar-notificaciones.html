@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Configuracion :: Notificaciones')"></head>
+	<body class="bg-light">
+		
+		<style>
+			/* Variables de colores */
+			:root {
+			    --primary-color: #11464A;
+			    --secondary-color: #007B63;
+			    --background-color: #f4f4f5;
+			    --card-shadow: 0 2px 4px rgba(0,0,0,0.05);
+			}
+
+			/* Mejoras generales */
+			body {
+			    background-color: var(--background-color);
+			}
+
+			/* Mejoras en las cards */
+			.card {
+			    border: none;
+			    box-shadow: var(--card-shadow);
+			    transition: box-shadow 0.3s ease;
+			}
+
+			.card:hover {
+			    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+			}
+
+			/* Mejoras en la tabla */
+			.table {
+			    margin-bottom: 0;
+			}
+
+			.table thead th {
+			    background-color: #f8f9fa;
+			    font-weight: 600;
+			    text-transform: uppercase;
+			    font-size: 0.85rem;
+			    letter-spacing: 0.5px;
+			}
+
+			.table tbody tr {
+			    transition: background-color 0.2s ease;
+			}
+
+			/* Mejoras en los badges de email */
+			.badge {
+				width: max-content;
+				  background: #dcfce7;
+				  border-radius: 6px;
+				  border: 1px solid #15803d;
+				  color: #15803d;
+				  padding: 4px 12px;
+				  display: flex;
+				  align-items: center;
+				  gap: 8px;
+				  font-size: .875rem;
+				  font-weight: 500;
+			    transition: all 0.2s ease;
+			}
+
+			.badge .btn-close {
+			    font-size: 0.7rem;
+			    padding: 0.25rem;
+			}
+
+			/* Mejoras en los botones */
+			.btn {
+			    font-weight: 500;
+			    padding: 0.5rem 1rem;
+			    transition: all 0.2s ease;
+			}
+
+			.btn-primary {
+			    background-color: var(--primary-color);
+			    border-color: var(--primary-color);
+			}
+
+			.btn-primary:hover {
+			    background-color: var(--secondary-color);
+			    border-color: var(--secondary-color);
+			}
+
+			/* Mejoras en los inputs */
+			.form-control {
+			    border: 1px solid #e2e8f0;
+			    padding: 0.75rem 1rem;
+			    transition: all 0.2s ease;
+			}
+
+			.form-control:focus {
+			    border-color: var(--primary-color);
+			    box-shadow: 0 0 0 0.2rem rgba(17, 70, 74, 0.1);
+			}
+
+			/* Animaciones */
+			@keyframes fadeIn {
+			    from { opacity: 0; transform: translateY(-10px); }
+			    to { opacity: 1; transform: translateY(0); }
+			}
+
+			.email-tag {
+			    animation: fadeIn 0.3s ease;
+			}
+			
+			/* Estilos para el modal */
+			.modal-header {
+			    background-color: var(--primary-color);
+			    color: white;
+			}
+
+			.modal-header .btn-close {
+			    color: white;
+			    opacity: 1;
+			}
+
+			/* Estilos para los badges de email en el modal */
+			#emailList .badge {
+			    animation: fadeIn 0.3s ease;
+			}
+
+			@keyframes fadeIn {
+			    from { opacity: 0; transform: translateY(-5px); }
+			    to { opacity: 1; transform: translateY(0); }
+			}
+
+			/* Hacer el campo tipo de notificación de solo lectura más visible */
+			input[readonly] {
+			    background-color: #f8f9fa;
+			    cursor: not-allowed;
+			}
+		</style>
+		
+	    <nav th:replace="fragments/navbar :: nav-bar('Configuracion')"></nav>
+	    
+	    <div class="container mt-4">
+	        <!-- Alerts -->
+	        <div th:replace="fragments/alerts :: alerts"></div>
+	        
+	        <!-- Header mejorado -->
+	        <div class="d-flex justify-content-between align-items-center mb-4">
+	            <div>
+	                <h2 class="mb-1">Configuración de Notificaciones</h2>
+	                <p class="text-muted">Gestiona las notificaciones por correo electrónico</p>
+	            </div>
+	        </div>
+	        
+	        <!-- Tabla mejorada -->
+	        <div class="card shadow-sm mb-4">
+	            <div class="card-header bg-white py-3">
+	                <h5 class="card-title mb-0">Configuraciones Actuales</h5>
+	            </div>
+	            <div class="card-body">
+	                <div class="table-responsive">
+	                    <table class="table table-striped align-middle table-hover">
+	                        <thead>
+	                            <tr>
+	                                <th class="border-0">Tipo de Notificación</th>
+	                                <th class="border-0">Correos</th>
+	                                <th class="border-0 text-end">Acciones</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr th:each="config : ${configs}">
+	                                <td class="align-middle">
+	                                    <div class="d-flex align-items-center">
+	                                        <i class="fas fa-bell text me-2"></i>
+	                                        <span th:text="${config.tipo}"></span>
+	                                    </div>
+	                                </td>
+	                                <td>
+	                                    <div class="d-flex flex-wrap gap-2">
+	                                        <span th:each="email : ${config.emails}" 
+	                                              class="badge d-flex align-items-center py-2 px-3">
+	                                            <span th:text="${email}"></span>
+	                                            <button type="button" 
+	                                                    class="btn-close btn-close ms-2"
+	                                                    th:data-config-id="${config.id}"
+	                                                    th:data-email="${email}"
+	                                                    onclick="removeEmail(this.dataset.configId, this.dataset.email)"
+														sec:authorize="hasAuthority('ACCESS_EDITAR_CONFIGURACION_NOTIFICACIONES')">
+	                                            </button>
+	                                        </span>
+	                                    </div>
+	                                </td>
+									<!-- Modificación en la columna de acciones -->
+									<td class="text-end">
+									    <div class="d-flex justify-content-end gap-2"> <!-- Añadimos este div contenedor -->
+									        <button class="btn btn-sm btn-primary"
+									                th:data-config-id="${config.id}"
+									                onclick="editConfig(this.dataset.configId)"
+													sec:authorize="hasAuthority('ACCESS_EDITAR_CONFIGURACION_NOTIFICACIONES')">
+									            <i class="fas fa-edit"></i>
+									        </button>
+									        <button class="btn btn-sm btn-danger"
+									                th:data-config-id="${config.id}"
+									                onclick="deleteConfig(this.dataset.configId)"
+													sec:authorize="hasAuthority('ACCESS_ELIMINAR_CONFIGURACION_NOTIFICACIONES')">
+									            <i class="fas fa-trash"></i>
+									        </button>
+									    </div>
+									</td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	            </div>
+	        </div>
+	        
+	        <!--  modal -->
+			<div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+			    <div class="modal-dialog">
+			        <div class="modal-content">
+			            <div class="modal-header">
+			                <h5 class="modal-title" id="configModalLabel">Editar Configuración</h5>
+			                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			            </div>
+			            <div class="modal-body">
+			                <form id="configForm" th:action="@{/notificaciones}" method="post" class="needs-validation" novalidate>
+			                    <input type="hidden" id="configId" name="id">
+			                    <div class="mb-3">
+			                        <label for="tipo" class="form-label">Tipo de Notificación</label>
+			                        <input type="text" class="form-control" 
+			                               id="tipo" name="tipo" required
+			                               placeholder="Tipo de notificación" readonly>
+			                        <div class="invalid-feedback">
+			                            Por favor, ingrese un tipo de notificación
+			                        </div>
+			                    </div>
+			                    <div class="mb-3">
+			                        <label for="emailInput" class="form-label">Correos Electrónicos</label>
+			                        <div class="input-group">
+			                            <input type="email" class="form-control" 
+			                                   id="emailInput" 
+			                                   placeholder="ejemplo@correo.com">
+			                            <button type="button" class="btn btn-primary" onclick="addEmail()">
+			                                <i class="fas fa-plus"></i>
+			                            </button>
+			                        </div>
+			                        <div id="emailList" class="mt-3 d-flex flex-wrap gap-2"></div>
+			                        <input type="hidden" id="emailsHidden" name="emails">
+			                    </div>
+			                </form>
+			            </div>
+			            <div class="modal-footer">
+			                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+			                <button type="button" class="btn btn-primary" onclick="submitForm()">Guardar cambios</button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+	    
+			<!-- Modal de confirmación para eliminar -->
+			<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+			    <div class="modal-dialog modal-dialog-centered">
+			        <div class="modal-content">
+			            <div class="modal-header border-0">
+			                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			            </div>
+			            <div class="modal-body text-center pb-4">
+			                <i class="fas fa-exclamation-circle text-danger mb-4" style="font-size: 3rem;"></i>
+			                <h5 class="modal-title mb-3" id="deleteModalLabel">Confirmar Eliminación</h5>
+			                <p class="text-muted">¿Está seguro que desea eliminar esta configuración de notificación? Esta acción no se puede deshacer.</p>
+			                <!-- Campo oculto para guardar el ID -->
+			                <input type="hidden" id="deleteConfigId">
+			            </div>
+			            <div class="modal-footer border-0 justify-content-center">
+			                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+			                <button type="button" class="btn btn-danger px-4" onclick="confirmDelete()">Eliminar</button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		
+	    <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+	    <script src="/js/configuracion/notificaciones.js"></script>
+		
+	</body>
+</html>
