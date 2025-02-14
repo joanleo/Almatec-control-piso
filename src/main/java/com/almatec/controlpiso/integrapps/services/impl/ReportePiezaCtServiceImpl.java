@@ -225,7 +225,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 
 	private void procesarReporteFinal(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
 			Item itemReporte, StringBuilder mensaje) throws IOException, ServiceException {
-
+		
 		List<Integer> centrosPendientes = obtenerCentrosPendientesPorReporteTepEnOP(itemOperacion, itemReporte);
 		if (!centrosPendientes.isEmpty()) {
 			log.info("Procesando centros de trabajo con tep pendientes");
@@ -255,7 +255,6 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 
 	private List<Integer> obtenerCentrosPendientesPorReporteTepEnOP(ItemOp itemOperacion, Item itemReporte) {
 		List<Integer> rutaCentrosTrabajoErp = itemOpService.obtenerCentrosTrabajoRutaPorIdOpIA(itemOperacion.getIdOpIntegrapps());
-		
 		List<Integer> centrosTepOp = ordenPvService.obtenerCentrosTrabajoTep(itemOperacion.getIdOpIntegrapps());
 		return rutaCentrosTrabajoErp.stream().filter(centro -> !centrosTepOp.contains(centro))
 				.collect(Collectors.toList());
@@ -467,7 +466,6 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	public ReportePiezaCt validarYObtenerReporte(Integer idReporte) throws ServiceException {
 		ReportePiezaCt reporte = reporteRepository.findById(idReporte)
 	            .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado: " + idReporte));
-	        
 	        if (Estado.PROCESANDO.equals(reporte.getEstado())) {
 	            throw new ServiceException("Reporte ya está siendo procesado");
 	        }
