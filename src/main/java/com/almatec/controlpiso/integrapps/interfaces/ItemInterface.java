@@ -17,4 +17,5 @@ public interface ItemInterface {
 	BigDecimal getitem_estado(); 
 	String getitem_ue(); 
 	BigDecimal getitem_long();
+	BigDecimal getitem_area();
 }

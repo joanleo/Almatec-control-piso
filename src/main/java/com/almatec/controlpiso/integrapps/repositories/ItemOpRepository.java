@@ -84,7 +84,7 @@ public interface ItemOpRepository extends JpaRepository<ItemOp, Long> {
 	Double obtenerValorAplicarTepItemCentroTrabajo(@Param("idItemFab") Integer idItemFab, @Param("idCentroTrabajo") Integer idCentroTrabajo);
 
 	@Query(value = "SELECT   Item_fab_Id, item_tipo, codigo_erp, item_desc, item_grp_flia, "
-			+ "item_grp_pin, item_peso_b, item_peso_n, item_plano, imp_etiqueta, item_estado, item_ue, item_long "
+			+ "item_grp_pin, item_peso_b, item_peso_n, item_plano, imp_etiqueta, item_estado, item_ue, item_long, item_area "
 			+ "FROM      items_fabrica "
 			+ "WHERE   (Item_fab_Id = :idItem)", nativeQuery = true)
 	ItemInterface obtenerItemFabricaPorId(@Param("idItem") Integer idItem);

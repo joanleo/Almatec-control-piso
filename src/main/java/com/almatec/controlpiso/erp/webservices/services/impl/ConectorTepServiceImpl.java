@@ -13,8 +13,10 @@ import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPDocumentosVersi
 import com.almatec.controlpiso.erp.webservices.generated.DoctoTEPMovimientosVersion01;
 import com.almatec.controlpiso.erp.webservices.services.ConectorTepService;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
+import com.almatec.controlpiso.integrapps.entities.CentroTrabajo;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
+import com.almatec.controlpiso.integrapps.repositories.CentroTrabajoRepository;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
@@ -24,12 +26,17 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 	private final ConfigurationService configService;
 	private final UtilitiesApp util;
 	private final ItemOpService itemOpService;
+	private final CentroTrabajoRepository centroTrabajoRepo;
 	
-	public ConectorTepServiceImpl(ConfigurationService configService, UtilitiesApp util, ItemOpService itemOpService) {
+	public ConectorTepServiceImpl(ConfigurationService configService, 
+			UtilitiesApp util, 
+			ItemOpService itemOpService,
+			CentroTrabajoRepository centroTrabajoRepo) {
 		super();
 		this.configService = configService;
 		this.util = util;
 		this.itemOpService = itemOpService;
+		this.centroTrabajoRepo = centroTrabajoRepo;
 	}
 
 	@Override
@@ -53,33 +60,69 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 
 	@Override
 	public List<DoctoTEPMovimientosVersion01> crearMovTiempos(ReporteDTO reporte, DataConsumoInterface data,
-			DataTEP dataTE, String idCTErp, boolean tepFaltante) {
-		List<DoctoTEPMovimientosVersion01> movs = new ArrayList<>();
-		Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
-		ItemInterface item = itemOpService.obtenerItemFabricaPorId(idItem);
+			DataTEP dataTE, String idCTErp, boolean tepFaltante) {		
 		
-		if(!tepFaltante) {
-			
-			Double valorAplicar = itemOpService.obtenerValorAplicarTepItemCentroTrabajo(idItem,
-					reporte.getIdCentroTrabajo());
-			
-			Integer cantPiezasReportar = reporte.getCantReportar();
-	
-			BigDecimal cantReportarTotalHoras = BigDecimal.valueOf(valorAplicar * reporte.getCantReportar());
-			List<BigDecimal> reportes = calcularReportes(cantReportarTotalHoras);
-	
-			Double kilosTotales = item.getitem_peso_b().multiply(new BigDecimal(cantPiezasReportar)).doubleValue();
-	
-			for (int i = 0; i < reportes.size(); i++) {
-				BigDecimal cantReportarActual = reportes.get(i);
-				Double kiloIteracion = kilosTotales / reportes.size();
-				crearMovimiento(data, dataTE, idCTErp, cantReportarActual, movs, kiloIteracion);
-				}
-		}else {
-			BigDecimal horas = BigDecimal.valueOf(0.01);
-			crearMovimiento(data, dataTE, idCTErp, horas, movs, 0.0001);
+		if(tepFaltante) {
+			return crearMovimientoTepFaltante(data, dataTE, idCTErp);
 		}
-		return movs;
+
+		return crearMovimientosRegulares(reporte, data, dataTE, idCTErp);
+	}
+	
+	private List<DoctoTEPMovimientosVersion01> crearMovimientoTepFaltante(DataConsumoInterface data, 
+	        DataTEP dataTE, String idCTErp) {
+	    List<DoctoTEPMovimientosVersion01> movs = new ArrayList<>();
+	    BigDecimal tiempoMin = BigDecimal.valueOf(0.01);
+	    BigDecimal cantMinima = BigDecimal.valueOf(0.0001);
+	    crearMovimiento(data, dataTE, idCTErp, tiempoMin, movs, cantMinima);
+	    return movs;
+	}
+	
+	private List<DoctoTEPMovimientosVersion01> crearMovimientosRegulares(ReporteDTO reporte, 
+	        DataConsumoInterface data, DataTEP dataTE, String idCTErp) {
+	    List<DoctoTEPMovimientosVersion01> movs = new ArrayList<>();
+	    
+	    Integer idItem = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
+	    ItemInterface item = itemOpService.obtenerItemFabricaPorId(idItem);
+	    Double valorAplicar = itemOpService.obtenerValorAplicarTepItemCentroTrabajo(idItem, 
+	            reporte.getIdCentroTrabajo());
+	    
+	    BigDecimal cantReportar = calcularCantidadReportar(reporte, item, valorAplicar);
+	    BigDecimal cantReportarTotalHoras = BigDecimal.valueOf(valorAplicar * reporte.getCantReportar());
+	    
+	    distribuirReportes(cantReportarTotalHoras, cantReportar, data, dataTE, idCTErp, movs);
+	    
+	    return movs;
+	}	
+	
+	private BigDecimal calcularCantidadReportar(ReporteDTO reporte, ItemInterface item, Double valorAplicar) {
+	    CentroTrabajo centroTrabajo = centroTrabajoRepo.findById(reporte.getIdCentroTrabajo())
+	            .orElseThrow();
+	    String um = centroTrabajo.getUm();
+	    
+	    switch (um) {
+	        case "KG":
+	            return item.getitem_peso_n().multiply(new BigDecimal(reporte.getCantReportar()));
+	        case "ML":
+	            return item.getitem_long().multiply(new BigDecimal(reporte.getCantReportar()));
+	        case "M2":
+	        case "MICRAS":
+	            return item.getitem_area().multiply(new BigDecimal(reporte.getCantReportar()));
+	        case "GOL":
+	            return BigDecimal.valueOf(valorAplicar * reporte.getCantReportar());
+	        default:
+	            throw new IllegalArgumentException("Unidad de medida no soportada: " + um);
+	    }
+	}
+	
+	private void distribuirReportes(BigDecimal cantReportarTotalHoras, BigDecimal cantReportar,
+	        DataConsumoInterface data, DataTEP dataTE, String idCTErp, List<DoctoTEPMovimientosVersion01> movs) {
+	    List<BigDecimal> reportes = calcularReportes(cantReportarTotalHoras);
+	    BigDecimal cantReportarPorIteracion = cantReportar.divide(BigDecimal.valueOf(reportes.size()));
+	    
+	    for (BigDecimal cantReportarActual : reportes) {
+	        crearMovimiento(data, dataTE, idCTErp, cantReportarActual, movs, cantReportarPorIteracion);
+	    }
 	}
 	
 	private List<BigDecimal> calcularReportes(BigDecimal totalHoras) {
@@ -99,8 +142,8 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 		return reportes;
 	}
 	
-	private void crearMovimiento(DataConsumoInterface data, DataTEP dataTE, String idCTErp, BigDecimal cantidadReportar,
-			List<DoctoTEPMovimientosVersion01> movs, Double kilosReportar) {
+	private void crearMovimiento(DataConsumoInterface data, DataTEP dataTE, String idCTErp, BigDecimal cantHorasReportar,
+			List<DoctoTEPMovimientosVersion01> movs, BigDecimal cantReportar) {
 		try {
 			DoctoTEPMovimientosVersion01 mov = new DoctoTEPMovimientosVersion01();
 			mov.setF_cia(configService.getCIA());
@@ -116,8 +159,8 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 			mov.setF880_ind_tipo_hora(1);// Revisar
 			mov.setF880_id_maquina(dataTE.getf807_id());// Revisar
 			mov.setF880_ind_operacion_completa(0);
-			mov.setF880_cant_completa_base(kilosReportar);
-			double horasPreCalculadas = precalcularHoras(cantidadReportar.doubleValue());
+			mov.setF880_cant_completa_base(cantReportar.doubleValue());
+			double horasPreCalculadas = precalcularHoras(cantHorasReportar.doubleValue());
 			
 			mov.setF880_horas(horasPreCalculadas);
 			movs.add(mov);			
