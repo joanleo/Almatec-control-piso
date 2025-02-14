@@ -8,17 +8,24 @@ let selectedOp = null;
 let items = [];
 let remisionItems = [];
 
+//Paginacion item op
+let currentItemPage = 1;
+const itemsPerPageInTable = 10; // Puedes ajustar este número
+let filteredItems = [];
+
 document.addEventListener('DOMContentLoaded', async function() {
 	fetchOps();
 	document.getElementById('tab-fabricado').addEventListener('click', async function() {
         document.getElementById('tab-fabricado').classList.add('active');
         document.getElementById('tab-ferreteria').classList.remove('active');
+		currentItemPage = 1;
         renderItemTable('fabricado');
     });
 
     document.getElementById('tab-ferreteria').addEventListener('click', async function() {
         document.getElementById('tab-fabricado').classList.remove('active');
         document.getElementById('tab-ferreteria').classList.add('active');
+		currentItemPage = 1;
         renderItemTable('ferreteria');
     });
 
@@ -178,6 +185,63 @@ function renderPagination() {
     pagination.innerHTML = paginationHTML;
 }
 
+function renderItemPagination() {
+    const paginationElement = document.getElementById('itemPagination');
+    const pageCount = Math.ceil(filteredItems.length / itemsPerPageInTable);
+
+    // No mostrar paginación si solo hay una página
+    if (pageCount <= 1) {
+        paginationElement.innerHTML = '';
+        return;
+    }
+
+    let paginationHTML = '';
+
+    // Botón anterior
+    paginationHTML += `
+        <li class="page-item ${currentItemPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeItemPage(${currentItemPage - 1}); return false;" ${currentItemPage === 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    `;
+
+    // Números de página
+    for (let i = 1; i <= pageCount; i++) {
+        if (
+            i === 1 || 
+            i === pageCount || 
+            (i >= currentItemPage - 2 && i <= currentItemPage + 2)
+        ) {
+            paginationHTML += `
+                <li class="page-item ${currentItemPage === i ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="changeItemPage(${i}); return false;">${i}</a>
+                </li>
+            `;
+        } else if (
+            i === currentItemPage - 3 || 
+            i === currentItemPage + 3
+        ) {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `;
+        }
+    }
+
+    // Botón siguiente
+    paginationHTML += `
+        <li class="page-item ${currentItemPage === pageCount ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeItemPage(${currentItemPage + 1}); return false;" ${currentItemPage === pageCount ? 'tabindex="-1" aria-disabled="true"' : ''}>
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    `;
+
+    paginationElement.innerHTML = paginationHTML;
+}
+
 
 function changePage(page) {
     const pageCount = Math.ceil(filteredOps.length / itemsPerPage);
@@ -197,20 +261,21 @@ function changePage(page) {
 }
 
 async function selectOp(idOpIa) {
-    spinner.removeAttribute('hidden')
-	document.getElementById('body-detalle-remision').innerHTML = ''
+    spinner.removeAttribute('hidden');
+    document.getElementById('body-detalle-remision').innerHTML = '';
+    currentItemPage = 1; // Reiniciamos la página de items
     try {
         const response = await fetch(`/almacen/remisiones/${idOpIa}`);
         items = await response.json();
         selectedOp = ops.find(op => op.idOpIa === idOpIa);
-		document.getElementById('title-op').textContent = 'Items de la OP-' + selectedOp.numOp
-		document.getElementById('tabs').removeAttribute('hidden')
+        document.getElementById('title-op').textContent = 'Items de la OP-' + selectedOp.numOp;
+        document.getElementById('tabs').removeAttribute('hidden');
         renderItemTable('fabricado');
     } catch (error) {
         console.error('Error fetching items:', error);
         showAlert('Error al cargar los items', 'danger');
     } finally {
-		spinner.setAttribute("hidden", '') 
+        spinner.setAttribute("hidden", '');
     }
 }
 
@@ -224,54 +289,61 @@ function renderItemTable(type){
 	}
 	let tbody = document.getElementById('body-items-op')
 	tbody.innerHTML = ''
-	items.filter(item => (type === 'fabricado' && item.idItemFab !== 0) || (type === 'ferreteria' && item.codigoErp !== '0'))
-	.forEach((item, index)=>{
-		let row = document.createElement('tr')
+	
+	filteredItems = items.filter(item => 
+        (type === 'fabricado' && item.idItemFab !== 0) || 
+        (type === 'ferreteria' && item.codigoErp !== '0')
+    );
+	
+	const startIndex = (currentItemPage - 1) * itemsPerPageInTable;
+    const endIndex = startIndex + itemsPerPageInTable;
+    const paginatedItems = filteredItems.slice(startIndex, endIndex);
 		
-		let cellNumber = document.createElement('td')
-		cellNumber.textContent = index + 1
-		row.appendChild(cellNumber)
-		
-		let cellRef = document.createElement('td')
-		cellRef.textContent = item.id + '-' + item.idItemFab
-		row.appendChild(cellRef)
-		
-		let cellMarca = document.createElement('td')
-		cellMarca.textContent = item.marca
-		row.appendChild(cellMarca)
-		
-		let cellDescripcion = document.createElement('td')
-		cellDescripcion.textContent = item.descripcion
-		row.appendChild(cellDescripcion)
-		
-		let cellCantSol = document.createElement('td')
-		cellCantSol.textContent = item.cant
-		row.appendChild(cellCantSol)
-		
-		let cellCantCumplida = document.createElement('td')
-		cellCantCumplida.textContent = item.cantCumplida
-		row.appendChild(cellCantCumplida)
-		
-		let cellCantEntregada = document.createElement('td')
-		cellCantEntregada.textContent = item.cantDespachada
-		row.appendChild(cellCantEntregada)
-		
-		let cellButton = document.createElement('td')
-		if((item.idItemFab != 0 && item.cantDespachada < item.cant && item.cantDespachada < item.cantCumplida) || (item.idItemFab == 0 && item.cantDespachada < item.cant)){
-			let button = document.createElement('button')
-			button.innerHTML = 'Agregar'
-			button.classList.add('btn', 'btn-primary')
-			button.type = 'button'
-			button.addEventListener('click', function(){
-				agregarItemTableDetalleRemision(item)
-			})			
-			cellButton.appendChild(button)
-		}
-		row.appendChild(cellButton)
-		
-		
-		tbody.appendChild(row)
-	})
+	paginatedItems.forEach((item, index) => {
+        let row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${startIndex + index + 1}</td>
+            <td>${item.id}-${item.idItemFab}</td>
+            <td>${item.marca}</td>
+            <td>${item.descripcion}</td>
+            <td>${item.cant}</td>
+            <td>${item.cantCumplida}</td>
+            <td>${item.cantDespachada}</td>
+            <td>${createItemButton(item)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+	
+	renderItemPagination();
+}
+
+function createItemButton(item) {
+    if ((item.idItemFab != 0 && item.cantDespachada < item.cant && item.cantDespachada < item.cantCumplida) || 
+        (item.idItemFab == 0 && item.cantDespachada < item.cant)) {
+        return `<button class="btn btn-primary" onclick="agregarItemTableDetalleRemision(${JSON.stringify(item).replace(/"/g, '&quot;')})">Agregar</button>`;
+    }
+    return '';
+}
+
+
+function changeItemPage(page) {
+    const pageCount = Math.ceil(filteredItems.length / itemsPerPageInTable);
+    
+    // Asegurarnos que la página está dentro de los límites válidos
+    if (page < 1) {
+        page = 1;
+    } else if (page > pageCount) {
+        page = pageCount;
+    }
+    
+    currentItemPage = page;
+    
+    // Determinar qué tipo de items estamos mostrando
+    const type = document.getElementById('tab-fabricado').classList.contains('active') ? 'fabricado' : 'ferreteria';
+    renderItemTable(type);
+    
+    // Scroll al inicio de la tabla
+    document.querySelector('#itemTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function agregarItemTableDetalleRemision(item){
@@ -284,11 +356,13 @@ function agregarItemTableDetalleRemision(item){
                 <td>${item.id + '-' + item.idItemFab}</td>
                 <td>${item.marca}</td>
                 <td>${item.descripcion}</td>
+				<td>${item.peso}</td>
                 <td>${item.cant}</td>
                 <td>${item.cantCumplida}</td>
                 <td>${item.cantDespachada}</td>
                 <td><input class="form-control cant-remisionar" type="number" min="1" ${item.idItemFab !== 0 ? `max="${cantMax}"  id="${item.id + '-' + item.idItemFab}"` : `max="${cantFerr}" id="itemFerr"`} required /></td>
-                <td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
+				<td class="peso-total">0</td>
+				<td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
             `
     tbody.appendChild(newRow)
     
@@ -296,12 +370,46 @@ function agregarItemTableDetalleRemision(item){
         if (this.value < 0) this.value = ''
         if(this.id == "itemFab" && this.value > cantMax) this.value = cantMax
         if(this.id == "itemFerr" && this.value > cantFerr) this.value = cantFerr
+		
+		const cantidad = parseFloat(this.value) || 0;
+        const pesoUnitario = parseFloat(item.peso) || 0;
+        const pesoTotal = (cantidad * pesoUnitario).toFixed(2);
+        newRow.querySelector('.peso-total').textContent = pesoTotal;
+        
+        actualizarPesoTotalRemision();
     });
+}
+
+function actualizarPesoTotalRemision() {
+    const rows = document.querySelectorAll('#body-detalle-remision tr');
+    let pesoTotalRemision = 0;
+    
+    rows.forEach(row => {
+        const pesoItem = parseFloat(row.querySelector('.peso-total').textContent) || 0;
+        pesoTotalRemision += pesoItem;
+    });
+    
+    // Update the total weight display
+    const pesoTotalElement = document.getElementById('peso-total-remision');
+    if (pesoTotalElement) {
+        pesoTotalElement.textContent = pesoTotalRemision.toFixed(2);
+    } else {
+        // Create the element if it doesn't exist
+        const totalDiv = document.createElement('div');
+        totalDiv.className = 'mt-3 text-end';
+        totalDiv.innerHTML = `
+            <strong>Peso Total Remisionado: </strong>
+            <span id="peso-total-remision">${pesoTotalRemision.toFixed(2)}</span> kg
+        `;
+        document.querySelector('#remisionTable').appendChild(totalDiv);
+    }
 }
 
 function eliminarFila(button){
 	let row = button.parentNode.parentNode
 	row.parentNode.removeChild(row)
+	
+	actualizarPesoTotalRemision();
 }
 
 async function guardarRemision(){
