@@ -39,6 +39,7 @@
 					<thead>
 						<tr>
 							<th>Num Memo</th>
+							<th>Fecha</th>
 							<th>Cliente</th>
 							<th>Proyecto</th>
 							<th>Zona</th>
@@ -51,6 +52,7 @@
 					<tbody id="body-memos">
 						<tr th:each="memo: ${memos}">
 							<td th:text="${'M' + '-' + memo.idMemo}"></td>
+							<td th:text="${#dates.format(memo.fechaCreacion, 'yyyy-MM-dd')}"></td>
 							<td th:text="${memo.cliente}"></td> 
 							<td th:text="${memo.proyecto}"></td>
 							<td th:text="${memo.zona}"></td>
