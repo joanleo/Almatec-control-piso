@@ -210,6 +210,7 @@ const fillTableOrders = (listOrders) => {
     }
             
     tbodyOrders.innerHTML = listOrders.map(order => {
+		console.log(order)
         const porcentaje = order.kgTotal > 0 ? 
             ((order.kgCumplidos / order.kgTotal) * 100).toFixed(2) : 
             '0.00';
@@ -253,7 +254,7 @@ const fillTableOrders = (listOrders) => {
 	                            <span class="visually-hidden">Cargando...</span>
 	                        </div>
 	                    </div>
-	                    <div class="table-responsive">
+	                    <div class="table-responsive justify-content-center" style="max-width:70%">
 	                        <table class="table table-sm production-orders-table" id="production-orders-table-${order.rowId}">
 	                            <thead>
 	                                <tr>
@@ -264,7 +265,7 @@ const fillTableOrders = (listOrders) => {
 	                                    <th class="sortable" data-sort-field="kgPlaneados">Cant Planeada [Kg] <i class="fa fa-sort"></i></th>
 	                                    <th class="sortable" data-sort-field="kgCumplidos">Cant Cumplida [Kg] <i class="fa fa-sort"></i></th>
 	                                    <th class="sortable" data-sort-field="avance">Avance [%] <i class="fa fa-sort"></i></th>
-										<th>Acciones</th>
+										<th class="text-center">Acciones</th>
 	                                </tr>
 	                            </thead>
 	                            <tbody id="production-orders-body-${order.rowId}">
@@ -376,12 +377,12 @@ function renderProductionOrders(orders, rowId) {
                         <span class="progress-value">${porcentaje}%</span>
                     </div>
                 </td>
-				<td>
+				<td class="text-center">
                     <button type="button" class="btn btn-primary btn-sm" 
                             data-bs-toggle="modal" 
                             data-bs-target="#detalleOrdenProduccion"
                             onclick="verDetalleOP('${order.opHijoNum}')">
-                        Ver
+                        <i class="fas fa-eye"></i>
                     </button>
                 </td>
             </tr>
