@@ -110,8 +110,11 @@ public class CentroTrabajoServiceImpl implements CentroTrabajoService {
 	@Transactional
 	@Override
 	public void guardar(CentroTrabajo centroTrabajo) {
-		centroTrabajoRepo.save(centroTrabajo);
-		
+		CentroTrabajo ct = centroTrabajoRepo.save(centroTrabajo);
+		ct.setaCT("CT"+ct.getId());
+		String codigo = String.format("CTR%05d", ct.getId());
+		ct.setCodigoBarraHum(codigo);
+		centroTrabajoRepo.save(ct);
 	}
 
 	@Override

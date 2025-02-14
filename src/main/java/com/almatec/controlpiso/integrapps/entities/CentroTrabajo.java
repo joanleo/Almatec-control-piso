@@ -27,6 +27,9 @@ public class CentroTrabajo {
 	@Column(name = "A_nombre")
 	private String nombre;
 	
+	@Column(name = " A_CT")
+	private String aCT;
+	
 	@Column(name = "A_Unidad")
 	private String um;
 	
@@ -40,7 +43,7 @@ public class CentroTrabajo {
 	private String idCentroTrabajoPadre;
 	
 	@Column(name = "E_activo")
-	private Boolean isActivo;
+	private Boolean isActivo=true;
 	
 	@Column(name = "A_usuariocrea")
 	private String usuarioCrea;
@@ -55,7 +58,7 @@ public class CentroTrabajo {
 	private Date fechaEdicion;
 	
 	@Column(name = "A_codbarmaq")
-	private String codigoBarraMaquina;
+	private String codigoBarraMaquina = "0";
 	
 	@Column(name = "A_codbarhum")
 	private String codigoBarraHum;
@@ -67,13 +70,13 @@ public class CentroTrabajo {
 	private Integer tiempoDisponible;
 	
 	@Column(name = "E_ctrl_pieza")
-	private Boolean isControlPieza;
+	private Boolean isControlPieza =false;
 	
 	@Column(name = "E_servicio")
-	private Boolean isControlServicio;
+	private Boolean isControlServicio =false;
 	
 	@Column(name = "is_show")
-	private Boolean isShow;
+	private Boolean isShow =true;
 	
 	@Column(name = "f808_id")
 	private Integer idCentroTrabajoErp;
@@ -277,6 +280,14 @@ public class CentroTrabajo {
 
 	public void setIdCentroTrabajoErp(Integer idCentroTrabajoErp) {
 		this.idCentroTrabajoErp = idCentroTrabajoErp;
+	}
+
+	public String getaCT() {
+		return aCT;
+	}
+
+	public void setaCT(String aCT) {
+		this.aCT = aCT;
 	}
 
 	@Override
