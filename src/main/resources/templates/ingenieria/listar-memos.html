@@ -2,56 +2,63 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head th:replace="fragments/head :: head('Ingenieria')"></head>
-	<style>
-		  #body-memos tr {
-		      cursor: pointer;
-		  }		
-	  </style>
 	<body>
-		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')" aria-label="Barra navegacion"></nav>
 		
 		<div hidden id="spinner">
 			<div>Cargando ...</div>
 		</div>
 				 
 		<div class="container my-5">
-			<h1>Memorandos</h1>
-			<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-			  <span th:text="${message}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
+			
+			<div class="row">
+		        <div class="col-12">
+		            <h1 class="mb-4">Memorandos</h1>			
+					<section id="alerts" aria-live="polite" th:replace="fragments/alerts :: alerts"></section>
+		        </div>
 			</div>
-			<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			  <span th:text="${error}"></span>
-			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-			  </button>
-			 </div>
-			 
-			 <form th:action="@{/ingenieria/memos}" method="get" class="my-4">
-	             <div class="input-group">
-	                 <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Buscar por cliente, proyecto o usuario...">
-	                 <button class="btn btn-outline-secondary" type="submit">Buscar</button>
-	             </div>
-	         </form>
+			
+			<div class="row mb-4">
+			    <div class="col-md-6 mx-auto">
+			        <form th:action="@{/ingenieria/memos}" method="get" class="d-flex">
+			            <div class="input-group">
+			                <span class="input-group-text">
+			                    <i class="fa fa-search"></i>
+			                </span>
+			                <input type="text" 
+			                       name="keyword" 
+			                       th:value="${keyword}" 
+			                       class="form-control" 
+			                       placeholder="Buscar por cliente, proyecto o usuario...">
+			                <button class="btn btn-outline-primary" type="submit">Buscar</button>
+			            </div>
+			        </form>
+			    </div>
+			</div>
 		 
 			<div class="table-responsive text-nowrap my-5">
 				<table class="table table-striped align-middle table-hover rounded" aria-describedby="table-description">
 					<thead>
 						<tr>
-							<th>Num Memo</th>
-							<th>Fecha</th>
-							<th>Cliente</th>
-							<th>Proyecto</th>
-							<th>Zona</th>
-							<th>OP</th>
-							<th>Solicita</th>
-							<th>Aprueba</th>
-							<th>Estado</th>
+							<th class="text-nowrap">Num Memo</th>
+							<th class="text-nowrap">Fecha</th>
+							<th class="text-nowrap">Cliente</th>
+							<th class="text-nowrap">Proyecto</th>
+							<th class="text-nowrap">Zona</th>
+							<th class="text-nowrap">OP</th>
+							<th class="text-nowrap">Solicita</th>
+							<th class="text-nowrap">Aprueba</th>
+							<th class="text-nowrap">Estado</th>
 						</tr>
 					</thead>
 					<tbody id="body-memos">
-						<tr th:each="memo: ${memos}">
-							<td th:text="${'M' + '-' + memo.idMemo}"></td>
+						<tr th:each="memo: ${memos}" style="cursor: pointer;">
+							<td>
+			                    <div class="d-flex align-items-center">
+			                        <i class="fa fa-file-text me-2"></i>
+			                        <span th:text="${'M-' + memo.idMemo}"></span>
+			                    </div>
+			                </td>
 							<td th:text="${#dates.format(memo.fechaCreacion, 'yyyy-MM-dd')}"></td>
 							<td th:text="${memo.cliente}"></td> 
 							<td th:text="${memo.proyecto}"></td>
@@ -69,26 +76,41 @@
 					</tbody>
 				</table>
 			</div>
-			<div style="display: flex; flex-direction: column;" hidden id="memoSel">
-				<h3>Memo selecionado:</h3>
-				<div style="display: flex; justify-content: space-between;">
-					<div class="input-group my-3 size-s" >
-			           <span class="input-group-text">Memo</span>
-			           <input type="text" class="form-control" id="noMemo" readonly style="text-align: right;" />
-			    	</div>
-					<div class="input-group my-3 mx-3 size-m" >
-			           <span class="input-group-text">Proyecto </span>
-			           <input type="text" class="form-control" id="proyecto" readonly style="text-align: right;" />
-			    	</div>
-					<div class="input-group my-3 mx-3 size-m" >
-			           <span class="input-group-text">OP </span>
-			           <input type="text" class="form-control" id="opSel" readonly style="text-align: right;" />
-			    	</div>
-					<div class="input-group my-3 mx-3 size-l" >
-			           <span class="input-group-text">Cliente </span>
-			           <input type="text" class="form-control" id="cliente" readonly style="text-align: right;" />
-			    	</div>
-					
+			<div id="memoSel" hidden class="card mt-4 p-0">
+				<div class="card-header">
+			        <h3 class="card-title mb-0">Memo seleccionado</h3>
+			    </div>
+				<div class="card-body">
+			        <div class="row g-2">
+						<div class="row">
+							<div class="col-md-3">
+				                <div class="input-group">								
+				                    <span class="input-group-text"> <i class="fa-solid fa-file-lines me-2"></i> Memo</span>
+				                    <input type="text" class="form-control text-end" id="noMemo" readonly>
+				                </div>
+				            </div>
+							<div class="col-md-6 offset-md-3">
+								<div class="input-group">								
+						           <span class="input-group-text"><i class="fa-solid fa-building me-2"></i>Cliente </span>
+						           <input type="text" class="form-control text-end" id="cliente" readonly />
+						    	</div>	
+							</div>		
+						</div>
+						<div class="row mt-3 justify-content-space-between">
+							<div class="col-md-3">
+								<div class="input-group">								
+						           <span class="input-group-text"><i class="fa-solid fa-clipboard-list me-2"></i>Fecha </span>
+						           <input type="text" class="form-control text-end" id="fecha" readonly />
+						    	</div>
+							</div>							
+							<div class="col-md-6 offset-md-3">
+				                <div class="input-group">								
+				                    <span class="input-group-text"><i class="fa-solid fa-folder-open me-2"></i>Proyecto</span>
+				                    <input type="text" class="form-control text-end" id="proyecto" readonly>
+				                </div>
+				            </div>							
+						</div>
+		        	</div>
 				</div>	
 			</div>
 		

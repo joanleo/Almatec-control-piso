@@ -210,7 +210,6 @@ const fillTableOrders = (listOrders) => {
     }
             
     tbodyOrders.innerHTML = listOrders.map(order => {
-		console.log(order)
         const porcentaje = order.kgTotal > 0 ? 
             ((order.kgCumplidos / order.kgTotal) * 100).toFixed(2) : 
             '0.00';
@@ -439,7 +438,7 @@ async function loadProductionOrders(rowId, spinner) {
         
         const productionOrders = await response.json();
 		
-		console.log(productionOrders)
+		//console.log(productionOrders)
         
         if (!productionOrders || productionOrders.length === 0) {
             tbody.innerHTML = `
@@ -611,7 +610,6 @@ async function verDetalleOP(numOp) {
 	        dataType: "json",
 	        contentType: "application/json",
 	        data: function(d) {
-				const data = JSON.stringify(d);
 	            return JSON.stringify(d);
 	        }
 	    },
@@ -624,7 +622,13 @@ async function verDetalleOP(numOp) {
 			{ 
                 data: 0,
                 width: '10%',
-                className: 'text-nowrap'
+                className: 'text-nowrap',
+				render: function(data, type, row) {
+			        if (type === 'display') {
+			            return data == 0 || data === "0" ? '-' : 'GY' + data;
+			        }
+			        return data;
+			    }
             },
             { 
                 data: 1,

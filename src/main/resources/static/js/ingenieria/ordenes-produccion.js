@@ -226,7 +226,13 @@ class DataTableHandler {
 		        { 
 		            data: 0,
 		            width: '10%',
-		            className: 'text-nowrap'
+		            className: 'text-nowrap',
+					render: function(data, type, row) {
+				        if (type === 'display') {
+				            return data == 0 || data === "0" ? '-' : 'GY' + data;
+				        }
+				        return data;
+				    }
 		        },  // ITEM
 		        { 
 		            data: 1,

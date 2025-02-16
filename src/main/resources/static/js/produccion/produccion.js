@@ -53,15 +53,18 @@ async function llenarTablaProductividadOperario(tiemposOperarios){
 	        
 	        let cellInicio = document.createElement('td')
 	        cellInicio.textContent = formatarFechaHora(operario.fechaInicioTurno)
+			cellInicio.classList.add('text-center')
 	        row.appendChild(cellInicio)
 	        
 	        let cellPruductivo = document.createElement('td')
 	        cellPruductivo.textContent = formatearTiempo(parseFloat(operario.productivo))
+			cellPruductivo.classList.add('text-center')
 	        row.appendChild(cellPruductivo)
 	        const productivo = parseFloat(operario.productivo)
 	        
 	        let cellImproductivo = document.createElement('td')
 	        cellImproductivo.textContent = formatearTiempo(parseFloat(operario.improductivo))
+			cellImproductivo.classList.add('text-center')
 	        row.appendChild(cellImproductivo)
 	        const improductivo = parseFloat(operario.improductivo)
 	        
@@ -71,6 +74,7 @@ async function llenarTablaProductividadOperario(tiemposOperarios){
 			}else{
 				cellFinal.textContent = ''
 			}
+			cellFinal.classList.add('text-center')
 			row.appendChild(cellFinal);
 	        
 	        let porcentaje
@@ -90,7 +94,11 @@ async function llenarTablaProductividadOperario(tiemposOperarios){
 	        row.appendChild(cellProgressBar)
 	        
 	        let cellEstado = document.createElement('td')
-	        cellEstado.textContent = operario.isActivo ? "Activo": "Inactivo"
+			let spanEstado = document.createElement('td')
+	        spanEstado.textContent = operario.isActivo ? "Activo": "Inactivo"
+			const badge = operario.isActivo ? "finished__badge" : "canceled__badge"
+			spanEstado.classList.add(badge);
+			cellEstado.appendChild(spanEstado)
 	        row.appendChild(cellEstado)
 	        
 	        tBodyProductividad.appendChild(row)		
@@ -137,48 +145,50 @@ async function llenarTablaPiezasOperario(){
 		piezasCT.forEach(async (pieza, index) => {
 			let row = document.createElement('tr')
 			
-	        
-	        let cellOp = document.createElement('td')
-	        cellOp.textContent = pieza.tipoOp + "-" + pieza.numOp
-			cellOp.classList.add('text-nowrap')
-	        row.appendChild(cellOp)
-	       	        
-	        let cellcliente = document.createElement('td')
-	        cellcliente.textContent = pieza.cliente
-	        row.appendChild(cellcliente)
-	        
-	        let cellProyecto = document.createElement('td')
-	        cellProyecto.textContent = pieza.co
-	        row.appendChild(cellProyecto)
+			let cellEstado = document.createElement('td')
+			let spanEstado = document.createElement('td')
+	        spanEstado.textContent = pieza.isActivo ? "Activo": "Inactivo"
+			const badge = pieza.isActivo ? "finished__badge" : "canceled__badge"
+			spanEstado.classList.add(badge);
+			cellEstado.appendChild(spanEstado)
+	        row.appendChild(cellEstado)					
+			
+	        let cellOperario = document.createElement('td')
+	        cellOperario.textContent = pieza.nombreOperario
+			cellOperario.classList.add('text-nowrap')
+	        row.appendChild(cellOperario)
 	        
 			let idItem = pieza.idParte != 0? pieza.idParte: pieza.idItemFab
 	        let cellRef = document.createElement('td')
 			cellRef.classList.add('text-nowrap')
-	        cellRef.textContent = pieza.idItem + "-" + idItem
+	        cellRef.textContent = "GY" + idItem
 	        row.appendChild(cellRef)
 			
 	        let celldescripcion = document.createElement('td')
 	        celldescripcion.textContent = pieza.descripcionItem
+			celldescripcion.classList.add('text-nowrap')
 	        row.appendChild(celldescripcion)
-	        
+			
 			const cantPiezaFabricada = await obtenerCantPiezasFabricadas(centroTSelected.id, pieza)
 	        let cellCantPendiente = document.createElement('td')
 	        cellCantPendiente.textContent = pieza.cantReq - cantPiezaFabricada
-	        row.appendChild(cellCantPendiente)
-	        
-	        let cellOperario = document.createElement('td')
-	        cellOperario.textContent = pieza.nombreOperario
-	        row.appendChild(cellOperario)
-	        
-	        let cellEstado = document.createElement('td')
-	        cellEstado.textContent = pieza.isActivo ? "Activo": "Inactivo"
-	        row.appendChild(cellEstado)
-	        
+			cellCantPendiente.classList.add('text-center')
+	        row.appendChild(cellCantPendiente)	
+			
 	        let cellPlano = document.createElement('td')
+			cellPlano.classList.add('text-center')
 	        if (pieza.plano ) {
 			    let linkPlano = document.createElement('a');
-			    linkPlano.textContent = "Ver plano";
 			    linkPlano.href = "#";
+				// Crear el ícono de PDF
+			    let iconoPdf = document.createElement('i');
+			    iconoPdf.className = 'fas fa-file-pdf';  // Clase de Font Awesome para ícono PDF
+			    
+			    // Opcional: Agregar clases de Bootstrap para el botón
+			    linkPlano.className = 'btn btn-primary btn-sm';
+			    
+			    // Agregar el ícono al enlace
+			    linkPlano.appendChild(iconoPdf);
 			    linkPlano.addEventListener("click", function() {
 			        verPdf(pieza.plano);
 			    });
@@ -187,6 +197,21 @@ async function llenarTablaPiezasOperario(){
 			    cellPlano.textContent = "Sin plano";
 			}
 			row.appendChild(cellPlano);
+			
+	        let cellOp = document.createElement('td')
+	        cellOp.textContent = pieza.tipoOp + "-" + pieza.numOp
+			cellOp.classList.add('text-nowrap')
+	        row.appendChild(cellOp)
+	       	        
+	        let cellcliente = document.createElement('td')
+	        cellcliente.textContent = pieza.cliente
+			cellcliente.classList.add('text-nowrap')
+	        row.appendChild(cellcliente)
+	        
+	        let cellProyecto = document.createElement('td')
+	        cellProyecto.textContent = pieza.co
+			cellProyecto.classList.add('text-nowrap')
+	        row.appendChild(cellProyecto)			        
 	        
 	        tBodyProductividad.appendChild(row)
 	    })
@@ -531,19 +556,6 @@ async function configuraCentroTrabajo(codigo){
 	mostrarAlert("El centro de trabajo no existe.", "danger")
 }
 
-/*function mostrarAlert(mensaje, tipo){
-	const alertElement = document.createElement('div')
-    	alertElement.className = `alert alert-${tipo} alert-dismissible fade show fixed-top`
-    	alertElement.role = 'alert'
-    	alertElement.style.zIndex = '10000'
-        alertElement.innerHTML = `
-        <strong>${mensaje}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
-
-        document.body.appendChild(alertElement)
-        
-        setTimeout(() => alertElement.remove(), 5000)
-}*/
 
 async function registraUsuarioCT(codigo){
 	if(centroTSelected === null){
@@ -683,7 +695,7 @@ async function agregarFilaListadoItems(num, op, item, isComponente, listadoItems
     
 
 	let cellRef = document.createElement('td')
-	cellRef.textContent = idItemOP+'-'+ref
+	cellRef.textContent = 'GY'+ref
 	cellRef.classList.add('text-nowrap')
 	row.appendChild(cellRef)
 	
@@ -714,6 +726,7 @@ async function agregarFilaListadoItems(num, op, item, isComponente, listadoItems
     
     let cellPintura = document.createElement('td')
     cellPintura.textContent = item.item_color
+	cellPintura.classList.add('text-nowrap')
     row.appendChild(cellPintura)
 
 	const consulta = {
@@ -727,11 +740,6 @@ async function agregarFilaListadoItems(num, op, item, isComponente, listadoItems
     cellCantPendiente.textContent = cant - cantPiezaFabricada
     row.appendChild(cellCantPendiente)
 	
-	/*const cant = isComponente ? item.material_cant : item.cant_req
-    let cellCantSol = document.createElement('td')
-    cellCantSol.textContent = cant
-    row.appendChild(cellCantSol)
-    */
     let peso = isComponente ? item.material_peso: item.item_peso 
     let pesoUnitario = document.createElement('td')
 	pesoUnitario.textContent = peso.toFixed(2)
@@ -745,6 +753,7 @@ async function agregarFilaListadoItems(num, op, item, isComponente, listadoItems
 	if(mostrarPrioridad){
 		let cellPrioridad = document.createElement('td')
 		cellPrioridad.textContent = item.prioridad
+		cellPrioridad.classList.add('text-center')
 		row.appendChild(cellPrioridad)
 	}
 	
@@ -1018,19 +1027,6 @@ function crearSelectOperariosCt(operariosCt){
         operariosCtElement.appendChild(container);
     }
 	
-	/*let selectElement = document.createElement("select")
-	selectElement.setAttribute("id", "operario-selected")
-	selectElement.style.margin = "0 0 0 1rem"
-	selectElement.classList.add('form-control')
-	
-	operariosCt.forEach(function (operario){
-		const optionElement = document.createElement("option")
-		optionElement.value = operario.id
-		optionElement.text = operario.nombre
-		selectElement.appendChild(optionElement)
-	})
-	container.appendChild(selectElement)
-	operariosCtElement.appendChild(container)*/
 }
 
 // Función para limpiar elementos
@@ -1104,103 +1100,6 @@ async function asignaPiezaOperario(){
         }
 	})
 }
-
-/*
-let itemAgregar
-let confirm_modal
-function confirmModal(item) {
-	const operarioSelected = document.getElementById("operario-selected")
-	const datalist = document.getElementById("operarios")
-	const opcionSeleccionada = Array.from(datalist.options).find(opcion => opcion.value === operarioSelected.value)
-	
-	let idOperario
-	let operarioSelectedName
-	if (opcionSeleccionada) {
-	  const operarioData = JSON.parse(opcionSeleccionada.getAttribute('data-operario'));
-	  idOperario = operarioData.id;
-	  operarioSelectedName = operarioData.nombre;
-	}
-
-	const descripcion = item.descripcion
-	confirm_modal = new bootstrap.Modal('#modal-confirma-pieza', {
-		  keyboard: false
-		})
-	const confirm_modal_body = confirm_modal._element.querySelector(".modal-confirm-body")
-
-	confirm_modal_body.textContent = `Esta seguro que desea asignar la pieza ${descripcion} al operario ${operarioSelectedName}.`
-	itemAgregar = item
-	const btnAceptar = confirm_modal._element.querySelector(".btn-primary");
-
-	let piezaOperario = {
-		idProceso: configProceso.id,
-		idOperario: idOperario,
-		idItemOp: item.idItemOP,
-		idItem: item.idItem,
-		isComponente:  item.isComponente,
-		estaActivo: true
-	}
-	
-    btnAceptar.setAttribute("data-item", JSON.stringify(piezaOperario));
-	confirm_modal.show()	
-}
-
-async function agregarPiezaOperario(event){
-	let piezasOperario = []
-	const btnAceptar = event.target;
-    const itemToAdd = JSON.parse(btnAceptar.getAttribute("data-item"))    
-    piezasOperario.push(itemToAdd)
-	console.log('pieza a asignar', piezasOperario)
-    try{
-		const response = await fetch(`/centros-trabajo/${centroTSelected.id}/asignar-pieza`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(piezasOperario),
-        })
-		
-		if(!response){
-			throw new Error("Error en la asignacion de pieza")
-		}
-		await  llenarTablaPiezasOperario()
-        confirm_modal.hide();
-		
-		const modalAbierto = document.querySelector('#asignarPieza.show');
-        if (modalAbierto) {
-            actualizarTablaModal();
-        }
-	}catch(error){
-		console.error(error)
-	}
-}
-
-
-function clearTable(table) {
-    while (table.rows.length > 1) {
-        table.deleteRow(1)
-    }
-}
-
-function addRowToTable(table, operario, index) {
-    let newRow = table.insertRow()
-    let cells = [
-        index,
-        operario.nombre,
-        operario.turno,
-        operario.inicio,
-        operario.productivo,
-        operario.improductivo,
-        operario.final,
-        operario.disponible,
-        operario.estado
-    ]
-
-    cells.forEach((cellContent, cellIndex) => {
-        let cell = newRow.insertCell(cellIndex)
-        cell.textContent = cellContent
-    })
-}
-*/
 
 async function realizarAsignacionMultiple(event) {
     const btnAceptar = event.target
@@ -1553,7 +1452,7 @@ async function crearFilaMostrarPiezas(index, item, idTbody, operario) {
     const ref = item.idParte != 0 ? item.idParte : item.idItemFab 
 	
     let cellRef = document.createElement('td')
-    cellRef.textContent = idPieza + '-' + ref //
+    cellRef.textContent = 'GY' + ref //
 	cellRef.classList.add("text-nowrap")
     row.appendChild(cellRef)
 
@@ -1657,7 +1556,7 @@ function actualizarTablaModal() {
 				
 		// Insertar después de items-op
 		if (!document.querySelector('#asignarPieza .table-process-section')) {
-	        const modalBody = document.querySelector('#asignarPieza .container');
+	        const modalBody = document.querySelector('#asignarPieza .container-fluid');
 	        modalBody.appendChild(modalTableSection);
 	    }		
 }

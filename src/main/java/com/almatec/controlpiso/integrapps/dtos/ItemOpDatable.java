@@ -7,7 +7,7 @@ import com.almatec.controlpiso.integrapps.interfaces.ItemOpInterface;
 
 public class ItemOpDatable {
 
-	private Long itemId;
+	private Integer itemId;
 	private String marca;
 	private String descripcion;
 	private Integer cant;
@@ -23,7 +23,7 @@ public class ItemOpDatable {
 	}
 	
 	public ItemOpDatable(ItemOpInterface itemInterface) {
-		this.itemId = itemInterface.getitem_id();
+		this.itemId = itemInterface.getItem_fab_Id();
 		this.marca = itemInterface.getmarca();
 		this.descripcion = itemInterface.getdescripcion();
 		this.cant = itemInterface.getcant_req().intValue();
@@ -38,11 +38,11 @@ public class ItemOpDatable {
 	
 	
 
-	public Long getItemId() {
+	public Integer getItemId() {
 		return itemId;
 	}
 
-	public void setItemId(Long itemId) {
+	public void setItemId(Integer itemId) {
 		this.itemId = itemId;
 	}
 

@@ -398,7 +398,7 @@ function actualizarPesoTotalRemision() {
         const totalDiv = document.createElement('div');
         totalDiv.className = 'mt-3 text-end';
         totalDiv.innerHTML = `
-            <strong>Peso Total Remisionado: </strong>
+            <strong>Peso Total Lista de Empaque: </strong>
             <span id="peso-total-remision">${pesoTotalRemision.toFixed(2)}</span> kg
         `;
         document.querySelector('#remisionTable').appendChild(totalDiv);

@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', function(){
 		row.addEventListener('click', async function(){
 			idMemoSelected = parseInt(row.cells[0].textContent.split('-')[1])
 			document.getElementById('noMemo').value = 'M-'+idMemoSelected
-			document.getElementById('proyecto').value = row.cells[2].textContent 
-			document.getElementById('opSel').value = row.cells[4].textContent
-			document.getElementById('cliente').value = row.cells[1].textContent 
+			document.getElementById('cliente').value = row.cells[2].textContent 
+			document.getElementById('proyecto').value = row.cells[3].textContent 
+			document.getElementById('fecha').value = row.cells[1].textContent
 			
 			document.getElementById('memoSel').removeAttribute('hidden')
 			

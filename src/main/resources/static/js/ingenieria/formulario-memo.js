@@ -53,6 +53,7 @@ function showSelect(listaItems){
 	dataListElement.setAttribute('id', 'itemsOp')
 	
 	listaItems.forEach(item => {
+		console.log(item)
 	    const option = document.createElement('option')
 	    option.textContent = item.descripcion
 	    option.setAttribute('id-item', item.id)
@@ -98,6 +99,10 @@ function fillTableItems(idItem){
 	let cellId = document.createElement('td')
 	cellId.textContent = item.id
 	row.appendChild(cellId)
+	
+	let cellRef = document.createElement('td')
+	cellRef.textContent = 'GY'+item.idItemFab
+	row.appendChild(cellRef)
 	
 	let cellDescripcion = document.createElement('td')
 	cellDescripcion.textContent = item.descripcion

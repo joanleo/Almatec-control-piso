@@ -16,8 +16,7 @@
 				<div>Cargando ...</div>
 			</div>
 							
-			<section id="alerts" aria-live="polite" th:replace="fragments/alerts :: alerts"></section>
-			 
+			<section id="alerts" aria-live="polite" th:replace="fragments/alerts :: alerts"></section>			 
             
 			<section id="title" class="text-center mb-4">
 				<h1 id="title-nombre-ct" aria-label="Nombre del centro de trabajo"></h1>
@@ -65,20 +64,20 @@
 				</div>
 			</section>
 			
-			<section class="container my-4" id="piezas-proceso">
+			<section class="container-fluid my-4" id="piezas-proceso">
 				<div class="table-responsive rounded-3 shadow-sm" >
 					<table class="table table-striped" id="table-process" aria-describedby="table-process-description">
 						<thead class="table-light">
 							  <tr>
+								<th>Estado</th>
+								<th>Operario</th>
+								<th>Ref</th>
+								<th>Descripcion</th>
+								<th class="text-nowrap">Cant Pend</th>
+								<th>Plano</th>
 								<th>O.P.</th>
 								<th>Cliente</th>
 								<th>Proyecto</th>
-								<th>Ref</th>
-								<th>Descripcion</th>
-								<th>Cant Pendiente</th>
-								<th>Operario</th>
-								<th>Estado</th>
-								<th>Plano</th>
 							  </tr>
 						</thead>
 						<tbody id="body-table-piezas-proceso">				
@@ -97,7 +96,7 @@
 				</button>
 			</div>		
 			
-			<section class="container my-4 table-production" id="productividad-operario">
+			<section class="container-fluid my-4 table-production" id="productividad-operario">
 				<div class="table-responsive rounded-3 shadow-sm" >
 					<table class="table table-striped " id="table-produccion" aria-describedby="table-produccion-description">
 					  <thead class="table-light"> 
@@ -133,7 +132,7 @@
 			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			      </div>
 			      <div class="modal-body">
-				  		<div class="container">
+				  		<div class="container-fluid">
 							  <div class="row" style="justify-content: space-around;">
 								  <div id="ops-ct" style="margin-top: 2rem; margin-bottom: 2rem; width: auto;">
 								  </div>
@@ -148,7 +147,7 @@
 							  </div>
 							  
 							  <div class="row1" id="items-op" style="margin-top: 1rem; margin-bottom: 2rem;">
-								  <div class="container">
+								  <div class="container-fluid">
 									  <h4 id="title-op-selected" class="text-center"></h4>
 									  
 									  <div class="action-bar p-2  my-3">
@@ -173,13 +172,13 @@
 														<th>REF</th>
 														<th>MARCA</th>
 										                <th>DESCRIPCION</th>
-										                <th>LONG [ml] </th>
-										                <th>CO</th>
+										                <th class="text-nowrap">LONG [ml] </th>
+										                <th class="text-nowrap">CO</th>
 														<th>ZONA</th>
 										                <th>PINTURA</th>
-										                <th>CANT PEND</th>
-										                <th>PESO UN [kg]</th>
-										                <th>PESO TOTAL [kg]</th>
+										                <th class="text-nowrap">CANT PEND</th>
+										                <th class="text-nowrap">PESO UN [kg]</th>
+										                <th class="text-nowrap">PESO TOTAL [kg]</th>
 										            </tr>
 										        </thead>
 										        <tbody id="listado-items">

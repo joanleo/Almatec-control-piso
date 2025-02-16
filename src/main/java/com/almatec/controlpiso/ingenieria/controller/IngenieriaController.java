@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.almatec.controlpiso.integrapps.dtos.ItemOpDatable;
-import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 import com.almatec.controlpiso.integrapps.interfaces.VistaOrdenPvDTO;
 import com.almatec.controlpiso.integrapps.paging.PageArray;
 import com.almatec.controlpiso.integrapps.paging.PagingRequest;

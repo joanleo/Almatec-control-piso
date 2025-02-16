@@ -1,6 +1,6 @@
 const ALERT_SETTINGS = {
     success: {
-        duration: 5000, 
+        duration: 3000, 
         icon: '<i class="fa-solid fa-circle-check me-2"></i>',
         animation: 'fade-in'
     },
@@ -15,7 +15,7 @@ const ALERT_SETTINGS = {
         animation: 'fade-in'
     },
     info: {
-        duration: 5000,
+        duration: 4000,
         icon: '<i class="fa-solid fa-circle-info me-2"></i>',
         animation: 'fade-in'
     }
