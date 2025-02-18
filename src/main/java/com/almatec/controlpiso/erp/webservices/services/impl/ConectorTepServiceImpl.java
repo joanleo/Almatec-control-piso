@@ -1,6 +1,7 @@
 package com.almatec.controlpiso.erp.webservices.services.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class ConectorTepServiceImpl implements ConectorTepService {
 	private void distribuirReportes(BigDecimal cantReportarTotalHoras, BigDecimal cantReportar,
 	        DataConsumoInterface data, DataTEP dataTE, String idCTErp, List<DoctoTEPMovimientosVersion01> movs) {
 	    List<BigDecimal> reportes = calcularReportes(cantReportarTotalHoras);
-	    BigDecimal cantReportarPorIteracion = cantReportar.divide(BigDecimal.valueOf(reportes.size()));
+	    BigDecimal cantReportarPorIteracion = cantReportar.divide(BigDecimal.valueOf(reportes.size()), 4, RoundingMode.HALF_UP);
 	    
 	    for (BigDecimal cantReportarActual : reportes) {
 	        crearMovimiento(data, dataTE, idCTErp, cantReportarActual, movs, cantReportarPorIteracion);
