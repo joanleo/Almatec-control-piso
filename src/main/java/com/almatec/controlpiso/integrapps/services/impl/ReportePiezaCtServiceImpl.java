@@ -61,10 +61,10 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	private static final String FORMATO_FECHA = "yyyyMMdd_HHmmss";
 	private static final String RESPUESTA_ENTREGA_EXITOSA = "Consumo y TEP creado exitosamente. Entrega creada Exitosamente. ";
 
-	private static final List<Integer> CENTROS_CONSUMO_PRINCIPAL = List.of(3, 4, 5, 6, 7, 8, 9);
+	private static final List<Integer> CENTROS_CONSUMO_PRINCIPAL = List.of(2, 3, 4, 5, 6, 7); //8,9
 	private static final List<Integer> CENTROS_CONSUMO_PLATINAS = List.of(10, 11);
 	private static final int CENTRO_FINAL = 17;
-	private static final int CENTRO_PUNZONADORA = 2;
+	//private static final int CENTRO_PUNZONADORA = 2;
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -175,8 +175,8 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			throw new ServiceException(errorMsg);
 		}
 
-		// Verificar si requiere proceso de punzonadora
-		if (requierePunzonadora(itemReporte)) {
+		// Verificar si requiere proceso de punzonadora no se debe hacer consumo el fleje ya viene punzonado
+		/*if (requierePunzonadora(itemReporte)) {
 			log.info("La ruta del item incluye punzonadora, creando conector tep");
 			conectores = new ArrayList<>();
 			conectores.addAll(agregarConsumoPunzonadora(reporteDTO, itemOperacion));
@@ -196,7 +196,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 				log.error(errorMsg);
 				throw new ServiceException(errorMsg);
 			}
-		}
+		}*/
 
 	}
 
@@ -314,7 +314,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		return tepYConsumo;
 	}
 
-	private boolean requierePunzonadora(Item itemReporte) {
+	/*private boolean requierePunzonadora(Item itemReporte) {
 		List<Integer> ruta = itemOpService.obtenerRutaItem(itemReporte.getIdItem());
 		return ruta.contains(CENTRO_PUNZONADORA);
 	}
@@ -326,7 +326,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		List<Conector> tepPunzonadora = consumosTepService.crearTEP(itemOperacion, reportePunzonadora, false);
 
 		return tepPunzonadora;
-	}
+	}*/
 
 	private void actualizarCentrosTep(ItemOp itemOp, Integer nuevoCentro, Boolean centroTrabajoErp) {
 		try {
