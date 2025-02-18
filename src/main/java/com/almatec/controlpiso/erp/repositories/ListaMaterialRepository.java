@@ -15,6 +15,7 @@ import com.almatec.controlpiso.erp.interfaces.RutaInterface;
 import com.almatec.controlpiso.erp.interfaces.TarifaCostosSegmentoItem;
 import com.almatec.controlpiso.erp.webservices.interfaces.ConsultaItemOpCreado;
 import com.almatec.controlpiso.erp.webservices.interfaces.TipoServicioYGrupoImpositivo;
+import com.almatec.controlpiso.ingenieria.dtos.ItemErpI;
 import com.almatec.controlpiso.integrapps.entities.VistaOrdenPv;
 
 public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, Integer> {
@@ -165,6 +166,15 @@ public interface ListaMaterialRepository extends JpaRepository<ListaMaterial, In
 	TipoServicioYGrupoImpositivo encontrarTipoServicioYGrupoImpositivoItem(@Param("itemIFId")Integer itemIFId, 
 			@Param("tipoOp") String tipoOp, 
 			@Param("numOp")Integer numOp);
+
+	@Query(value = "SELECT   TOP (1) "
+			+ "f120_id AS CodErp, "
+			+ "f120_descripcion AS Descripcion, "
+			+ "f120_id_unidad_inventario AS Um "
+			+ "FROM  t120_mc_items "
+			+ "WHERE   (f120_id = :idMateriaPrima) "
+			+ "AND f120_id_cia = 22 ", nativeQuery = true)
+	ItemErpI obtenerItemERp(@Param("idMateriaPrima") Integer idMateriaPrima);
 
 
 }

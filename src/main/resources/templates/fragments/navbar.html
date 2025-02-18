@@ -30,7 +30,10 @@
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_CREAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/nuevo">Crear memo</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_APROBAR_MEMO'')')}" ><a class="dropdown-item" href="/ingenieria/memos/aprobar">Aprobar memos</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_HISTORIAL_MEMOS'')')}" ><a class="dropdown-item" href="/ingenieria/memos">Historial memos</a></li>
-          </ul>
+			<li><h6 class="dropdown-header">Items</h6></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_BUSCAR_ITEMS'')')}" ><a class="dropdown-item" href="/ingenieria/items">Items</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_VER_BUSCAR_RUTA_ITEM'')')}" ><a class="dropdown-item" href="/ingenieria/items/rutas">Ruta</a></li>  
+		</ul>
         </li>
         
         <li class="nav-item dropdown" th:if="${#authorization.expression('hasAuthority(''ACCESS_PROGRAMACION'')')}">

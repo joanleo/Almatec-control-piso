@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Ingenieria')"></head>
+	<body>
+		<style>
+	        .search-result:hover {
+	            background-color: #f8f9fa;
+	            cursor: pointer;
+	        }
+	        .item-card {
+	            transition: transform 0.2s;
+	        }
+	        .item-card:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+	        }
+			
+			.item-tree {
+		        position: relative;
+		    }
+		    .toggle-btn i {
+		        transition: transform 0.2s;
+		    }
+		    .fa-rotate-90 {
+		        transform: rotate(90deg);
+		    }
+		    .item-content {
+		        transition: background-color 0.2s;
+		        border-radius: 0.25rem;
+		        padding: 0.5rem;
+		    }
+		    .item-content:hover {
+		        background-color: rgba(0,0,0,0.02);
+		    }
+			.timeline-container {
+		        max-width: 800px;
+		        margin: 0 auto;
+		        padding: 20px;
+		        display: none; /* Inicialmente oculto */
+		    }
+
+		    .timeline-item {
+		        position: relative;
+		        margin-bottom: 30px;
+		        padding-left: 50px;
+		    }
+
+		    .timeline-item::before {
+		        content: '';
+		        position: absolute;
+		        left: 15px;
+		        top: 0;
+		        height: 100%;
+		        width: 2px;
+		        background-color: #e2e8f0;
+		    }
+
+		    .timeline-item:last-child::before {
+		        display: none;
+		    }
+
+		    .timeline-number {
+		        position: absolute;
+		        left: 0;
+		        top: 0;
+		        width: 32px;
+		        height: 32px;
+		        background-color: #11464A;
+		        color: white;
+		        border-radius: 50%;
+		        display: flex;
+		        align-items: center;
+		        justify-content: center;
+		        font-weight: bold;
+		    }
+
+		    .timeline-card {
+		        background-color: white;
+		        border-radius: 8px;
+		        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		        padding: 16px;
+		        margin-left: 15px;
+		        transition: box-shadow 0.3s ease;
+		    }
+
+		    .timeline-card:hover {
+		        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+		    }
+			.item-details {
+			    border-left: 4px solid #3b82f6;
+			    background-color: #f8fafc !important;
+			}
+
+			.item-details h6 {
+			    color: #1a365d;
+			    font-weight: 600;
+			}
+	    </style>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')" aria-label="Barra de navegacion"></nav>
+				 
+		<div class="container mt-4">
+	        <div class="row mb-4">
+	            <div class="col">
+	                <h4>Búsqueda de Items</h4>
+	                <p class="text-muted">Busca items por descripción.</p>
+	            </div>
+	        </div>
+
+	        <!-- Barra de búsqueda -->
+	        <div class="row mb-4">
+	            <div class="col-md-8 mx-auto">
+	                <div class="input-group">
+	                    <span class="input-group-text">
+	                        <i class="fa fa-search me-2"></i>
+	                    </span>
+	                    <input type="text" 
+	                           id="searchInput" 
+	                           class="form-control form-control-lg" 
+	                           placeholder="Buscar item..."
+	                           autocomplete="off">
+	                </div>
+	            </div>
+	        </div>
+			
+			<div class="row mb-4">
+	            <div class="col-md-4 mx-auto">
+					<div class="btn-group">
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="">
+					        <i class="fa fa-layer-group me-2"></i>Todos
+					    </button>
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="CONJUNTO">
+					        <i class="fa fa-cubes me-2"></i>Conjuntos
+					    </button>
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="ELEMENTO">
+					        <i class="fa fa-cube me-2"></i>Elementos
+					    </button>
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="PARTE">
+					        <i class="fa fa-puzzle-piece me-2"></i>Partes
+					    </button>
+					</div>
+	            </div>
+	        </div>
+			
+			<!-- Resultados de búsqueda -->
+	        <div class="row" id="searchResults">
+	            <div class="col-md-8 mx-auto">
+	                <div class="card">
+	                    <div class="card-body">
+	                        <div id="resultsList" class="list-group list-group-flush">
+	                            <!-- Los resultados se cargarán aquí dinámicamente -->
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+			
+			<div class="row mt-4" id="routeContainer" style="display: none;">
+			    <div class="col-md-8 mx-auto">
+			        <div class="card">
+			            <div class="card-body">
+							<div class="d-flex justify-content-between align-items-center mb-4">
+							    <h5 class="card-title mb-0">Ruta de Fabricación</h5>
+								<button class="btn btn-outline-secondary btn-sm" data-action="volver">
+								    <i class="fa fa-arrow-left me-1"></i>Volver
+								</button>
+							</div>
+							
+							<!-- Detalles del item -->
+			                <div class="item-details mb-4 p-3 bg-light rounded">
+			                    <div class="row align-items-center">
+			                        <div class="col-md-10">
+			                            <h6 id="itemDescription" class="mb-2"></h6>
+			                            <p class="mb-0 text-muted">
+			                                <span id="itemCode" class="me-3"></span>
+			                                <span id="itemPlano"></span>
+			                            </p>
+			                        </div>
+			                        <div class="col-md-2 text-md-end">
+			                            <span id="itemTipo" class="ms-2"></span>
+			                        </div>
+			                    </div>
+			                </div>
+							
+			                <div class="timeline-container">
+			                    <!-- La ruta se cargará aquí dinámicamente -->
+			                </div>
+			                
+			                <!-- Resumen -->
+			                <div class="mt-4 p-3 bg-light rounded">
+			                    <h6 class="mb-3">Resumen de la Ruta</h6>
+			                    <div class="row">
+			                        <!--<div class="col-6">
+			                            <strong>Tiempo total:</strong> 
+			                            <span id="totalTime">0 hrs</span>
+			                        </div>-->
+			                        <div class="col-6">
+			                            <strong>Centros de trabajo:</strong> 
+			                            <span id="totalCenters">0</span>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
+	    </div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/general.js"></script>
+		<script src="/js/ingenieria/items-rutas.js"></script>
+	</body>
+</html>

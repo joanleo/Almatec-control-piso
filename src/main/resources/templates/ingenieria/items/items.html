@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Ingenieria')"></head>
+	<body>
+		<style>
+	        .search-result:hover {
+	            background-color: #f8f9fa;
+	            cursor: pointer;
+	        }
+	        .item-card {
+	            transition: transform 0.2s;
+	        }
+	        .item-card:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+	        }
+			
+			.item-tree {
+		        position: relative;
+		    }
+		    .toggle-btn i {
+		        transition: transform 0.2s;
+		    }
+		    .fa-rotate-90 {
+		        transform: rotate(90deg);
+		    }
+		    .item-content {
+		        transition: background-color 0.2s;
+		        border-radius: 0.25rem;
+		        padding: 0.5rem;
+		    }
+		    .item-content:hover {
+		        background-color: rgba(0,0,0,0.02);
+		    }
+	    </style>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')" aria-label="Barra de navegacion"></nav>
+				 
+		<div class="container mt-4">
+	        <div class="row mb-4">
+	            <div class="col">
+	                <h4>Búsqueda de Items</h4>
+	                <p class="text-muted">Busca items por descripción.</p>
+	            </div>
+	        </div>
+
+	        <!-- Barra de búsqueda -->
+	        <div class="row mb-4">
+	            <div class="col-md-8 mx-auto">
+	                <div class="input-group">
+	                    <span class="input-group-text">
+	                        <i class="fa fa-search me-2"></i>
+	                    </span>
+	                    <input type="text" 
+	                           id="searchInput" 
+	                           class="form-control form-control-lg" 
+	                           placeholder="Buscar item..."
+	                           autocomplete="off">
+	                </div>
+	            </div>
+	        </div>
+
+	        <!-- Filtros rápidos -->
+	        <div class="row mb-4">
+	            <div class="col-md-4 mx-auto">
+					<div class="btn-group">
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="">
+					        <i class="fa fa-layer-group me-2"></i>Todos
+					    </button>
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="CONJUNTO">
+					        <i class="fa fa-cubes me-2"></i>Conjuntos
+					    </button>
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="ELEMENTO">
+					        <i class="fa fa-cube me-2"></i>Elementos
+					    </button>
+					    <button type="button" class="btn btn-outline-secondary" data-tipo="PARTE">
+					        <i class="fa fa-puzzle-piece me-2"></i>Partes
+					    </button>
+					</div>
+	            </div>
+	        </div>
+			
+	        <!-- Resultados de búsqueda -->
+	        <div class="row" id="searchResults">
+	            <div class="col-md-8 mx-auto">
+	                <div class="card">
+	                    <div class="card-body">
+	                        <div id="resultsList" class="list-group list-group-flush">
+	                            <!-- Los resultados se cargarán aquí dinámicamente -->
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+			
+			<!-- Contenedor para el detalle del item -->
+			<div class="row mt-4">
+			    <div class="col-md-8 mx-auto">
+			        <div id="itemDetail" class="card d-none">
+			            <div class="card-body">
+			                <!-- El detalle del item se cargará aquí -->
+			            </div>
+			        </div>
+			    </div>
+			</div>
+	    </div>
+		
+		<div id="itemContainer" 
+		     th:data-has-permission="${#authorization.expression('hasAuthority(''ACCESS_VER_COMPONENTES_ITEM'')')}">
+		</div>
+		
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/general.js"></script>
+		<script src="/js/ingenieria/items-buscar.js"></script>
+	</body>
+</html>
+

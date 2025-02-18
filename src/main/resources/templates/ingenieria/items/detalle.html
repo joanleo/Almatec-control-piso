@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Ingenieria')"></head>
+	<body>
+		<style>
+		    .toggle-btn i {
+		        transition: transform 0.3s ease;
+		    }
+		    .fa-rotate-90 {
+		        transform: rotate(90deg);
+		    }
+		    .item-content {
+		        transition: background-color 0.2s;
+		    }
+		    .item-content:hover {
+		        background-color: rgba(0,0,0,0.02);
+		    }
+		    .component-item {
+		        position: relative;
+		    }
+		    .component-item::before {
+		        content: "";
+		        position: absolute;
+		        left: -20px;
+		        top: 50%;
+		        width: 20px;
+		        height: 1px;
+		        background-color: #dee2e6;
+		    }
+			.item-tree {
+		        position: relative;
+		    }
+		    .fa-rotate-90 {
+		        transform: rotate(90deg);
+		    }
+		    .transition-transform {
+		        transition: transform 0.3s ease;
+		    }
+		    .border-start {
+		        border-left: 2px solid #dee2e6 !important;
+		    }
+		</style>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>
+		    
+		<div class="container mt-4">
+	        <!-- Cabecera del Item -->
+	        <div class="card mb-4">
+	            <div class="card-body">
+	                <div class="d-flex justify-content-between align-items-start">
+	                    <div>
+	                        <h2 class="mb-2" th:text="${item.descripcion}">Nombre del Item</h2>
+	                        <p class="text-muted mb-0">
+	                            Código: <span th:text="'GY' + ${item.idItem}"></span> | 
+	                            Plano: <span th:text="${item.plano ?: 'N/A'}"></span>
+	                        </p>
+	                        <p class="text-muted mb-0" th:if="${item.pesoBruto != null || item.pesoNeto != null}">
+	                            <span th:if="${item.pesoBruto != null}">
+	                                Peso Bruto: <span th:text="${#numbers.formatDecimal(item.pesoBruto, 1, 3)} + ' kg'"></span>
+	                            </span>
+	                            <span th:if="${item.pesoNeto != null}">
+	                                | Peso Neto: <span th:text="${#numbers.formatDecimal(item.pesoNeto, 1, 3)} + ' kg'"></span>
+	                            </span>
+	                        </p>
+	                    </div>
+	                    <span th:class="${'badge ' + 
+	                        (item.tipo == 'CONJUNTO' ? 'bg-success' : 
+	                         item.tipo == 'ELEMENTO' ? 'bg-primary' : 
+	                         'bg-info')}" 
+	                        th:text="${item.tipo}">
+	                    </span>
+	                </div>
+	            </div>
+	        </div>
+	
+			<!-- Fragmento recursivo para los componentes -->
+			<!-- Fragmento recursivo para los componentes -->
+			<div th:fragment="itemTree(item, nivel)" class="item-tree">
+			    <div th:class="${'ms-' + nivel + ' border-start position-relative'}"
+			         th:if="${item != null}">
+			        <div class="ps-3 py-2">
+			            <!-- Línea horizontal -->
+			            <div th:if="${nivel > 0}" 
+			                 class="position-absolute" 
+			                 style="width: 1rem; height: 2px; background-color: #dee2e6; left: 0; top: 1.5rem;">
+			            </div>
+			            
+			            <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded">
+			                <div class="d-flex align-items-center gap-2">
+			                    <!-- Botón para Componentes/Subcomponentes -->
+			                    <button th:if="${(nivel == 0 and item.componentes != null and not #lists.isEmpty(item.componentes)) or 
+			                                  (nivel > 0 and item.subcomponentes != null and not #lists.isEmpty(item.subcomponentes))}"
+			                            class="toggle-btn btn btn-sm btn-link p-0 text-decoration-none"
+			                            type="button"
+			                            data-bs-toggle="collapse"
+			                            th:data-bs-target="${'#comp-' + item.idItem}">
+			                        <i class="fas fa-chevron-right transition-transform"></i>
+			                    </button>
+			                    <div>
+			                        <span class="fw-medium" th:text="${item.descripcion}"></span>
+									<p class="text-muted mb-0 text-nowrap d-flex align-items-center">
+										Código: <span th:text="'GY' + ${item.idItem}"></span>
+				                        <span th:class="${'me-2 badge ms-2 ' + 
+				                            (item.tipo == 'CONJUNTO' ? 'bg-success' : 
+				                             item.tipo == 'ELEMENTO' ? 'bg-primary' : 
+				                             'bg-info')}" 
+				                            th:text="${item.tipo}">
+				                        </span>										
+									</p>
+			                    </div>
+			                </div>
+			                
+			                <div class="d-flex align-items-center gap-3">
+			                    <small class="text-muted" th:text="${'Plano: ' + (item.plano ?: 'N/A')}"></small>
+			                    <span th:if="${nivel > 0}" 
+			                          class="badge bg-secondary" 
+			                          th:text="${item.cantidad + ' und'}">
+			                    </span>
+			                    <!-- Botón para Materia Prima -->
+			                    <button th:if="${item.materiaPrima != null and not #lists.isEmpty(item.materiaPrima)}"
+			                            class="btn btn-sm btn-outline-primary"
+			                            type="button"
+			                            data-bs-toggle="collapse"
+			                            th:data-bs-target="${'#mp-' + item.idItem}">
+			                        MP <i class="fas fa-boxes"></i>
+			                    </button>
+			                </div>
+			            </div>
+
+			            <!-- Materia Prima -->
+			            <div th:if="${item.materiaPrima != null and not #lists.isEmpty(item.materiaPrima)}"
+			                 th:id="${'mp-' + item.idItem}"
+			                 class="collapse mt-2">
+			                <div class="ms-4 p-2 bg-white rounded border">
+			                    <div th:each="mp : ${item.materiaPrima}"
+			                         class="d-flex justify-content-between align-items-center p-2">
+			                        <div>
+			                            <span th:text="${mp.descripcion}"></span>
+			                            <small class="text-muted" th:text="${mp.codErp != null ? '(' + mp.codErp + ')' : ''}"></small>
+			                        </div>
+			                        <div class="d-flex align-items-center gap-2">
+			                            <span class="badge bg-secondary" th:text="${#numbers.formatDecimal(mp.cantidad, 1, 3) + ' ' + mp.unidad}"></span>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+
+			            <!-- Componentes o Subcomponentes -->
+			            <div th:if="${(nivel == 0 and item.componentes != null and not #lists.isEmpty(item.componentes))}"
+			                 th:id="${'comp-' + item.idItem}"
+			                 class="collapse">
+			                <div th:each="componente : ${item.componentes}">
+			                    <div th:replace="this :: itemTree(${componente}, ${nivel + 3})"></div>
+			                </div>
+			            </div>
+			            
+			            <!-- Solo para subcomponentes -->
+			            <div th:if="${nivel > 0 and item.subcomponentes != null and not #lists.isEmpty(item.subcomponentes)}"
+			                 th:id="${'comp-' + item.idItem}"
+			                 class="collapse">
+			                <div th:each="componente : ${item.subcomponentes}">
+			                    <div th:replace="this :: itemTree(${componente}, ${nivel + 3})"></div>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+	</div>
+			
+		<footer th:replace="fragments/footer :: footer"></footer>
+		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/general.js"></script>
+		<script src="/js/ingenieria/item-detalle.js"></script>
+	</body>
+</html>
