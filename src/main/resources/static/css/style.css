@@ -158,12 +158,12 @@ footer {
   border-radius: 6px;
   border: 1px solid #15803d;
   color: #15803d;
-  padding: 4px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: .875rem;
-  font-weight: 500;
+  padding: 0.25em 0.35em;
+  font-size: 0.75em;
+  font-weight: 700;
 }
 
 .approved__badge {
@@ -172,12 +172,12 @@ footer {
   border-radius: 6px;
   border: 1px solid #3F3FEB;
   color: #3F3FEB;
-  padding: 4px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: .875rem;
-  font-weight: 500;
+  padding: 0.25em 0.35em;
+  font-size: 0.75em;
+  font-weight: 700;
 }
 
 .in_preparation__badge {
@@ -186,12 +186,12 @@ footer {
   border-radius: 6px;
   border: 1px solid #EAA90F;
   color: #EAA90F;
-  padding: 4px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: .875rem;
-  font-weight: 500;
+  padding: 0.25em 0.35em;
+  font-size: 0.75em;
+  font-weight: 700;
 }
 
 .canceled__badge {
@@ -200,12 +200,12 @@ footer {
   border-radius: 6px;
   border: 1px solid #b91c1c;
   color: #b91c1c;
-  padding: 4px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: .875rem;
-  font-weight: 500;
+  padding: 0.25em 0.35em;
+  font-size: 0.75em;
+  font-weight: 700;
 }
 
 .input-group-text{

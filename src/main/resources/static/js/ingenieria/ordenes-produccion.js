@@ -168,10 +168,9 @@ class DataTableHandler {
 				drawCallback: function(settings) {
                     const api = this.api();
                     // Esperamos un breve momento para asegurar que el DOM se ha actualizado
-                    setTimeout(() => {
-                        api.columns.adjust();
-                        api.draw(false); // false para evitar un nuevo servidor request
-                    }, 100);
+					if (!api.settings()[0].bDestroying) {
+					        api.columns.adjust();
+					    }
                 }
 			});
 
@@ -335,7 +334,46 @@ class DataTableHandler {
 					title: fileName,
 					titleAttr: 'Exportar a Excel',
 					className: 'btn btn-primary',
+					action: function(e, dt, button, config) {
+				        const self = this;
+				        // Hacemos la llamada al endpoint que devuelve todos los datos
+				        $.ajax({
+				            url: `${CONSTANTS.API.DETALLE_OP}/${state.currentOp}/detalle`,
+				            type: 'GET',
+				            success: function(data) {
+				                // Convertimos los datos al formato que espera DataTables
+				                const exportData = data.map(item => [
+				                    item.itemId,
+				                    item.marca,
+				                    item.descripcion,
+				                    item.cant,
+				                    item.peso,
+				                    item.cantPentiente,
+				                    item.pesoPendiente,
+				                    item.color,
+				                    item.plano
+				                ]);
+
+				                // Temporalmente reemplazamos los datos en el DataTable
+				                const originalData = dt.data();
+				                dt.clear();
+				                dt.rows.add(exportData);
+				                dt.draw();
+
+				                // Ejecutamos la exportación con el contexto correcto
+				                $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+
+				                // Restauramos los datos originales
+				                dt.clear();
+				                dt.rows.add(originalData);
+				                dt.draw();
+				            }
+				        });
+				    },
 					exportOptions: {
+						modifier: {
+	                        page: 'all'    // Esto es clave - indica que exporte todas las páginas
+	                    },
 			            columns: ':not(:last-child)',
 			            format: {
 							body: function(data, row, column, node) {
@@ -368,10 +406,49 @@ class DataTableHandler {
 					title: fileName,
 					titleAttr: 'Exportar a PDF',
 					className: 'btn btn-primary',
+					action: function(e, dt, button, config) {
+				        const self = this;
+				        // Hacemos la llamada al endpoint que devuelve todos los datos
+				        $.ajax({
+				            url: `${CONSTANTS.API.DETALLE_OP}/${state.currentOp}/detalle`,
+				            type: 'GET',
+				            success: function(data) {
+				                // Convertimos los datos al formato que espera DataTables
+				                const exportData = data.map(item => [
+				                    item.itemId,
+				                    item.marca,
+				                    item.descripcion,
+				                    item.cant,
+				                    item.peso,
+				                    item.cantPentiente,
+				                    item.pesoPendiente,
+				                    item.color,
+				                    item.plano
+				                ]);
+
+				                // Temporalmente reemplazamos los datos en el DataTable
+				                const originalData = dt.data();
+				                dt.clear();
+				                dt.rows.add(exportData);
+				                dt.draw();
+
+				                // Ejecutamos la exportación con el contexto correcto
+				                $.fn.dataTable.ext.buttons.pdfHtml5.action.call(self, e, dt, button, config);
+
+				                // Restauramos los datos originales
+				                dt.clear();
+				                dt.rows.add(originalData);
+				                dt.draw();
+				            }
+				        });
+				    },
 					orientation: 'landscape', // Orientación del PDF (portrait o landscape)
 					pageSize: 'LEGAL',
 					exportOptions: {
-			            columns: ':not(:last-child)' 
+			            columns: ':not(:last-child)' ,
+						modifier: {
+	                        page: 'all'    // Esto es clave - indica que exporte todas las páginas
+	                    },
 			        }
 				}
 
@@ -630,10 +707,9 @@ class DataTableHandler {
 			drawCallback: function(settings) {
                 const api = this.api();
                 // Esperamos un breve momento para asegurar que el DOM se ha actualizado
-                setTimeout(() => {
-                    api.columns.adjust();
-                    api.draw(false); // false para evitar un nuevo servidor request
-                }, 100);
+				if (!api.settings()[0].bDestroying) {
+				        api.columns.adjust();
+				    }
             }
 		};
 		$('#detalleOrdenProduccion').on('shown.bs.modal', function () {

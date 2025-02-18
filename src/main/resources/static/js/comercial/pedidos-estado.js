@@ -1,6 +1,6 @@
 // Estado global de la aplicación
 const state = {
-    loadedOrders: new Set(),
+    loadedPvs: new Set(),
     isLoading: false,
     activeRequest: null,
     productionOrdersData: new Map() // Cambiamos a Map para mejor manejo de datos
@@ -133,16 +133,16 @@ async function buscarPedidos(page = 0, size = CONFIG.PAGE_SIZE, sortField = CONF
 
     try {
         const filtro = getFiltros();
-        const orders = await getOrders(filtro, page, size, sortField, sortDirection);
-        if (!orders || !orders.content) {
+        const pedidos = await getPedidos(filtro, page, size, sortField, sortDirection);
+        if (!pedidos || !pedidos.content) {
             throw new Error('Datos de órdenes inválidos');
         }
-        const listOrders = createListObjectsOrder(orders.content);
-        fillTableOrders(listOrders);
-        setupPagination(orders.totalPages, page, size, sortField, sortDirection);
+        const listPvs = createListObjectsPv(pedidos.content);
+        fillTablePedidos(listPvs);
+        setupPagination(pedidos.totalPages, page, size, sortField, sortDirection);
         
         // Limpiar el estado de las órdenes cargadas cuando se hace una nueva búsqueda
-        state.loadedOrders.clear();
+        state.loadedPvs.clear();
     } catch (error) {
         console.error('Error al buscar pedidos:', error);
         showError('Error al cargar los pedidos');
@@ -169,8 +169,8 @@ function getFiltros() {
     };
 }
 
-const createListObjectsOrder = (orders) => {
-    return orders.map(item => {
+const createListObjectsPv = (pedidos) => {
+    return pedidos.map(item => {
         // Validar fecha
         let formattedDate;
         try {
@@ -197,10 +197,10 @@ const createListObjectsOrder = (orders) => {
     });
 };
 
-const fillTableOrders = (listOrders) => {
-    const tbodyOrders = document.getElementById("orders");
+const fillTablePedidos = (listPvs) => {
+    const tbodyOrders = document.getElementById("pedidos");
     
-    if (!listOrders.length) {
+    if (!listPvs.length) {
         tbodyOrders.innerHTML = `
             <tr class="table-warning">
                 <td colspan="10" class="text-center">No se encontraron registros</td>
@@ -209,26 +209,26 @@ const fillTableOrders = (listOrders) => {
         return;
     }
             
-    tbodyOrders.innerHTML = listOrders.map(order => {
-        const porcentaje = order.kgTotal > 0 ? 
-            ((order.kgCumplidos / order.kgTotal) * 100).toFixed(2) : 
+    tbodyOrders.innerHTML = listPvs.map(pv => {
+        const porcentaje = pv.kgTotal > 0 ? 
+            ((pv.kgCumplidos / pv.kgTotal) * 100).toFixed(2) : 
             '0.00';
             
         return `
             <tr class="order-row">
                 <td class="text-center">
-                    <button class="btn btn-link btn-sm expand-btn p-0" onclick="toggleProductionOrders('${order.rowId}', event)">
+                    <button class="btn btn-link btn-sm expand-btn p-0" onclick="toggleProductionOrders('${pv.rowId}', event)">
                         <i class="fa fa-chevron-down"></i>
                     </button>
                 </td>
-                <td class="text-nowrap">${order.pv}</td>
-                <td class="text-nowrap">${order.asesor}</td>
-                <td class="text-nowrap">${order.co}</td>
-                <td class="text-nowrap">${order.descripcion}</td>
-                <td class="text-nowrap">${order.cliente}</td>
-                <td><div class="${getStatusClass(order.estado)}">${order.estado}</div></td>
-                <td>${formatNumber(order.kgTotal)}</td>
-                <td>${formatNumber(order.kgTotal - order.kgCumplidos)}</td>
+                <td class="text-nowrap">${pv.pv}</td>
+                <td class="text-nowrap">${pv.asesor}</td>
+                <td class="text-nowrap">${pv.co}</td>
+                <td class="text-nowrap">${pv.descripcion}</td>
+                <td class="text-nowrap">${pv.cliente}</td>
+                <td><div class="${getStatusClass(pv.estado)}">${pv.estado}</div></td>
+                <td>${formatNumber(pv.kgTotal)}</td>
+                <td>${formatNumber(pv.kgTotal - pv.kgCumplidos)}</td>
                 <td>
                     <div class="progress-container">
                         <div class="progress" style="height: 20px;">
@@ -241,20 +241,20 @@ const fillTableOrders = (listOrders) => {
                         <span class="progress-value">${porcentaje}%</span>
                     </div>
                 </td>
-                <td>${order.fecha}</td>
+                <td>${pv.fecha}</td>
             </tr>
             
-			<tr class="production-orders-row d-none" id="production-orders-${order.rowId}">
+			<tr class="production-orders-row d-none" id="production-orders-${pv.rowId}">
 	            <td colspan="11">
 	                <div class="production-orders-container p-3">
 	                    <div class="d-flex justify-content-between align-items-center mb-3">
 	                        <h6 class="mb-0">Órdenes de Producción</h6>
-	                        <div class="spinner-border spinner-border-sm d-none" role="status" id="spinner-${order.rowId}">
+	                        <div class="spinner-border spinner-border-sm d-none" role="status" id="spinner-${pv.rowId}">
 	                            <span class="visually-hidden">Cargando...</span>
 	                        </div>
 	                    </div>
 	                    <div class="table-responsive justify-content-center" style="max-width:70%">
-	                        <table class="table table-sm production-orders-table" id="production-orders-table-${order.rowId}">
+	                        <table class="table table-sm production-orders-table" id="production-orders-table-${pv.rowId}">
 	                            <thead>
 	                                <tr>
 	                                    <th class="sortable" data-sort-field="op">OP <i class="fa fa-sort"></i></th>
@@ -267,7 +267,7 @@ const fillTableOrders = (listOrders) => {
 										<th class="text-center">Acciones</th>
 	                                </tr>
 	                            </thead>
-	                            <tbody id="production-orders-body-${order.rowId}">
+	                            <tbody id="production-orders-body-${pv.rowId}">
 	                            </tbody>
 	                        </table>
 	                    </div>
@@ -400,12 +400,12 @@ async function toggleProductionOrders(rowId, event) {
         icon.classList.add('fa-chevron-up');
         productionOrdersRow.classList.remove('d-none');
         
-        if (!state.loadedOrders.has(rowId)) {
+        if (!state.loadedPvs.has(rowId)) {
             if (state.activeRequest) {
                 state.activeRequest.abort();
             }
             await loadProductionOrders(rowId, spinner);
-            state.loadedOrders.add(rowId);
+            state.loadedPvs.add(rowId);
             initializeProductionOrdersSorting(rowId);
         }
     } else {
@@ -508,7 +508,7 @@ const getStatusClass = (estado) => {
     }
 }
 
-async function getOrders(filtro, page, size, sortField, sortDirection) {
+async function getPedidos(filtro, page, size, sortField, sortDirection) {
     const response = await fetch(`/comercial/pedidos/filtrar?page=${page}&size=${size}&sort=${sortField}&order=${sortDirection}`, {
         method: 'POST',
         headers: {
@@ -723,6 +723,42 @@ async function verDetalleOP(numOp) {
 				title: fileName,
 				titleAttr: 'Exportar a Excel',
 				className: 'btn btn-primary',
+				action: function(e, dt, button, config) {
+			        const self = this;
+			        // Hacemos la llamada al endpoint que devuelve todos los datos
+			        $.ajax({
+			            url: `${CONSTANTS.API.DETALLE_OP}/${state.currentOp}/detalle`,
+			            type: 'GET',
+			            success: function(data) {
+			                // Convertimos los datos al formato que espera DataTables
+			                const exportData = data.map(item => [
+			                    item.itemId,
+			                    item.marca,
+			                    item.descripcion,
+			                    item.cant,
+			                    item.peso,
+			                    item.cantPentiente,
+			                    item.pesoPendiente,
+			                    item.color,
+			                    item.plano
+			                ]);
+
+			                // Temporalmente reemplazamos los datos en el DataTable
+			                const originalData = dt.data();
+			                dt.clear();
+			                dt.rows.add(exportData);
+			                dt.draw();
+
+			                // Ejecutamos la exportación con el contexto correcto
+			                $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+
+			                // Restauramos los datos originales
+			                dt.clear();
+			                dt.rows.add(originalData);
+			                dt.draw();
+			            }
+			        });
+			    },
 				exportOptions: {
 		            columns: ':not(:last-child)', // También excluimos la última columna para PDF
 		            format: {
@@ -756,6 +792,42 @@ async function verDetalleOP(numOp) {
 				title: fileName,
 				titleAttr: 'Exportar a PDF',
 				className: 'btn btn-primary',
+				action: function(e, dt, button, config) {
+			        const self = this;
+			        // Hacemos la llamada al endpoint que devuelve todos los datos
+			        $.ajax({
+			            url: `${CONSTANTS.API.DETALLE_OP}/${state.currentOp}/detalle`,
+			            type: 'GET',
+			            success: function(data) {
+			                // Convertimos los datos al formato que espera DataTables
+			                const exportData = data.map(item => [
+			                    item.itemId,
+			                    item.marca,
+			                    item.descripcion,
+			                    item.cant,
+			                    item.peso,
+			                    item.cantPentiente,
+			                    item.pesoPendiente,
+			                    item.color,
+			                    item.plano
+			                ]);
+
+			                // Temporalmente reemplazamos los datos en el DataTable
+			                const originalData = dt.data();
+			                dt.clear();
+			                dt.rows.add(exportData);
+			                dt.draw();
+
+			                // Ejecutamos la exportación con el contexto correcto
+			                $.fn.dataTable.ext.buttons.pdfHtml5.action.call(self, e, dt, button, config);
+
+			                // Restauramos los datos originales
+			                dt.clear();
+			                dt.rows.add(originalData);
+			                dt.draw();
+			            }
+			        });
+			    },
 				orientation: 'landscape', // Orientación del PDF (portrait o landscape)
 				pageSize: 'LEGAL',
 				exportOptions: {
