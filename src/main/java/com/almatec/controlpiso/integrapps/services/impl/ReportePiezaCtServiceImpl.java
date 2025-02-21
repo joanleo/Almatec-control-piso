@@ -78,6 +78,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		ResponseMessage response = new ResponseMessage();
 		ReportePiezaCt reporte = crearEntidadReporte(reporteDTO);
 		reporte.setEstado(Estado.PENDIENTE);
+		reporte.setEsReproceso(false);
 
 		try {
 			ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
@@ -233,7 +234,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		}
 		
 		// Solo actualizar cantidad cumplida si no es un reprocesamiento
-		if (!Estado.ERROR.equals(reporte.getEstado())) {
+		if (!reporte.getEsReproceso()) {
 			log.debug("Actualizando cantidad cumplida para nuevo reporte");
 			actualizarCantidadCumplida(reporteDTO, itemOperacion);
 			itemOpService.guardarItemOp(itemOperacion);
@@ -532,6 +533,8 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	    ResponseMessage response = new ResponseMessage();
 	    try {
 	        ReportePiezaCt reporte = validarYObtenerReporte(idReporte);
+	        reporte.setEsReproceso(true);
+	        
 	        ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
 	        Integer idItemReportar = reporte.getIdItemFab() != 0 ? reporte.getIdItemFab() : reporte.getIdParte();
 	        Item itemReporte = itemService.buscarItemFabrica(idItemReportar);

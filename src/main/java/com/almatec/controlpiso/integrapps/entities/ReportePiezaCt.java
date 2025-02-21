@@ -18,8 +18,6 @@ public class ReportePiezaCt {
 	public enum Estado {
         PENDIENTE,          // Reporte guardado inicialmente
         PROCESANDO,         // Durante el envío al ERP
-        //CONSUMO_COMPLETO,   // Consumo procesado exitosamente
-        //TEP_COMPLETO,       // TEP procesado exitosamente
         COMPLETO,           // proceso exitoso
         ERROR              // Error en algún paso
     }
@@ -74,6 +72,9 @@ public class ReportePiezaCt {
 
 	@Column(name = "ultimo_intento")
     private LocalDateTime ultimoIntento;
+	
+	@Column(name = "es_reproceso")
+	private Boolean esReproceso=false;
 	
 
 	public Integer getId() {
@@ -212,19 +213,32 @@ public class ReportePiezaCt {
 		this.ultimoIntento = ultimoIntento;
 	}
 
+	public Boolean getEsReproceso() {
+		return esReproceso != null && esReproceso;
+	}
+
+	public void setEsReproceso(Boolean esReproceso) {
+		this.esReproceso = esReproceso;
+	}
+
 	public ReportePiezaCt() {
 		super();
 	}
-
+	
 	@Override
 	public String toString() {
-		return "ReportePiezaCt [id=" + id + ", idItemFab=" + idItemFab + ", idParte=" + idParte + ", idCentroT="
-				+ idCentroT + ", idOperario=" + idOperario + ", cant=" + cant + ", docErp=" + docErp + ", fechaErp="
-				+ fechaErp + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", itemId=" + itemId
-				+ ", lote=" + lote + ", isConsume=" + isConsume + ", isTep=" + isTep + ", idConfigProceso="
-				+ idConfigProceso + "]";
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("ReportePiezaCt [id=").append(id).append(", idItemFab=").append(idItemFab).append(", idParte=")
+				.append(idParte).append(", idCentroT=").append(idCentroT).append(", idOperario=").append(idOperario)
+				.append(", cant=").append(cant).append(", docErp=").append(docErp).append(", fechaErp=")
+				.append(fechaErp).append(", fechaCreacion=").append(fechaCreacion).append(", estado=").append(estado)
+				.append(", itemId=").append(itemId).append(", lote=").append(lote).append(", isConsume=")
+				.append(isConsume).append(", isTep=").append(isTep).append(", idConfigProceso=").append(idConfigProceso)
+				.append(", mensajeError=").append(mensajeError).append(", ultimoIntento=").append(ultimoIntento)
+				.append(", esReproceso=").append(esReproceso).append("]");
+		return builder2.toString();
 	}
-	
+
 	public static class Builder {
         private ReportePiezaCt reporte = new ReportePiezaCt();
 
