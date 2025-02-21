@@ -34,15 +34,40 @@
                    </select>			   
            	 </div>
            	 
-           	 <button class="btn btn-primary my-3" onclick="imprimirSeleccion()">Imprimir Selección</button>
+           	 <button class="btn btn-primary my-3" onclick="imprimirSeleccion()">
+				<i class="fas fa-print me-2"></i>
+				Imprimir Selección
+			</button>
            	 
-       	 	 <h2 hidden id="title-ops" class="mt-5">OPs</h2>		
-           	 <div class="form-group mt-4" id="ops-ct">
-			 </div>
-           	 
-           	 <h2 hidden id="title-items">Items</h2>
-           	 <div class="form-group mt-4" id="detalle-op">						
-			 </div>
+			<div class="card shadow-sm mb-4" hidden id="title-ops">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Ordenes de Produccion</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="form-group mt-4" id="ops-ct">
+                    </div>
+                </div>
+            </div>
+			
+			<div class="card shadow-sm mb-4" hidden id="title-items">
+                <div class="card-header" >
+                    <h3 class="card-title h5 mb-0">Items de ordenes seleccionadas</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="form-group mt-4"  id="detalle-op">
+                    </div>
+                </div>
+            </div>
+
+			<div class="card shadow-sm mb-4" hidden id="title-componentes">
+                <div class="card-header" >
+                    <h3 class="card-title h5 mb-0">Componentes de los item de las ordenes seleccionadas</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="form-group mt-4" id="componentes">
+                    </div>
+                </div>
+            </div>
 			 
 			 <h2 hidden id="title-componentes">Partes</h2>
 			 <div class="form-group mt-4" id="componentes">						
@@ -51,6 +76,7 @@
 		
 		<footer th:replace="fragments/footer :: footer"></footer>
 		<script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+		<script src="/js/general.js"></script>
 		<script src="/js/produccion/carga-ct.js"></script>
 	</body>
 </html>

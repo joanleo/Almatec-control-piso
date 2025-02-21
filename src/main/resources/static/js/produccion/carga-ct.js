@@ -126,13 +126,23 @@ function actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_compo
 }
 
 function crearCheckBoxList(opsCargaCt, selectedCentroId, table_items, table_componentes) {
-    checkList = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]')
+	checkList = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]');
     for (const element of checkList) {
         element.addEventListener('change', function () {
-        	actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes)
-        })
+            actualizarTablas(opsCargaCt, selectedCentroId, table_items, table_componentes);
+            actualizarBotonesExportacion();
+        });
+    }
+    
+    // Actualizar también cuando se usa "Seleccionar todo"
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            actualizarBotonesExportacion();
+        });
     }
 }
+
 
 function mostrarOcultarTabla(elementId, condition) {
     let element = document.getElementById(elementId)
@@ -248,7 +258,7 @@ document.getElementById('centroSelect').addEventListener('change', async functio
     }
 })
 
-async function imprimirSeleccion() {
+/*async function imprimirSeleccion() {
     let opsSeleccionadas = obtenerOPsSeleccionadas()
     let downloadedFilename 
 	spinner.removeAttribute('hidden')
@@ -283,7 +293,7 @@ async function imprimirSeleccion() {
 	    console.error('Error:', error)
 	})
     console.log("OPs seleccionadas:", opsSeleccionadas)
-}
+}*/
 
 function obtenerOPsSeleccionadas() {
     let opsSeleccionadas = []
@@ -295,3 +305,130 @@ function obtenerOPsSeleccionadas() {
 
     return opsSeleccionadas
 }
+
+// Función para agregar botones de exportación
+function agregarBotonesExportacion() {
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'd-flex justify-content-end mb-4';
+    
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+    btnGroup.setAttribute('role', 'group');
+    
+    btnGroup.innerHTML = `
+        <button type="button" class="btn btn-danger d-flex align-items-center" onclick="descargarSeleccion('pdf')" disabled id="btnPdf">
+            <i class="fa fa-file-pdf me-2"></i>
+            <span>Exportar PDF</span>
+        </button>
+        <button type="button" class="btn btn-success d-flex align-items-center" onclick="descargarSeleccion('excel')" disabled id="btnExcel">
+            <i class="fa fa-file-excel me-2"></i>
+            <span>Exportar Excel</span>
+        </button>
+    `;
+    
+    btnContainer.appendChild(btnGroup);
+    
+    // Reemplazar el botón existente
+    const oldButton = document.querySelector('button[onclick="imprimirSeleccion()"]');
+    if (oldButton) {
+        oldButton.parentNode.replaceChild(btnContainer, oldButton);
+    }
+}
+
+// Función para habilitar/deshabilitar botones según la selección
+function actualizarBotonesExportacion() {
+    const checkboxesSeleccionados = document.querySelectorAll('input[type=checkbox][id^="checkbox_"]:checked');
+    const btnPdf = document.getElementById('btnPdf');
+    const btnExcel = document.getElementById('btnExcel');
+    
+    if (btnPdf && btnExcel) {
+        const haySeleccion = checkboxesSeleccionados.length > 0;
+        btnPdf.disabled = !haySeleccion;
+        btnExcel.disabled = !haySeleccion;
+    }
+}
+
+async function descargarSeleccion(formato) {
+    const opsSeleccionadas = obtenerOPsSeleccionadas();
+    if (opsSeleccionadas.length === 0) {
+        mostrarError('Por favor, seleccione al menos una operación para exportar.');
+        return;
+    }
+
+    const btnPdf = document.getElementById('btnPdf');
+    const btnExcel = document.getElementById('btnExcel');
+    const botones = [btnPdf, btnExcel];
+    
+    // Deshabilitar botones y mostrar spinner
+    botones.forEach(btn => {
+        if (btn) btn.disabled = true;
+    });
+    spinner.removeAttribute('hidden');
+    
+    try {
+        const response = await fetch(`/centros-trabajo/${selectedCentroId}/descargar/${formato}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(opsSeleccionadas)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let downloadedFilename = `export.${formato}`;
+        
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename=["']?([^"']+)["']?/);
+            if (filenameMatch) {
+                downloadedFilename = filenameMatch[1];
+            }
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = downloadedFilename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al descargar el archivo. Por favor, intente nuevamente.');
+    } finally {
+        // Restaurar estado de los botones y ocultar spinner
+        spinner.setAttribute('hidden', '');
+        actualizarBotonesExportacion();
+    }
+}
+
+function mostrarError(mensaje) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+    alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span>${mensaje}</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    const container = document.querySelector('.container');
+    const opsSection = document.getElementById('ops-section');
+    container.insertBefore(alertDiv, opsSection);
+    
+    // Auto-cerrar la alerta después de 5 segundos
+    setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alertDiv);
+        bsAlert.close();
+    }, 5000);
+}
+
+// Llamar a esta función después de que se cargue el documento
+document.addEventListener('DOMContentLoaded', function() {
+    agregarBotonesExportacion();
+});

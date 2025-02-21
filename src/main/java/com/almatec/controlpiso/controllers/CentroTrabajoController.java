@@ -57,6 +57,7 @@ import com.almatec.controlpiso.integrapps.services.RegistroParadaService;
 import com.almatec.controlpiso.integrapps.services.ReportePiezaCtService;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasOperariosService;
 import com.almatec.controlpiso.integrapps.services.VistaPiezasReportadasService;
+import com.almatec.controlpiso.produccion.service.ExportOpCentroTrabajoToExcel;
 import com.almatec.controlpiso.programacion.dtos.OrdenProduccionResumen;
 import com.almatec.controlpiso.security.entities.Usuario;
 import com.almatec.controlpiso.utils.CentrosTrabajoPDFService;
@@ -363,25 +364,34 @@ public class CentroTrabajoController {
 		return "produccion/carga-centros-trabajo";
 	}
 	
-	@PostMapping("/{idCT}/descargar")
+	@PostMapping("/{idCT}/descargar/{formato}")
 	public void opsCentroTrabajo(HttpServletResponse response,
 							@PathVariable Integer idCT,
+							@PathVariable String formato,
 							@RequestBody List<Integer> opsSeleccionadas) throws DocumentException, IOException {
 		CentroTrabajo centroT =  centroTrabajoService.buscarCentroTrabajoPorIdCtErp(idCT);
-		response.setContentType("application/pdf");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		String currentDateTime = dateFormatter.format(new Date());
-		String headerKey = "Content-Disposition";
-		String headerValue = "attachment; filename=carga_trabajo_" + centroT.getNombre() + "_" + currentDateTime + ".pdf";
-		response.setHeader(headerKey, headerValue);
+	    String currentDateTime = dateFormatter.format(new Date());
+	    String fileName = "carga_trabajo_" + centroT.getNombre() + "_" + currentDateTime;
 		
 		Set<OrdenProduccionResumen> opsCt = vistaPiezasReportadasService.buscarOps(idCT);
 		
-		Rectangle letter = PageSize.LETTER;
-		//float halfLetterHeight = letter.getHeight() / 2;
-		//Rectangle halfLetter = new Rectangle(letter.getWidth(), halfLetterHeight);
-		ExportOpCentroTrabajoToPdf documento = new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, letter);
-		documento.export(response);
+		if ("excel".equalsIgnoreCase(formato)) {
+	        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+	        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+	        
+	        ExportOpCentroTrabajoToExcel excelExporter = 
+	            new ExportOpCentroTrabajoToExcel(opsCt, opsSeleccionadas, centroT);
+	        excelExporter.export(response);
+	    } else {
+	        response.setContentType("application/pdf");
+	        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
+	        
+	        Rectangle letter = PageSize.LETTER;
+	        ExportOpCentroTrabajoToPdf documento = 
+	            new ExportOpCentroTrabajoToPdf(opsCt, opsSeleccionadas, centroT, letter);
+	        documento.export(response);
+	    }
 	}
 	
 	@GetMapping("/proceso/{idConfigProceso}/paradas")
