@@ -19,7 +19,7 @@ public interface SolicitudMateriaPrimaRepository extends JpaRepository<Solicitud
 	Integer obtenerConsecutivo();
 
 	@Query(value = "SELECT Mp_Sol.id_sol_mp, Mp_Sol.cia, Mp_Sol.Bodega_Erp, Mp_Sol.Tipo_doc, Mp_Sol.Num_doc, "
-			+ "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Erp, "
+			+ "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Aprueba, "
 			+ "Mp_Sol.Tipo_doc_Erp, Mp_Sol.Num_Doc_Erp, Mp_Sol.Fecha_Doc_Erp, Mp_Sol.Barcode, web_usuarios.usu_nombre "
 			+ "FROM Mp_Sol "
 			+ "INNER JOIN "
@@ -29,7 +29,7 @@ public interface SolicitudMateriaPrimaRepository extends JpaRepository<Solicitud
 	List<SolicitudUsuarioInterface> findByIdEstado(@Param("idEstado") int i);
 	
 	@Query(value = "SELECT Mp_Sol.id_sol_mp, Mp_Sol.cia, Mp_Sol.Bodega_Erp, Mp_Sol.Tipo_doc, Mp_Sol.Num_doc, "
-			+ "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Erp, "
+			+ "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Aprueba, "
 			+ "Mp_Sol.Tipo_doc_Erp, Mp_Sol.Num_Doc_Erp, Mp_Sol.Fecha_Doc_Erp, Mp_Sol.Barcode, web_usuarios.usu_nombre "
 			+ "FROM Mp_Sol "
 			+ "INNER JOIN "
@@ -48,7 +48,7 @@ public interface SolicitudMateriaPrimaRepository extends JpaRepository<Solicitud
 	String obtenerIdctErp(@Param("idCentroTrabajo") Integer idCentroTrabajo);
 
 	@Query(value = "SELECT Mp_Sol.id_sol_mp, Mp_Sol.cia, Mp_Sol.Bodega_Erp, Mp_Sol.Tipo_doc, Mp_Sol.Num_doc, " +
-            "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Erp, " +
+            "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Aprueba, " +
             "Mp_Sol.Tipo_doc_Erp, Mp_Sol.Num_Doc_Erp, Mp_Sol.Fecha_Doc_Erp, Mp_Sol.Barcode, web_usuarios.usu_nombre " +
             "FROM Mp_Sol " +
             "INNER JOIN web_usuarios ON Mp_Sol.Id_Usu_Sol = web_usuarios.usu_id " +
@@ -59,7 +59,7 @@ public interface SolicitudMateriaPrimaRepository extends JpaRepository<Solicitud
     Page<SolicitudUsuarioInterface> findByIdEstadoPaginado(@Param("idEstado") int idEstado, Pageable pageable);
 
 	@Query(value = "SELECT Mp_Sol.id_sol_mp, Mp_Sol.cia, Mp_Sol.Bodega_Erp, Mp_Sol.Tipo_doc, Mp_Sol.Num_doc, " +
-            "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Erp, " +
+            "Mp_Sol.Fecha_Doc, Mp_Sol.Estado_Doc, Mp_Sol.id_op_ia, Mp_Sol.Tipo_Op, Mp_Sol.Num_Op, Mp_Sol.Id_Usu_Sol, Mp_Sol.Id_Usu_Aprueba, " +
             "Mp_Sol.Tipo_doc_Erp, Mp_Sol.Num_Doc_Erp, Mp_Sol.Fecha_Doc_Erp, Mp_Sol.Barcode, web_usuarios.usu_nombre " +
             "FROM Mp_Sol " +
             "INNER JOIN web_usuarios ON Mp_Sol.Id_Usu_Sol = web_usuarios.usu_id " +

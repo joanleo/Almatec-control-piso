@@ -80,6 +80,7 @@ public class TransferenciaService {
 		solicitudIntegrapps.setNumDocErp(transferencia.getf350_consec_docto());
 		solicitudIntegrapps.setIdEstado(1);
 		solicitudIntegrapps.setFechaDocEp(transferencia.getf350_fecha_ts_creacion());
+		solicitudIntegrapps.setIdUsuarioAprueba(usuarioAprueba.getId());
 		solicitudMateriaPrimaService.actualizaSolicitud(solicitudIntegrapps);
 		
 		mensajeService.crearEmailAprobacionTransferencia(transferencia, solicitudIntegrapps, usuarioAprueba);

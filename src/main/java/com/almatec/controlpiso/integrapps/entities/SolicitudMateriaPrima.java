@@ -41,8 +41,8 @@ public class SolicitudMateriaPrima {
 	private Integer numOp = 0;
 	@Column(name = "Id_Usu_Sol")
 	private Integer idUsuarioSol = 0;
-	@Column(name = "Id_Usu_Erp")
-	private Integer idUsuarioErp = 0;
+	@Column(name = "Id_Usu_Aprueba")
+	private Integer idUsuarioAprueba = 0;
 	@Column(name = "Tipo_doc_Erp")
 	private String tipoDocErp = "TRA";
 	@Column(name = "Num_Doc_Erp")
@@ -75,7 +75,7 @@ public class SolicitudMateriaPrima {
 		this.tipoOp = sol.getTipo_Op();
 		this.numOp = sol.getNum_Op();
 		this.idUsuarioSol = sol.getId_Usu_Sol();
-		this.idUsuarioErp = sol.getId_Usu_Erp();
+		this.idUsuarioAprueba = sol.getId_Usu_Aprueba();
 		this.tipoDocErp = sol.getTipo_doc_Erp();
 		this.numDocErp = sol.getNum_Doc_Erp();
 		this.fechaDocEp = sol.getFecha_Doc_Erp();
@@ -126,8 +126,8 @@ public class SolicitudMateriaPrima {
 		return idUsuarioSol;
 	}
 
-	public Integer getIdUsuarioErp() {
-		return idUsuarioErp;
+	public Integer getIdUsuarioAprueba() {
+		return idUsuarioAprueba;
 	}
 
 	public String getTipoDocErp() {
@@ -190,8 +190,8 @@ public class SolicitudMateriaPrima {
 		this.idUsuarioSol = idUsuarioSol;
 	}
 
-	public void setIdUsuarioErp(Integer idUsuarioErp) {
-		this.idUsuarioErp = idUsuarioErp;
+	public void setIdUsuarioAprueba(Integer idUsuarioErp) {
+		this.idUsuarioAprueba = idUsuarioErp;
 	}
 
 	public void setTipoDocErp(String tipoDocErp) {
@@ -215,7 +215,7 @@ public class SolicitudMateriaPrima {
 		return "SolicitudMateriaPrima [id=" + id + ", idCia=" + idCia + ", bodegaErp=" + bodegaErp + ", tipoDoc="
 				+ tipoDoc + ", numDoc=" + numDoc + ", fechaDoc=" + fechaDoc + ", idEstado=" + idEstado + ", idOp="
 				+ idOp + ", tipoOp=" + tipoOp + ", numOp=" + numOp + ", idUsuarioSol=" + idUsuarioSol
-				+ ", idUsuarioErp=" + idUsuarioErp + ", tipoDocErp=" + tipoDocErp + ", numDocErp=" + numDocErp
+				+ ", idUsuarioAprueba=" + idUsuarioAprueba + ", tipoDocErp=" + tipoDocErp + ", numDocErp=" + numDocErp
 				+ ", fechaDocEp=" + fechaDocEp + ", barcode=" + barcode + "]";
 	}
 	

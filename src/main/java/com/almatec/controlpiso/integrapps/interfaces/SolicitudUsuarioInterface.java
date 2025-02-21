@@ -16,7 +16,7 @@ public interface SolicitudUsuarioInterface {
 	String getTipo_Op();
 	Integer getNum_Op();
 	Integer getId_Usu_Sol();
-	Integer getId_Usu_Erp();
+	Integer getId_Usu_Aprueba();
 	String getTipo_doc_Erp();
 	Integer getNum_Doc_Erp();
 	LocalDateTime getFecha_Doc_Erp();
