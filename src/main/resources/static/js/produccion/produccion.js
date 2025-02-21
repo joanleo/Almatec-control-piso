@@ -1186,7 +1186,8 @@ async function regActualizarParada(codigo){
 	for(let parada of paradas){
 		if(codigo == parada.codBarrasM){
 			paradaSelected = parada
-			document.getElementById("descripcion-parada").value = parada.nombre
+			console.log(parada)
+			document.getElementById("descripcion-parada").textContent = parada.nombre
 			modalParada = new bootstrap.Modal('#modal-parada')
 			modalParada.show()
 		}
@@ -1197,31 +1198,67 @@ async function regActualizarParada(codigo){
 	}
 }
 
+
 async function handleKeyPressParadaOperario(event){
 	if (event.key === 'Enter') {
 		const codigoOperElement = document.querySelector("#cod-operario-parada")
 		const codigoOper = codigoOperElement.value
-        const operario = await obtenerOperario(codigoOper.substring(3))
-        let operariosCT = await obtenerOperariosCT()
-        let isOperarioInCt = false
-        for(const oper of operariosCT){
-			if(oper.id == operario.id){
-				isOperarioInCt = true
-				const registroParadaDTO ={
-					"idConfigProceso": configProceso.id,
-					"idOperario": operario.id,
-					"idParada": paradaSelected.id
+		const loadingElement = document.querySelector("#parada-loading");
+        const resultadoElement = document.querySelector("#resultado-operacion");
+		
+		try{
+			loadingElement.classList.remove('d-none');
+            codigoOperElement.disabled = true;
+	        const operario = await obtenerOperario(codigoOper.substring(3))
+	        let operariosCT = await obtenerOperariosCT()
+	        let isOperarioInCt = false
+
+			for(const oper of operariosCT){
+				if(oper.id == operario.id){
+					isOperarioInCt = true
+					const registroParadaDTO ={
+						"idConfigProceso": configProceso.id,
+						"idOperario": operario.id,
+						"idParada": paradaSelected.id
+					}
+					const response = await registrarActualizarPara(registroParadaDTO);
+					console.log(response)
+                    // Mostrar resultado
+                    document.getElementById('mensaje-resultado').textContent = response.mensaje;
+                    resultadoElement.classList.remove('d-none');
+                    
+                    // Cerrar después de un delay
+                    setTimeout(() => {
+                        modalParada.hide();
+                        resetearModal();
+                    }, 3000);
 				}
-				await registrarActualizarPara(registroParadaDTO)
-				modalParada.hide()
-		        codigoOperElement.value = ''
 			}
-		}
-		if(!isOperarioInCt){
-			mostrarAlert("El operario digitado no se encuentra registrado en el centro de trabajo", "danger")
-		}
+
+			if(!isOperarioInCt){
+				mostrarAlert("El operario digitado no se encuentra registrado en el centro de trabajo", "danger")
+			}
+		} catch (error) {
+            mostrarAlert(error.message, "danger");
+        } finally {
+            loadingElement.classList.add('d-none');
+
+        }		
     }
 }
+
+function resetearModal() {
+    document.querySelector("#resultado-operacion").classList.add('d-none');
+    document.querySelector("#parada-loading").classList.add('d-none');
+    const codigoOperElement = document.querySelector("#cod-operario-parada");
+	codigoOperElement.value = '';
+	codigoOperElement.disabled = false;
+
+	codigoOperElement.focus();
+	
+    paradaSelected = null;
+}
+
 
 async function registrarActualizarPara(registroParadaDTO){
 	try{
@@ -1239,7 +1276,9 @@ async function registrarActualizarPara(registroParadaDTO){
             throw new Error(error.mensaje);
 		}
 		const data = await response.json()
-		mostrarAlert(data.mensaje,"success")
+		return data;
+		//console.log(data)
+		//mostrarAlert(data.mensaje,"success")
 	}catch(error){
 		mostrarAlert(error,"danger")
 	}
