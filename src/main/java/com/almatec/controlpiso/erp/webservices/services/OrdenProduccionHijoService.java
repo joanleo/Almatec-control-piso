@@ -89,7 +89,7 @@ public class OrdenProduccionHijoService {
 		String responseItemRutaXml =xmlService.postImportarXML(itemRutaXml);
 		util.guardarRegistroXml(xmlService.crearPlanoXml(itemRutaXml), "ITEM_RUTA-OP_IA_" + idOPI + "_" + dateTime);
 		util.crearArchivoPlano(itemRutaXml, "ITEM_RUTA-OP_IA_" + idOPI  + dateTime , configService.getCIA());
-		log.debug("Respuesta creacion item-ruta");
+		log.debug("Respuesta creacion item-ruta" + responseItemRutaXml);
 		if (!responseItemRutaXml.equals(RESPUESTA_OK)) {
 			return responseItemRutaXml;
 		}

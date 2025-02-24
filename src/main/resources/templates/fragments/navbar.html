@@ -117,6 +117,7 @@
             <li th:if="${#authorization.expression('hasAuthority(''ACCESS_CENTROS_DE_TRABAJO'')')}"><a class="dropdown-item" href="/centros-trabajo">Centros de trabajo</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACESS_VER_CONFIGURACION_NOTIFICACIONES'')')}"><a class="dropdown-item" href="/notificaciones">Notificaciones</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PARAMETROS'')')}"><a class="dropdown-item" href="/parametros/listar">Parametros</a></li>
+			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PARAMETROS'')')}"><a class="dropdown-item" href="/paradas/listar">Paradas</a></li>
             <li><hr class="dropdown-divider"></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_OPERARIOS'')')}"><a class="dropdown-item" href="/operarios/listar">Operarios</a></li>
 			<li th:if="${#authorization.expression('hasAuthority(''ACCESS_PERFILES_O_ROLES'')')}"><a class="dropdown-item" href="/roles">Perfiles o Roles</a></li>

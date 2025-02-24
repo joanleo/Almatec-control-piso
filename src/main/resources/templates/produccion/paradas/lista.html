@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Lista de Paradas')"></head>
+<body>
+	<header>
+		<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>			
+	</header>
+    <div class="container-fluid">
+        <div class="row justify-content-center text-center">
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content p-4">
+				<div hidden id="spinner">
+					<div>Cargando ...</div>
+				</div>
+								
+				<section id="alerts" aria-live="polite" th:replace="fragments/alerts :: alerts"></section>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Lista de Paradas</h2>
+                    <a th:href="@{/paradas/crear}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Nueva Parada
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="parada : ${paradas}">
+                                        <td th:text="${parada.nombre}"></td>
+                                        <td>
+                                            <span th:if="${parada.isActivo}" class="badge bg-success">Activo</span>
+                                            <span th:unless="${parada.isActivo}" class="badge bg-danger">Inactivo</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a th:href="@{/paradas/editar/{id}(id=${parada.id})}" 
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-pencil"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-danger"
+                                                        th:onclick="'confirmarEliminacion(' + ${parada.id} + ')'">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                            <form th:id="'deleteForm' + ${parada.id}"
+                                                  th:action="@{/paradas/eliminar/{id}(id=${parada.id})}"
+                                                  method="POST" style="display: none;">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts fragment -->
+    <div th:replace="produccion/paradas/layout :: scripts"></div>
+</body>
+</html>

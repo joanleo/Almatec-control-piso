@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head th:replace="fragments/head :: head('Produccion')"></head>
+	<body>
+		<header>
+			<nav th:replace="fragments/navbar :: nav-bar('Ingenieria')"></nav>			
+		</header>
+	    <div class="container-fluid">
+	        <div class="row justify-content-center">	
+	            <!-- Main Content -->
+	            <div class="col-md-9 col-lg-10 main-content p-4">
+	                <div class="card">
+	                    <div class="card-header bg-success	 text-white d-flex justify-content-between align-items-center">
+	                        <h3 class="card-title mb-0" th:text="${parada.id == null ? 'Nueva Parada' : 'Editar Parada'}">Parada</h3>
+	                        <a th:href="@{/paradas/listar}" class="btn btn-light">
+	                            <i class="fa fa-arrow-left"></i> Volver
+	                        </a>
+	                    </div>
+	                    <div class="card-body">
+							<form th:action="@{${parada.id == null ? '/paradas/crear' : '/paradas/editar/' + parada.id}}"
+	                              th:object="${parada}" method="POST" class="needs-validation" novalidate>
+	                            
+								  <div class="row g-2">
+		
+			                          <!-- Nombre -->
+			                          <div class="col-md-6">
+			                              <label for="nombre" class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+			                              <input type="text" class="form-control" id="nombre" th:field="*{nombre}" maxlength="250" required>
+			                              <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
+			                                  Error en el nombre
+			                              </div>
+			                          </div>
+		
+			                          <!-- Descripción -->
+			                          <div class="col-md-6">
+			                              <label for="descripcion" class="form-label fw-semibold">Descripción <span class="text-danger">*</span></label>
+			                              <input type="text" class="form-control" id="descripcion" th:field="*{descripcion}" required maxlength="15">
+			                              <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}">
+			                                  Error en la descripción
+			                              </div>
+			                          </div>
+		
+			                          <!-- Tipo 
+			                          <div class="col-md-6">
+			                              <label for="tipo" class="form-label">Tipo <span class="text-danger">*</span></label>
+			                              <select class="form-select" id="tipo" th:field="*{tipo}" required>
+			                                  <option value="">Seleccione un tipo</option>
+			                                  <option value="MAQUINA">Máquina</option>
+			                                  <option value="PROCESO">Proceso</option>
+			                                  <option value="OPERADOR">Operador</option>
+			                              </select>
+			                              <div class="invalid-feedback" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}">
+			                                  Error en el tipo
+			                              </div>
+			                          </div>-->
+		
+			                          <!-- Código de Barras Humano -->
+									  <div class="col-md-6">
+                                          <label for="codBarHum" class="form-label fw-semibold">Código de Barras</label>
+                                          <div class="input-group">
+                                              <span class="input-group-text bg-light"><i class="fas fa-barcode text-secondary"></i></span>
+                                              <input type="text" class="form-control form-control-lg bg-light" id="codBarHum" 
+                                                  th:field="*{codBarrasM}" maxlength="15" readonly>
+                                          </div>
+                                      </div>
+		
+			                      </div>
+		                          <!-- Estado -->
+		                          <div class="col-md-6">
+		                              <label for="activo" class="form-label">Estado</label>
+		                              <div class="form-check form-switch">
+		                                  <input class="form-check-input" type="checkbox" id="activo" th:field="*{isActivo}"
+										  	th:checked="${parada.isActivo == null ? true : parada.isActivo}">
+		                                  <label class="form-check-label" for="activo">Activo</label>
+		                              </div>
+		                          </div>
+	
+	                            <div class="d-flex justify-content-end gap-2 mt-4">
+	                                <a th:href="@{/paradas/listar}" class="btn btn-secondary">
+	                                    <i class="fa fa-times-circle"></i> Cancelar
+	                                </a>
+	                                <button type="submit" class="btn btn-primary">
+	                                    <i class="fas fa-check-circle"></i> Guardar
+	                                </button>
+	                            </div>
+	                        </form>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <!-- Scripts fragment -->
+	    <div th:replace="produccion/paradas/layout :: scripts"></div>
+	    
+	    <!-- Validación del formulario -->
+	    <script>
+	        (function () {
+	            'use strict'
+	            var forms = document.querySelectorAll('.needs-validation')
+	            Array.prototype.slice.call(forms)
+	                .forEach(function (form) {
+	                    form.addEventListener('submit', function (event) {
+	                        if (!form.checkValidity()) {
+	                            event.preventDefault()
+	                            event.stopPropagation()
+	                        }
+	                        form.classList.add('was-validated')
+	                    }, false)
+	                })
+	        })()
+	    </script>
+</body>
+</html>

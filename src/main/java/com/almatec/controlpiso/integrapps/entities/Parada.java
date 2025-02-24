@@ -19,27 +19,27 @@ public class Parada {
 	private Long id;
 	
 	@Column(name = "C_ciaorg_id")
-	private Long idCia;
+	private Long idCia= 0L;
 	
-	@Column(name = "A_co")
-	private String co;
+	@Column(name = "A_co", length = 3, nullable = false)
+	private String co= "1";
 	
-	@Column(name = "A_nombre")
-	private String nombre;
+	@Column(name = "A_nombre", length = 250)
+	private String nombre= "Operacion";
 	
-	@Column(name = "A_descripcion")
-	private String descripcion;
+	@Column(name = "A_descripcion", length = 15, nullable = false)
+	private String descripcion = ".";
 	
-	@Column(name = "A_tipo")
-	private String tipo;
+	@Column(name = "A_tipo", length = 15, nullable = false)
+	private String tipo= "Tipo";
 	
-	@Column(name = "E_activo")
-	private Boolean isActivo;
+	@Column(name = "E_activo", nullable = false)
+	private Boolean isActivo= true;
 	
-	@Column(name = "A_usuariocrea")
-	private String usuarioCrea;
+	@Column(name = "A_usuariocrea", length = 100, nullable = false)
+	private String usuarioCrea= "UsuarioCrea";
 	
-	@Column(name = "A_usuarioedita")
+	@Column(name = "A_usuarioedita", length = 100)
 	private String usuarioEdita;
 	
 	@Column(name = "FC_registro")
@@ -48,20 +48,20 @@ public class Parada {
 	@Column(name = "FE_registro")
 	private LocalDateTime fechaEdicion;
 	
-	@Column(name = "A_codbarmaq")
-	private String codBarrasM;
+	@Column(name = "A_codbarmaq", length = 15)
+	private String codBarrasM = "0000";
 	
-	@Column(name = "A_codbarhum")
-	private String codBarraH;
+	@Column(name = "A_codbarhum", length = 15)
+	private String codBarraH = "0001";
 	
-	@Column(name = "A_afecta")
-	private String afecta;
+	@Column(name = "A_afecta", length = 4)
+	private String afecta= "PROC";
 	
-	@Column(name = "C_color")
-	private String color;
+	@Column(name = "C_color", length = 12, nullable = false)
+	private String color= "&H00FFFFFF&";
 	
-	@Column(name = "A_codigo")
-	private String codigo;
+	@Column(name = "A_codigo", length = 3, nullable = false)
+	private String codigo= "0";
 
 	public Parada() {
 		super();
