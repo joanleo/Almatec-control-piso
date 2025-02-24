@@ -61,6 +61,8 @@ public class VistaOpItemsMaterialesRuta {
 	@Column(name = "peso_pintura")
 	private BigDecimal pesoPintura;
 	
+	private BigDecimal item_area;
+	
 	public VistaOpItemsMaterialesRuta() {
 		super();
 	}
@@ -202,6 +204,10 @@ public class VistaOpItemsMaterialesRuta {
 		return estadoOp;
 	}
 
+	public BigDecimal getItem_area() {
+		return item_area;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaOpItemsMaterialesRuta [id=" + id + ", idOpIntegrapps=" + idOpIntegrapps + ", cliente=" + cliente
@@ -215,7 +221,8 @@ public class VistaOpItemsMaterialesRuta {
 				+ ", material_centro_t_nombre=" + material_centro_t_nombre + ", materia_prima_material_id="
 				+ materia_prima_material_id + ", materia_prima_material_desc=" + materia_prima_material_desc
 				+ ", materia_prima_material_cant=" + materia_prima_material_cant + ", zona=" + zona + ", grupo=" + grupo
-				+ ", marca=" + marca + ", estadoOp=" + estadoOp + ", pesoPintura=" + pesoPintura + "]";
+				+ ", marca=" + marca + ", estadoOp=" + estadoOp + ", pesoPintura=" + pesoPintura + ", item_area="
+				+ item_area + "]";
 	}
 
 			

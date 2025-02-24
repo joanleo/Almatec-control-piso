@@ -65,6 +65,7 @@ public class EstructuraOrdenProduccionResumen {
 		item.setCantReportadaPieza(registro.getCantReportadaPieza());
 		item.setCantPendientePieza(registro.getCantPendientePieza());
 		item.setPrioridad(registro.getPrioridad());
+		item.setItemArea(registro.getItemArea());
 		
 		return item;
 	}

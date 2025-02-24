@@ -94,10 +94,38 @@ function updateTable() {
     updateSummary(filteredItems)
 }
 
+async function fetchCentrosT(){
+	try{
+		const response = await fetch('/centros-trabajo/listar')
+		if(!response.ok){
+			throw new Error("Error al obtener los Centros de trabajo")
+		}
+		const data = await response.json()
+		return data
+	}catch(error){
+		console.error("Error al obtener los Centros de trabajo: ", error)
+	}
+}
+
+async function obtenerOrdenes(idCentroT){
+	
+	const response = await fetch(`/programacion/centro-trabajo/${idCentroT}/resumen-ops`)
+	
+	const data = await response.json()
+	
+	console.log(data)
+	return data
+	
+}
+
+// Modificación para la función updateSummary
 function updateSummary(items) {
-    const esCentroEspecial = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22].includes(Number(centroTrabajoSelectedId));
+    const esCentroEspecial = Number(centroTrabajoSelectedId) > 12;
+    const esCentro17 = Number(centroTrabajoSelectedId) === 17;
     let totalRequerido = 0;
     let totalReportado = 0;
+    let totalRequeridoM2 = 0;
+    let totalReportadoM2 = 0;
     let summaryHTML = '';
 
     if (esCentroEspecial) {
@@ -105,37 +133,93 @@ function updateSummary(items) {
         totalRequerido = items.reduce((sum, item) => sum + item.cantReq, 0);
         totalReportado = items.reduce((sum, item) => sum + (item.cantReportada || 0), 0);
 
+        // Para el centro 17, calcular también en metros cuadrados
+        if (esCentro17) {
+            totalRequeridoM2 = items.reduce((sum, item) => sum + (item.cantReq * item.itemArea), 0);
+            totalReportadoM2 = items.reduce((sum, item) => sum + ((item.cantReportada || 0) * item.itemArea), 0);
+        }
+
         const porcentajeAvance = totalRequerido > 0 ? (totalReportado / totalRequerido * 100).toFixed(0) : '0';
         const dashArray = 2 * Math.PI * 45;
         const dashOffset = dashArray * (1 - porcentajeAvance / 100);
 
-        summaryHTML = `
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <div class="card bg-white">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Porcentaje de Avance</h5>
-                            <svg width="150" height="150" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="45" fill="none" stroke="#e6e6e6" stroke-width="10"/>
-                                <circle cx="50" cy="50" r="45" fill="none" stroke="#007bff" stroke-width="10"
-                                        stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}"
-                                        transform="rotate(-90 50 50)"/>
-                                <text x="50" y="50" font-size="18" text-anchor="middle" alignment-baseline="middle">
-                                    ${porcentajeAvance}%
-                                </text>
-                                <text x="50" y="70" font-size="12" text-anchor="middle" alignment-baseline="middle">
-                                    AVANCE
-                                </text>
-                            </svg>
-                            <p class="mt-3">Total Requerido: ${totalRequerido.toFixed(0)} und</p>
-                            <p>Total Reportado: ${totalReportado.toFixed(0)} und</p>
+        if (esCentro17) {
+            // Vista mejorada para centro de trabajo 17 con kg y m2 similar a la imagen de referencia
+            const totalPesoRequerido = items.reduce((sum, item) => sum + (item.cantReq * (item.itemPeso || 0)), 0);
+            const totalPesoReportado = items.reduce((sum, item) => sum + ((item.cantReportada || 0) * (item.itemPeso || 0)), 0);
+            
+            summaryHTML = `
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card bg-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title mb-4">Porcentaje de Avance</h5>
+                                <div class="d-flex justify-content-center">
+                                    <div style="position: relative; width: 150px; height: 150px;">
+                                        <svg width="150" height="150" viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="#e6e6e6" stroke-width="10"/>
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="#007bff" stroke-width="10"
+                                                    stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}"
+                                                    transform="rotate(-90 50 50)"/>
+                                        </svg>
+                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                            <div style="font-size: 24px; font-weight: bold;">${porcentajeAvance}%</div>
+                                            <div style="font-size: 14px;">AVANCE</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-4 text-start">
+                                        <p class="mb-1 fw-semibold">m² requeridos: <span class="bg-light">${totalRequeridoM2.toFixed(2)} m²</span></p>
+                                        <p class="mb-1 fw-semibold">m² fabricados: <span class="bg-light">${totalReportadoM2.toFixed(2)} m²</span></p>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <p class="mb-1 fw-semibold">Total Requerido: ${totalRequerido.toFixed(0)} und</p>
+                                        <p class="mb-1 fw-semibold">Total Fabricado: ${totalReportado.toFixed(0)} und</p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <p class="mb-1 fw-semibold">kilos requeridos: ${totalPesoRequerido.toFixed(2)} kg</p>
+                                        <p class="mb-1 fw-semibold">kilos fabricados: ${totalPesoReportado.toFixed(2)} kg</p>
+                                    </div>
+                                </div>      
+                               
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        } else {
+            // Mantener la vista normal para otros centros especiales
+            summaryHTML = `
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card bg-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Porcentaje de Avance</h5>
+                                <svg width="150" height="150" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#e6e6e6" stroke-width="10"/>
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#007bff" stroke-width="10"
+                                            stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}"
+                                            transform="rotate(-90 50 50)"/>
+                                    <text x="50" y="50" font-size="18" text-anchor="middle" alignment-baseline="middle">
+                                        ${porcentajeAvance}%
+                                    </text>
+                                    <text x="50" y="70" font-size="12" text-anchor="middle" alignment-baseline="middle">
+                                        AVANCE
+                                    </text>
+                                </svg>
+                                <p class="mt-3">Total Requerido: ${totalRequerido.toFixed(0)} und</p>
+                                <p>Total Reportado: ${totalReportado.toFixed(0)} und</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     } else {
         // Mantener el comportamiento original para otros centros
+        // Código existente para centros no especiales
         const materiaPrimaSummary = items.reduce((acc, item) => {
             const key = item.materiaPrimaId;
             if (!acc[key]) {
@@ -228,41 +312,20 @@ function updateSummary(items) {
     document.getElementById('summaryCard').innerHTML = summaryHTML;
 }
 
-async function fetchCentrosT(){
-	try{
-		const response = await fetch('/centros-trabajo/listar')
-		if(!response.ok){
-			throw new Error("Error al obtener los Centros de trabajo")
-		}
-		const data = await response.json()
-		return data
-	}catch(error){
-		console.error("Error al obtener los Centros de trabajo: ", error)
-	}
-}
-
-async function obtenerOrdenes(idCentroT){
-	
-	const response = await fetch(`/programacion/centro-trabajo/${idCentroT}/resumen-ops`)
-	
-	const data = await response.json()
-	
-	console.log(data)
-	return data
-	
-}
-
-function mostrarItems(items){
-	document.getElementById('resultadosContainer').style.display = 'block';
-		
-	let tbody = document.getElementById("resumen-op")
-	tbody.innerHTML = ''
-	
-	const esCentroEspecial = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22].includes(Number(centroTrabajoSelectedId));
-	    
+// Modificación para mostrarItems
+function mostrarItems(items) {
+    document.getElementById('resultadosContainer').style.display = 'block';
+        
+    let tbody = document.getElementById("resumen-op");
+    tbody.innerHTML = '';
+    
+    const esCentroEspecial = Number(centroTrabajoSelectedId) > 12;
+    const esCentro17 = Number(centroTrabajoSelectedId) === 17;
+        
     // Actualizar los encabezados según el centro de trabajo
     const thead = document.querySelector('#resultsTable thead tr');
-    if (esCentroEspecial) {
+    if (esCentro17) {
+        // Encabezados específicos para el centro 17
         thead.innerHTML = `
             <th>
                 <a data-sort="op">
@@ -281,143 +344,240 @@ function mostrarItems(items){
             </th>
             <th>
                 <a>
-                    <span>Cant. Requerida</span>
+                    <span>Cant. Req (und)</span>
+                </a>
+            </th>
+			<th>
+               <a>
+                   <span>Peso Und</span>
+               </a>
+           </th>
+            <th>
+                <a>
+                    <span>Cant. Fab</span>
+                </a>
+            </th>            
+            <th>
+                <a>
+                    <span>Área (m²)</span>
+                </a>
+            </th>
+			<th>
+                <a>
+                    <span>Cant Req (kg)</span>
                 </a>
             </th>
             <th>
                 <a>
-                    <span>Cant. Reportada</span>
+                    <span>Cant. Fab (kg)</span>
                 </a>
             </th>
         `;
-	} else {
-	    thead.innerHTML = `
-	        <th>
-	            <a data-sort="op">
-	                <span>O.P.</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Proyecto</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Descripción</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Cantidad</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Peso Bruto Und</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Cod. Materia Prima</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Materia Prima</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Peso Total Req.</span>
-	            </a>
-	        </th>
-	        <th>
-	            <a>
-	                <span>Cant. Finalizada</span>
-	            </a>
-	        </th>
-	    `;
-	}
-	
-	items.forEach(item => {
-		let row = document.createElement("tr")
-		//console.log(item)
-		if (esCentroEspecial) {
-            // Vista simplificada para centros 13 y 17
-            // OP
+    } else if (esCentroEspecial) {
+        // Mantener encabezados para otros centros especiales
+        thead.innerHTML = `
+            <th>
+                <a data-sort="op">
+                    <span>O.P.</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Proyecto</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Descripción</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Cant. Req</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Cant. Fab</span>
+                </a>
+            </th>
+        `;
+    } else {
+        // Mantener encabezados para centros normales
+        thead.innerHTML = `
+            <th>
+                <a data-sort="op">
+                    <span>O.P.</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Proyecto</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Descripción</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Cant. Req</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Peso Und</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Peso Total Req.</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Cod. Materia Prima</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Materia Prima</span>
+                </a>
+            </th>
+            <th>
+                <a>
+                    <span>Cant. Fab (und)</span>
+                </a>
+            </th>
+			<th>
+                <a>
+                    <span>Cant. Fab (kg)</span>
+                </a>
+            </th>
+        `;
+    }
+    
+    items.forEach(item => {
+        let row = document.createElement("tr");
+        
+        if (esCentro17) {
+            // Vista específica para centro 17 con áreas y pesos
             let cellOp = document.createElement("td");
             cellOp.textContent = item.op;
             cellOp.classList.add("text-nowrap");
             row.appendChild(cellOp);
             
-            // Proyecto
             let cellProyecto = document.createElement("td");
             cellProyecto.textContent = item.un;
             row.appendChild(cellProyecto);
             
-            // Descripción
             let cellDescripcion = document.createElement("td");
             cellDescripcion.textContent = item.descripcion;
             row.appendChild(cellDescripcion);
             
-            // Cantidad Requerida
             let cellCantReq = document.createElement("td");
             cellCantReq.textContent = item.cantReq.toFixed(0) + ' und';
-            cellCantReq.style.textAlign = 'right';
+            cellCantReq.style.textAlign = 'center';
             row.appendChild(cellCantReq);
+			
+			let cellPesoBrutoUnd = document.createElement("td");
+            cellPesoBrutoUnd.textContent = item.itemPeso;
+            row.appendChild(cellPesoBrutoUnd);
             
-            // Cantidad Reportada
             let cellCantReport = document.createElement("td");
             cellCantReport.textContent = item.cantReportada.toFixed(0) + ' und';
-            cellCantReport.style.textAlign = 'right';
+            cellCantReport.style.textAlign = 'center';
+            row.appendChild(cellCantReport);
+                      
+            let cellArea = document.createElement("td");
+            const areaM2 = (item.cantReq * item.itemArea).toFixed(2);
+            cellArea.textContent = areaM2;
+            cellArea.style.textAlign = 'center';
+            row.appendChild(cellArea);
+			
+			let cellKgRequeridos = document.createElement("td");
+            cellKgRequeridos.textContent = (item.cantReq * (item.itemPeso || 0)).toFixed(2);
+            cellKgRequeridos.style.textAlign = 'center';
+            row.appendChild(cellKgRequeridos);
+            
+            let cellKgFabricados = document.createElement("td");
+            const pesoKg = (item.cantReportada * (item.itemPeso || 0)).toFixed(2);
+            cellKgFabricados.textContent = pesoKg;
+            cellKgFabricados.style.textAlign = 'center';
+            row.appendChild(cellKgFabricados);
+            
+        } else if (esCentroEspecial) {
+            // Vista para otros centros especiales (sin cambios)
+            let cellOp = document.createElement("td");
+            cellOp.textContent = item.op;
+            cellOp.classList.add("text-nowrap");
+            row.appendChild(cellOp);
+            
+            let cellProyecto = document.createElement("td");
+            cellProyecto.textContent = item.un;
+            row.appendChild(cellProyecto);
+            
+            let cellDescripcion = document.createElement("td");
+            cellDescripcion.textContent = item.descripcion;
+            row.appendChild(cellDescripcion);
+            
+            let cellCantReq = document.createElement("td");
+            cellCantReq.textContent = item.cantReq.toFixed(0) + ' und';
+            cellCantReq.style.textAlign = 'center';
+            row.appendChild(cellCantReq);
+            
+            let cellCantReport = document.createElement("td");
+            cellCantReport.textContent = item.cantReportada.toFixed(0) + ' und';
+            cellCantReport.style.textAlign = 'center';
             row.appendChild(cellCantReport);
             
-        } else {			
+        } else {
+            // Vista para centros normales (sin cambios)
+            let cellOp = document.createElement("td");
+            cellOp.textContent = item.op;
+            cellOp.classList.add("text-nowrap");
+            row.appendChild(cellOp);
+            
+            let cellProyecto = document.createElement("td");
+            cellProyecto.textContent = item.un;
+            row.appendChild(cellProyecto);
+            
+            let cellDescripcion = document.createElement("td");
+            cellDescripcion.textContent = item.descripcion;
+            row.appendChild(cellDescripcion);
+            
+            let cellCantidad = document.createElement("td");
+            cellCantidad.textContent = item.cantReq;
+            row.appendChild(cellCantidad);
+            
+            let cellPesoBrutoUnd = document.createElement("td");
+            cellPesoBrutoUnd.textContent = item.materiaPrimaCant;
+            row.appendChild(cellPesoBrutoUnd);
+            
+            let cellPesoTotalReq = document.createElement("td");
+            cellPesoTotalReq.textContent = (item.cantReq * item.materiaPrimaCant).toFixed(2);
+            row.appendChild(cellPesoTotalReq);
 			
-			let cellOp = document.createElement("td")
-			cellOp.textContent = item.op
-			cellOp.classList.add("text-nowrap")
-			row.appendChild(cellOp)
+            let cellCodMateriaPrima = document.createElement("td");
+            cellCodMateriaPrima.textContent = item.materiaPrimaId;
+            row.appendChild(cellCodMateriaPrima);
+            
+            let cellMateriaPrima = document.createElement("td");
+            cellMateriaPrima.textContent = item.materiaPrimaDescripcion;
+            row.appendChild(cellMateriaPrima);        
 			
-			let cellProyecto = document.createElement("td")
-			cellProyecto.textContent = item.un
-			row.appendChild(cellProyecto)
-			
-			let cellDescripcion = document.createElement("td")
-			cellDescripcion.textContent = item.descripcion
-			row.appendChild(cellDescripcion)
-			
-			let cellCantidad = document.createElement("td")
-			cellCantidad.textContent = item.cantReq
-			row.appendChild(cellCantidad)
-			
-			let cellPesoBrutoUnd = document.createElement("td")
-			cellPesoBrutoUnd.textContent = item.materiaPrimaCant
-			row.appendChild(cellPesoBrutoUnd)
-			
-			let cellCodMateriaPrima = document.createElement("td")
-			cellCodMateriaPrima.textContent = item.materiaPrimaId
-			row.appendChild(cellCodMateriaPrima)
-			
-			let cellMateriaPrima = document.createElement("td")
-			cellMateriaPrima.textContent = item.materiaPrimaDescripcion
-			row.appendChild(cellMateriaPrima)		
-			
-			let cellPesoTotalReq = document.createElement("td")
-			cellPesoTotalReq.textContent = (item.cantReq * item.materiaPrimaCant).toFixed(2)
-			row.appendChild(cellPesoTotalReq)
-			
-			let cellCantFinalizada = document.createElement("td")
-			cellCantFinalizada.textContent = (item.cantReportada * item.materiaPrimaCant).toFixed(2)
-			row.appendChild(cellCantFinalizada)
-		}		
-		
-		tbody.appendChild(row)
-	})
-	
-	//console.log(items)
-	
+			let cellFabricada = document.createElement("td");
+            cellFabricada.textContent = (item.cantReportada).toFixed(0);
+            row.appendChild(cellFabricada);            
+            
+            let cellkgFabricados = document.createElement("td");
+            cellkgFabricados.textContent = (item.cantReportada * item.materiaPrimaCant).toFixed(2);
+            row.appendChild(cellkgFabricados);
+        }       
+        
+        tbody.appendChild(row);
+    });
 }
 
 function procesarOrdenes(ordenes){
@@ -448,13 +608,14 @@ function procesarElementosOp(op){
 		
 	op.items.forEach(elemento => {
 		if(centroTrabajoSelectedId == elemento.itemCentroTId){
-			if ([13, 17, 22].includes(Number(centroTrabajoSelectedId))) {
+			if (Number(centroTrabajoSelectedId) > 12) {
                 agregarOActualizarItem({
                     op: op.op,
                     un: op.un,
                     zona: op.zona,
                     itemOpId: elemento.itemOpId,
                     itemId: elemento.itemId,
+					itemArea: elemento.itemArea,
                     descripcion: elemento.itemDescripcion,
                     cantReq: elemento.cantReq,
                     cantReportada: elemento.cantReportadaPieza ?? 0,
@@ -473,6 +634,7 @@ function procesarElementosOp(op){
                     zona: op.zona,
                     itemOpId: elemento.itemOpId,
                     itemId: elemento.itemId,
+					itemArea: elemento.itemArea,
                     descripcion: elemento.itemDescripcion,
                     cantReq: elemento.cantReq,
                     cantReportada: elemento.cantReportadaPieza ?? 0,
@@ -487,13 +649,14 @@ function procesarElementosOp(op){
 		if(elemento.componentes && elemento.componentes.length > 0){
 			elemento.componentes.forEach(componente => {
                 if (centroTrabajoSelectedId == componente.materialCentroTId) {
-                    if ([13, 17, 22].includes(Number(centroTrabajoSelectedId))) {
+                    if (Number(centroTrabajoSelectedId) > 12) {
                         agregarOActualizarItem({
                             op: op.op,
                             un: op.un,
                             zona: op.zona,
                             itemOpId: elemento.itemOpId,
                             itemId: componente.materialId,
+							itemArea: elemento.itemArea,
                             descripcion: componente.materialDescripcion,
                             cantReq: elemento.cantReq * componente.materialCant,
                             cantReportada: componente.cantReportadaMaterial ?? 0,

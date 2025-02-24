@@ -78,6 +78,7 @@ public class VistaPiezasReportadasServiceImpl implements VistaPiezasReportadasSe
 		item.setMateriaPrimaId(registro.get(0).getMateriaPrimaId());
 		item.setMateriaPrimaDescripcion(registro.get(0).getMateriaPrimaDescripcion());
 		item.setMateriaPrimaCant(registro.get(0).getMateriaPrimaCant());
+		item.setItemArea(registro.get(0).getItemArea());
 		
 		Set<ComponenteDTO> mergedComponentes = registro.stream()
 				.flatMap(element -> element.getComponentes().stream())

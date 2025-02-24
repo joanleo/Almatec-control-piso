@@ -26,6 +26,7 @@ public class ItemDTO {
 	private Integer materiaPrimaId;
 	private String materiaPrimaDescripcion;
 	private BigDecimal materiaPrimaCant;
+	private BigDecimal itemArea;
 	
 	public ItemDTO() {
 		super();
@@ -187,6 +188,14 @@ public class ItemDTO {
 		this.materiaPrimaCant = materiaPrimaCant;
 	}
 
+	public BigDecimal getItemArea() {
+		return itemArea;
+	}
+
+	public void setItemArea(BigDecimal itemArea) {
+		this.itemArea = itemArea;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemDTO [itemOpId=" + itemOpId + ", itemId=" + itemId + ", itemDescripcion=" + itemDescripcion
@@ -196,9 +205,7 @@ public class ItemDTO {
 				+ ", cantReportadaPieza=" + cantReportadaPieza + ", cantPendientePieza=" + cantPendientePieza
 				+ ", componentes=" + componentes + ", prioridad=" + prioridad + ", materiaPrimaId=" + materiaPrimaId
 				+ ", materiaPrimaDescripcion=" + materiaPrimaDescripcion + ", materiaPrimaCant=" + materiaPrimaCant
-				+ "]";
+				+ ", itemArea=" + itemArea + "]";
 	}
-	
-	
 
 }

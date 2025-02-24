@@ -116,6 +116,9 @@ public class VistaPiezasReportadas {
 	
 	@Column(name = "cantidad_pendiente_material")
 	private BigDecimal cantPendienteMaterial;
+	
+	@Column(name = "item_area")
+	private BigDecimal itemArea;
 
 	public VistaPiezasReportadas() {
 		super();
@@ -261,6 +264,10 @@ public class VistaPiezasReportadas {
 		return cantPendienteMaterial;
 	}
 
+	public BigDecimal getItemArea() {
+		return itemArea;
+	}
+
 	@Override
 	public String toString() {
 		return "VistaPiezasReportadas [id=" + id + ", idOpIntegrapps=" + idOpIntegrapps + ", cliente=" + cliente
@@ -275,8 +282,7 @@ public class VistaPiezasReportadas {
 				+ ", materiaPrimaCant=" + materiaPrimaCant + ", estadoOp=" + estadoOp + ", un=" + un + ", zona=" + zona
 				+ ", grupo=" + grupo + ", marca=" + marca + ", cantReportadaPieza=" + cantReportadaPieza
 				+ ", cantPendientePieza=" + cantPendientePieza + ", cantReportadaMaterial=" + cantReportadaMaterial
-				+ ", cantPendienteMaterial=" + cantPendienteMaterial + "]";
+				+ ", cantPendienteMaterial=" + cantPendienteMaterial + ", itemArea=" + itemArea + "]";
 	}
-
 
 }
