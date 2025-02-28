@@ -1187,13 +1187,23 @@ async function regActualizarParada(codigo){
 		if(codigo == parada.codBarrasM){
 			paradaSelected = parada
 			console.log(parada)
-			document.getElementById("descripcion-parada").textContent = parada.nombre
 			modalParada = new bootstrap.Modal('#modal-parada')
+			const modalElement = document.getElementById('modal-parada')
+			    
+		    // Añadir un event listener para cuando el modal esté completamente mostrado
+		    modalElement.addEventListener('shown.bs.modal', function() {
+		      const elementTitle = document.getElementById("descripcion-parada")	      
+		      if(elementTitle){
+		        elementTitle.textContent = parada.nombre
+		      }
+		    })
+			
 			modalParada.show()
+			
 		}
 	}
 	if(!paradaSelected){
-		mostrarAlert("La parada digitada no existe.", "danger")
+		mostrarAlert("La parada ingresada no existe.", "danger")
 		return
 	}
 }
