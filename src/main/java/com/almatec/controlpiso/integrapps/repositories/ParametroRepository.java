@@ -12,6 +12,7 @@ public interface ParametroRepository extends JpaRepository<Parametro, Integer> {
 			+ "FROM pro_reporte_pieza_ct "
 			+ "WHERE item_parte_id = :idPerfil "
 			+ "AND item_id = :idItem "
+			+ "AND estado <> 'ANULADO' "
 			+ "GROUP BY item_id", nativeQuery = true)
 	Integer buscarCantidadesFabricadasPerfil(@Param("idItem") Long idItem, @Param("idPerfil")Integer idPerfil);
 
@@ -20,6 +21,7 @@ public interface ParametroRepository extends JpaRepository<Parametro, Integer> {
 			+ "WHERE Item_fab_id = :idItemFab "
 			+ "AND C_centrotrabajo_id = :idCT "
 			+ "AND item_id = :idItem "
+			+ "AND estado <> 'ANULADO' "
 			+ "GROUP BY item_id", nativeQuery = true)
 	Integer buscarCantidadesFabricadasConjunto(@Param("idItem") Long idItem, @Param("idItemFab")Integer idItemFab, 
 											@Param("idCT")Integer idCT);

@@ -126,7 +126,8 @@
 			                    <span th:class="${'badge ' + 
 			                        (reporte.estado == 'COMPLETO' ? 'bg-success' : 
 			                        (reporte.estado == 'ERROR' ? 'bg-danger' : 
-			                        (reporte.estado == 'PENDIENTE' ? 'bg-warning' : 'bg-secondary')))}"
+			                        (reporte.estado == 'PENDIENTE' ? 'bg-warning' : 
+									(reporte.estado == 'PENDIENTE' ? 'bg-secondary' : 'bg-secondary'))))}"
 			                        th:text="${reporte.estado}">
 			                    </span>
 			                </td>
@@ -146,17 +147,29 @@
 			                         th:text="${reporte.mensajeError}">
 			                    </div>
 			                </td>
-			                <td class="text-center">
-			                    <button th:if="${reporte.estado == 'PENDIENTE' or reporte.estado == 'ERROR'}"
-			                            class="btn btn-primary btn-sm"
-			                            onclick="reenviarReporte(this)"
-			                            th:data-reporte-id="${reporte.id}"
-			                            data-bs-toggle="tooltip"
-			                            data-bs-placement="top"
-			                            title="Reenviar">
-			                        <i class="fas fa-sync-alt"></i>
-			                    </button>
-			                </td>
+							<td class="text-center">
+							    <div class="btn-group" role="group" aria-label="Report Actions">
+							        <button th:if="${reporte.estado == 'ERROR' and #authorization.expression('hasAuthority(''ACCESS_REENVIAR_REPORTE_FABRICACION'')') }"
+							                class="btn btn-primary"
+							                onclick="reenviarReporte(this)"
+							                th:data-reporte-id="${reporte.id}"
+							                data-bs-toggle="tooltip"
+							                data-bs-placement="top"
+							                title="Reenviar reporte">
+							            <i class="fas fa-sync-alt"></i>
+							        </button>
+							        
+							        <button th:if="${reporte.estado == 'ERROR' and #authorization.expression('hasAuthority(''ACCESS_ANULAR_REPORTE_FABRICACION'')') }"
+							                class="btn btn-danger"
+							                onclick="anularReporte(this)"
+							                th:data-reporte-id="${reporte.id}"
+							                data-bs-toggle="tooltip"
+							                data-bs-placement="top"
+							                title="Anular reporte">
+							            <i class="fas fa-times"></i>
+							        </button>
+							    </div>
+							</td>
 			            </tr>
 	                </tbody>
 	            </table>
@@ -236,6 +249,27 @@
 			    </ul>
 			</nav>
 	    </div>
+		
+		<div class="modal fade" id="anularModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
+		    <div class="modal-dialog modal-dialog-centered">
+		        <div class="modal-content">
+		            <div class="modal-header border-0">
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body text-center pb-4">
+		                <i class="fas fa-exclamation-circle text-danger mb-4" style="font-size: 3rem;"></i>
+		                <h5 class="modal-title mb-3" id="anularModalLabel">Confirmar Anulacion</h5>
+		                <p class="text-muted">¿Está seguro que desea anular este reporte? Esta acción no se puede deshacer.</p>
+		                <!-- Campo oculto para guardar el ID -->
+		                <input type="hidden" id="anularReporteId">
+		            </div>
+		            <div class="modal-footer border-0 justify-content-center">
+		                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+		                <button type="button" class="btn btn-danger px-4" onclick="confirmAnular()">Anular</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
 	
 	    <!-- Scripts -->
 		<footer th:replace="fragments/footer :: footer"></footer>

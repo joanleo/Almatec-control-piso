@@ -17,7 +17,8 @@ public interface ReportePiezaCtRepository extends JpaRepository<ReportePiezaCt, 
 		    + "FROM pro_reporte_pieza_ct "
 		    + "WHERE Item_fab_id = :idItemFab "
 		    + "AND C_centrotrabajo_id = :idCT "
-		    + "AND item_id = :idItem", nativeQuery = true)
+		    + "AND item_id = :idItem "
+		    + "AND estado <> 'ANULADO' ", nativeQuery = true)
 	Integer buscarCantidadesFabricadasConjunto(@Param("idItem") Long idItem, @Param("idItemFab")Integer idItemFab, 
 											@Param("idCT")Integer idCT);
 
@@ -25,7 +26,8 @@ public interface ReportePiezaCtRepository extends JpaRepository<ReportePiezaCt, 
 		    + "FROM pro_reporte_pieza_ct "
 		    + "WHERE item_parte_id = :idPerfil "
 		    + "AND C_centrotrabajo_id = :idCT "
-		    + "AND item_id = :idItem", nativeQuery = true)
+		    + "AND item_id = :idItem "
+		    + "AND estado <> 'ANULADO' ", nativeQuery = true)
 	Integer buscarCantidadesFabricadasPerfil(@Param("idItem") Long idItem, @Param("idPerfil")Integer idPerfil, 
 			@Param("idCT")Integer idCT);
 	

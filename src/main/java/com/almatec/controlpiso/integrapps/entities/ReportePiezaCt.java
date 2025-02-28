@@ -19,7 +19,8 @@ public class ReportePiezaCt {
         PENDIENTE,          // Reporte guardado inicialmente
         PROCESANDO,         // Durante el envío al ERP
         COMPLETO,           // proceso exitoso
-        ERROR              // Error en algún paso
+        ERROR,              // Error en algún paso
+        ANULADO
     }
 	
 	@Id

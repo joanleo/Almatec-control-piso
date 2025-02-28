@@ -586,4 +586,51 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		return reporteDTO;
 	}
 
+	@Override
+	@Transactional
+	public ResponseMessage anularReporte(Integer idReporte) throws ServiceException {
+	    ResponseMessage response = new ResponseMessage();
+	    
+	    ReportePiezaCt reporte = reporteRepository.findById(idReporte)
+	        .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado: " + idReporte));
+	    
+	    if (!Estado.ERROR.equals(reporte.getEstado())) {
+	        response.setError(true);
+	        response.setMensaje("Solo se pueden anular reportes en estado de ERROR");
+	        return response;
+	    }
+	    
+	    // Reverse quantity update in ItemOp
+        ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
+        
+        if (itemOp != null && itemOp.getCantCumplida() != null) {
+            // Subtract the reported quantity from the cumulative quantity
+            Double cantidadActual = itemOp.getCantCumplida();
+            Double cantidadReportada = reporte.getCant().doubleValue();
+            
+            if (cantidadActual >= cantidadReportada) {
+                itemOp.setCantCumplida(cantidadActual - cantidadReportada);
+                itemOpService.guardarItemOp(itemOp);
+                log.info("Cantidad cumplida en ItemOp {} actualizada: {} → {}", 
+                    itemOp.getId(), cantidadActual, itemOp.getCantCumplida());
+            } else {
+                log.warn("No se puede restar la cantidad reportada ({}) de la cantidad cumplida actual ({})", 
+                    cantidadReportada, cantidadActual);
+                response.setError(true);
+                response.setMensaje("No se puede anular el reporte porque la cantidad reportada excede la cantidad cumplida actual");
+                return response;
+            }
+        }
+	    
+	    // Update report status to ANULADO
+	    reporte.setEstado(Estado.ANULADO);
+	    reporte.setUltimoIntento(LocalDateTime.now());
+	    reporte.setMensajeError(reporte.getMensajeError() + " | Anulado manualmente.");
+	    reporteRepository.save(reporte);
+	    
+	    response.setError(false);
+	    response.setMensaje("Reporte anulado correctamente y cantidad en OP actualizada");
+	    return response;
+	}
+
 }

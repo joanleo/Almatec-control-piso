@@ -40,6 +40,7 @@ import com.almatec.controlpiso.integrapps.dtos.ListaMDTO;
 import com.almatec.controlpiso.integrapps.dtos.OpProduccionDTO;
 import com.almatec.controlpiso.integrapps.dtos.OperarioRegistradoDTO;
 import com.almatec.controlpiso.integrapps.dtos.ProyectoProduccionDTO;
+import com.almatec.controlpiso.integrapps.dtos.ResponseMessage;
 import com.almatec.controlpiso.integrapps.dtos.SolicitudMariaPrimaDTO;
 import com.almatec.controlpiso.integrapps.dtos.SpecItemLoteDTO;
 import com.almatec.controlpiso.integrapps.dtos.UsuarioDTO;
@@ -337,6 +338,20 @@ public class ProduccionController {
 	                "mensaje", "Error interno al reenviar el reporte: " + e.getMessage(),
 	                "tipo", "danger"
 	            ));
+	    }
+	}
+	
+	@PostMapping("/anular-reporte/{idReporte}")
+	public ResponseEntity<ResponseMessage> anularReporte(@PathVariable Integer idReporte) {
+	    try {
+	        ResponseMessage response = reportePiezaCtService.anularReporte(idReporte);
+	        if (response.getError()) {
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        ResponseMessage errorResponse = new ResponseMessage(true, "Error al anular reporte: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
 	}
 	

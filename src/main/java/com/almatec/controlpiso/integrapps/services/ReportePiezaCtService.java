@@ -28,4 +28,6 @@ public interface ReportePiezaCtService {
 
 	void reprocesarReporte(Integer idReporte) throws ServiceException, IOException;
 
+	ResponseMessage anularReporte(Integer idReporte) throws ServiceException;
+
 }
