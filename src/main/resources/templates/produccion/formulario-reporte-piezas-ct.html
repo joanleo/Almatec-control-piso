@@ -47,7 +47,7 @@
 							<div class="row">
 	                            <div class="col-md-3 mb-3">
 	                                <label for="id-item" class="form-label">Ref:</label>
-	                                <input type="text" id="id-item" class="form-control" th:value="*{idItem} + '-' + (*{idParte != 0} ? *{idParte} : *{idItemFab})"  required readonly/>                   
+	                                <input type="text" id="id-item" class="form-control" th:value=" 'GY' + (*{idParte != 0} ? *{idParte} : *{idItemFab})"  required readonly/>                   
 	                            </div>
 								<div class="col-md-9 mb-3">
 	                                <label for="item" class="form-label">Item:</label>
