@@ -12,11 +12,7 @@ public class ParadaDTO {
     @NotNull(message = "descripcion no puede ser nulo")
     @Size(max = 15, message = "descripcion no puede exceder 15 caracteres")
     private String descripcion;
-    
-    @NotNull(message = "tipo no puede ser nulo")
-    @Size(max = 15, message = "tipo no puede exceder 15 caracteres")
-    private String tipo;
-    
+       
     @NotNull(message = "activo no puede ser nulo")
     private Boolean isActivo;
     
@@ -28,61 +24,41 @@ public class ParadaDTO {
 		super();
 	}
 
-
 	public Long getId() {
 		return id;
 	}
-
 
 	public String getNombre() {
 		return nombre;
 	}
 
-
 	public String getDescripcion() {
 		return descripcion;
 	}
-
-
-	public String getTipo() {
-		return tipo;
-	}
-
 
 	public Boolean getIsActivo() {
 		return isActivo;
 	}
 
-
 	public String getCodBarrasM() {
 		return codBarrasM;
 	}
-
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
 
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-
-
 	public void setIsActivo(Boolean isActivo) {
 		this.isActivo = isActivo;
 	}
-
 
 	public void setCodBarrasM(String codBarrasM) {
 		this.codBarrasM = codBarrasM;

@@ -1,7 +1,9 @@
 package com.almatec.controlpiso.produccion.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -22,6 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.almatec.controlpiso.integrapps.entities.Parada;
 import com.almatec.controlpiso.integrapps.services.ParadaService;
 import com.almatec.controlpiso.produccion.dtos.ParadaDTO;
+import com.almatec.controlpiso.produccion.service.ParadaPdfService;
+import com.google.zxing.WriterException;
+import com.lowagie.text.DocumentException;
 
 @Controller
 @RequestMapping("/paradas")
@@ -29,6 +34,9 @@ public class ParadaController {
 
     @Autowired
     private ParadaService paradaService;
+    
+    @Autowired
+    private ParadaPdfService paradaPdfService;
 
     @GetMapping
     public ResponseEntity<List<Parada>> obtenerParadas() {
@@ -45,7 +53,7 @@ public class ParadaController {
     public String mostrarFormularioCrear(Model model) {
         ParadaDTO parada = new ParadaDTO();
         parada.setIsActivo(true);
-        model.addAttribute("parada", parada);  // Cambiado de "proParada" a "parada" para consistencia
+        model.addAttribute("parada", parada);
         return "produccion/paradas/formulario";
     }
 
@@ -60,7 +68,7 @@ public class ParadaController {
 
         paradaService.crear(paradaDTO, auth.getName());
         redirectAttributes.addFlashAttribute("mensaje", "Parada creada exitosamente");
-        return "redirect:/paradas/listar";  // Corregida la ruta de redirección
+        return "redirect:/paradas/listar";
     }
 
     @GetMapping("/editar/{id}")
@@ -68,13 +76,13 @@ public class ParadaController {
         Parada parada = paradaService.obtenerPorId(id);
         ParadaDTO paradaDTO = new ParadaDTO();
         BeanUtils.copyProperties(parada, paradaDTO);
-        model.addAttribute("parada", paradaDTO);  // Usando consistentemente "parada"
+        model.addAttribute("parada", paradaDTO);
         return "produccion/paradas/formulario";
     }
 
     @PostMapping("/editar/{id}")
     public String actualizarParada(@PathVariable Long id,
-                                  @Valid @ModelAttribute("parada") ParadaDTO paradaDTO,  // Cambiado a minúscula y consistente
+                                  @Valid @ModelAttribute("parada") ParadaDTO paradaDTO,
                                   BindingResult result,
                                   RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -83,13 +91,18 @@ public class ParadaController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         paradaService.actualizar(id, paradaDTO, auth.getName());
         redirectAttributes.addFlashAttribute("mensaje", "Parada actualizada exitosamente");
-        return "redirect:/paradas/listar";  // Corregida la ruta de redirección
+        return "redirect:/paradas/listar";
     }
 
     @PostMapping("/eliminar/{id}")
     public String eliminarParada(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         paradaService.eliminar(id);
         redirectAttributes.addFlashAttribute("mensaje", "Parada eliminada exitosamente");
-        return "redirect:/paradas/listar";  // Corregida la ruta de redirección
+        return "redirect:/paradas/listar";
+    }
+    
+    @GetMapping("/exportar-pdf")
+	public void generarBarCodeOperarios(HttpServletResponse response) throws DocumentException, IOException, WriterException {
+    	paradaPdfService.generarBarCodeParadas(response);
     }
 }
