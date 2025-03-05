@@ -157,10 +157,11 @@ public class ExportOpCentroTrabajoToExcel {
 
     private void obtenerFilasDeOp(OrdenProduccionResumen op, Map<String, RowItemPdf> uniqueRows) {
         for (ItemDTO item : op.getItems()) {
+        	System.out.println(item);
             if (Objects.equals(item.getItemCentroTId(), centroTrabajo.getId())) {
                 agregarOActualizarFila(uniqueRows, op, item, item.getItemDescripcion(), 
                     item.getCantReq(), item.getItemPeso(), item.getItemLongitud(), 
-                    item.getItemId().toString(), item.getCantCumplida().intValue());
+                    item.getItemId().toString(), item.getCantReportadaPieza());
             }
             
             for (ComponenteDTO componente : item.getComponentes()) {
