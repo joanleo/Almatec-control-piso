@@ -396,12 +396,23 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		response.setError(true);
 	}
 
-	private void actualizarCantidadCumplida(ReporteDTO reporteDTO, ItemOp item) {
-		if (item.getCantCumplida() == null || item.getCantCumplida() == 0) {
-			item.setCantCumplida(reporteDTO.getCantReportar().doubleValue());
-		} else {
-			item.setCantCumplida(item.getCantCumplida() + reporteDTO.getCantReportar().doubleValue());
-		}
+	private void actualizarCantidadCumplida(ReporteDTO reporteDTO, ItemOp item) throws ServiceException {
+		double newCantCumplida;
+	    
+	    if (item.getCantCumplida() == null || item.getCantCumplida() == 0) {
+	        newCantCumplida = reporteDTO.getCantReportar().doubleValue();
+	    } else {
+	        newCantCumplida = item.getCantCumplida() + reporteDTO.getCantReportar().doubleValue();
+	    }
+	    
+	    // Validate that the new accumulated quantity doesn't exceed the required quantity
+	    if (newCantCumplida > item.getCant()) {
+	        throw new ServiceException("La cantidad cumplida (" + newCantCumplida + 
+	                                  ") no puede ser mayor que la cantidad requerida (" + 
+	                                  item.getCant() + ")");
+	    }
+	    
+	    item.setCantCumplida(newCantCumplida);
 	}
 
 	private ReportePiezaCt crearEntidadReporte(ReporteDTO reporteDTO) {
