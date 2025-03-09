@@ -371,28 +371,33 @@ class DataTableHandler {
 				        });
 				    },
 					exportOptions: {
-						modifier: {
-	                        page: 'all'    // Esto es clave - indica que exporte todas las páginas
-	                    },
-			            columns: ':not(:last-child)',
-			            format: {
-							body: function(data, row, column, node) {
-	                            // Removemos el formato de número si existe
-	                            if (typeof data === 'string') {
-	                                // Primero, removemos los puntos de miles
-	                                data = data.replace(/\./g, '');
-	                                // Luego reemplazamos la coma decimal por punto
-	                                data = data.replace(',', '.');
-	                                
-	                                // Si el resultado es un número válido, lo retornamos como número
-	                                if (!isNaN(data)) {
-	                                    return parseFloat(data);
-	                                }
-	                            }
-	                            return data;
-	                        }
-			            }
-			        },
+					    modifier: {
+					        page: 'all'    // Esto es clave - indica que exporte todas las páginas
+					    },
+					    columns: ':not(:last-child)',
+					    format: {
+					        body: function(data, row, column, node) {
+					            // Solo aplicamos el formato a las columnas numéricas específicas (4, 6 para peso)
+					            // Y columnas 3, 5 para cantidades
+					            if (column === 4 || column === 6 || column === 3 || column === 5) {
+					                // Verificamos si el dato parece un número formateado
+					                if (typeof data === 'string' && /^[\d.,]+$/.test(data.trim())) {
+					                    // Primero, removemos los puntos de miles
+					                    let cleanData = data.replace(/\./g, '');
+					                    // Luego reemplazamos la coma decimal por punto
+					                    cleanData = cleanData.replace(',', '.');
+					                    
+					                    // Si el resultado es un número válido, lo retornamos como número
+					                    if (!isNaN(cleanData)) {
+					                        return parseFloat(cleanData);
+					                    }
+					                }
+					            }
+					            // Para el resto de las columnas, devolvemos el dato sin modificar
+					            return data;
+					        }
+					    }
+					},
 					customize: function(xlsx) {
 	                    let sheet = xlsx.xl.worksheets['sheet1.xml'];
 	                    $('row c[r^="E"], row c[r^="G"]', sheet).each(function() {
