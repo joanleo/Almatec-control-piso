@@ -132,7 +132,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
         for (ItemDTO item : op.getItems()) {
             if (Objects.equals(item.getItemCentroTId(), centroTrabajo.getId())) {
                 agregarOActualizarFila(uniqueRows, op, item, item.getItemDescripcion(), item.getCantReq(), 
-                         item.getItemPeso(), item.getItemLongitud(), item.getItemId().toString(), item.getCantCumplida().intValue());
+                         item.getItemPeso(), item.getItemLongitud(), item.getItemId().toString(), item.getCantReportadaPieza());
             }
             for (ComponenteDTO componente : item.getComponentes()) {
                 if (Objects.equals(componente.getMaterialCentroTId(), centroTrabajo.getId())) {

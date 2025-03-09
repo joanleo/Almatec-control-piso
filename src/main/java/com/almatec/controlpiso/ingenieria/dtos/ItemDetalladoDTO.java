@@ -11,9 +11,8 @@ public class ItemDetalladoDTO {
     private String plano;
     private BigDecimal pesoBruto;
     private BigDecimal pesoNeto;
-    private List<ComponenteDTO> componentes= new ArrayList<>();;
-    private List<MateriaPrimaDTO> materiaPrima= new ArrayList<>();;
-    private List<RutaItemDTO> rutaFabricacion= new ArrayList<>();;
+    private List<ComponenteDTO> componentes= new ArrayList<>();
+    private List<MateriaPrimaDTO> materiaPrima= new ArrayList<>();
     
 	public ItemDetalladoDTO() {
 		super();
@@ -88,7 +87,5 @@ public class ItemDetalladoDTO {
 		return "ItemDetalladoDTO [idItem=" + idItem + ", descripcion=" + descripcion + ", tipo=" + tipo + ", plano="
 				+ plano + ", pesoBruto=" + pesoBruto + ", pesoNeto=" + pesoNeto + ", componentes=" + componentes
 				+ ", materiaPrima=" + materiaPrima + "]";
-	}
-    
-    
+	}  
 }
