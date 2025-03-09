@@ -89,32 +89,41 @@ function agregarItem(){
 	console.log(idItem)
 }
 
-function fillTableItems(idItem){
-	let tbody = document.getElementById("body-detalle-memo")
-	console.log(idItem)
-	const item = itemsOp.find(item=> item.id == parseInt(idItem))
-	console.log(item)
-	let row = document.createElement("tr")
-	
-	let cellId = document.createElement('td')
-	cellId.textContent = item.id
-	row.appendChild(cellId)
-	
-	let cellRef = document.createElement('td')
-	cellRef.textContent = 'GY'+item.idItemFab
-	row.appendChild(cellRef)
-	
-	let cellDescripcion = document.createElement('td')
-	cellDescripcion.textContent = item.descripcion
-	row.appendChild(cellDescripcion)
-	
-	let cellCantOp = document.createElement('td')
-	cellCantOp.classList.add("text-nowrap")
-	cellCantOp.innerHTML = item.cant
-	row.appendChild(cellCantOp)
-	
-	let cellCantMemo = document.createElement("td")
-	let inputCantMemo = document.createElement("input")
+function fillTableItems(idItem) {
+    let tbody = document.getElementById("body-detalle-memo")
+    const item = itemsOp.find(item => item.id == parseInt(idItem))
+    
+    // Crear una fila con atributos de datos para facilitar el acceso
+    let row = document.createElement("tr")
+    row.dataset.itemId = item.id
+    row.dataset.itemRef = 'GY' + item.idItemFab
+    row.dataset.itemDescripcion = item.descripcion
+    row.dataset.itemCantOp = item.cant
+    
+    // Crear celdas con clases que las identifiquen
+    let cellId = document.createElement('td')
+    cellId.classList.add('cell-id')
+    cellId.textContent = item.id
+    row.appendChild(cellId)
+    
+    let cellRef = document.createElement('td')
+    cellRef.classList.add('cell-ref')
+    cellRef.textContent = 'GY' + item.idItemFab
+    row.appendChild(cellRef)
+    
+    let cellDescripcion = document.createElement('td')
+    cellDescripcion.classList.add('cell-descripcion')
+    cellDescripcion.textContent = item.descripcion
+    row.appendChild(cellDescripcion)
+    
+    let cellCantOp = document.createElement('td')
+    cellCantOp.classList.add('cell-cant-op', 'text-nowrap')
+    cellCantOp.textContent = item.cant
+    row.appendChild(cellCantOp)
+    
+    let cellCantMemo = document.createElement("td")
+    cellCantMemo.classList.add('cell-cant-memo')
+    let inputCantMemo = document.createElement("input")
     inputCantMemo.classList.add("form-control")
     inputCantMemo.type = "number"
     inputCantMemo.min = "1"
@@ -123,28 +132,45 @@ function fillTableItems(idItem){
     }
     cellCantMemo.appendChild(inputCantMemo)
     row.appendChild(cellCantMemo)
-	
-	let cellAccion = document.createElement("td")
-	cellAccion.innerHTML = `
-		<select class="form-control" required>
-		   <option value="" disabled selected hidden>Seleccionar..</option>
-           <option value="Adicionar">Adicionar</option>
-           <option value="Restar">Restar</option>
-       </select>
-	`
-	row.appendChild(cellAccion)
-	
-	let cellButton = document.createElement("td")
-	let button = document.createElement("button")
-	button.setAttribute("type", "button")
-	button.classList.add("btn", "btn-danger")
-	button.onclick = eliminarFila
-	button.textContent = "Remover"
-	cellButton.appendChild(button)
-	row.appendChild(cellButton)
-	
-	tbody.appendChild(row)
-		
+    
+    let cellAccion = document.createElement("td")
+    cellAccion.classList.add('cell-accion')
+    let selectAccion = document.createElement("select")
+    selectAccion.classList.add("form-control")
+    selectAccion.required = true
+    
+    let optionDefault = document.createElement("option")
+    optionDefault.value = ""
+    optionDefault.disabled = true
+    optionDefault.selected = true
+    optionDefault.hidden = true
+    optionDefault.textContent = "Seleccionar.."
+    
+    let optionAdicionar = document.createElement("option")
+    optionAdicionar.value = "Adicionar"
+    optionAdicionar.textContent = "Adicionar"
+    
+    let optionRestar = document.createElement("option")
+    optionRestar.value = "Restar"
+    optionRestar.textContent = "Restar"
+    
+    selectAccion.appendChild(optionDefault)
+    selectAccion.appendChild(optionAdicionar)
+    selectAccion.appendChild(optionRestar)
+    cellAccion.appendChild(selectAccion)
+    row.appendChild(cellAccion)
+    
+    let cellButton = document.createElement("td")
+    cellButton.classList.add('cell-button')
+    let button = document.createElement("button")
+    button.setAttribute("type", "button")
+    button.classList.add("btn", "btn-danger")
+    button.onclick = eliminarFila
+    button.textContent = "Remover"
+    cellButton.appendChild(button)
+    row.appendChild(cellButton)
+    
+    tbody.appendChild(row)
 }
 
 function eliminarFila(event){
@@ -174,8 +200,8 @@ function validarItems() {
     }
     
     for (let row of rows) {
-        const cantidad = row.cells[3].querySelector('input').value;
-        const accion = row.cells[4].querySelector('select').value;
+        const cantidad = row.querySelector('.cell-cant-memo input').value;
+        const accion = row.querySelector('.cell-accion select').value;
         
         if (cantidad === '' || accion === '') {
             return false;
@@ -185,7 +211,7 @@ function validarItems() {
     return true;
 }
 
-async function crearMemo(){
+async function crearMemo() {
     spinner.removeAttribute('hidden');
     console.log("Creando memo");
     const idUsuario = document.getElementById('usuarioId').value;
@@ -193,14 +219,15 @@ async function crearMemo(){
     const rows = tbody.querySelectorAll('tr');
     let items = [];
     
-    rows.forEach(row=>{
+    rows.forEach(row => {
         const item = {
-            idItemOp: row.cells[0].textContent,
-            cantidad: row.cells[3].querySelector('input').value,
-            operacion: row.cells[4].querySelector('select').value
+            idItemOp: row.querySelector('.cell-id').textContent,
+            cantidad: row.querySelector('.cell-cant-memo input').value,
+            operacion: row.querySelector('.cell-accion select').value
         };
         items.push(item);
     });
+    
     const observacion = document.getElementById('observaciones').value;
     
     const memo = {
