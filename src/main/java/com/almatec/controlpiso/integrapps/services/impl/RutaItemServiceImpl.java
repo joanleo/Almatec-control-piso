@@ -26,12 +26,12 @@ public class RutaItemServiceImpl implements RutaItemService {
 
 	@Override
 	public List<RutaItem> buscarRutaItem(Integer idItem) {
-		return rutaItemRepo.findByIdItem(idItem);
+		return rutaItemRepo.findByIdItemAndIsActivoTrue(idItem);
 	}
 
 	@Override
 	public List<RutaItemDTO> obtenerRutaPorItem(Integer idItem) {
-		List<RutaItem> rutasItem = rutaItemRepo.findByIdItem(idItem);
+		List<RutaItem> rutasItem = rutaItemRepo.findByIdItemAndIsActivoTrue(idItem);
 		
 		return rutasItem.stream()
 	            .map(ruta -> {

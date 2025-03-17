@@ -8,6 +8,6 @@ import com.almatec.controlpiso.integrapps.entities.RutaItem;
 
 public interface RutaItemRepository extends JpaRepository<RutaItem, Integer> {
 
-	List<RutaItem> findByIdItem(Integer idItem);
+	List<RutaItem> findByIdItemAndIsActivoTrue(Integer idItem);
 
 }
