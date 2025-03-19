@@ -21,12 +21,12 @@
 	<body>
 		<div class="container">
 			<header>
-				<h1>Nueva Remisión Creada</h1>
+				<h1>Nueva Lista de Empaque Creada</h1>
 			</header>
 			<main class="content">
 				<section>
-					<h2>Detalles de la Remisión</h2>
-					<p><strong>Remisión:</strong> <span th:text="${idRemision}">RM-12345</span></p>
+					<h2>Detalles de la Lista de Empaque</h2>
+					<p><strong>Remisión:</strong> <span th:text="${idRemision}">LE-12345</span></p>
 					<p><strong>Orden de Producción:</strong> <span th:text="${op}">IF-6789</span></p>
 					<p><strong>Cliente:</strong> <span th:text="${cliente}">Cliente</span></p>
 					<p><strong>Proyecto:</strong> <span th:text="${proyecto}">Proyecto</span></p>
@@ -52,7 +52,7 @@
 				</section>
 				<section>
 					<h2>Observaciones</h2>
-					<p th:text="${observaciones}">Observaciones sobre la remisión...</p>
+					<p th:text="${observaciones}">Observaciones sobre la lista de empaque...</p>
 				</section>
 				<section>
 					<h2>Próximos Pasos</h2>

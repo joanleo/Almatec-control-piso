@@ -6,14 +6,16 @@ document.addEventListener('DOMContentLoaded', function(){
 	let tbodyRemisiones = document.getElementById('body-remisiones')
 	let rows = tbodyRemisiones.querySelectorAll('tr')
 	rows.forEach(row=>{
-		row.addEventListener('click', async function(event){
-			const idRemision = parseInt(row.cells[0].textContent.split('-')[1])
-			document.getElementById('noRm').value = idRemision
-			document.getElementById('fechaCreacion').value = row.cells[4].textContent
-			document.getElementById('opSel').value = row.cells[1].textContent
-			document.getElementById('cliente').value = row.cells[2].textContent
-			
-			document.getElementById('remSel').removeAttribute('hidden')
+		row.addEventListener('click', async function(){
+		
+			const idRemision = this.dataset.idRemision.textContent.split('-')[1];
+			      
+		    document.getElementById('noRm').value = idRemision;
+		    document.getElementById('fechaCreacion').value = this.dataset.fecha;
+		    document.getElementById('opSel').value = this.dataset.op;
+		    document.getElementById('cliente').value = this.dataset.cliente;
+		     
+		    document.getElementById('remSel').removeAttribute('hidden');
 			
 			const detallesRemision = await obtenerDetalleRemision(idRemision)
 			fillTableDetalleRemision(detallesRemision)
@@ -70,11 +72,11 @@ function actualizarTablaRemisiones(remisiones) {
 		row.style.cursor = 'pointer';
 		
 		row.innerHTML = `
-			<td>RM-${rem.idRemision}</td>
-			<td>${rem.op}</td>
-			<td>${rem.cliente}</td>
-			<td>${rem.proyecto}</td>
-			<td>${new Date(rem.fechaCreacion).toLocaleDateString()}</td>
+			<td class="remision-id">LE-${rem.idRemision}</td>
+			<td class="remision-op">${rem.op}</td>
+			<td class="remision-cliente">${rem.cliente}</td>
+			<td class="remision-proyecto">${rem.proyecto}</td>
+			<td class="remision-fecha">${new Date(rem.fechaCreacion).toLocaleDateString()}</td>
 		`;
 		row.addEventListener('click', async function() {
 			const idRemision = rem.idRemision;
@@ -134,6 +136,20 @@ function actualizarPaginacion(data) {
 	pagination.appendChild(nextLi);
 }
 
+async function obtenerEncabezadoRemision(idRemision){
+	try{
+		const request = await fetch(`/almacen/remisiones/${idRemision}/encabezado-remision`)
+		if(!request.ok){
+			console.log(await request.json())
+			throw new Error("Error al tratar de obtener el encabezado de la solicitud")
+		}
+		const response = await request.json()
+		console.log(response)
+		return response
+	}catch (error){
+		console.log(error)
+	}
+}
 
 async function obtenerDetalleRemision(idRemision){
 	try{
@@ -159,23 +175,28 @@ function fillTableDetalleRemision(detalles){
 		
 		let cellItem = document.createElement('td')
 		cellItem.textContent = item.idItemOp
+		cellItem.classList.add("detalle-item")
 		row.appendChild(cellItem)
 		
 		let cellDescripcion = document.createElement('td')
 		cellDescripcion.textContent = item.descripcion
+		cellItem.classList.add("detalle-descripcion")
 		row.appendChild(cellDescripcion)
 		
 		let cellCant = document.createElement('td')
 		cellCant.textContent = item.cant
+		cellItem.classList.add("detalle-cantidad")
 		row.appendChild(cellCant)
 		
 		let cellPeso = document.createElement('td')
 		cellPeso.textContent = item.peso
+		cellItem.classList.add("detalle-peso")
 		row.appendChild(cellPeso)
 		
 		const pesoTtl = item.cant * item.peso
 		let cellPesoTtl = document.createElement('td')
 		cellPesoTtl.textContent = pesoTtl.toFixed(3)
+		cellItem.classList.add("detalle-peso-total")
 		row.appendChild(cellPesoTtl)
 		
 		
@@ -444,7 +465,7 @@ function regresarADatosTransporte() {
 // Función auxiliar para actualizar el contenido de la previsualización
 function actualizarContenidoPreview(idRemision, fechaCreacion, opSel, cliente, datosTransporte) {
     // Actualizamos todos los campos de la previsualización como antes...
-    document.getElementById('preview-remision-number').textContent = `RM-${idRemision}`;
+    document.getElementById('preview-remision-number').textContent = `LE-${idRemision}`;
     document.getElementById('preview-cliente').textContent = cliente;
     document.getElementById('preview-op').textContent = opSel;
     document.getElementById('preview-fecha').textContent = fechaCreacion;
@@ -473,9 +494,17 @@ function actualizarContenidoPreview(idRemision, fechaCreacion, opSel, cliente, d
 /**
  * Actualiza la información básica en el modal de vista previa
  */
-function actualizarInformacionBasica(idRemision, fecha, op, cliente) {
-    document.getElementById('preview-remision-number').textContent = `RM-${idRemision}`;
+async function actualizarInformacionBasica(idRemision, fecha, op, cliente) {
+	//Obtenemos el encabezado de la remision
+	const encabezado = await obtenerEncabezadoRemision(idRemision)
+    document.getElementById('preview-remision-number').textContent = `LE-${idRemision}`;
     document.getElementById('preview-cliente').textContent = cliente;
+	
+	document.getElementById('preview-proyecto').textContent = encabezado.proyecto.split("-")[1];
+	document.getElementById('preview-direccion').textContent = encabezado.direccion;
+	document.getElementById('preview-ciudad').textContent = encabezado.ciudad;
+	document.getElementById('preview-contacto').textContent = encabezado.contacto + "  ||  " + encabezado.celular;	
+	
     document.getElementById('preview-op').textContent = op;
     document.getElementById('preview-fecha').textContent = fecha;
 }
@@ -576,7 +605,7 @@ function imprimirDatos(){
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `RM-${idRemision}.pdf`
+        a.download = `LE-${idRemision}.pdf`
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)

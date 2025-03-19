@@ -208,6 +208,12 @@ public class AlmacenController {
 		return ResponseEntity.ok(detalleRemision);
 	}
 	
+	@GetMapping("/remisiones/{idRemision}/encabezado-remision")
+	public ResponseEntity<EncabezadoRemision> obtenerEncabezadoRemision(@PathVariable Long idRemision){		
+		EncabezadoRemision encabezadoRemision = almacenService.obtenerEncabezadoRemisionPorId(idRemision);		
+		return ResponseEntity.ok(encabezadoRemision);
+	}
+	
 	@PostMapping("/remisiones/{idRemision}/pdf/generar")
 	public void generarPdfRemision(HttpServletResponse response, 
 			@PathVariable Long idRemision,

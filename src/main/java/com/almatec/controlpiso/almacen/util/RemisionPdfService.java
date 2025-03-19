@@ -574,7 +574,7 @@ public class RemisionPdfService extends PdfPageEventHelper{
 	        
 	     // Agregar el código de barras
 	        Barcode128 barcode = new Barcode128();
-	        barcode.setCode("RM-" + encabezado.getIdRemision());
+	        barcode.setCode("LE-" + encabezado.getIdRemision());
 	        barcode.setCodeType(Barcode128.CODE128);
 	        Image barcodeImage = barcode.createImageWithBarcode(cb, null, null);
 	        barcodeImage.setAbsolutePosition(document.right() - 60, document.top() - 30);

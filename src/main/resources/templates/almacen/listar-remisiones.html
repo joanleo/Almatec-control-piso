@@ -65,11 +65,11 @@
 						</thead>
 						<tbody id="body-remisiones">
 							<tr	th:each="rem : ${remisionesPage.content}">
-								<td th:text="${'RM' + '-' + rem.idRemision}"></td>
-								<td th:text="${rem.op}"></td>
-								<td th:text="${rem.cliente}"></td>
-								<td th:text="${rem.proyecto}"></td>
-								<td th:text="${#dates.format(rem.fechaCreacion, 'yyyy-MM-dd')}"></td>
+								<td class="remision-id" th:text="${'LE' + '-' + rem.idRemision}"></td>
+								<td class="remision-op" th:text="${rem.op}"></td>
+								<td class="remision-cliente" th:text="${rem.cliente}"></td>
+								<td class="remision-proyecto" th:text="${rem.proyecto}"></td>
+								<td class="remision-fecha" th:text="${#dates.format(rem.fechaCreacion, 'yyyy-MM-dd')}"></td>
 							</tr>		
 						</tbody>
 					</table>
@@ -97,7 +97,7 @@
 				<h3>Lista de Empaque selecionada:</h3>
 				<div style="display: flex; justify-content: space-between;">
 					<div class="input-group my-3 size-s" >
-			           <span class="input-group-text"># RM</span>
+			           <span class="input-group-text"># LE</span>
 			           <input type="text" class="form-control" id="noRm" readonly style="text-align: right;" />
 			    	</div>
 					<div class="input-group my-3 mx-3" style="width: 12rem;">
@@ -162,7 +162,7 @@
 		    <div class="modal-dialog modal-xl">
 		        <div class="modal-content">
 		            <div class="modal-header">
-		                <h5 class="modal-title">Vista Previa de Remisión</h5>
+		                <h5 class="modal-title">Vista Previa de Lista de Empaque</h5>
 		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		            </div>
 		            <div class="modal-body">
@@ -170,10 +170,12 @@
 		                <div class="row mb-4">
 		                    <div class="col-3">
 		                        <!-- Espacio para el logo de la empresa -->
-		                        <div style="height: 80px;" class="bg-light">Logo</div>
+		                        <div style="height: 80px;" class="bg-light">
+									<img th:src="@{/imgs/logo-guayacan-mini.png}" alt="logo" />
+								</div>
 		                    </div>
 		                    <div class="col-6 text-center">
-		                        <h3 class="mb-2">REMISION DE DESPACHOS</h3>
+		                        <h3 class="mb-2">LISTA DE EMPAQUE</h3>
 		                        <h4 class="mb-2">ALMATEC LOGISTICA INTELIGENTE S.A.S.</h4>
 		                        <h5>Nit: 900951036-1</h5>
 		                    </div>
@@ -215,6 +217,11 @@
 		                            <div class="col-md-8" id="preview-fecha"></div>
 		                        </div>
 		                    </div>
+							
+							<div class="row">
+								<div class="col-md-2"><strong>Contacto:</strong></div>
+	                            <div class="col-md-8" id="preview-contacto"></div>
+							</div>
 		                </div>
 
 		                <!-- Sección de información del transporte -->

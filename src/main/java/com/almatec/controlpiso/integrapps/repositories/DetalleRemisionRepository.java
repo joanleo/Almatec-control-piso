@@ -20,7 +20,8 @@ public interface DetalleRemisionRepository extends JpaRepository<DetalleRemision
 			+ "ON remision_detalle.id_item_op = items_op.item_id "
 			+ "LEFT JOIN items_fabrica "
 			+ "ON items_op.Item_fab_Id = items_fabrica.Item_fab_Id "
-			+ "WHERE   (remision_detalle.id_remision = :idRemision)", nativeQuery = true)
+			+ "WHERE   (remision_detalle.id_remision = :idRemision) "
+			+ "ORDER BY remision_detalle.id_detalle_remision DESC", nativeQuery = true)
 	List<DetalleRemisionInterface> buscarDetallesPorIdRemision(@Param("idRemision") Long idRemision);
 
 }

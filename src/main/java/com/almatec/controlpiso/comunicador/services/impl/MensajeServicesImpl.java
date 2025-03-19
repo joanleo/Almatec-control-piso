@@ -57,7 +57,7 @@ public class MensajeServicesImpl implements MensajeServices{
     	VistaOrdenPv orden = ordenPvService.obtenerOrdenPorId(remision.getIdOpIa());
     	
     	Context context = new Context();
-        context.setVariable("idRemision", "RM-" + remision.getIdRemision());
+        context.setVariable("idRemision", "LE-" + remision.getIdRemision());
         context.setVariable("op", orden.getTipoOp() + "-" + orden.getNumOp());
         context.setVariable("cliente", orden.getCliente());
         context.setVariable("proyecto", orden.getCentroOperaciones());
@@ -70,7 +70,7 @@ public class MensajeServicesImpl implements MensajeServices{
         
         crearEmail("CREACION_RM", 
         			"Remision Generada " 
-    				+"RM-" + remision.getIdRemision() 
+    				+"LE-" + remision.getIdRemision() 
     				+ "_" + orden.getTipoOp() + "-" + orden.getNumOp() 
     				+ "_" + orden.getCentroOperaciones()
     				+ "_" + orden.getCliente() , 

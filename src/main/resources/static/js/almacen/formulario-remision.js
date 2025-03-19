@@ -57,7 +57,7 @@ async function fetchOps() {
         renderOpTable();
     } catch (error) {
         console.error('Error fetching OPs:', error);
-        showAlert('Error al cargar las OPs', 'danger');
+        mostrarAlert('Error al cargar las OPs', 'danger');
     } finally {
         spinner.setAttribute("hidden", '')
     }
@@ -273,7 +273,7 @@ async function selectOp(idOpIa) {
         renderItemTable('fabricado');
     } catch (error) {
         console.error('Error fetching items:', error);
-        showAlert('Error al cargar los items', 'danger');
+        mostrarAlert('Error al cargar los items', 'danger');
     } finally {
         spinner.setAttribute("hidden", '');
     }
@@ -353,25 +353,32 @@ function agregarItemTableDetalleRemision(item){
 	const cantFerr = item.cant - item.cantDespachada
 	let newRow = document.createElement('tr')
 	newRow.innerHTML = `
-                <td>${item.id + '-' + item.idItemFab}</td>
+                <td data-tipo="item-id">${item.id + '-' + item.idItemFab}</td>
                 <td>${item.marca}</td>
                 <td>${item.descripcion}</td>
-				<td>${item.peso}</td>
+                <td>${item.peso}</td>
                 <td>${item.cant}</td>
                 <td>${item.cantCumplida}</td>
                 <td>${item.cantDespachada}</td>
-                <td><input class="form-control cant-remisionar" type="number" min="1" ${item.idItemFab !== 0 ? `max="${cantMax}"  id="${item.id + '-' + item.idItemFab}"` : `max="${cantFerr}" id="itemFerr"`} required /></td>
-				<td class="peso-total">0</td>
-				<td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
+                <td><input class="form-control cant-remisionar" type="number" min="1" ${item.idItemFab !== 0 ? `max="${cantMax}"  id="${item.id + '-' + item.idItemFab}"` : `max="${cantFerr}" id="itemFerr"`} data-tipo="cantidad" required /></td>
+                <td class="peso-total" data-tipo="peso-total">0</td>
+                <td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
             `
     tbody.appendChild(newRow)
     
-    newRow.querySelector('.cant-remisionar').addEventListener('input', function() {
-        if (this.value < 0) this.value = ''
-        if(this.id == "itemFab" && this.value > cantMax) this.value = cantMax
-        if(this.id == "itemFerr" && this.value > cantFerr) this.value = cantFerr
-		
-		const cantidad = parseFloat(this.value) || 0;
+	const cantInput = newRow.querySelector('.cant-remisionar');
+    cantInput.addEventListener('input', function() {
+        // Validar que no sea negativo
+        if (this.value < 0) this.value = '';
+        
+        // Validar que no exceda el máximo
+        const max = parseFloat(this.getAttribute('max'));
+        if (this.value > max) this.value = max;
+        
+        // Validar que sea un número
+        if (isNaN(parseFloat(this.value))) this.value = '';
+        
+        const cantidad = parseFloat(this.value) || 0;
         const pesoUnitario = parseFloat(item.peso) || 0;
         const pesoTotal = (cantidad * pesoUnitario).toFixed(2);
         newRow.querySelector('.peso-total').textContent = pesoTotal;
@@ -413,60 +420,75 @@ function eliminarFila(button){
 }
 
 async function guardarRemision(){
-	spinner.removeAttribute('hidden')
-	
-	const button = document.getElementById('submitForm');
+    spinner.removeAttribute('hidden')
+    
+    const button = document.getElementById('submitForm');
     button.disabled = true;
     
-	const idUsuario = document.getElementById('usuarioId').value
-	const observaciones = document.getElementById('observaciones').value
-	const rows = document.querySelectorAll('#body-detalle-remision tr')
-	
-	if (rows.length === 0) {
-		mostrarAlert('La remision debe tener al menos un elemento.','danger')
-		button.disabled = false
-		spinner.setAttribute('hidden', '')
-		return
-	}
-	
-	let detalles = []
-	for(const row of rows){
-		const item = row.cells[0].textContent
-		const detalle = {
-			itemOp: parseInt(item.split('-')[0]),
-			cantidad: parseFloat(row.cells[6].querySelector('input').value)
-		}
-		detalles.push(detalle) 
-	}
-	const remision = {
-		idOpIa: selectedOp.idOpIa,
-		idUsuario: idUsuario,
-		observaciones: observaciones,
-		detalles: detalles
-	}
-	
-	
-	try{
-		const request = await fetch(`/almacen/remisiones`,{
-			method: 'POST',
-			headers: {
-				'Content-type': 'application/json'
-			},
-			body: JSON.stringify(remision)
-		})
-		const response = await request.json()
-		//mostrarAlert(`Se creo la remision RM-${response.idRemision}`,'success')
-		localStorage.setItem('alertMessage', JSON.stringify({
-            message: `Se creo la remision RM-${response.idRemision}`,
+    const idUsuario = document.getElementById('usuarioId').value
+    const observaciones = document.getElementById('observaciones').value
+    const rows = document.querySelectorAll('#body-detalle-remision tr')
+    
+    if (rows.length === 0) {
+        mostrarAlert('La remision debe tener al menos un elemento.','danger')
+        button.disabled = false
+        spinner.setAttribute('hidden', '')
+        return
+    }
+    
+    let detalles = []
+    let hayErrores = false;
+    
+    for(const row of rows){
+        const itemText = row.querySelector('td[data-tipo="item-id"]').textContent;
+        const cantInput = row.querySelector('input[data-tipo="cantidad"]');
+        
+        // Validación de la entrada
+        if (!cantInput || !cantInput.value || isNaN(parseFloat(cantInput.value)) || parseFloat(cantInput.value) <= 0) {
+            mostrarAlert('Por favor, ingrese una cantidad válida para todos los items.', 'danger');
+            button.disabled = false;
+            spinner.setAttribute('hidden', '');
+            hayErrores = true;
+            break;
+        }
+        
+        const detalle = {
+            itemOp: parseInt(itemText.split('-')[0]),
+            cantidad: parseFloat(cantInput.value)
+        }
+        detalles.push(detalle) 
+    }
+    
+    if (hayErrores) return;
+    
+    const remision = {
+        idOpIa: selectedOp.idOpIa,
+        idUsuario: idUsuario,
+        observaciones: observaciones,
+        detalles: detalles
+    }
+    
+    try{
+        const request = await fetch(`/almacen/remisiones`,{
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(remision)
+        })
+        const response = await request.json()
+        localStorage.setItem('alertMessage', JSON.stringify({
+            message: `Se creo la lista de empaque LE-${response.idRemision}`,
             type: 'success'
         }))
-		//mostrarModal(mensaje)
-		window.location.reload()		
-	}catch(error){
-		console.log(error)
-	}finally{
-		spinner.setAttribute('hidden', '')
-		}
+        window.location.reload()        
+    }catch(error){
+        console.log(error)
+        mostrarAlert('Error al guardar la remisión', 'danger');
+    }finally{
+        spinner.setAttribute('hidden', '')
+        button.disabled = false;
+    }
 }
 
 document.getElementById("remisionForm").addEventListener('submit', function(event){
