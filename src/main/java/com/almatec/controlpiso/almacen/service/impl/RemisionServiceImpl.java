@@ -59,7 +59,7 @@ public class RemisionServiceImpl implements RemisionService {
 
 	@Override
 	public Page<EncabezadoRemision> obtenerRemisionesPaginadas(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by("IdRemision").descending());
+		Pageable pageable = PageRequest.of(page, size);
 		try {
 			return remisionRepo.buscarTodasRemisiones(pageable);
 		} catch (Exception e) {

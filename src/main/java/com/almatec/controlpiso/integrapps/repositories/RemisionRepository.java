@@ -65,7 +65,8 @@ public interface RemisionRepository extends JpaRepository<Remision, Long> {
 			+ "INNER JOIN view_orden_pv "
 			+ "ON remision.id_op_ia = view_orden_pv.id_op_ia "
 			+ "INNER JOIN web_usuarios "
-			+ "ON remision.id_usuario_crea = web_usuarios.usu_id ", nativeQuery = true)
+			+ "ON remision.id_usuario_crea = web_usuarios.usu_id "
+			+ "ORDER BY remision.id_remision DESC ", nativeQuery = true)
 	Page<EncabezadoRemision> buscarTodasRemisiones(Pageable pageable);
 
 	@Query(value = "SELECT remision.id_remision AS IdRemision, remision.fechaCreacion AS FechaCreacion, " +
@@ -79,7 +80,8 @@ public interface RemisionRepository extends JpaRepository<Remision, Long> {
 	           "WHERE LOWER(CAST(remision.id_remision AS VARCHAR)) LIKE LOWER(CONCAT('%', :termino, '%')) " +
 	           "OR LOWER(RTRIM(view_orden_pv.Tipo_OP) + '-' + RTRIM(view_orden_pv.Num_Op)) LIKE LOWER(CONCAT('%', :termino, '%')) " +
 	           "OR LOWER(view_orden_pv.f200_razon_social) LIKE LOWER(CONCAT('%', :termino, '%')) " +
-	           "OR LOWER(RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion)) LIKE LOWER(CONCAT('%', :termino, '%'))",
+	           "OR LOWER(RTRIM(view_orden_pv.f285_id) + '-' + RTRIM(view_orden_pv.f285_descripcion)) LIKE LOWER(CONCAT('%', :termino, '%')) " + 
+	           "ORDER BY remision.id_remision DESC",
 	           nativeQuery = true,
 	           countQuery = "SELECT COUNT(*) " +
 	           "FROM remision " +
