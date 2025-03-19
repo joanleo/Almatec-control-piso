@@ -203,7 +203,7 @@ public class ExportOpCentroTrabajoToExcel {
             newRow.setColor(item.getItemColor() != null ? item.getItemColor() : "");
             newRow.setPrioridad(item.getPrioridad());
             newRow.setRef(ref != null ? ref : "");
-            newRow.setLongitud(longitud != null ? longitud.setScale(2, RoundingMode.HALF_UP) : null);
+            newRow.setLongitud(longitud != null ? longitud.setScale(3, RoundingMode.HALF_UP) : null);
             newRow.setProyecto(op.getUn() != null ? op.getUn() : "");
             newRow.setZona(op.getZona() != null ? op.getZona() : "");
             newRow.setMarca(item.getMarca() != null ? item.getMarca() : "");

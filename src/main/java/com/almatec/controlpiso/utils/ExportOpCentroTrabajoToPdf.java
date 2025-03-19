@@ -177,7 +177,7 @@ public class ExportOpCentroTrabajoToPdf extends ExportToPdf {
 		row.setColor(item.getItemColor() != null ? item.getItemColor() : "");
 		row.setPrioridad(item.getPrioridad());
 		row.setRef(ref != null ? ref : "");
-		row.setLongitud(longitud != null ? longitud.setScale(2, RoundingMode.HALF_UP) : null);
+		row.setLongitud(longitud != null ? longitud.setScale(3, RoundingMode.HALF_UP) : null);
 		row.setProyecto(op.getUn() != null ? op.getUn() : "");
 		row.setZona(op.getZona() != null ? op.getZona() : "");
 		row.setMarca(item.getMarca() != null ? item.getMarca() : "");

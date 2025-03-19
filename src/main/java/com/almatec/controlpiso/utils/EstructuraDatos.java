@@ -69,7 +69,7 @@ public class EstructuraDatos {
         componente.setMaterial_centro_t_id(vista.getMaterialCentroTId());
         componente.setMaterial_centro_t_nombre(vista.getMaterial_centro_t_nombre());
         componente.setMaterial_peso(vista.getMaterial_peso());
-        componente.setLongitud(vista.getItem_long());
+        componente.setLongitud(vista.getMaterial_long());
 
         return componente;
     }
