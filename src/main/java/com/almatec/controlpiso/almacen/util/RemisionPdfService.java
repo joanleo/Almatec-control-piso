@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,6 +52,7 @@ public class RemisionPdfService extends PdfPageEventHelper{
 	public void createPdf(HttpServletResponse response) throws DocumentException, IOException {
 		
 		Document document = new Document(PageSize.A4);
+		document.setMargins(36, 36, 54, 54);
 		PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
 		writer.setPageEvent(this);
         document.open();
@@ -67,10 +69,14 @@ public class RemisionPdfService extends PdfPageEventHelper{
         
         materialEmpaque(document);
         
-        PdfPTable firmasTable = new PdfPTable(5);
         
+        PdfPTable firmasTable = new PdfPTable(5);        
         firmasTable.setWidthPercentage(100);
-        firmasTable.setWidths(new float[] { 30f, 10f, 30, 10f, 30f});
+        try {
+            firmasTable.setWidths(new float[] { 30f, 10f, 30, 10f, 30f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
 
         PdfPCell supervisorCell = new PdfPCell(new Phrase("Supervisor"));
         supervisorCell.setBorder(Rectangle.TOP); 
@@ -100,21 +106,19 @@ public class RemisionPdfService extends PdfPageEventHelper{
         document.add(Chunk.NEWLINE);
 
         float yPos = writer.getVerticalPosition(true);
-        float tableHeight = firmasTable.getTotalHeight();
-        float bottomMargin = document.bottomMargin();
+        float tableHeight = firmasTable.getTotalHeight() ;
+        float bottomMargin = document.bottomMargin() ;
         
         // Si la posición actual más la altura de la tabla es menor que el margen inferior,
         // entonces añadir la tabla, si no, añadir una nueva página.
-        if (yPos - tableHeight - bottomMargin > 0) {
+        if (yPos - tableHeight - bottomMargin < 0) {
+        	System.out.println("Operacion calculo altura: " + (yPos - tableHeight - bottomMargin));
         	document.add(Chunk.NEWLINE);
-        	document.add(Chunk.NEWLINE);
-            document.add(firmasTable);
-        } else {
             document.newPage();
-            document.add(firmasTable);
         }
-
-
+        
+        document.add(Chunk.NEWLINE);
+        document.add(firmasTable);
         document.close();
         writer.close();
 	}
@@ -280,6 +284,7 @@ public class RemisionPdfService extends PdfPageEventHelper{
 	private void datosTitulo(Document document) {
 		Font titleFont = new Font();
 		titleFont.setSize(20);
+		titleFont.setStyle(Font.BOLD);
 		Paragraph title = new Paragraph("LISTA DE EMPAQUE", titleFont);
 		title.setAlignment(Element.ALIGN_CENTER);
 		title.setSpacingBefore(25);
@@ -303,147 +308,164 @@ public class RemisionPdfService extends PdfPageEventHelper{
 
 	private void datosTransportadora(Document document) {
 		Font infoFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
+		Font headerInfoFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
+		headerInfoFont.setStyle(Font.BOLD);
 		PdfPTable tableTransporteCliente = new PdfPTable(6);
 		PdfPCell emptyCell = new PdfPCell();
 		emptyCell.setBorder(Rectangle.NO_BORDER);
 
 		tableTransporteCliente.setSpacingBefore(20);
 		tableTransporteCliente.setWidthPercentage(100f);
-		tableTransporteCliente.setWidths(new float[] {1, 1, 1, 1, 1, 1});
+		try {
+		    tableTransporteCliente.setWidths(new float[] {1, 1, 1, 1, 1, 1});
+		} catch (DocumentException e) {
+		    e.printStackTrace();
+		}
 		
-		PdfPCell trasportadoraCell = new PdfPCell(new Phrase("Transportadora: ", infoFont));
+		// Safe get methods for dataTransportadora
+		String nombreTransportadora = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getNombre()).orElse("") : "";
+		String vehiculo = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getVehiculo()).orElse("") : "";
+		String conductor = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getConductor()).orElse("") : "";
+		String placa = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getPlaca()).orElse("") : "";
+		String cedula = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getCedula()).orElse("") : "";
+		String pase = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getPase()).orElse("") : "";
+		String celular = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getCelular()).orElse("") : "";
+		Double pesoEntrada = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getPesoEntrada()).orElse(0.0) : 0.0;
+		Double pesoSalida = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getPesoSalida()).orElse(0.0) : 0.0;
+		String horaEntrada = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getHoraEntrada()).orElse("") : "";
+		String horaSalida = dataTransportadora != null ? 
+		    Optional.ofNullable(dataTransportadora.getHoraSalida()).orElse("") : "";
+		
+		PdfPCell trasportadoraCell = new PdfPCell(new Phrase("Transportadora: ", headerInfoFont));
 		trasportadoraCell.setBorder(Rectangle.NO_BORDER);
 		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(trasportadoraCell);
 		
-		PdfPCell nombreTransportadoraCell = new PdfPCell(new Phrase(dataTransportadora.getNombre(), infoFont));
+		PdfPCell nombreTransportadoraCell = new PdfPCell(new Phrase(nombreTransportadora, infoFont));
 		nombreTransportadoraCell.setBorder(Rectangle.NO_BORDER);
 		nombreTransportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(nombreTransportadoraCell);
-		//tableTransporteCliente.addCell(emptyCell);
 		
 		tableTransporteCliente.addCell(emptyCell);
 		tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell vehiculoCell = new PdfPCell(new Phrase("Vehiculo: ", infoFont));
+		PdfPCell vehiculoCell = new PdfPCell(new Phrase("Vehiculo: ", headerInfoFont));
 		vehiculoCell.setBorder(Rectangle.NO_BORDER);
 		vehiculoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableTransporteCliente.addCell(vehiculoCell);
 		
-		PdfPCell descVehiculoCell = new PdfPCell(new Phrase(dataTransportadora.getVehiculo(), infoFont));
+		PdfPCell descVehiculoCell = new PdfPCell(new Phrase(vehiculo, infoFont));
 		descVehiculoCell.setBorder(Rectangle.NO_BORDER);
 		descVehiculoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(descVehiculoCell);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell conductorCell = new PdfPCell(new Phrase("Conductor: ", infoFont));
+		PdfPCell conductorCell = new PdfPCell(new Phrase("Conductor: ", headerInfoFont));
 		conductorCell.setBorder(Rectangle.NO_BORDER);
 		conductorCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(conductorCell);
 		
-		PdfPCell nombreConductorCell = new PdfPCell(new Phrase(dataTransportadora.getConductor(), infoFont));
+		PdfPCell nombreConductorCell = new PdfPCell(new Phrase(conductor, infoFont));
 		nombreConductorCell.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		nombreConductorCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(nombreConductorCell);
-		//tableTransporteCliente.addCell(emptyCell);
 		
 		tableTransporteCliente.addCell(emptyCell);
 		tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell placaCell = new PdfPCell(new Phrase("Placa: ", infoFont));
+		PdfPCell placaCell = new PdfPCell(new Phrase("Placa: ", headerInfoFont));
 		placaCell.setBorder(Rectangle.NO_BORDER);
 		placaCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableTransporteCliente.addCell(placaCell);
 		
-		PdfPCell numPlaca = new PdfPCell(new Phrase(dataTransportadora.getPlaca(), infoFont));
+		PdfPCell numPlaca = new PdfPCell(new Phrase(placa, infoFont));
 		numPlaca.setBorder(Rectangle.NO_BORDER);
 		numPlaca.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(numPlaca);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell cedulaCell = new PdfPCell(new Phrase("Cedula: ", infoFont));
+		PdfPCell cedulaCell = new PdfPCell(new Phrase("Cedula: ", headerInfoFont));
 		cedulaCell.setBorder(Rectangle.NO_BORDER);
 		cedulaCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(cedulaCell);
 		
-		PdfPCell numeroCedula = new PdfPCell(new Phrase(dataTransportadora.getCedula(), infoFont));
+		PdfPCell numeroCedula = new PdfPCell(new Phrase(cedula, infoFont));
 		numeroCedula.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		numeroCedula.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(numeroCedula);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell paseCell = new PdfPCell(new Phrase("Pase: ", infoFont));
+		PdfPCell paseCell = new PdfPCell(new Phrase("Pase: ", headerInfoFont));
 		paseCell.setBorder(Rectangle.NO_BORDER);
 		paseCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(paseCell);
 		
-		PdfPCell numPase = new PdfPCell(new Phrase(dataTransportadora.getPase(), infoFont));
+		PdfPCell numPase = new PdfPCell(new Phrase(pase, infoFont));
 		numPase.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		numPase.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(numPase);
-		//tableTransporteCliente.addCell(emptyCell);
 		
 		tableTransporteCliente.addCell(emptyCell);
 		tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell celularCell = new PdfPCell(new Phrase("Celular: ", infoFont));
+		PdfPCell celularCell = new PdfPCell(new Phrase("Celular: ", headerInfoFont));
 		celularCell.setBorder(Rectangle.NO_BORDER);
 		celularCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(celularCell);
 		
-		PdfPCell numeroCelular = new PdfPCell(new Phrase(dataTransportadora.getCelular(), infoFont));
+		PdfPCell numeroCelular = new PdfPCell(new Phrase(celular, infoFont));
 		numeroCelular.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		numeroCelular.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(numeroCelular);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell pesoEntradaCell = new PdfPCell(new Phrase("Peso Entrada [Kg]: ", infoFont));
+		PdfPCell pesoEntradaCell = new PdfPCell(new Phrase("Peso Entrada [Kg]: ", headerInfoFont));
 		pesoEntradaCell.setBorder(Rectangle.NO_BORDER);
 		pesoEntradaCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(pesoEntradaCell);
 		
-		Double pesoEntrada = dataTransportadora.getPesoEntrada();
 		PdfPCell valorPesoEntradaCell = new PdfPCell(new Phrase(pesoEntrada.toString(), infoFont));
 		valorPesoEntradaCell.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		valorPesoEntradaCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(valorPesoEntradaCell);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell pesoSalidaCell = new PdfPCell(new Phrase("Peso Salida [Kg]: ", infoFont));
+		PdfPCell pesoSalidaCell = new PdfPCell(new Phrase("Peso Salida [Kg]: ", headerInfoFont));
 		pesoSalidaCell.setBorder(Rectangle.NO_BORDER);
 		pesoSalidaCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableTransporteCliente.addCell(pesoSalidaCell);
 		
-		Double pesoSalida = dataTransportadora.getPesoSalida();
 		PdfPCell valorPespSalidaCell = new PdfPCell(new Phrase(pesoSalida.toString(), infoFont));
 		valorPespSalidaCell.setBorder(Rectangle.NO_BORDER);
 		valorPespSalidaCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(valorPespSalidaCell);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell horaIngresoCell = new PdfPCell(new Phrase("Hora Ingreso: ", infoFont));
+		PdfPCell horaIngresoCell = new PdfPCell(new Phrase("Hora Ingreso: ", headerInfoFont));
 		horaIngresoCell.setBorder(Rectangle.NO_BORDER);
 		horaIngresoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(horaIngresoCell);
 		
-		PdfPCell valorHoraIngresoCell = new PdfPCell(new Phrase(dataTransportadora.getHoraEntrada(), infoFont));
+		PdfPCell valorHoraIngresoCell = new PdfPCell(new Phrase(horaEntrada, infoFont));
 		valorHoraIngresoCell.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		valorHoraIngresoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(valorHoraIngresoCell);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell horaSalidaCell = new PdfPCell(new Phrase("Hora Salida: ", infoFont));
+		PdfPCell horaSalidaCell = new PdfPCell(new Phrase("Hora Salida: ", headerInfoFont));
 		horaSalidaCell.setBorder(Rectangle.NO_BORDER);
 		horaSalidaCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(horaSalidaCell);
 		
-		PdfPCell valorHoraSalida = new PdfPCell(new Phrase(dataTransportadora.getHoraSalida(), infoFont));
+		PdfPCell valorHoraSalida = new PdfPCell(new Phrase(horaSalida, infoFont));
 		valorHoraSalida.setBorder(Rectangle.NO_BORDER);
-		trasportadoraCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		valorHoraSalida.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableTransporteCliente.addCell(valorHoraSalida);
-		//tableTransporteCliente.addCell(emptyCell);
 		
-		PdfPCell pesoNetoCell = new PdfPCell(new Phrase("Peso Neto: ", infoFont));
+		PdfPCell pesoNetoCell = new PdfPCell(new Phrase("Peso Neto: ", headerInfoFont));
 		pesoNetoCell.setBorder(Rectangle.NO_BORDER);
 		pesoNetoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableTransporteCliente.addCell(pesoNetoCell);
@@ -457,15 +479,17 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		
 		document.add(tableTransporteCliente);
 	}
-
+	
 	private void datosCliente(Document document) {
 		Font infoFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
-		PdfPTable tableDataCliente = new PdfPTable(6);
+		Font headerInfoFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
+		headerInfoFont.setStyle(Font.BOLD);
+		PdfPTable tableDataCliente = new PdfPTable(5);
 		tableDataCliente.setSpacingBefore(30);
 		tableDataCliente.setWidthPercentage(100f);
-		tableDataCliente.setWidths(new float[] {1, 1, 1, 1, 1, 1});
+		tableDataCliente.setWidths(new float[] {1, 2, 1, 1, 1});
 		
-		PdfPCell clientCell = new PdfPCell(new Phrase("Cliente: ", infoFont));
+		PdfPCell clientCell = new PdfPCell(new Phrase("Cliente: ", headerInfoFont));
 		clientCell.setBorder(Rectangle.NO_BORDER);
 		clientCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(clientCell);
@@ -478,9 +502,9 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		PdfPCell emptyCell = new PdfPCell();
 		emptyCell.setBorder(Rectangle.NO_BORDER);
 		tableDataCliente.addCell(emptyCell);
-		tableDataCliente.addCell(emptyCell);
+		//tableDataCliente.addCell(emptyCell);
 		
-		PdfPCell opCell = new PdfPCell(new Phrase("Num OP: ", infoFont));
+		PdfPCell opCell = new PdfPCell(new Phrase("Num OP: ", headerInfoFont));
 		opCell.setBorder(Rectangle.NO_BORDER);
 		opCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableDataCliente.addCell(opCell);
@@ -490,23 +514,23 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		numOpCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(numOpCell);
 		
-		PdfPCell proyectoCell = new PdfPCell(new Phrase("Proyecto: ", infoFont));
+		PdfPCell proyectoCell = new PdfPCell(new Phrase("Proyecto: ", headerInfoFont));
 		proyectoCell.setBorder(Rectangle.NO_BORDER);
 		proyectoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(proyectoCell);
 		
-		PdfPCell descProyectoCell = new PdfPCell(new Phrase(encabezado.getProyecto(), infoFont));
+		PdfPCell descProyectoCell = new PdfPCell(new Phrase(encabezado.getProyecto().split("-")[1], infoFont));
 		descProyectoCell.setBorder(Rectangle.NO_BORDER);
 		descProyectoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(descProyectoCell);
 		
 		
-		tableDataCliente.addCell(emptyCell);
+		//tableDataCliente.addCell(emptyCell);
 		tableDataCliente.addCell(emptyCell);
 		tableDataCliente.addCell(emptyCell);
 		tableDataCliente.addCell(emptyCell);
 		
-		PdfPCell dirCell = new PdfPCell(new Phrase("Direccion Despacho: ", infoFont));
+		PdfPCell dirCell = new PdfPCell(new Phrase("Direccion Despacho: ", headerInfoFont));
 		dirCell.setBorder(Rectangle.NO_BORDER);
 		dirCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(dirCell);
@@ -517,10 +541,10 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		dataDirCell.setVerticalAlignment(Element.ALIGN_CENTER);
 		tableDataCliente.addCell(dataDirCell);
 		
-		tableDataCliente.addCell(emptyCell);
+		//tableDataCliente.addCell(emptyCell);
 		tableDataCliente.addCell(emptyCell);
 		
-		PdfPCell ciudadCell = new PdfPCell(new Phrase("Ciudad Despacho: ", infoFont));
+		PdfPCell ciudadCell = new PdfPCell(new Phrase("Ciudad Despacho: ", headerInfoFont));
 		ciudadCell.setBorder(Rectangle.NO_BORDER);
 		ciudadCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableDataCliente.addCell(ciudadCell);
@@ -530,7 +554,7 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		dataCiudadCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(dataCiudadCell);
 		
-		PdfPCell contactoCell = new PdfPCell(new Phrase("Contacto: ", infoFont));
+		PdfPCell contactoCell = new PdfPCell(new Phrase("Contacto: ", headerInfoFont));
 		contactoCell.setBorder(Rectangle.NO_BORDER);
 		contactoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(contactoCell);
@@ -540,10 +564,10 @@ public class RemisionPdfService extends PdfPageEventHelper{
 		nombreContactoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 		tableDataCliente.addCell(nombreContactoCell);
 		
-		tableDataCliente.addCell(emptyCell);
+		//tableDataCliente.addCell(emptyCell);
 		tableDataCliente.addCell(emptyCell);
 		
-		PdfPCell telCell = new PdfPCell(new Phrase("Telefono: ", infoFont));
+		PdfPCell telCell = new PdfPCell(new Phrase("Telefono: ", headerInfoFont));
 		telCell.setBorder(Rectangle.NO_BORDER);
 		telCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		tableDataCliente.addCell(telCell);
