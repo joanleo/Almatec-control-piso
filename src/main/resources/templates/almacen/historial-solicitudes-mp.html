@@ -67,11 +67,12 @@
 	                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
 	                    <a class="page-link" th:href="@{/almacen/solicitudes/historial(page=${currentPage - 1},size=${solicitudes.size})}">‹</a>
 	                </li>
-	                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" 
-	                    th:classappend="${pageNum == currentPage} ? 'active'">
-	                    <a class="page-link" th:href="@{/almacen/solicitudes/historial(page=${pageNum},size=${solicitudes.size})}" 
-	                       th:text="${pageNum + 1}"></a>
-	                </li>
+					<!-- Páginas numeradas (máximo 5) -->
+			        <li class="page-item" th:each="pageNum : ${pageNumbers}"
+			            th:classappend="${pageNum == currentPage} ? 'active'">
+			            <a class="page-link" th:href="@{/almacen/solicitudes/historial(page=${pageNum},size=${solicitudes.size})}"
+			               th:text="${pageNum + 1}"></a>
+			        </li>
 	                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
 	                    <a class="page-link" th:href="@{/almacen/solicitudes/historial(page=${currentPage + 1},size=${solicitudes.size})}">›</a>
 	                </li>

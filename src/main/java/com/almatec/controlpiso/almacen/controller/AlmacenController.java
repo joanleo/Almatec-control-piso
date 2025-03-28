@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -120,12 +122,22 @@ public class AlmacenController {
 		Page<SolicitudDTO> solicitudes = solicitudMateriaPrimaService.obtenerTodasSolicitudesPaginadas(page, size);
 		
 		int totalPages = Math.max(1, solicitudes.getTotalPages());
-		
-		
+	    
+	    // Cálculo de páginas para mostrar (máximo 5)
+	    int startPage = Math.max(0, page - 2);
+	    int endPage = Math.min(totalPages - 1, startPage + 4);
+	    startPage = Math.max(0, endPage - 4);
+	    
+	    // Lista de números de página a mostrar
+	    List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+	                                         .boxed()
+	                                         .collect(Collectors.toList());
+	    
 	    modelo.addAttribute("currentPage", page);
 	    modelo.addAttribute("totalPages", totalPages);
-		modelo.addAttribute("solicitudes", solicitudes);
-		modelo.addAttribute("hasContent", solicitudes.hasContent());
+	    modelo.addAttribute("solicitudes", solicitudes);
+	    modelo.addAttribute("hasContent", solicitudes.hasContent());
+	    modelo.addAttribute("pageNumbers", pageNumbers);
 		
 		return "almacen/historial-solicitudes-mp.html";
 	}

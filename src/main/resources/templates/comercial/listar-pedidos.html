@@ -44,7 +44,7 @@
 						        <span th:case="'Aprobado'" class="approved__badge" th:text="${pedido.estado}"></span>
 						        <span th:case="'Anulado'" class="canceled__badge" th:text="${pedido.estado}"></span>
 						        <span th:case="'Retenido'" class="in_preparation__badge" th:text="${pedido.estado}"></span>
-						        <span th:case="*" th:text="${pedido.estado}"></span>
+						        <span th:case="*" class="in_preparation__badge" th:text="${pedido.estado}"></span>
 						    </span>
 						</td>
 						<td >
@@ -55,14 +55,35 @@
 				</table>
 			</div>
 			<nav aria-label="Page navigation" th:if="${pedidosPage.totalPages > 1}">
-                <ul class="pagination justify-content-center">
-
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0, pedidosPage.totalPages - 1)}" th:classappend="${pedidosPage.number == i} ? 'active'">
-                        <a class="page-link" th:href="@{/comercial/pedidos/listar(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
-                    </li>
-
-                </ul>
-            </nav>
+			    <ul class="pagination justify-content-center">
+			        <!-- Primera página -->
+			        <li class="page-item" th:classappend="${pedidosPage.number == 0} ? 'disabled'">
+			            <a class="page-link" th:href="@{/comercial/pedidos/listar(page=0, keyword=${keyword})}">&laquo;</a>
+			        </li>
+			        
+			        <!-- Página anterior -->
+			        <li class="page-item" th:classappend="${pedidosPage.number == 0} ? 'disabled'">
+			            <a class="page-link" th:href="@{/comercial/pedidos/listar(page=${pedidosPage.number - 1}, keyword=${keyword})}">‹</a>
+			        </li>
+			        
+			        <!-- Páginas numeradas (máximo 5) -->
+			        <li class="page-item" th:each="pageNum : ${pageNumbers}" 
+			            th:classappend="${pedidosPage.number == pageNum} ? 'active'">
+			            <a class="page-link" th:href="@{/comercial/pedidos/listar(page=${pageNum}, keyword=${keyword})}" 
+			               th:text="${pageNum + 1}"></a>
+			        </li>
+			        
+			        <!-- Página siguiente -->
+			        <li class="page-item" th:classappend="${pedidosPage.number == pedidosPage.totalPages - 1} ? 'disabled'">
+			            <a class="page-link" th:href="@{/comercial/pedidos/listar(page=${pedidosPage.number + 1}, keyword=${keyword})}">›</a>
+			        </li>
+			        
+			        <!-- Última página -->
+			        <li class="page-item" th:classappend="${pedidosPage.number == pedidosPage.totalPages - 1} ? 'disabled'">
+			            <a class="page-link" th:href="@{/comercial/pedidos/listar(page=${pedidosPage.totalPages - 1}, keyword=${keyword})}">&raquo;</a>
+			        </li>
+			    </ul>
+			</nav>
 		</div>
 		
 		<footer th:replace="fragments/footer :: footer"></footer>

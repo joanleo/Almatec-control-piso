@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,19 +85,33 @@ public class ComercialController {
     }
 	
 	
-	@GetMapping("/pedidos/listar")
-	public String listarPedidosVentaErp(Model modelo,
-            @RequestParam(required = false) String keyword,
-            @PageableDefault(size = 10) Pageable pageable) {
-		
-		Page<VistaPedidosErp> page = (keyword == null || keyword.isEmpty())  ?
-		vistaPedidosErpService.buscarPedidosErp(pageable) :
-		vistaPedidosErpService.buscarPedidosErp(keyword, pageable);
-		
-		modelo.addAttribute("pedidosPage", page);
-		modelo.addAttribute("keyword", keyword);
-		return "comercial/listar-pedidos";
-	}
+    @GetMapping("/pedidos/listar")
+    public String listarPedidosVentaErp(Model modelo,
+                                      @RequestParam(required = false) String keyword,
+                                      @PageableDefault(size = 10) Pageable pageable) {
+
+        Page<VistaPedidosErp> page = (keyword == null || keyword.isEmpty()) ?
+                vistaPedidosErpService.buscarPedidosErp(pageable) :
+                vistaPedidosErpService.buscarPedidosErp(keyword, pageable);
+
+        // Cálculo de páginas para mostrar (máximo 5)
+        int currentPage = page.getNumber();
+        int totalPages = page.getTotalPages();
+        
+        int startPage = Math.max(0, currentPage - 2);
+        int endPage = Math.min(totalPages - 1, startPage + 4);
+        startPage = Math.max(0, endPage - 4);
+        
+        List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+                                            .boxed()
+                                            .collect(Collectors.toList());
+        
+        modelo.addAttribute("pedidosPage", page);
+        modelo.addAttribute("keyword", keyword);
+        modelo.addAttribute("pageNumbers", pageNumbers);
+        
+        return "comercial/listar-pedidos";
+    }
 	
 	@GetMapping("/pedidos/estado/{idPedido}")
 	public String verDetallePedido(@PathVariable Integer idPedido, Model modelo) {
