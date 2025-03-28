@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.almatec.controlpiso.erp.webservices.ConfigurationService;
 import com.almatec.controlpiso.integrapps.dtos.ParametroDTO;
 import com.almatec.controlpiso.integrapps.services.ParametroService;
 
@@ -22,6 +24,9 @@ public class ParametrosController {
 	
 	@Autowired
 	private ParametroService parametroService;
+	
+	@Autowired
+	private ConfigurationService configurationService;
 	
 	@GetMapping("/listar")
 	public String listarParametros() {
@@ -38,6 +43,7 @@ public class ParametrosController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			parametroService.guardarParametros(parametrosDTO);
+			configurationService.recargarParametros();
 			response.put("status", "success");
 	        response.put("message", "Cambios guardados exitosamente");
 	        return ResponseEntity.ok(response);

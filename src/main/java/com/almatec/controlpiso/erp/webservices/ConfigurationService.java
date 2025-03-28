@@ -74,7 +74,10 @@ public class ConfigurationService {
                 .filter(entry -> parametro.getNombre().contains(entry.getKey()))
                 .forEach(entry -> entry.getValue().accept(parametro)));
     }
-
+    
+    public void recargarParametros() {
+        asignarParametros();
+    }
 
     public Integer getCIA() {
         return CIA;
