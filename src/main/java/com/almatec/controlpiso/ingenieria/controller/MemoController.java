@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.almatec.controlpiso.comunicador.services.MensajeServices;
 import com.almatec.controlpiso.ingenieria.MemoWithOP;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
 import com.almatec.controlpiso.ingenieria.dtos.MemoDetalleDTO;
@@ -38,6 +39,7 @@ public class MemoController {
 	private final ItemOpService itemOpService;
 	private final MemoService memoService;
 	private final UtilitiesApp util;
+	private final MensajeServices mensajeServices;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -45,12 +47,14 @@ public class MemoController {
 			OrdenPvService ordenPvService, 
 			ItemOpService itemOpService,
 			MemoService memoService,
-			UtilitiesApp util) {
+			UtilitiesApp util,
+			MensajeServices mensajeServices) {
 		super();
 		this.ordenPvService = ordenPvService;
 		this.itemOpService = itemOpService;
 		this.memoService = memoService;
 		this.util = util;
+		this.mensajeServices = mensajeServices;
 	}
 	
 	@GetMapping
@@ -109,7 +113,9 @@ public class MemoController {
 	@PostMapping("/{idMemo}/aprobar-memo")
 	public ResponseEntity<MemoDTO> aprobarMemo(@PathVariable Long idMemo){
 		Usuario usuario = util.obtenerUsuarioAtenticado();
-		return ResponseEntity.ok(memoService.aprobarMemo(idMemo, usuario));
+		MemoDTO memoaproved = memoService.aprobarMemo(idMemo, usuario);
+		mensajeServices.enviarEmailAprobacionMemo(memoaproved);
+		return ResponseEntity.ok(memoaproved);
 	}
 	
 

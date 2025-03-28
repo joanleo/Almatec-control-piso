@@ -127,6 +127,7 @@ public class MemoServiceImpl implements MemoService {
             protected void configure() {
                 map().setIdUsuario(source.getUsuarioCrea().getId());
                 map().setId(source.getId());
+                map().setIdUsuarioAprueba(source.getUsuarioAprueba().getId());
             }
         };
         mapper.addMappings(memoMap);

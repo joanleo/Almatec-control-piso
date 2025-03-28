@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
+import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
@@ -22,5 +23,7 @@ public interface MensajeServices {
 	void enviarEmailGeneracionRemision(Remision remision);
 
 	void enviarEmailCreacionOrdenProduccion(VistaOrdenPv ordenVacia);
+
+	void enviarEmailAprobacionMemo(MemoDTO memoSaved);
 
 }

@@ -20,6 +20,7 @@ import com.almatec.controlpiso.comunicador.entities.Mensaje;
 import com.almatec.controlpiso.comunicador.repositories.MensajeRepository;
 import com.almatec.controlpiso.comunicador.services.MensajeServices;
 import com.almatec.controlpiso.erp.interfaces.DetalleTransferenciaInterface;
+import com.almatec.controlpiso.ingenieria.dtos.MemoDTO;
 import com.almatec.controlpiso.integrapps.entities.DetalleSolicitudMateriaPrima;
 import com.almatec.controlpiso.integrapps.entities.Remision;
 import com.almatec.controlpiso.integrapps.entities.SolicitudMateriaPrima;
@@ -202,5 +203,35 @@ public class MensajeServicesImpl implements MensajeServices{
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(correo).matches();
     }
+
+	@Override
+	public void enviarEmailAprobacionMemo(MemoDTO memo) {
+	    try {
+	        // Obtener información adicional necesaria
+	        VistaOrdenPv orden = ordenPvService.obtenerOrdenPorId(memo.getIdOpIntegrapps());
+	        Usuario usuarioSolicita = usuarioService.buscarUsuarioPorId(memo.getIdUsuario());
+	        Usuario usuarioAprueba = usuarioService.buscarUsuarioPorId(memo.getIdUsuarioAprueba());
+	        
+	        Context context = new Context();
+	        context.setVariable("memo", memo);
+	        context.setVariable("ordenProduccion", orden.getTipoOp() + "-" + orden.getNumOp());
+	        context.setVariable("solicitante", usuarioSolicita.getNombres());
+	        context.setVariable("aprobador", usuarioAprueba.getNombres());
+	        
+	        String contenido = templateEngine.process("aprobacion-memorando", context);
+	        
+	        crearEmail("APROBACION_MEMO",
+	                "Aprobación de Memorando " 
+	                + "M-" + memo.getId()
+	                + "_" + orden.getTipoOp() + "-" + orden.getNumOp()
+	                + "_" + orden.getCentroOperaciones()
+	                + "_" + orden.getCliente(),
+	                contenido);
+	                
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        logger.error("Error al enviar email de aprobación de memorando", e);
+	    }
+	}
 
 }

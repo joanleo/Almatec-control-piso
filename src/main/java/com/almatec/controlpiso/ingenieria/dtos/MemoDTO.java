@@ -9,6 +9,7 @@ public class MemoDTO {
 	private Integer idUsuario;
 	private String observacion;
 	private List<MemoDetalleDTO> detalles;
+	private Integer idUsuarioAprueba;
 	
 	public MemoDTO() {
 		super();
@@ -52,6 +53,14 @@ public class MemoDTO {
 
 	public void setObservacion(String observacion) {
 		this.observacion = observacion;
+	}
+
+	public Integer getIdUsuarioAprueba() {
+		return idUsuarioAprueba;
+	}
+
+	public void setIdUsuarioAprueba(Integer idUsuarioAprueba) {
+		this.idUsuarioAprueba = idUsuarioAprueba;
 	}
 	
 	
