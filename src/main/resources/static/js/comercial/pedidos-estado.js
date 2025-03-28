@@ -727,7 +727,7 @@ async function verDetalleOP(numOp) {
 			        const self = this;
 			        // Hacemos la llamada al endpoint que devuelve todos los datos
 			        $.ajax({
-			            url: `${CONSTANTS.API.DETALLE_OP}/${state.currentOp}/detalle`,
+			            url: `/ingenieria/op/${numOp}/detalle`,
 			            type: 'GET',
 			            success: function(data) {
 			                // Convertimos los datos al formato que espera DataTables
@@ -804,7 +804,7 @@ async function verDetalleOP(numOp) {
 			        const self = this;
 			        // Hacemos la llamada al endpoint que devuelve todos los datos
 			        $.ajax({
-			            url: `${CONSTANTS.API.DETALLE_OP}/${state.currentOp}/detalle`,
+			            url: `/ingenieria/op/${numOp}/detalle`,
 			            type: 'GET',
 			            success: function(data) {
 			                // Convertimos los datos al formato que espera DataTables
