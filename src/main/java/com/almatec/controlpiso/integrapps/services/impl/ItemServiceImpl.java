@@ -130,6 +130,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	private List<MateriaPrimaDTO> buscarMateriaPrima(Integer idItem) {
+		System.out.println("Obteniendo materias primas para: " + idItem);
         List<ItemMaterial> materiales = itemMaterialRepo.findComponentes(idItem);
         System.out.println("      Materia prima: " + materiales.get(0));
         return materiales.stream()

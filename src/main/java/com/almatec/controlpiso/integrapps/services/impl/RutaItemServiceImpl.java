@@ -3,8 +3,6 @@ package com.almatec.controlpiso.integrapps.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.exceptions.ResourceNotFoundException;
@@ -18,11 +16,13 @@ import com.almatec.controlpiso.integrapps.services.RutaItemService;
 @Service
 public class RutaItemServiceImpl implements RutaItemService {
 	
-	@Autowired
-	private RutaItemRepository rutaItemRepo;
-	
-	@Autowired
-	private CentroTrabajoRepository centroTrabajoRepo;
+	private final RutaItemRepository rutaItemRepo;
+	private final CentroTrabajoRepository centroTrabajoRepo;
+
+	public RutaItemServiceImpl(RutaItemRepository rutaItemRepo, CentroTrabajoRepository centroTrabajoRepo) {
+		this.rutaItemRepo = rutaItemRepo;
+		this.centroTrabajoRepo = centroTrabajoRepo;
+	}
 
 	@Override
 	public List<RutaItem> buscarRutaItem(Integer idItem) {

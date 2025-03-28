@@ -118,19 +118,16 @@ public class ComponenteDTO implements CommonDTO {
 
 	@Override
 	public String getCentroTrabajo() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getDescripcion() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Integer getCant() {
-		// TODO Auto-generated method stub
 		return null;
 	}	
 
