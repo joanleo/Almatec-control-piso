@@ -129,6 +129,27 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		actualizarRespuesta(response, mensajeResultado.toString());
 	}
 	
+	private void procesarReporteSegunCentroTrabajo(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
+			Item itemReporte, ResponseMessage response, Boolean tieneConsumo) throws ServiceException, IOException, RutaItemException{
+		StringBuilder mensajeResultado = new StringBuilder();
+
+		if (CENTROS_CONSUMO_PRINCIPAL.contains(reporte.getIdCentroT())) {
+			procesarReporteConConsumoPrincipal(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		} else if (CENTROS_CONSUMO_PLATINAS.contains(reporte.getIdCentroT())) {
+			if (itemOperacion.getCentroTConsumo() == 0) {
+				procesarReporteConConsumoPlatinas(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+			} else {
+				procesarReporteSimple(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+			}
+		} else if (reporte.getIdCentroT() == CENTRO_FINAL) {
+			procesarReporteFinal(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		} else {
+			procesarReporteSimple(reporte, reporteDTO, itemOperacion, itemReporte, mensajeResultado);
+		}
+
+		actualizarRespuesta(response, mensajeResultado.toString());
+	}
+	
 	private void procesarReporteConConsumoPrincipal(ReportePiezaCt reporte, ReporteDTO reporteDTO, ItemOp itemOperacion,
 			Item itemReporte, StringBuilder mensajeResultado) throws ServiceException, IOException {
 
@@ -176,29 +197,6 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 			throw new ServiceException(errorMsg);
 		}
 
-		// Verificar si requiere proceso de punzonadora no se debe hacer consumo el fleje ya viene punzonado
-		/*if (requierePunzonadora(itemReporte)) {
-			log.info("La ruta del item incluye punzonadora, creando conector tep");
-			conectores = new ArrayList<>();
-			conectores.addAll(agregarConsumoPunzonadora(reporteDTO, itemOperacion));
-			String nombrePunzonadora = "TEP_PUNZONADORA";
-			nombreArchivo = generarNombreArchivo(nombrePunzonadora + "_OP", reporteDTO.getNumOp().toString());
-			log.info("Creando xml y archivo plano");
-			guardarArchivos(conectores, nombreArchivo);
-
-			respuestaWeService = xmlService.postImportarXML(conectores);
-			log.info("Respuesta del webservices {}.", respuestaWeService);
-			if (RESPUESTA_EXITOSA.equals(respuestaWeService)) {
-				mensajeResultado.append("TEP punzonadora creado exitosamente.");
-				log.info("Actualizando datos en integrapps reporte");
-				actualizarCentrosTep(itemOperacion, CENTRO_PUNZONADORA, false);
-			} else {
-				String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
-				log.error(errorMsg);
-				throw new ServiceException(errorMsg);
-			}
-		}*/
-
 	}
 
 
@@ -241,12 +239,8 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 		} else {
 			log.debug("Omitiendo actualización de cantidad cumplida por ser un reprocesamiento");
 		}
-		String respuestaWeService = entregaService.crearEntrega(itemOperacion, reporteDTO);
-		if (RESPUESTA_ENTREGA_EXITOSA.equals(respuestaWeService)) {
-			actualizarCentrosTep(itemOperacion, 14, true);
-			reporte.setIsTep(true);
-			reporte.setIsConsume(true);
-		} else {
+		String respuestaWeService = entregaService.crearEntrega(itemOperacion, reporteDTO, reporte);
+		if (!RESPUESTA_ENTREGA_EXITOSA.equals(respuestaWeService)) {
 			String errorMsg = "Error al procesar la solicitud en el webservices: " + respuestaWeService;
 			throw new ServiceException(errorMsg);
 		}
@@ -356,9 +350,6 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	            log.debug("Centro TEP {} ya existe en la lista, no se requiere actualización", idCTErp);
 	        }
 	
-			//itemReporte.setCentrosTrabajoTep(centrosTep);
-			//itemService.guardarItem(itemReporte);
-			//ordenPvService.actualizarCentrosTep(itemOp.getIdOpIntegrapps(), centrosTep);
 		} catch (Exception e) {
 	        log.error("Error al actualizar centros TEP: {}", e.getMessage(), e);
 	        throw new RuntimeException("Error al actualizar centros TEP: " + e.getMessage(), e);

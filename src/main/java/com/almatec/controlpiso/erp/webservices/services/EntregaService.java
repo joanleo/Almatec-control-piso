@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.almatec.controlpiso.almacen.service.SolicitudMateriaPrimaService;
@@ -25,10 +27,12 @@ import com.almatec.controlpiso.erp.webservices.interfaces.Conector;
 import com.almatec.controlpiso.exceptions.ServiceException;
 import com.almatec.controlpiso.integrapps.dtos.ReporteDTO;
 import com.almatec.controlpiso.integrapps.entities.ItemOp;
+import com.almatec.controlpiso.integrapps.entities.ReportePiezaCt;
 import com.almatec.controlpiso.integrapps.interfaces.ItemInterface;
 import com.almatec.controlpiso.integrapps.interfaces.ItemListaMateriaInterface;
 import com.almatec.controlpiso.integrapps.services.ItemOpService;
 import com.almatec.controlpiso.integrapps.services.ParametroService;
+import com.almatec.controlpiso.integrapps.services.VistaOrdenPvService;
 import com.almatec.controlpiso.utils.UtilitiesApp;
 
 @Service
@@ -50,11 +54,15 @@ public class EntregaService {
 	private final ConectorEntregaService conectorEntregaService;
 	private final UtilitiesApp util;
 	private final ConfigurationService configService;
+	private final VistaOrdenPvService ordenPvService;
+	
+	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	public EntregaService(ParametroService parametroService, ItemOpService itemOpService,
 			ListaMaterialService listaMaterialService, SolicitudMateriaPrimaService solicitudMateriaPrimaService,
 			ConectorConsumoService conectorConsumoService, ConectorTepService conectorTepService, XmlService xmlService,
-			ConectorEntregaService conectorEntregaService, UtilitiesApp util, ConfigurationService configService) {
+			ConectorEntregaService conectorEntregaService, UtilitiesApp util, ConfigurationService configService,
+			VistaOrdenPvService ordenPvService) {
 		super();
 		this.parametroService = parametroService;
 		this.itemOpService = itemOpService;
@@ -66,6 +74,7 @@ public class EntregaService {
 		this.conectorEntregaService = conectorEntregaService;
 		this.util = util;
 		this.configService = configService;
+		this.ordenPvService = ordenPvService;
 	}
 
 	private Integer getCantidadFabricada(ItemOp item, ReporteDTO reporte) {
@@ -133,7 +142,6 @@ public class EntregaService {
 	private List<Conector> generarDocumentosConsumoYTep(ItemOp item, ReporteDTO reporte,
             List<ItemReporteConsumoDTO> itemsConsumo) {
 		List<Conector> consumoYTep = new ArrayList<>();
-		System.out.println("Consumos: " + reporte);
 		DataConsumoInterface data = listaMaterialService.obtenerDataParaConsumo(item.getIdOpIntegrapps());
 		String idCTErp = solicitudMateriaPrimaService.obtenerIdctErp(reporte.getIdCentroTrabajo());
 		String idRuta = "0" + data.getf120_id();
@@ -211,19 +219,19 @@ public class EntregaService {
 	 * Crea la entrega para el item y reporte recibido
      * 
      * @param item el ItemOp para entregar
-     * @param reporte El reporte contiene los datos de la entrega
+     * @param reporteDTO El reporte contiene los datos de la entrega
+	 * @param reporte2 
      * @return String indica el resultado de la entrega
      * @throws IOException si existe un error procesando el XML
 	 * @throws ServiceException 
      */
-	public String crearEntrega(ItemOp item, ReporteDTO reporte) throws IOException, ServiceException {
+	public String crearEntrega(ItemOp item, ReporteDTO reporteDTO, ReportePiezaCt reporte) throws IOException, ServiceException {
 		
-		Integer piezasSinConsumo = 0;
-
-		Integer cantFabItemOp = getCantidadFabricada(item, reporte);		
-		
-		System.out.println("Creando entrega");
-		
+		String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+		if(reporte.getEsReproceso() && reporte.getIsConsume()) {
+			String resultado = procesarDocumentosEntrega(item, reporteDTO, dateTime);	        
+	        return resultado.equals(RESPUESTA_OK) ? RESPUESTA_ENTREGA_EXITOSA : resultado;
+		}
 		//se agregan consumos de materia prima que no ha sido reportada en la lista de materiales del item
 		//List<ItemReporteConsumoDTO> itemsConsumo = processarListaMateriales(item, reporte, cantFabItemOp, piezasSinConsumo);
 		List<ItemReporteConsumoDTO> itemsConsumo = new ArrayList<>();
@@ -232,23 +240,58 @@ public class EntregaService {
 		if(item.getCodigoPintura() == 0 || item.getCodigoPintura() == null) {
 			throw new ServiceException(String.format("El código ERP de la pintura para el item '%s' no puede ser cero ni nulo", item.getDescripcion()));
 		}
-		agregarConsumoPintura(item, reporte, itemsConsumo);
+		agregarConsumoPintura(item, reporteDTO, itemsConsumo);
 
 		//se generan los conectores de consumo y tep
-		List<Conector> consumoYTep = generarDocumentosConsumoYTep(item, reporte, itemsConsumo);
+		List<Conector> consumoYTep = generarDocumentosConsumoYTep(item, reporteDTO, itemsConsumo);
 		
-		String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
 		//se envia al erp consumos y tep
-        String responseConsumoTep = procesarXmlConsumoYTep(consumoYTep, reporte, dateTime);
+        String responseConsumoTep = procesarXmlConsumoYTep(consumoYTep, reporteDTO, dateTime);
         
         if(!responseConsumoTep.equals(RESPUESTA_OK)) {
         	return responseConsumoTep;
         }
-        
+
+        actualizarCentrosTep(item, 14, true);
+		reporte.setIsTep(true);
+		reporte.setIsConsume(true);
         //Se procesa la entrega
-        String resultado = procesarDocumentosEntrega(item, reporte, dateTime);
+        String resultado = procesarDocumentosEntrega(item, reporteDTO, dateTime);
         
         return resultado.equals(RESPUESTA_OK) ? RESPUESTA_ENTREGA_EXITOSA : resultado;
 
+	}
+	
+	private void actualizarCentrosTep(ItemOp itemOp, Integer nuevoCentro, Boolean centroTrabajoErp) {
+		try {
+			List<Integer> centrosTep = ordenPvService.obtenerCentrosTrabajoTep(itemOp.getIdOpIntegrapps());
+			log.debug("Centros TEP actuales: {}", centrosTep);
+			if (centrosTep.size() == 1 && centrosTep.get(0) == 0) {
+				log.debug("Limpiando lista de centros TEP vacía");
+				centrosTep.clear();
+			}
+			
+			Integer idCTErp = nuevoCentro;
+			if(Boolean.FALSE.equals(centroTrabajoErp)) {
+				String idCTErpString = solicitudMateriaPrimaService.obtenerIdctErp(nuevoCentro).trim();
+				log.debug("Convertido centro trabajo {} a centro trabajo ERP: {}", nuevoCentro, idCTErpString);
+				idCTErp = Integer.valueOf(idCTErpString);			
+			}
+	
+			if (!centrosTep.contains(idCTErp)) {
+	            centrosTep.add(idCTErp);
+	            log.debug("Lista final de centros TEP a actualizar: {}", centrosTep);
+	            
+	            // Actualizar en la base de datos
+	            ordenPvService.actualizarCentrosTep(itemOp.getIdOpIntegrapps(), centrosTep);
+	            log.debug("Actualización de centros TEP completada");
+	        } else {
+	            log.debug("Centro TEP {} ya existe en la lista, no se requiere actualización", idCTErp);
+	        }
+	
+		} catch (Exception e) {
+	        log.error("Error al actualizar centros TEP: {}", e.getMessage(), e);
+	        throw new RuntimeException("Error al actualizar centros TEP: " + e.getMessage(), e);
+	    }
 	}
 }
