@@ -31,7 +31,7 @@
                 <p><strong>Orden de Producción:</strong> <span th:text="${ordenProduccion}">OP-12345</span></p>
                 <p><strong>Solicitado por:</strong> <span th:text="${solicitante}">Nombre del Solicitante</span></p>
                 <p><strong>Aprobado por:</strong> <span th:text="${aprobador}">Nombre del Aprobador</span></p>
-                <p><strong>Observación:</strong> <span th:text="${memo.observacion}">Observación del memorando</span></p>
+                <p th:if="${not #lists.isEmpty(memo.detalles)}"><strong>Observación:</strong> <span th:text="${memo.detalles[0].observacion}">Observación del memorando</span></p>
             </section>
             <section>
                 <h2>Detalles de Operaciones</h2>
@@ -41,15 +41,13 @@
                             <th>Ítem</th>
                             <th>Cantidad</th>
                             <th>Operación</th>
-                            <th>Descripción</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="detalle : ${memo.detalles}">
                             <td th:text="${detalle.idItemOp}">ITEM-001</td>
                             <td th:text="${detalle.cantidad}">10</td>
-                            <td th:text="${detalle.operacion}">Corte</td>
-                            <td th:text="${detalle.descripcion}">Descripción de la operación</td>
+                            <td th:text="${detalle.operacion}">Adicion</td>
                         </tr>
                     </tbody>
                 </table>

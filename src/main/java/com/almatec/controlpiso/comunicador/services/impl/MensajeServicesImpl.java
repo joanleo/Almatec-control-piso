@@ -213,12 +213,12 @@ public class MensajeServicesImpl implements MensajeServices{
 	        Usuario usuarioAprueba = usuarioService.buscarUsuarioPorId(memo.getIdUsuarioAprueba());
 	        
 	        Context context = new Context();
-	        context.setVariable("memo", memo);
+	        context.setVariable("memo", memo.);
 	        context.setVariable("ordenProduccion", orden.getTipoOp() + "-" + orden.getNumOp());
 	        context.setVariable("solicitante", usuarioSolicita.getNombres());
 	        context.setVariable("aprobador", usuarioAprueba.getNombres());
 	        
-	        String contenido = templateEngine.process("aprobacion-memorando", context);
+	        String contenido = templateEngine.process("aprobacion-memo", context);
 	        
 	        crearEmail("APROBACION_MEMO",
 	                "Aprobación de Memorando " 
