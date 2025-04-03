@@ -179,7 +179,7 @@ function fillTableDisponible(items) {
                 <td data-idBodega="${idBodega}">${idBodega}</td>
                 <td>${lote}</td>
                 <td>${disponible}</td>
-                <td><input class="form-control" type='number' id='${uniqueId}' min="1" max="${disponible}" step="0.001" required value="${item.disponible}"  /></td>
+                <td><input class="form-control" type='number' id='${uniqueId}' min="0.001" max="${disponible}" step="0.001" required value="${item.disponible}"  /></td>
                 <td><button class="btn btn-danger" onclick=eliminarFila(this)>Eliminar</button></td>
             `
 
