@@ -605,7 +605,7 @@ public class ReportePiezaCtServiceImpl implements ReportePiezaCtService {
 	    // Reverse quantity update in ItemOp
         ItemOp itemOp = itemOpService.obtenerItemPorId(reporte.getItemId());
         
-        if (itemOp != null && itemOp.getCantCumplida() != null) {
+        if (reporte.getIdCentroT() == CENTRO_FINAL && itemOp != null && itemOp.getCantCumplida() != null) {
             // Subtract the reported quantity from the cumulative quantity
             Double cantidadActual = itemOp.getCantCumplida();
             Double cantidadReportada = reporte.getCant().doubleValue();
